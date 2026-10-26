@@ -1,0 +1,60 @@
+ M .env.example
+ M package-lock.json
+ M package.json
+ M src/adapters/api-document-lane.ts
+ M src/adapters/api-suite-workflow.ts
+ M src/adapters/api-test-adapter.ts
+ M src/adapters/browser-runtime.ts
+ M src/adapters/computer-use.ts
+ M src/adapters/document-importer.ts
+ M src/adapters/document-package-refresh.ts
+ M src/adapters/document-test-workflow.ts
+ M src/adapters/document-workflow-record.ts
+ M src/demo/runtime.ts
+ M src/demo/server.ts
+ M src/mcp/server.ts
+ M tests/api-document-lane.test.mjs
+ M tests/document-api-contract-ui.integration.test.mjs
+ M tests/document-case-generation-vertical.integration.test.mjs
+ M tests/document-case-metadata.test.mjs
+ M tests/document-no-model-step-fallback.integration.mjs
+ M tests/document-package-refresh.test.mjs
+ M tests/document-post-login-generation.integration.test.mjs
+ M tests/document-run-crash-recovery.integration.test.mjs
+ M tests/document-run-progress.integration.test.mjs
+ M tests/document-workflow-mcp.integration.test.mjs
+ M tests/document-workflow-record.test.mjs
+ M tests/document-workflow.integration.test.mjs
+ M web/src/document-tests-page.tsx
+ M web/src/styles.css
+ M web/src/workbench.tsx
+?? examples/web-regression-sample/
+?? "output/TestPilot\351\241\271\347\233\256\344\273\213\347\273\215\344\270\216\347\224\262\346\226\271\351\234\200\346\261\202\347\241\256\350\256\244.docx"
+?? output/playwright/testpilot-agent-history-review-2026-10-23.png
+?? output/playwright/testpilot-agent-review-2026-10-23.png
+?? output/playwright/testpilot-current-desktop-verification-2026-10-23.png
+?? output/playwright/testpilot-recovery-results-review-2026-10-23.png
+?? output/playwright/testpilot-regression-cases-desktop.png
+?? output/playwright/testpilot-run-history-desktop-verification-2026-10-23.png
+?? output/playwright/testpilot-run-history-desktop.png
+?? output/playwright/testpilot-run-history-recovery-2026-10-23.png
+?? output/playwright/testpilot-web-regression-desktop.png
+?? output/playwright/testpilot-web-regression-mobile.png
+?? src/adapters/document-case-entry.ts
+?? src/adapters/document-impact-analysis.ts
+?? src/adapters/document-sensitive-data.ts
+?? src/adapters/mysql-readonly-browser.ts
+?? tests/document-baseline-comparison.test.mjs
+?? tests/document-failure-triage.test.mjs
+?? tests/document-impact-analysis.test.mjs
+?? tests/document-material-version.test.mjs
+?? tests/document-project-session.integration.test.mjs
+?? tests/document-regression-sample.integration.test.mjs
+?? tests/document-revision-api.integration.test.mjs
+?? tests/document-revision-history.test.mjs
+?? tests/document-run-cancel.integration.test.mjs
+?? tests/document-sensitive-export.test.mjs
+?? tests/document-site-version.integration.test.mjs
+?? tests/document-test-data-version.test.mjs
+?? tests/document-test-parameters.test.mjs
+?? web/src/mysql-explorer-page.tsx

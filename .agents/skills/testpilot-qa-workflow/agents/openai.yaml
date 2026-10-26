@@ -1,0 +1,3 @@
+interface:
+  display_name: "TestPilot QA Workflow"
+  short_description: "Plan, review, run and reconcile reusable QA tests"

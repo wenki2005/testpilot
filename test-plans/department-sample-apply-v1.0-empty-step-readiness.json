@@ -1,0 +1,1335 @@
+{
+  "projectId": "624a5e81-e79e-493f-a746-8accc5c44b90",
+  "projectName": "部门申样书需求文档 V1.0.pdf、部门申样书_V1.0_测试用例.xmind（全流程自测样例）",
+  "generatedAt": "2026-10-19T05:59:30.9722730+08:00",
+  "inventoryTotal": 156,
+  "emptyStepCount": 94,
+  "classificationCounts": {
+    "clarification": 11,
+    "outOfScope": 5,
+    "businessPageRoleFixture": 23,
+    "apiBackendIntegrationSecurityEvidence": 55
+  },
+  "rule": "A missing step array is not automatically a TestPilot defect. Add grounded read-only partial assertions when they directly verify an observable clause; preserve the full-case gap until required fixtures, contracts, identities, or owner decisions exist.",
+  "cases": [
+    {
+      "caseId": "case-3",
+      "title": "待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "依赖/范围：clarification-required",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 企微工作台入口 › 部门样书申请 › 身份校验 › 点击工作台「部门样书」入口 › 系统校验员工是否在企微架构内 › 🔄待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）"
+    },
+    {
+      "caseId": "case-5",
+      "title": "代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "依赖/范围：clarification-required",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 申请人类型 › 选择本人申请/代人申请 › 表单带出对应申请人信息 › ❌ 代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径"
+    },
+    {
+      "caseId": "case-6",
+      "title": "后端备注=「发送样书」+该流程企微审批编号+用户选填备注",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 后端备注=「发送样书」+该流程企微审批编号+用户选填备注 P0"
+    },
+    {
+      "caseId": "case-7",
+      "title": "推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」 P0"
+    },
+    {
+      "caseId": "case-8",
+      "title": "费用划归客户通常为外部客户（合作客户）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 费用划归客户通常为外部客户（合作客户）"
+    },
+    {
+      "caseId": "case-9",
+      "title": "审批流=企微架构直属上级单级审批",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 审批流=企微架构直属上级单级审批"
+    },
+    {
+      "caseId": "case-11",
+      "title": "后端备注=「内部样书」+企微审批编号+用户选填备注",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 后端备注=「内部样书」+企微审批编号+用户选填备注"
+    },
+    {
+      "caseId": "case-12",
+      "title": "推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」 P0"
+    },
+    {
+      "caseId": "case-13",
+      "title": "费用划归客户通常为内部部门（部门费用）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 费用划归客户通常为内部部门（部门费用）"
+    },
+    {
+      "caseId": "case-14",
+      "title": "审批流=直属上级单级审批",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 审批流=直属上级单级审批"
+    },
+    {
+      "caseId": "case-15",
+      "title": "产品用书不论本数（3本/5本）均归为赠送出库类型",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 产品用书不论本数（3本/5本）均归为赠送出库类型"
+    },
+    {
+      "caseId": "case-16",
+      "title": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）",
+      "group": "out-of-scope",
+      "executionRoute": "out-of-scope",
+      "executionReason": "来源将此项标记为本期范围外。",
+      "existingCoverageGap": "依赖/范围：na_or_scope_note",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "保留在需求追踪中；确认版本范围后标记 N/A，不计为通过。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 出版社用书 › 查看出版社用书选项 › ❌ 本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）"
+    },
+    {
+      "caseId": "case-20",
+      "title": "待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "依赖/范围：clarification-required",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › 🔄待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）"
+    },
+    {
+      "caseId": "case-23",
+      "title": "接口异常：🔄待澄清 客户接口失败时的前端降级提示",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "依赖/范围：clarification-required",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ❌ 接口异常：🔄待澄清 客户接口失败时的前端降级提示"
+    },
+    {
+      "caseId": "case-28",
+      "title": "待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "依赖/范围：clarification-required",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › 🔄待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）"
+    },
+    {
+      "caseId": "case-34",
+      "title": "新增行编码同样需通过易诚通校验，否则边框变红",
+      "group": "business-page-role-fixture",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需使用已确认不存在的书目编码并提供易诚通查询契约/可控 mock；不得用未知编码将空灰框判为产品失败。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › ❌ 新增行编码同样需通过易诚通校验，否则边框变红"
+    },
+    {
+      "caseId": "case-36",
+      "title": "待澄清 样书明细可添加的最大行数限制",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "依赖/范围：clarification-required",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › 🔄待澄清 样书明细可添加的最大行数限制"
+    },
+    {
+      "caseId": "case-56",
+      "title": "全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要为待审批、已通过、已驳回、锁单失败、已下单、已发货、已签收、已取消各准备一条隔离的样书申请记录，并确认测试账号能看到这些状态；当前没有状态夹具或清理方案。",
+      "preconditions": [
+        "准备上述 8 种状态的合成申请记录。",
+        "提供可复用的只读测试账号和记录清理/重置方案。"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口 P1"
+    },
+    {
+      "caseId": "case-61",
+      "title": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
+      "group": "business-page-role-fixture",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "需预置可打开的申请详情/明细记录及返回路径，才能核验时间轴状态保持。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 从明细页返回后回到审批详情页，审批时间轴与状态不丢失 P1"
+    },
+    {
+      "caseId": "case-62",
+      "title": "长沙快递总仓有货：锁定长沙仓发货",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ✅ 长沙快递总仓有货：锁定长沙仓发货 P0"
+    },
+    {
+      "caseId": "case-63",
+      "title": "长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货 P0"
+    },
+    {
+      "caseId": "case-64",
+      "title": "两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要一个可控测试书目及两个仓库的库存夹具（两仓缺货、单仓缺货两组），并指定不会真实锁单/下单的隔离环境；当前只有显示结果，没有安全可执行的库存/锁单前置。",
+      "preconditions": [
+        "准备两个仓库的合成库存夹具并确认刷新/回滚方式。",
+        "确认该环境不会触发真实锁单、下单或库存变更。"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」"
+    },
+    {
+      "caseId": "case-65",
+      "title": "开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）"
+    },
+    {
+      "caseId": "case-66",
+      "title": "重新按仓库优先级请求库存查询并再次锁单",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 锁单失败页重试 › 点击底部重试按钮 › ✅ 重新按仓库优先级请求库存查询并再次锁单"
+    },
+    {
+      "caseId": "case-67",
+      "title": "重试仍缺货：保持锁单失败状态",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 锁单失败页重试 › 点击底部重试按钮 › ❌ 重试仍缺货：保持锁单失败状态"
+    },
+    {
+      "caseId": "case-68",
+      "title": "旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ✅ 旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发） P0"
+    },
+    {
+      "caseId": "case-69",
+      "title": "物流快递单号回传至H5供员工查看物流轨迹",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ✅ 物流快递单号回传至H5供员工查看物流轨迹 P0"
+    },
+    {
+      "caseId": "case-70",
+      "title": "其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号）",
+      "group": "business-page-role-fixture",
+      "executionRoute": "browser-ui",
+      "executionReason": "这是可观察的页面验收点，但当前没有可靠定位步骤。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "依据当前已登录页面的 DOM/可访问性证据补控件定位与断言；定位不唯一时记录精确控件名，不猜 selector。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ❌ 其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号） P1"
+    },
+    {
+      "caseId": "case-71",
+      "title": "// 前置：本期均走旺店通快递仓发货",
+      "group": "out-of-scope",
+      "executionRoute": "out-of-scope",
+      "executionReason": "来源将此项标记为本期范围外。",
+      "existingCoverageGap": "依赖/范围：na_or_scope_note",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "保留在需求追踪中；确认版本范围后标记 N/A，不计为通过。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 本期不做（计划下期） › 物流仓WMS锁单与库存优先级 › // 前置：本期均走旺店通快递仓发货"
+    },
+    {
+      "caseId": "case-72",
+      "title": "不触发物流仓WMS锁定/推送逻辑",
+      "group": "out-of-scope",
+      "executionRoute": "out-of-scope",
+      "executionReason": "来源将此项标记为本期范围外。",
+      "existingCoverageGap": "依赖/范围：na_or_scope_note",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "保留在需求追踪中；确认版本范围后标记 N/A，不计为通过。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 本期不做（计划下期） › 物流仓WMS锁单与库存优先级 › ❌ 不触发物流仓WMS锁定/推送逻辑"
+    },
+    {
+      "caseId": "case-73",
+      "title": "申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致 P0"
+    },
+    {
+      "caseId": "case-74",
+      "title": "商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值 P1"
+    },
+    {
+      "caseId": "case-76",
+      "title": "待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致）",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "依赖/范围：clarification-required",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ⚠️待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致） P0"
+    },
+    {
+      "caseId": "case-77",
+      "title": "商品接口查询失败：对应字段降级提示，不阻塞整页加载",
+      "group": "business-page-role-fixture",
+      "executionRoute": "browser-ui",
+      "executionReason": "这是可观察的页面验收点，但当前没有可靠定位步骤。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "依据当前已登录页面的 DOM/可访问性证据补控件定位与断言；定位不唯一时记录精确控件名，不猜 selector。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ❌ 商品接口查询失败：对应字段降级提示，不阻塞整页加载 P1"
+    },
+    {
+      "caseId": "case-78",
+      "title": "收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显 P1"
+    },
+    {
+      "caseId": "case-80",
+      "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需至少一条有收货信息和样书明细的订单夹具，并提供分页数据，才能核验订单字段及每页20条。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 查看订单列表 › 按订单生成时间倒序展示 › ✅ 展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条 P1"
+    },
+    {
+      "caseId": "case-83",
+      "title": "无匹配：提示无结果",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需至少一条订单记录作为搜索前基线，再用唯一不存在关键词验证无匹配结果；当前列表基线已为空，不能证明搜索生效。",
+      "preconditions": [],
+      "preconditionsConfirmed": true,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 关键字搜索订单 › 输入订单编号/订单图书名 › ❌ 无匹配：提示无结果"
+    },
+    {
+      "caseId": "case-85",
+      "title": "展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次",
+      "group": "business-page-role-fixture",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需要脱敏订单夹具覆盖各订单状态及多条物流轨迹，提供易查单/自有物流接口契约、刷新时间语义和只读数据读回；需求含手机号/地址等字段，当前不能用真实个人数据或公开 H5 页面证明服务端来源与 10 分钟刷新。",
+      "preconditions": [
+        "准备脱敏订单及物流轨迹夹具和只读账号。",
+        "提供接口字段契约、刷新时间基准及只读数据读回方式。"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单详情页 › 查看订单与物流信息 › 展示基础信息与时间轴 › ✅ 展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次 P1"
+    },
+    {
+      "caseId": "case-92",
+      "title": "关联企微认证信息正确展示",
+      "group": "business-page-role-fixture",
+      "executionRoute": "browser-ui",
+      "executionReason": "这是可观察的页面验收点，但当前没有可靠定位步骤。",
+      "existingCoverageGap": "需可复用的员工测试身份及脱敏的预期企微绑定资料；当前会话未提供“我的/个人信息”入口或可核对预期值。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "依据当前已登录页面的 DOM/可访问性证据补控件定位与断言；定位不唯一时记录精确控件名，不猜 selector。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 员工端-我的页面 › 个人信息区 › 展示头像、用户名、手机号 › ✅ 关联企微认证信息正确展示"
+    },
+    {
+      "caseId": "case-95",
+      "title": "// 本期不做统计看板，待后续需求提出时再实现",
+      "group": "out-of-scope",
+      "executionRoute": "out-of-scope",
+      "executionReason": "来源将此项标记为本期范围外。",
+      "existingCoverageGap": "原需求明确本期不做统计看板，标为范围外；保留来源但不计测试通过。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "保留在需求追踪中；确认版本范围后标记 N/A，不计为通过。",
+      "source": "部门申样书_V1.0_测试用例.xmind › PC端适配 › 申请数据看板页 › // 本期不做统计看板，待后续需求提出时再实现"
+    },
+    {
+      "caseId": "case-97",
+      "title": "可查看/编辑「员工福利订单」「部门用书订单」页面",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 角色=内部图书订单管理员 访问 › ✅ 可查看/编辑「员工福利订单」「部门用书订单」页面 P0"
+    },
+    {
+      "caseId": "case-98",
+      "title": "可查看/编辑「内部订单管理」板块下所有页面",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 角色=管理员 访问 › ✅ 可查看/编辑「内部订单管理」板块下所有页面 P0"
+    },
+    {
+      "caseId": "case-100",
+      "title": "OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单创建规则 › OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间 P0"
+    },
+    {
+      "caseId": "case-101",
+      "title": "72小时后无物流单状态：订单状态变更为「订单取消」",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单创建规则 › ❌ 72小时后无物流单状态：订单状态变更为「订单取消」"
+    },
+    {
+      "caseId": "case-102",
+      "title": "// 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除",
+      "group": "out-of-scope",
+      "executionRoute": "out-of-scope",
+      "executionReason": "来源将此项标记为本期范围外。",
+      "existingCoverageGap": "原需求已澄清“其他出库单号”本期不作为头部筛选项；建议改成否定验收：筛选区不存在该项，并以PC筛选区为验证页面；本次归到范围澄清，不能算已通过。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "保留在需求追踪中；确认版本范围后标记 N/A，不计为通过。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › // 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除"
+    },
+    {
+      "caseId": "case-103",
+      "title": "用书类型筛选（全部/营销用书/产品用书）生效",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 用书类型筛选（全部/营销用书/产品用书）生效"
+    },
+    {
+      "caseId": "case-104",
+      "title": "划归客户支持下拉筛选与模糊搜索",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 划归客户支持下拉筛选与模糊搜索"
+    },
+    {
+      "caseId": "case-105",
+      "title": "发货方式（全部/快递仓发货/物流仓发货）筛选生效",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 发货方式（全部/快递仓发货/物流仓发货）筛选生效"
+    },
+    {
+      "caseId": "case-106",
+      "title": "物流单号/企微审批单号支持模糊与精准搜索",
+      "group": "business-page-role-fixture",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 物流单号/企微审批单号支持模糊与精准搜索"
+    },
+    {
+      "caseId": "case-107",
+      "title": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
+      "group": "business-page-role-fixture",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单详情明细字段 › 展示新增字段 › ✅ 展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注 P1"
+    },
+    {
+      "caseId": "case-108",
+      "title": "迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致 P0"
+    },
+    {
+      "caseId": "case-109",
+      "title": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）",
+      "group": "business-page-role-fixture",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对） P0"
+    },
+    {
+      "caseId": "case-110",
+      "title": "原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示",
+      "group": "business-page-role-fixture",
+      "executionRoute": "clarification",
+      "executionReason": "旧入口下线/跳转缺少旧地址、新地址及可判定条件，当前页面无法证明入口迁移结果。",
+      "existingCoverageGap": "旧入口下线/跳转属于导航与当前 URL 判定；用例未给旧系统入口 URL、新地址或“下线”的可判定条件，当前 BrowserStep DSL 也没有当前 URL 断言。需要给出准确旧/新地址与判定标准，并为跨域导航提供允许列表。",
+      "preconditions": [
+        "提供旧入口 URL、新目标 URL（如有）及跳转/下线判定标准。",
+        "确认目标域名属于本次授权测试范围。"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "补充旧系统 URL、新系统 URL 和预期跳转/下线行为；确认后再加入 URL 断言和允许的导航范围。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示 P1"
+    },
+    {
+      "caseId": "case-111",
+      "title": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ❌ 迁移后按原有筛选项（订单号/客户/状态等）查询结果正确 P1"
+    },
+    {
+      "caseId": "case-112",
+      "title": "迁移后历史订单详情、物流信息、备注字段无丢失",
+      "group": "business-page-role-fixture",
+      "executionRoute": "fixture-or-role",
+      "executionReason": "需要指定的业务记录、管理后台权限或状态夹具；当前 H5 页面没有证据证明该数据存在。",
+      "existingCoverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "在隔离环境准备专用权限和可重复的合成 fixture，记录基线、创建与清理方式；后台功能需关联正确的管理端目标。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ❌ 迁移后历史订单详情、物流信息、备注字段无丢失 P1"
+    },
+    {
+      "caseId": "case-113",
+      "title": "P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ⚠️ P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验"
+    },
+    {
+      "caseId": "case-114",
+      "title": "「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见",
+      "group": "business-page-role-fixture",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需要至少管理员、内部图书订单管理员和普通员工三个可复用隔离身份，并确认菜单可见性、直接路由访问和服务端权限的预期矩阵；当前只有一个登录态，无法证明其他角色不可见或后端拒绝。",
+      "preconditions": [
+        "提供管理员、内部图书订单管理员、普通员工三个隔离测试账号/角色。",
+        "确认直接路由访问和服务端拒绝的日志/证据读取方式。"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见 P0"
+    },
+    {
+      "caseId": "case-115",
+      "title": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需审批成功后的消息队列/企微测试接收人或mock，核对推送文案和目标用户；不得向真实上级发送测试消息。此项走API/集成契约测试；H5页面静态文本不是有效断言。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 员工创建部门用书申请单 › ✅ 推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级"
+    },
+    {
+      "caseId": "case-116",
+      "title": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 订单库存不足锁单失败 › ✅ 推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」"
+    },
+    {
+      "caseId": "case-117",
+      "title": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 订单72小时未发货 › ✅ 推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」"
+    },
+    {
+      "caseId": "case-118",
+      "title": "推送失败：🔄待澄清 消息推送失败是否重试与告警",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "原用例将推送失败后的重试/告警策略标为待澄清；需产品/运营定义最大重试、告警目标、时限，再设计用例。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › ❌ 推送失败：🔄待澄清 消息推送失败是否重试与告警"
+    },
+    {
+      "caseId": "case-119",
+      "title": "通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 企微审批接口 › 后台创建OA审批模板（含部门、申请人、用途、公司、图书明细字段），通过template_id创建审批单 › ✅ 通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页 P0"
+    },
+    {
+      "caseId": "case-120",
+      "title": "接口异常：🔄待澄清 审批接口失败的容错与重试",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "原用例将审批接口失败的容错与重试标为待澄清；需明确可重试错误、次数/间隔、补偿与用户提示。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 企微审批接口 › 后台创建OA审批模板（含部门、申请人、用途、公司、图书明细字段），通过template_id创建审批单 › ❌ 接口异常：🔄待澄清 审批接口失败的容错与重试"
+    },
+    {
+      "caseId": "case-121",
+      "title": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ✅ 客户接口按客户分类返回（1004.00/1004.06）供H5过滤 P0"
+    },
+    {
+      "caseId": "case-122",
+      "title": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ✅ 创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5） P0"
+    },
+    {
+      "caseId": "case-123",
+      "title": "开单返回错误信息：前端toast展示错误原因",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ❌ 开单返回错误信息：前端toast展示错误原因"
+    },
+    {
+      "caseId": "case-124",
+      "title": "先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 旺店通发货/数量接口 › 按仓库优先级查询库存与发货 › ✅ 先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货 P0"
+    },
+    {
+      "caseId": "case-125",
+      "title": "库存查询失败：进入锁单失败分支",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 旺店通发货/数量接口 › 按仓库优先级查询库存与发货 › ❌ 库存查询失败：进入锁单失败分支"
+    },
+    {
+      "caseId": "case-126",
+      "title": "每10分钟拉取一次物流最新信息",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易查单物流接口 › 物流轨迹查询 › ✅ 每10分钟拉取一次物流最新信息"
+    },
+    {
+      "caseId": "case-127",
+      "title": "无物流信息且超72小时：置订单异常/取消",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易查单物流接口 › 物流轨迹查询 › ❌ 无物流信息且超72小时：置订单异常/取消"
+    },
+    {
+      "caseId": "case-128",
+      "title": "企微OA审批模板ID配置正确",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 企微OA审批模板ID配置正确 P0"
+    },
+    {
+      "caseId": "case-129",
+      "title": "快递仓仓库ID配置正确（长沙仓/天津仓）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 快递仓仓库ID配置正确（长沙仓/天津仓） P0"
+    },
+    {
+      "caseId": "case-130",
+      "title": "旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺） P0"
+    },
+    {
+      "caseId": "case-131",
+      "title": "配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "原用例将配置缺失/错误时降级与告警标为待澄清；需明确配置项、失败安全行为和告警标准。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ❌ 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略"
+    },
+    {
+      "caseId": "case-132",
+      "title": "P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需专用且已确认不存在/未入库的书目编码 fixture 与易诚通契约，才能安全触发并核验错误提示及字段不回显。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 录入 weight 为空的在库图书物流编码 › bookCheck 返回业务错误 › ✅ P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显"
+    },
+    {
+      "caseId": "case-133",
+      "title": "P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "manual-analysis",
+      "executionReason": "来源没有提供足够明确的界面行为、数据或可判定预期，无法安全推导自动操作。",
+      "existingCoverageGap": "需确认不存在的书目编码 fixture 和可读 productId/当前行状态断言，才能核验前端清空productId、标红及禁止提交。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "从需求原文补充前置条件、操作、预期结果和验证通道，再生成脚本。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 录入 weight 为空的在库图书物流编码 › bookCheck 返回业务错误 › ⚠️❌ P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）"
+    },
+    {
+      "caseId": "case-134",
+      "title": "P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 忽略提示强行填数量并提交 › 调用 /dept/book/apply/submit › ⚠️❌ P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）"
+    },
+    {
+      "caseId": "case-135",
+      "title": "P0 缺重图书不计入预估总重导致超重样书被提交发货",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 忽略提示强行填数量并提交 › 调用 /dept/book/apply/submit › ❌ P0 缺重图书不计入预估总重导致超重样书被提交发货"
+    },
+    {
+      "caseId": "case-139",
+      "title": "P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ⚠️❌ P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）"
+    },
+    {
+      "caseId": "case-140",
+      "title": "P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ⚠️❌ P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）"
+    },
+    {
+      "caseId": "case-141",
+      "title": "P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ❌ P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）"
+    },
+    {
+      "caseId": "case-142",
+      "title": "P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ❌ P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）"
+    },
+    {
+      "caseId": "case-143",
+      "title": "收件人>20字/详细地址>20字：服务端已正确拦截",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ✅ 收件人>20字/详细地址>20字：服务端已正确拦截"
+    },
+    {
+      "caseId": "case-144",
+      "title": "P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ⚠️❌ P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）"
+    },
+    {
+      "caseId": "case-145",
+      "title": "P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ❌ P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）"
+    },
+    {
+      "caseId": "case-146",
+      "title": "P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ⚠️❌ P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）"
+    },
+    {
+      "caseId": "case-147",
+      "title": "P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 审批回调-并发与判空 › 回调与补偿Job并发 / spRecords缺失 › handleApprovalCallback 幂等与健壮性 › ⚠️❌ P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）"
+    },
+    {
+      "caseId": "case-148",
+      "title": "P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 审批回调-并发与判空 › 回调与补偿Job并发 / spRecords缺失 › handleApprovalCallback 幂等与健壮性 › ❌ P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）"
+    },
+    {
+      "caseId": "case-149",
+      "title": "P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ⚠️❌ P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）"
+    },
+    {
+      "caseId": "case-150",
+      "title": "P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ✅ P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token"
+    },
+    {
+      "caseId": "case-151",
+      "title": "P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ✅ P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限"
+    },
+    {
+      "caseId": "case-152",
+      "title": "P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "api-contract",
+      "executionReason": "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。",
+      "existingCoverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ❌ P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）"
+    },
+    {
+      "caseId": "case-153",
+      "title": "P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）",
+      "group": "api-backend-integration-security-evidence",
+      "executionRoute": "source-review",
+      "executionReason": "验收需要读取源码、构建产物或安全扫描证据，页面操作无法证明。",
+      "existingCoverageGap": "需要源代码/安全测试环境来审查token存储与OAuth state生成；禁止读取/输出真实用户token，当前页面可见UI无法证明安全属性。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "关联目标仓库/构建产物和安全规则，在源码审查通道执行并附扫描结果。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ❌ P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）"
+    },
+    {
+      "caseId": "case-156",
+      "title": "待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）",
+      "group": "clarification",
+      "executionRoute": "clarification",
+      "executionReason": "验收范围或通过条件尚未定稿。",
+      "existingCoverageGap": "原用例明确待澄清H5是否支持申请编号搜索；需产品确认范围后再分解接受/不接受能力。",
+      "preconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "preconditionsConfirmed": false,
+      "nextAction": "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。",
+      "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 端能力对称 › H5「我的申请」按编号搜索 › 与PC端历史申请记录对比 › 🔄待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）"
+    }
+  ]
+}

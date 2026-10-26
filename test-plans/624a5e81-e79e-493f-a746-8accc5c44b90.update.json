@@ -1,0 +1,4563 @@
+[
+  {
+    "id": "case-1",
+    "title": "在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微工作台入口 › 部门样书申请 › 身份校验 › 点击工作台「部门样书」入口 › 系统校验员工是否在企微架构内 › ✅ 在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门 P0",
+    "requirementRefs": [
+      "企微工作台入口 › 部门样书申请 › 身份校验 › 点击工作台「部门样书」入口 › 系统校验员工是否在企微架构内 › ✅ 在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门 P0"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "小额样书申请"
+      },
+      {
+        "action": "assertVisible",
+        "text": "本人申领"
+      },
+      {
+        "action": "assertVisible",
+        "text": "收货信息"
+      }
+    ],
+    "coverageGap": "These checks only prove the signed-in form is visible. To prove current WeCom identity/name/company/department is auto-filled, need an approved test account and expected identity fixture plus value assertions; screenshot does not show identity fields."
+  },
+  {
+    "id": "case-2",
+    "title": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微工作台入口 › 部门样书申请 › 身份校验 › 点击工作台「部门样书」入口 › 系统校验员工是否在企微架构内 › ❌ 非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单 P0",
+    "requirementRefs": [
+      "企微工作台入口 › 部门样书申请 › 身份校验 › 点击工作台「部门样书」入口 › 系统校验员工是否在企微架构内 › ❌ 非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单 P0"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单",
+    "steps": [],
+    "coverageGap": "Cannot test unauthorized employee with this authenticated employee session. Requires a dedicated unauthorized account or auth mock and verified denial route/toast; do not switch/clear the user login."
+  },
+  {
+    "id": "case-3",
+    "title": "待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微工作台入口 › 部门样书申请 › 身份校验 › 点击工作台「部门样书」入口 › 系统校验员工是否在企微架构内 › 🔄待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）",
+    "requirementRefs": [
+      "企微工作台入口 › 部门样书申请 › 身份校验 › 点击工作台「部门样书」入口 › 系统校验员工是否在企微架构内 › 🔄待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）",
+    "steps": [],
+    "coverageGap": "依赖/范围：clarification-required"
+  },
+  {
+    "id": "case-4",
+    "title": "本人申请：申请人取当前企微登录人姓名与部门",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 申请人类型 › 选择本人申请/代人申请 › 表单带出对应申请人信息 › ✅ 本人申请：申请人取当前企微登录人姓名与部门",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 申请人类型 › 选择本人申请/代人申请 › 表单带出对应申请人信息 › ✅ 本人申请：申请人取当前企微登录人姓名与部门"
+    ],
+    "priority": "P2",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "本人申请：申请人取当前企微登录人姓名与部门",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "本人申领"
+      },
+      {
+        "action": "assertVisible",
+        "text": "代人申领"
+      },
+      {
+        "action": "assertVisible",
+        "text": "收货信息"
+      }
+    ],
+    "coverageGap": "Visible choices are proven; selected applicant name/department correctness requires identity fixture and assertValue for the mapped fields. Screenshot has no identity values in viewport."
+  },
+  {
+    "id": "case-5",
+    "title": "代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 申请人类型 › 选择本人申请/代人申请 › 表单带出对应申请人信息 › ❌ 代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 申请人类型 › 选择本人申请/代人申请 › 表单带出对应申请人信息 › ❌ 代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径",
+    "steps": [],
+    "coverageGap": "依赖/范围：clarification-required"
+  },
+  {
+    "id": "case-6",
+    "title": "后端备注=「发送样书」+该流程企微审批编号+用户选填备注",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 后端备注=「发送样书」+该流程企微审批编号+用户选填备注 P0",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 后端备注=「发送样书」+该流程企微审批编号+用户选填备注 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "后端备注=「发送样书」+该流程企微审批编号+用户选填备注",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-7",
+    "title": "推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」 P0",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-8",
+    "title": "费用划归客户通常为外部客户（合作客户）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 费用划归客户通常为外部客户（合作客户）",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 费用划归客户通常为外部客户（合作客户）"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "费用划归客户通常为外部客户（合作客户）",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-9",
+    "title": "审批流=企微架构直属上级单级审批",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 审批流=企微架构直属上级单级审批",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 审批流=企微架构直属上级单级审批"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "审批流=企微架构直属上级单级审批",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-10",
+    "title": "页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › 页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择营销用书 › 确定后端备注规则、出库单类别与发货店铺 › 页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」",
+    "steps": [
+      {
+        "action": "assertExactVisible",
+        "text": "如有调样、周边产品等样书申请需求，请OA申请"
+      }
+    ],
+    "coverageGap": "XMind requires exact copy “如有调样、周边产品等样书申请需求，请OA申请”, while historical screenshot reads “如有调样、周边产品等样书申请需求，请联系运营OA申请”. Assert the requirement wording as a regression reproducer; resolve the acceptance copy before calling it passed."
+  },
+  {
+    "id": "case-11",
+    "title": "后端备注=「内部样书」+企微审批编号+用户选填备注",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 后端备注=「内部样书」+企微审批编号+用户选填备注",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 后端备注=「内部样书」+企微审批编号+用户选填备注"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "后端备注=「内部样书」+企微审批编号+用户选填备注",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-12",
+    "title": "推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」 P0",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-13",
+    "title": "费用划归客户通常为内部部门（部门费用）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 费用划归客户通常为内部部门（部门费用）",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 费用划归客户通常为内部部门（部门费用）"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "费用划归客户通常为内部部门（部门费用）",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-14",
+    "title": "审批流=直属上级单级审批",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 审批流=直属上级单级审批",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 审批流=直属上级单级审批"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "审批流=直属上级单级审批",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-15",
+    "title": "产品用书不论本数（3本/5本）均归为赠送出库类型",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 产品用书不论本数（3本/5本）均归为赠送出库类型",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 选择产品用书 › 确定后端备注规则、出库单类别与发货店铺 › ✅ 产品用书不论本数（3本/5本）均归为赠送出库类型"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "产品用书不论本数（3本/5本）均归为赠送出库类型",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-16",
+    "title": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书用途 › 出版社用书 › 查看出版社用书选项 › ❌ 本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书用途 › 出版社用书 › 查看出版社用书选项 › ❌ 本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）",
+    "steps": [],
+    "coverageGap": "依赖/范围：na_or_scope_note"
+  },
+  {
+    "id": "case-17",
+    "title": "1004.00 外部客户—合作客户：正常展示可选",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › ✅ 1004.00 外部客户—合作客户：正常展示可选 P0",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › ✅ 1004.00 外部客户—合作客户：正常展示可选 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "1004.00 外部客户—合作客户：正常展示可选",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-18",
+    "title": "1004.06 内部客户—部门费用：正常展示可选",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › ✅ 1004.06 内部客户—部门费用：正常展示可选 P0",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › ✅ 1004.06 内部客户—部门费用：正常展示可选 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "1004.06 内部客户—部门费用：正常展示可选",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-19",
+    "title": "其他分类（信用客户1004.01/呆账客户1004.02/内部结算客户1004.03/内部客户其他1004.04/控价不发货1004.05）：不展示",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › ❌ 其他分类（信用客户1004.01/呆账客户1004.02/内部结算客户1004.03/内部客户其他1004.04/控价不发货1004.05）：不展示 P1",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › ❌ 其他分类（信用客户1004.01/呆账客户1004.02/内部结算客户1004.03/内部客户其他1004.04/控价不发货1004.05）：不展示 P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "其他分类（信用客户1004.01/呆账客户1004.02/内部结算客户1004.03/内部客户其他1004.04/控价不发货1004.05）：不展示",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-20",
+    "title": "待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › 🔄待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 客户列表数据范围（按客户分类字段正向过滤） › 调用易诚通/经销商客户接口，仅拉取指定分类 › 🔄待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
+    "steps": [],
+    "coverageGap": "依赖/范围：clarification-required"
+  },
+  {
+    "id": "case-21",
+    "title": "命中关键词：下拉展示匹配客户名称供选择",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ✅ 命中关键词：下拉展示匹配客户名称供选择",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ✅ 命中关键词：下拉展示匹配客户名称供选择"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "命中关键词：下拉展示匹配客户名称供选择",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "费用划归客户"
+      }
+    ],
+    "coverageGap": "The page has a customer search field (screenshot). A match result cannot be asserted without seeded customer data; no-result UX requires the exact current empty-state text and API fixture. Also DSL cannot assert dropdown item count."
+  },
+  {
+    "id": "case-22",
+    "title": "无匹配客户：下拉无结果并提示",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ❌ 无匹配客户：下拉无结果并提示",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ❌ 无匹配客户：下拉无结果并提示"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "无匹配客户：下拉无结果并提示",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "费用划归客户"
+      }
+    ],
+    "coverageGap": "This is only the search prompt, not proof that a no-match state appears. Need deterministic no-match query and known empty-state wording/API fixture; DSL lacks collection-count assertion."
+  },
+  {
+    "id": "case-23",
+    "title": "接口异常：🔄待澄清 客户接口失败时的前端降级提示",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ❌ 接口异常：🔄待澄清 客户接口失败时的前端降级提示",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ❌ 接口异常：🔄待澄清 客户接口失败时的前端降级提示"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 接口异常：🔄待澄清 客户接口失败时的前端降级提示",
+    "steps": [],
+    "coverageGap": "依赖/范围：clarification-required"
+  },
+  {
+    "id": "case-24",
+    "title": "客户列表为最新数据（非缓存历史快照）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 客户数据实时性 › 提交时实时调接口全量拉取最新客户 › ✅ 客户列表为最新数据（非缓存历史快照） P1",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 费用划归客户 › 客户数据实时性 › 提交时实时调接口全量拉取最新客户 › ✅ 客户列表为最新数据（非缓存历史快照） P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "客户列表为最新数据（非缓存历史快照）",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-25",
+    "title": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ✅ 编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤) P0",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ✅ 编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤) P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "自编码"
+      },
+      {
+        "action": "assertVisible",
+        "text": "图书名称"
+      },
+      {
+        "action": "assertVisible",
+        "text": "出版社"
+      },
+      {
+        "action": "assertVisible",
+        "text": "定价(元)"
+      },
+      {
+        "action": "assertVisible",
+        "text": "小计(元)"
+      }
+    ],
+    "coverageGap": "Screenshot proves table columns, not returned book metadata. Need a known valid book-code fixture and expected title/publisher/price/weight; screenshot shows no weight column in the table."
+  },
+  {
+    "id": "case-26",
+    "title": "编码不存在/输入错误：输入框边框变红，显示「未获取图书信息」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ❌ 编码不存在/输入错误：输入框边框变红，显示「未获取图书信息」",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ❌ 编码不存在/输入错误：输入框边框变红，显示「未获取图书信息」"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "编码不存在/输入错误：输入框边框变红，显示「未获取图书信息」",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "自编码",
+        "value": "9999999999"
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "自编码"
+      },
+      {
+        "action": "assertText",
+        "text": "未获取图书信息"
+      }
+    ],
+    "coverageGap": "The screenshot shows the 自编码 input but not the error state. Need confirmed nonexistent code and fresh observed error text; invalid border may be trigger-dependent. Do not infer the failed lookup from the input alone."
+  },
+  {
+    "id": "case-27",
+    "title": "输入非数字：校验拦截，不调用接口",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ❌ 输入非数字：校验拦截，不调用接口",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ❌ 输入非数字：校验拦截，不调用接口"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "输入非数字：校验拦截，不调用接口",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "自编码",
+        "value": "ABC"
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "自编码"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "自编码",
+        "value": ""
+      }
+    ],
+    "coverageGap": "UI invalid-state can be checked safely, but “does not call API” cannot be proven by BrowserStep DSL; needs request interception/telemetry test or local API mock."
+  },
+  {
+    "id": "case-28",
+    "title": "待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › 🔄待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › 🔄待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
+    "steps": [],
+    "coverageGap": "依赖/范围：clarification-required"
+  },
+  {
+    "id": "case-29",
+    "title": "正整数（1~9999）：小计=数量×定价，总计=所有图书小计之和，预估总重=∑(数量×单本重量)",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ✅ 正整数（1~9999）：小计=数量×定价，总计=所有图书小计之和，预估总重=∑(数量×单本重量) P1",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ✅ 正整数（1~9999）：小计=数量×定价，总计=所有图书小计之和，预估总重=∑(数量×单本重量) P1"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "正整数（1~9999）：小计=数量×定价，总计=所有图书小计之和，预估总重=∑(数量×单本重量)",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "样书明细"
+      },
+      {
+        "action": "assertVisible",
+        "text": "图书数量"
+      },
+      {
+        "action": "assertVisible",
+        "text": "小计"
+      },
+      {
+        "action": "assertVisible",
+        "text": "总计"
+      },
+      {
+        "action": "assertVisible",
+        "text": "预估总重"
+      }
+    ],
+    "coverageGap": "These are structure checks only. Arithmetic needs known product price/weight plus quantities and expected totals; live product data is uncontrolled. Screenshot shows table/totals but no populated sample."
+  },
+  {
+    "id": "case-30",
+    "title": "数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ❌ 数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ❌ 数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "样书明细"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "0"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "-1"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "1.5"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "abc"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": ""
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      }
+    ],
+    "coverageGap": "The historical E2E found a .button-disabled control, but did not prove its accessible role/name. This proposed role assertion needs fresh locator confirmation; no submit is clicked. Also verify each invalid value is accepted by the input before interpreting the disabled assertion."
+  },
+  {
+    "id": "case-31",
+    "title": "数量>9999：前端拦截提示超出范围",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ❌ 数量>9999：前端拦截提示超出范围 P2",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ❌ 数量>9999：前端拦截提示超出范围 P2"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "数量>9999：前端拦截提示超出范围",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "10000"
+      },
+      {
+        "action": "assertText",
+        "text": "超出范围"
+      }
+    ]
+  },
+  {
+    "id": "case-32",
+    "title": "P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ⚠️❌ P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ⚠️❌ P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交"
+    ],
+    "priority": "P0",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "样书明细"
+      },
+      {
+        "action": "assertVisible",
+        "text": "图书数量"
+      },
+      {
+        "action": "assertVisible",
+        "text": "小计"
+      },
+      {
+        "action": "assertVisible",
+        "text": "总计"
+      },
+      {
+        "action": "assertVisible",
+        "text": "预估总重"
+      }
+    ],
+    "coverageGap": "The screenshot shows a >19kg advisory, but not the XMind’s >19kg toast and submission-disabled behavior. Need test book with known unit weight, a safe quantity fixture, and current exact toast/disabled expectation; must never submit."
+  },
+  {
+    "id": "case-33",
+    "title": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › ✅ 新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › ✅ 新增一行含物流编码、图书数量、图书名称、出版社、定价字段"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
+    "steps": [
+      {
+        "action": "clickExactText",
+        "text": "继续添加样书"
+      },
+      {
+        "action": "assertValue",
+        "label": "自编码",
+        "value": "",
+        "rowIndex": 1
+      },
+      {
+        "action": "assertValue",
+        "label": "数量（册）",
+        "value": "",
+        "rowIndex": 1
+      }
+    ],
+    "coverageGap": "The screenshot grounds the add button and first-row columns. DSL has no row-count assertion, so visible columns can all belong to the original row; add-row success is not yet proved. Need count/row-scoped assertion in DSL."
+  },
+  {
+    "id": "case-34",
+    "title": "新增行编码同样需通过易诚通校验，否则边框变红",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › ❌ 新增行编码同样需通过易诚通校验，否则边框变红",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › ❌ 新增行编码同样需通过易诚通校验，否则边框变红"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "新增行编码同样需通过易诚通校验，否则边框变红",
+    "steps": [
+      {
+        "action": "clickByRole",
+        "role": "button",
+        "name": "继续添加样书"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "自编码",
+        "value": "9999999999",
+        "rowIndex": 1
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "自编码",
+        "rowIndex": 1
+      },
+      {
+        "action": "assertText",
+        "text": "未获取图书信息"
+      }
+    ],
+    "coverageGap": "New row behavior is not row-scoped; requires no-match product fixture and row-scoped field assertion/selection. Current DSL may resolve first matching table column only."
+  },
+  {
+    "id": "case-35",
+    "title": "每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › ✅ 每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增） P1",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › ✅ 每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增） P1"
+    ],
+    "priority": "P1",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增）",
+    "steps": [
+      {
+        "action": "clickExactText",
+        "text": "继续添加样书"
+      },
+      {
+        "action": "assertValue",
+        "label": "自编码",
+        "value": "",
+        "rowIndex": 1
+      },
+      {
+        "action": "assertText",
+        "text": "删除"
+      }
+    ],
+    "coverageGap": "A delete control is not evidenced in screenshot, and DSL cannot scope it to a newly added row or assert row count/restoration. Historical E2E clicked 删除 on an unsaved row; keep this isolated and verify count via a runner with row-count support."
+  },
+  {
+    "id": "case-36",
+    "title": "待澄清 样书明细可添加的最大行数限制",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › 🔄待澄清 样书明细可添加的最大行数限制",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 样书明细区 › 点击「继续添加样书」按钮 › 向下复制空白图书明细行 › 🔄待澄清 样书明细可添加的最大行数限制"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 待澄清 样书明细可添加的最大行数限制",
+    "steps": [],
+    "coverageGap": "依赖/范围：clarification-required"
+  },
+  {
+    "id": "case-37",
+    "title": "发货方式固定为「快递」，无其他可选",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 发货方式 › 查看发货方式选项 › 仅支持快递，H5不展示快递公司选择 › ✅ 发货方式固定为「快递」，无其他可选 P1",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 发货方式 › 查看发货方式选项 › 仅支持快递，H5不展示快递公司选择 › ✅ 发货方式固定为「快递」，无其他可选 P1"
+    ],
+    "priority": "P1",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "发货方式固定为「快递」，无其他可选",
+    "steps": [
+      {
+        "action": "assertExactVisible",
+        "text": "仅支持快递"
+      },
+      {
+        "action": "assertNotVisible",
+        "text": "快递公司"
+      }
+    ],
+    "coverageGap": "Screenshot and historical E2E show “仅支持快递”; XMind expects “快递”. Treat as an acceptance-text mismatch requiring product-owner clarification, even though the visible value itself is safely assertable."
+  },
+  {
+    "id": "case-38",
+    "title": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 发货方式 › 查看发货方式选项 › 仅支持快递，H5不展示快递公司选择 › ✅ 快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式） P2",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 发货方式 › 查看发货方式选项 › 仅支持快递，H5不展示快递公司选择 › ✅ 快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式） P2"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
+    "steps": [
+      {
+        "action": "assertExactVisible",
+        "text": "仅支持快递"
+      },
+      {
+        "action": "assertNotVisible",
+        "text": "快递公司"
+      },
+      {
+        "action": "assertNotVisible",
+        "text": "选择快递公司"
+      }
+    ],
+    "coverageGap": "This asserts the H5 field only. Determining the actual courier from a WDT store default is integration behavior and needs WDT sandbox data/contract."
+  },
+  {
+    "id": "case-39",
+    "title": "0<字数≤30：正常提交",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 备注 › 输入备注内容 › 校验字数 › ✅ 0<字数≤30：正常提交",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 备注 › 输入备注内容 › 校验字数 › ✅ 0<字数≤30：正常提交"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "0<字数≤30：正常提交",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "备注",
+        "value": "仅做页面校验"
+      },
+      {
+        "action": "assertValue",
+        "label": "备注",
+        "value": "仅做页面校验"
+      }
+    ]
+  },
+  {
+    "id": "case-40",
+    "title": ">30字：限制输入或提示超长",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 备注 › 输入备注内容 › 校验字数 › ❌ >30字：限制输入或提示超长",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 备注 › 输入备注内容 › 校验字数 › ❌ >30字：限制输入或提示超长"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": ">30字：限制输入或提示超长",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "备注",
+        "value": "1234567890123456789012345678901"
+      },
+      {
+        "action": "assertMaxLengthOrMessage",
+        "label": "备注",
+        "maxLength": 30,
+        "message": "超长"
+      }
+    ]
+  },
+  {
+    "id": "case-41",
+    "title": "文本≤20字：通过",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写收件人 › ✅ 文本≤20字：通过",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 填写收件人 › ✅ 文本≤20字：通过"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "文本≤20字：通过",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "收件人",
+        "value": "测试收件人"
+      },
+      {
+        "action": "assertValue",
+        "label": "收件人",
+        "value": "测试收件人"
+      }
+    ]
+  },
+  {
+    "id": "case-42",
+    "title": "为空：字段标红提示必填",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写收件人 › ❌ 为空：字段标红提示必填",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 填写收件人 › ❌ 为空：字段标红提示必填"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "为空：字段标红提示必填",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "收货信息"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "收件人",
+        "value": ""
+      },
+      {
+        "action": "assertText",
+        "text": "必填"
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "收件人"
+      }
+    ],
+    "coverageGap": "Safe transient input is possible; screenshot only shows empty input, not the error. No blur action exists, so must validate that fill-to-empty triggers the visible required error. If blur is required, add a bounded blur/focus DSL step."
+  },
+  {
+    "id": "case-43",
+    "title": ">20字：限制输入",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写收件人 › ❌ >20字：限制输入",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 填写收件人 › ❌ >20字：限制输入"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": ">20字：限制输入",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "收货信息"
+      },
+      {
+        "action": "assertVisible",
+        "text": "收件人"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "收件人",
+        "value": "ABCDEFGHIJKLMNOPQRSTUVWXY"
+      },
+      {
+        "action": "assertValue",
+        "label": "收件人",
+        "value": "ABCDEFGHIJKLMNOPQRST"
+      }
+    ]
+  },
+  {
+    "id": "case-44",
+    "title": "11位数字：通过",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写手机号码 › ✅ 11位数字：通过",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 填写手机号码 › ✅ 11位数字：通过"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "11位数字：通过",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "手机号码",
+        "value": "13800138000"
+      },
+      {
+        "action": "assertValue",
+        "label": "手机号码",
+        "value": "13800138000"
+      }
+    ]
+  },
+  {
+    "id": "case-45",
+    "title": "非11位/含非数字字符：红色提示「手机号格式错误」P1",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写手机号码 › ❌ 非11位/含非数字字符：红色提示「手机号格式错误」P1",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 填写手机号码 › ❌ 非11位/含非数字字符：红色提示「手机号格式错误」P1"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "非11位/含非数字字符：红色提示「手机号格式错误」P1",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "手机号码",
+        "value": "123"
+      },
+      {
+        "action": "assertText",
+        "text": "手机号格式错误"
+      }
+    ]
+  },
+  {
+    "id": "case-46",
+    "title": "逐级选择成功回填所在地区",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 选择所在地区 › 省/市/区三级联动 › ✅ 逐级选择成功回填所在地区",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 选择所在地区 › 省/市/区三级联动 › ✅ 逐级选择成功回填所在地区"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "逐级选择成功回填所在地区",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "样书申请"
+      },
+      {
+        "action": "clickByRole",
+        "role": "link",
+        "name": "样书申请"
+      },
+      {
+        "action": "assertVisible",
+        "text": "收件信息"
+      },
+      {
+        "action": "assertVisible",
+        "text": "所在地区"
+      }
+    ],
+    "coverageGap": "The screenshot grounds three selectors. DSL has no placeholder-targeted click and no cascading option inventory; successful province/city/district selection and selected-value assertion need known region fixture and locator support."
+  },
+  {
+    "id": "case-47",
+    "title": "未选全三级：提交校验标红",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 选择所在地区 › 省/市/区三级联动 › ❌ 未选全三级：提交校验标红",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 选择所在地区 › 省/市/区三级联动 › ❌ 未选全三级：提交校验标红"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "未选全三级：提交校验标红",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "所在地区"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "所在地区",
+        "rowIndex": 2
+      }
+    ],
+    "coverageGap": "A disabled submit button does not prove that missing province/city/district fields are marked red. resolveDocumentField only locates input/textarea (not the three selects), so the required direct invalid assertion cannot currently address region selectors. Add select-aware field resolution/invalid check or mark the case blocked; never report it passed from disabled-submit alone."
+  },
+  {
+    "id": "case-48",
+    "title": "手动输入≤20字：通过",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写详细地址 › ✅ 手动输入≤20字：通过",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 填写详细地址 › ✅ 手动输入≤20字：通过"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "手动输入≤20字：通过",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "详细地址",
+        "value": "测试地址一号"
+      },
+      {
+        "action": "assertValue",
+        "label": "详细地址",
+        "value": "测试地址一号"
+      }
+    ]
+  },
+  {
+    "id": "case-49",
+    "title": "未填写：标红提示必填",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写详细地址 › ❌ 未填写：标红提示必填",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 收件信息 › 填写详细地址 › ❌ 未填写：标红提示必填"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "未填写：标红提示必填",
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "详细地址"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "详细地址",
+        "value": ""
+      },
+      {
+        "action": "assertText",
+        "text": "必填"
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "详细地址"
+      }
+    ],
+    "coverageGap": "Safe transient input is possible; screenshot shows field placeholder but not required error. No blur action exists; confirm input-to-empty produces error, otherwise add bounded blur DSL action."
+  },
+  {
+    "id": "case-50",
+    "title": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ✅ 全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录 P0",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ✅ 全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录 P0"
+    ],
+    "priority": "P0",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-51",
+    "title": "存在漏填或格式校验失败：对应字段输入框标红，不跳转",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ❌ 存在漏填或格式校验失败：对应字段输入框标红，不跳转",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ❌ 存在漏填或格式校验失败：对应字段输入框标红，不跳转"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "存在漏填或格式校验失败：对应字段输入框标红，不跳转",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-52",
+    "title": "必填未完成时提交按钮置灰不可点击",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ❌ 必填未完成时提交按钮置灰不可点击",
+    "requirementRefs": [
+      "员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ❌ 必填未完成时提交按钮置灰不可点击"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "必填未完成时提交按钮置灰不可点击",
+    "steps": [
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      }
+    ],
+    "coverageGap": "The historical runner observed a disabled-submit control but selected it by undocumented CSS class, not accessible role/name. Fresh DOM evidence is needed to verify accessible name “提交申请”; this is a safe assertion and must not click."
+  },
+  {
+    "id": "case-53",
+    "title": "待审核：状态按钮置灰",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看审批流程与状态 › 页面展示申请编号、申请流程、申请人、申请时间、状态按钮 › ✅ 待审核：状态按钮置灰",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看审批流程与状态 › 页面展示申请编号、申请流程、申请人、申请时间、状态按钮 › ✅ 待审核：状态按钮置灰"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "待审核：状态按钮置灰",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-54",
+    "title": "审核通过：状态按钮绿色",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看审批流程与状态 › 页面展示申请编号、申请流程、申请人、申请时间、状态按钮 › ✅ 审核通过：状态按钮绿色",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看审批流程与状态 › 页面展示申请编号、申请流程、申请人、申请时间、状态按钮 › ✅ 审核通过：状态按钮绿色"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "审核通过：状态按钮绿色",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-55",
+    "title": "审核驳回：状态按钮红色，展示驳回原因文案，支持重新申请或联系审批人",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看审批流程与状态 › 页面展示申请编号、申请流程、申请人、申请时间、状态按钮 › ❌ 审核驳回：状态按钮红色，展示驳回原因文案，支持重新申请或联系审批人 P1",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看审批流程与状态 › 页面展示申请编号、申请流程、申请人、申请时间、状态按钮 › ❌ 审核驳回：状态按钮红色，展示驳回原因文案，支持重新申请或联系审批人 P1"
+    ],
+    "priority": "P1",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "审核驳回：状态按钮红色，展示驳回原因文案，支持重新申请或联系审批人",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-56",
+    "title": "全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口 P1",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口 P1"
+    ],
+    "priority": "P1",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-57",
+    "title": "仅申请发起人本人可见并可进入「查看明细」入口",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 仅申请发起人本人可见并可进入「查看明细」入口 P0",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 仅申请发起人本人可见并可进入「查看明细」入口 P0"
+    ],
+    "priority": "P0",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "仅申请发起人本人可见并可进入「查看明细」入口",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-58",
+    "title": "代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ❌ 代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限 P0",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ❌ 代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限 P0"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-59",
+    "title": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ❌ 越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据 P0",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ❌ 越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据 P0"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-60",
+    "title": "直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需） P2",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需） P2"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需）",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-61",
+    "title": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 从明细页返回后回到审批详情页，审批时间轴与状态不丢失 P1",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ✅ 从明细页返回后回到审批详情页，审批时间轴与状态不丢失 P1"
+    ],
+    "priority": "P1",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-62",
+    "title": "长沙快递总仓有货：锁定长沙仓发货",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ✅ 长沙快递总仓有货：锁定长沙仓发货 P0",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ✅ 长沙快递总仓有货：锁定长沙仓发货 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "长沙快递总仓有货：锁定长沙仓发货",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-63",
+    "title": "长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货 P0",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-64",
+    "title": "两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-65",
+    "title": "开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 按仓库优先级依次查询旺店通快递仓库存 › ❌ 开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-66",
+    "title": "重新按仓库优先级请求库存查询并再次锁单",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 锁单失败页重试 › 点击底部重试按钮 › ✅ 重新按仓库优先级请求库存查询并再次锁单",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 锁单失败页重试 › 点击底部重试按钮 › ✅ 重新按仓库优先级请求库存查询并再次锁单"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "重新按仓库优先级请求库存查询并再次锁单",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-67",
+    "title": "重试仍缺货：保持锁单失败状态",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 锁单失败页重试 › 点击底部重试按钮 › ❌ 重试仍缺货：保持锁单失败状态",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › 锁单失败页重试 › 点击底部重试按钮 › ❌ 重试仍缺货：保持锁单失败状态"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "重试仍缺货：保持锁单失败状态",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-68",
+    "title": "旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ✅ 旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发） P0",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ✅ 旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发） P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发）",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-69",
+    "title": "物流快递单号回传至H5供员工查看物流轨迹",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ✅ 物流快递单号回传至H5供员工查看物流轨迹 P0",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ✅ 物流快递单号回传至H5供员工查看物流轨迹 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "物流快递单号回传至H5供员工查看物流轨迹",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-70",
+    "title": "其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ❌ 其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号） P1",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 审批通过后系统锁单 › 调用企微审批接口回传审批结果后，进入库存检查 › ⚠️ 旺店通发货与出库单回传规则 › 锁单成功推送旺店通发货 › ❌ 其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号） P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号）",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-71",
+    "title": "// 前置：本期均走旺店通快递仓发货",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 本期不做（计划下期） › 物流仓WMS锁单与库存优先级 › // 前置：本期均走旺店通快递仓发货",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 本期不做（计划下期） › 物流仓WMS锁单与库存优先级 › // 前置：本期均走旺店通快递仓发货"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "// 前置：本期均走旺店通快递仓发货",
+    "steps": [],
+    "coverageGap": "依赖/范围：na_or_scope_note"
+  },
+  {
+    "id": "case-72",
+    "title": "不触发物流仓WMS锁定/推送逻辑",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 本期不做（计划下期） › 物流仓WMS锁单与库存优先级 › ❌ 不触发物流仓WMS锁定/推送逻辑",
+    "requirementRefs": [
+      "员工端-用书审批详情页 › 本期不做（计划下期） › 物流仓WMS锁单与库存优先级 › ❌ 不触发物流仓WMS锁定/推送逻辑"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "不触发物流仓WMS锁定/推送逻辑",
+    "steps": [],
+    "coverageGap": "依赖/范围：na_or_scope_note"
+  },
+  {
+    "id": "case-73",
+    "title": "申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致 P0",
+    "requirementRefs": [
+      "员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致 P0"
+    ],
+    "priority": "P0",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-74",
+    "title": "商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值 P1",
+    "requirementRefs": [
+      "员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值 P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-75",
+    "title": "多行样书明细逐行展示小计，总计=∑小计、预估总重=∑(数量×单本重量)",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 多行样书明细逐行展示小计，总计=∑小计、预估总重=∑(数量×单本重量) P1",
+    "requirementRefs": [
+      "员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 多行样书明细逐行展示小计，总计=∑小计、预估总重=∑(数量×单本重量) P1"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "多行样书明细逐行展示小计，总计=∑小计、预估总重=∑(数量×单本重量)",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-76",
+    "title": "待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ⚠️待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致） P0",
+    "requirementRefs": [
+      "员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ⚠️待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致） P0"
+    ],
+    "priority": "P0",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致）",
+    "steps": [],
+    "coverageGap": "依赖/范围：clarification-required"
+  },
+  {
+    "id": "case-77",
+    "title": "商品接口查询失败：对应字段降级提示，不阻塞整页加载",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ❌ 商品接口查询失败：对应字段降级提示，不阻塞整页加载 P1",
+    "requirementRefs": [
+      "员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ❌ 商品接口查询失败：对应字段降级提示，不阻塞整页加载 P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "商品接口查询失败：对应字段降级提示，不阻塞整页加载",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-78",
+    "title": "收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显 P1",
+    "requirementRefs": [
+      "员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显 P1"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显",
+    "steps": [],
+    "coverageGap": "依赖/范围：api_data_or_business_fixture_prerequisite"
+  },
+  {
+    "id": "case-79",
+    "title": "页面纯只读，无编辑/提交/删除入口",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 页面纯只读，无编辑/提交/删除入口 P2",
+    "requirementRefs": [
+      "员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 页面纯只读，无编辑/提交/删除入口 P2"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "页面纯只读，无编辑/提交/删除入口",
+    "steps": [
+      {
+        "action": "clickExactText",
+        "text": "历史申请记录"
+      },
+      {
+        "action": "assertVisible",
+        "text": "暂无申请记录"
+      }
+    ],
+    "coverageGap": "当前登录账号没有申请记录，无法打开申请详情页验证只读属性或编辑/提交/删除入口；需要带有一条历史申请的隔离测试账号/数据夹具后才能完整执行。"
+  },
+  {
+    "id": "case-80",
+    "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 查看订单列表 › 按订单生成时间倒序展示 › ✅ 展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条 P1",
+    "requirementRefs": [
+      "员工端-订单列表页 › 查看订单列表 › 按订单生成时间倒序展示 › ✅ 展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条 P1"
+    ],
+    "priority": "P1",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+    "steps": [],
+    "coverageGap": "列表字段可见不能证明实际订单号、状态、价格、收件信息、首本书及总本数正确；需已登录的订单样例/数据断言，且20条分页需至少21条记录。"
+  },
+  {
+    "id": "case-81",
+    "title": "无订单：展示空状态",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 查看订单列表 › 按订单生成时间倒序展示 › ❌ 无订单：展示空状态",
+    "requirementRefs": [
+      "员工端-订单列表页 › 查看订单列表 › 按订单生成时间倒序展示 › ❌ 无订单：展示空状态"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "无订单：展示空状态",
+    "steps": [
+      {
+        "text": "订单物流",
+        "action": "clickExactText"
+      },
+      {
+        "text": "暂无订单物流记录",
+        "action": "assertExactVisible"
+      }
+    ],
+    "coverageGap": "空态只能在有权限且订单列表真实为空的隔离账号/夹具下验证；当前会话数据未提供。"
+  },
+  {
+    "id": "case-82",
+    "title": "模糊匹配返回对应订单",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 关键字搜索订单 › 输入订单编号/订单图书名 › ✅ 模糊匹配返回对应订单",
+    "requirementRefs": [
+      "员工端-订单列表页 › 关键字搜索订单 › 输入订单编号/订单图书名 › ✅ 模糊匹配返回对应订单"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "模糊匹配返回对应订单",
+    "steps": [],
+    "coverageGap": "需要确定的搜索字段、测试关键词和含/不含匹配项的订单 fixture；只看搜索框与按钮不能证明模糊匹配生效。"
+  },
+  {
+    "id": "case-83",
+    "title": "无匹配：提示无结果",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 关键字搜索订单 › 输入订单编号/订单图书名 › ❌ 无匹配：提示无结果",
+    "requirementRefs": [
+      "员工端-订单列表页 › 关键字搜索订单 › 输入订单编号/订单图书名 › ❌ 无匹配：提示无结果"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "无匹配：提示无结果",
+    "steps": [],
+    "coverageGap": "需隔离的不存在关键词和确定的无结果文案；现有步骤没有填入关键词或断言结果内容。"
+  },
+  {
+    "id": "case-84",
+    "title": "展示对应订单详情",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 点击订单卡片 › 跳转订单详情页 › ✅ 展示对应订单详情",
+    "requirementRefs": [
+      "员工端-订单列表页 › 点击订单卡片 › 跳转订单详情页 › ✅ 展示对应订单详情"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "展示对应订单详情",
+    "steps": [],
+    "coverageGap": "需已知订单 fixture、结果项定位与详情视图唯一字段；“订单”标签不足以证实打开的是对应订单。"
+  },
+  {
+    "id": "case-85",
+    "title": "展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单详情页 › 查看订单与物流信息 › 展示基础信息与时间轴 › ✅ 展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次 P1",
+    "requirementRefs": [
+      "员工端-订单详情页 › 查看订单与物流信息 › 展示基础信息与时间轴 › ✅ 展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次 P1"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次",
+    "steps": [],
+    "coverageGap": "要求验证API/服务端/第三方集成或业务数据，需专用隔离环境、测试身份/数据、接口契约及结果读取能力；当前公开H5页面不足以判定。"
+  },
+  {
+    "id": "case-86",
+    "title": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单详情页 › 查看订单与物流信息 › 展示基础信息与时间轴 › ❌ 超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
+    "requirementRefs": [
+      "员工端-订单详情页 › 查看订单与物流信息 › 展示基础信息与时间轴 › ❌ 超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
+    "steps": [],
+    "coverageGap": "72小时阈值、取消状态由定时/后端逻辑产生；需隔离且可控时钟/预置订单 fixture。不得在生产数据中等待或触发取消。"
+  },
+  {
+    "id": "case-87",
+    "title": "展示申请编号、申请时间、申请用途、申请人、申请诉求(仅第一本书)及总本数、申请状态",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-历史申请记录页（我的申请） › 查看我的申请 › 按申请时间倒序展示申请记录卡片 › ✅ 展示申请编号、申请时间、申请用途、申请人、申请诉求(仅第一本书)及总本数、申请状态 P1",
+    "requirementRefs": [
+      "员工端-历史申请记录页（我的申请） › 查看我的申请 › 按申请时间倒序展示申请记录卡片 › ✅ 展示申请编号、申请时间、申请用途、申请人、申请诉求(仅第一本书)及总本数、申请状态 P1"
+    ],
+    "priority": "P1",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "展示申请编号、申请时间、申请用途、申请人、申请诉求(仅第一本书)及总本数、申请状态",
+    "steps": [],
+    "coverageGap": "静态字段标签不证明申请数据准确或“仅第一本书/总本数”聚合正确；需已登录申请记录 fixture 和字段值断言。"
+  },
+  {
+    "id": "case-88",
+    "title": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-历史申请记录页（我的申请） › 查看我的申请 › 按申请时间倒序展示申请记录卡片 › ✅ 申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查） P2",
+    "requirementRefs": [
+      "员工端-历史申请记录页（我的申请） › 查看我的申请 › 按申请时间倒序展示申请记录卡片 › ✅ 申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查） P2"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）",
+    "steps": [],
+    "coverageGap": "仅能安全确认复制控件存在；验证一键复制效果需点击并读取剪贴板的能力/权限，当前 BrowserStep DSL 没有剪贴板断言。"
+  },
+  {
+    "id": "case-89",
+    "title": "按用途筛选（营销用书/产品用书）生效",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-历史申请记录页（我的申请） › 查看我的申请 › 按样书用途/审批状态筛选 › ✅ 按用途筛选（营销用书/产品用书）生效",
+    "requirementRefs": [
+      "员工端-历史申请记录页（我的申请） › 查看我的申请 › 按样书用途/审批状态筛选 › ✅ 按用途筛选（营销用书/产品用书）生效"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "按用途筛选（营销用书/产品用书）生效",
+    "steps": [],
+    "coverageGap": "控件存在不证明筛选生效；需分别预置营销/产品用途记录，并筛选后断言结果集合。"
+  },
+  {
+    "id": "case-90",
+    "title": "按状态筛选（待审批/已通过/已驳回）生效",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-历史申请记录页（我的申请） › 查看我的申请 › 按样书用途/审批状态筛选 › ✅ 按状态筛选（待审批/已通过/已驳回）生效",
+    "requirementRefs": [
+      "员工端-历史申请记录页（我的申请） › 查看我的申请 › 按样书用途/审批状态筛选 › ✅ 按状态筛选（待审批/已通过/已驳回）生效"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "按状态筛选（待审批/已通过/已驳回）生效",
+    "steps": [],
+    "coverageGap": "控件存在不证明状态筛选生效；需待审批/已通过/已驳回各自的记录 fixture 和结果断言。"
+  },
+  {
+    "id": "case-91",
+    "title": "无符合条件记录：空状态",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-历史申请记录页（我的申请） › 查看我的申请 › 按样书用途/审批状态筛选 › ❌ 无符合条件记录：空状态",
+    "requirementRefs": [
+      "员工端-历史申请记录页（我的申请） › 查看我的申请 › 按样书用途/审批状态筛选 › ❌ 无符合条件记录：空状态"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "无符合条件记录：空状态",
+    "steps": [],
+    "coverageGap": "需隔离的零匹配筛选条件/账号，以证明真正出现空状态。"
+  },
+  {
+    "id": "case-92",
+    "title": "关联企微认证信息正确展示",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-我的页面 › 个人信息区 › 展示头像、用户名、手机号 › ✅ 关联企微认证信息正确展示",
+    "requirementRefs": [
+      "员工端-我的页面 › 个人信息区 › 展示头像、用户名、手机号 › ✅ 关联企微认证信息正确展示"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "关联企微认证信息正确展示",
+    "steps": [],
+    "coverageGap": "字段出现不证明与企微账号关联正确；需用户批准的测试账号及其预期姓名/手机号/部门值，避免读取或输出真实个人信息。"
+  },
+  {
+    "id": "case-93",
+    "title": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-我的页面 › 快捷入口 › 点击「我的申请」/「订单物流」 › ✅ 页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+    "requirementRefs": [
+      "员工端-我的页面 › 快捷入口 › 点击「我的申请」/「订单物流」 › ✅ 页面平滑切换，数据实时加载，默认展示全部并支持分页20条"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+    "steps": [],
+    "coverageGap": "静态“20条/页”不证明分页大小、加载时序或数据实时性；需至少21条受控记录、分页动作/数量断言及可测性能阈值，当前DSL没有等待时间/集合计数断言。"
+  },
+  {
+    "id": "case-94",
+    "title": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+    "source": "部门申样书_V1.0_测试用例.xmind › PC端适配 › 页面适配 › 样书申请页/历史记录页/订单物流页 › ✅ PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致 P2",
+    "requirementRefs": [
+      "PC端适配 › 页面适配 › 样书申请页/历史记录页/订单物流页 › ✅ PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致 P2"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [],
+    "preconditionsConfirmed": true,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+    "steps": [
+      {
+        "action": "setViewport",
+        "width": 390,
+        "height": 844
+      },
+      {
+        "action": "assertVisible",
+        "text": "小额样书申请"
+      },
+      {
+        "action": "assertNoHorizontalOverflow"
+      },
+      {
+        "action": "setViewport",
+        "width": 1280,
+        "height": 800
+      },
+      {
+        "action": "assertVisible",
+        "text": "小额样书申请"
+      },
+      {
+        "action": "assertNoHorizontalOverflow"
+      }
+    ],
+    "coverageGap": "可用DSL直接检查390×844与1280×800两种viewport的关键内容和横向溢出；这不能证明底层共用同一份代码，也未覆盖所有交互同构。"
+  },
+  {
+    "id": "case-95",
+    "title": "// 本期不做统计看板，待后续需求提出时再实现",
+    "source": "部门申样书_V1.0_测试用例.xmind › PC端适配 › 申请数据看板页 › // 本期不做统计看板，待后续需求提出时再实现",
+    "requirementRefs": [
+      "PC端适配 › 申请数据看板页 › // 本期不做统计看板，待后续需求提出时再实现"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "// 本期不做统计看板，待后续需求提出时再实现",
+    "steps": [],
+    "coverageGap": "原需求明确本期不做统计看板，标为范围外；保留来源但不计测试通过。"
+  },
+  {
+    "id": "case-96",
+    "title": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+    "source": "部门申样书_V1.0_测试用例.xmind › PC端适配 › 申请数据看板页 › ❌ 本期PC后台仅提供订单明细列表，不提供申请数据统计看板 P2",
+    "requirementRefs": [
+      "PC端适配 › 申请数据看板页 › ❌ 本期PC后台仅提供订单明细列表，不提供申请数据统计看板 P2"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+    "steps": [],
+    "coverageGap": "需PC后台可用的授权角色；需要确认“订单明细列表”存在且统计看板/统计入口不存在。当前目标URL和账号是否具备PC后台权限未知。"
+  },
+  {
+    "id": "case-97",
+    "title": "可查看/编辑「员工福利订单」「部门用书订单」页面",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 角色=内部图书订单管理员 访问 › ✅ 可查看/编辑「员工福利订单」「部门用书订单」页面 P0",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 角色=内部图书订单管理员 访问 › ✅ 可查看/编辑「员工福利订单」「部门用书订单」页面 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "可查看/编辑「员工福利订单」「部门用书订单」页面",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-98",
+    "title": "可查看/编辑「内部订单管理」板块下所有页面",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 角色=管理员 访问 › ✅ 可查看/编辑「内部订单管理」板块下所有页面 P0",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 角色=管理员 访问 › ✅ 可查看/编辑「内部订单管理」板块下所有页面 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "可查看/编辑「内部订单管理」板块下所有页面",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-99",
+    "title": "「内部订单管理」菜单不可见，直接访问URL返回无权限",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 其他角色 访问 › ❌ 「内部订单管理」菜单不可见，直接访问URL返回无权限 P0",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 权限控制（新增角色「内部图书订单管理员」） › 其他角色 访问 › ❌ 「内部订单管理」菜单不可见，直接访问URL返回无权限 P0"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "「内部订单管理」菜单不可见，直接访问URL返回无权限",
+    "steps": [],
+    "coverageGap": "需授权的非管理员账号、内部订单管理直接URL，以及隔离权限测试环境；这是访问控制测试，不能用已登录页面的菜单文本替代服务端拒绝。"
+  },
+  {
+    "id": "case-100",
+    "title": "OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单创建规则 › OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间 P0",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单创建规则 › OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-101",
+    "title": "72小时后无物流单状态：订单状态变更为「订单取消」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单创建规则 › ❌ 72小时后无物流单状态：订单状态变更为「订单取消」",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单创建规则 › ❌ 72小时后无物流单状态：订单状态变更为「订单取消」"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "72小时后无物流单状态：订单状态变更为「订单取消」",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-102",
+    "title": "// 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › // 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › // 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "none",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "// 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除",
+    "steps": [],
+    "coverageGap": "原需求已澄清“其他出库单号”本期不作为头部筛选项；建议改成否定验收：筛选区不存在该项，并以PC筛选区为验证页面；本次归到范围澄清，不能算已通过。"
+  },
+  {
+    "id": "case-103",
+    "title": "用书类型筛选（全部/营销用书/产品用书）生效",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 用书类型筛选（全部/营销用书/产品用书）生效",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 用书类型筛选（全部/营销用书/产品用书）生效"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "用书类型筛选（全部/营销用书/产品用书）生效",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-104",
+    "title": "划归客户支持下拉筛选与模糊搜索",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 划归客户支持下拉筛选与模糊搜索",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 划归客户支持下拉筛选与模糊搜索"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "划归客户支持下拉筛选与模糊搜索",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-105",
+    "title": "发货方式（全部/快递仓发货/物流仓发货）筛选生效",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 发货方式（全部/快递仓发货/物流仓发货）筛选生效",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 发货方式（全部/快递仓发货/物流仓发货）筛选生效"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "发货方式（全部/快递仓发货/物流仓发货）筛选生效",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-106",
+    "title": "物流单号/企微审批单号支持模糊与精准搜索",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 物流单号/企微审批单号支持模糊与精准搜索",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 头部筛选项 › 用书类型/划归客户/发货方式/物流单号/企微审批单号 › ✅ 物流单号/企微审批单号支持模糊与精准搜索"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "物流单号/企微审批单号支持模糊与精准搜索",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-107",
+    "title": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单详情明细字段 › 展示新增字段 › ✅ 展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注 P1",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 部门用书订单 › 订单详情明细字段 › 展示新增字段 › ✅ 展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注 P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-108",
+    "title": "迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致 P0",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-109",
+    "title": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对） P0",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对） P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-110",
+    "title": "原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示 P1",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示 P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示",
+    "steps": [],
+    "coverageGap": "需提供旧系统入口URL/页面和预期新地址；现有DSL无当前URL断言，点链接也可能离开授权目标origin，不能凭文本存在判定已下线/正确跳转。"
+  },
+  {
+    "id": "case-111",
+    "title": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ❌ 迁移后按原有筛选项（订单号/客户/状态等）查询结果正确 P1",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ❌ 迁移后按原有筛选项（订单号/客户/状态等）查询结果正确 P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-112",
+    "title": "迁移后历史订单详情、物流信息、备注字段无丢失",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ❌ 迁移后历史订单详情、物流信息、备注字段无丢失 P1",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ❌ 迁移后历史订单详情、物流信息、备注字段无丢失 P1"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "迁移后历史订单详情、物流信息、备注字段无丢失",
+    "steps": [],
+    "coverageGap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。"
+  },
+  {
+    "id": "case-113",
+    "title": "P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ⚠️ P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ⚠️ P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验"
+    ],
+    "priority": "P0",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-114",
+    "title": "「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见",
+    "source": "部门申样书_V1.0_测试用例.xmind › 管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见 P0",
+    "requirementRefs": [
+      "管理端后台（经销商系统服务端） › 内部订单管理（菜单迁移+新增，排序置于菜单最末位） › 员工福利订单（本期迁移，纳入交付范围） › 从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」 › ✅ 「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见",
+    "steps": [],
+    "coverageGap": "需管理员与非管理员两种隔离角色账号，验证菜单/路由/后端权限一致。"
+  },
+  {
+    "id": "case-115",
+    "title": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 员工创建部门用书申请单 › ✅ 推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+    "requirementRefs": [
+      "企微消息通知 › 消息推送触发场景 › 员工创建部门用书申请单 › ✅ 推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+    "steps": [],
+    "coverageGap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。"
+  },
+  {
+    "id": "case-116",
+    "title": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 订单库存不足锁单失败 › ✅ 推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+    "requirementRefs": [
+      "企微消息通知 › 消息推送触发场景 › 订单库存不足锁单失败 › ✅ 推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+    "steps": [],
+    "coverageGap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。"
+  },
+  {
+    "id": "case-117",
+    "title": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 订单72小时未发货 › ✅ 推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+    "requirementRefs": [
+      "企微消息通知 › 消息推送触发场景 › 订单72小时未发货 › ✅ 推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」"
+    ],
+    "priority": "P2",
+    "category": "functional",
+    "confidence": "medium",
+    "coverageAreas": [
+      "functional"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+    "steps": [],
+    "coverageGap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。"
+  },
+  {
+    "id": "case-118",
+    "title": "推送失败：🔄待澄清 消息推送失败是否重试与告警",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › ❌ 推送失败：🔄待澄清 消息推送失败是否重试与告警",
+    "requirementRefs": [
+      "企微消息通知 › 消息推送触发场景 › ❌ 推送失败：🔄待澄清 消息推送失败是否重试与告警"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 推送失败：🔄待澄清 消息推送失败是否重试与告警",
+    "steps": [],
+    "coverageGap": "原用例将推送失败后的重试/告警策略标为待澄清；需产品/运营定义最大重试、告警目标、时限，再设计用例。"
+  },
+  {
+    "id": "case-119",
+    "title": "通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 企微审批接口 › 后台创建OA审批模板（含部门、申请人、用途、公司、图书明细字段），通过template_id创建审批单 › ✅ 通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页 P0",
+    "requirementRefs": [
+      "数据接口层 › 企微审批接口 › 后台创建OA审批模板（含部门、申请人、用途、公司、图书明细字段），通过template_id创建审批单 › ✅ 通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-120",
+    "title": "接口异常：🔄待澄清 审批接口失败的容错与重试",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 企微审批接口 › 后台创建OA审批模板（含部门、申请人、用途、公司、图书明细字段），通过template_id创建审批单 › ❌ 接口异常：🔄待澄清 审批接口失败的容错与重试",
+    "requirementRefs": [
+      "数据接口层 › 企微审批接口 › 后台创建OA审批模板（含部门、申请人、用途、公司、图书明细字段），通过template_id创建审批单 › ❌ 接口异常：🔄待澄清 审批接口失败的容错与重试"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 接口异常：🔄待澄清 审批接口失败的容错与重试",
+    "steps": [],
+    "coverageGap": "原用例将审批接口失败的容错与重试标为待澄清；需明确可重试错误、次数/间隔、补偿与用户提示。"
+  },
+  {
+    "id": "case-121",
+    "title": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ✅ 客户接口按客户分类返回（1004.00/1004.06）供H5过滤 P0",
+    "requirementRefs": [
+      "数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ✅ 客户接口按客户分类返回（1004.00/1004.06）供H5过滤 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤",
+    "steps": [],
+    "coverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。"
+  },
+  {
+    "id": "case-122",
+    "title": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ✅ 创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5） P0",
+    "requirementRefs": [
+      "数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ✅ 创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5） P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-123",
+    "title": "开单返回错误信息：前端toast展示错误原因",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ❌ 开单返回错误信息：前端toast展示错误原因",
+    "requirementRefs": [
+      "数据接口层 › 易诚通接口 › 图书信息/客户字段查询 + 其他出库单创建 › ❌ 开单返回错误信息：前端toast展示错误原因"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "开单返回错误信息：前端toast展示错误原因",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-124",
+    "title": "先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 旺店通发货/数量接口 › 按仓库优先级查询库存与发货 › ✅ 先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货 P0",
+    "requirementRefs": [
+      "数据接口层 › 旺店通发货/数量接口 › 按仓库优先级查询库存与发货 › ✅ 先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-125",
+    "title": "库存查询失败：进入锁单失败分支",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 旺店通发货/数量接口 › 按仓库优先级查询库存与发货 › ❌ 库存查询失败：进入锁单失败分支",
+    "requirementRefs": [
+      "数据接口层 › 旺店通发货/数量接口 › 按仓库优先级查询库存与发货 › ❌ 库存查询失败：进入锁单失败分支"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "库存查询失败：进入锁单失败分支",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-126",
+    "title": "每10分钟拉取一次物流最新信息",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易查单物流接口 › 物流轨迹查询 › ✅ 每10分钟拉取一次物流最新信息",
+    "requirementRefs": [
+      "数据接口层 › 易查单物流接口 › 物流轨迹查询 › ✅ 每10分钟拉取一次物流最新信息"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "每10分钟拉取一次物流最新信息",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-127",
+    "title": "无物流信息且超72小时：置订单异常/取消",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易查单物流接口 › 物流轨迹查询 › ❌ 无物流信息且超72小时：置订单异常/取消",
+    "requirementRefs": [
+      "数据接口层 › 易查单物流接口 › 物流轨迹查询 › ❌ 无物流信息且超72小时：置订单异常/取消"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "无物流信息且超72小时：置订单异常/取消",
+    "steps": [],
+    "coverageGap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。"
+  },
+  {
+    "id": "case-128",
+    "title": "企微OA审批模板ID配置正确",
+    "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 企微OA审批模板ID配置正确 P0",
+    "requirementRefs": [
+      "系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 企微OA审批模板ID配置正确 P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "企微OA审批模板ID配置正确",
+    "steps": [],
+    "coverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。"
+  },
+  {
+    "id": "case-129",
+    "title": "快递仓仓库ID配置正确（长沙仓/天津仓）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 快递仓仓库ID配置正确（长沙仓/天津仓） P0",
+    "requirementRefs": [
+      "系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 快递仓仓库ID配置正确（长沙仓/天津仓） P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "快递仓仓库ID配置正确（长沙仓/天津仓）",
+    "steps": [],
+    "coverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。"
+  },
+  {
+    "id": "case-130",
+    "title": "旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺） P0",
+    "requirementRefs": [
+      "系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ✅ 旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺） P0"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺）",
+    "steps": [],
+    "coverageGap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。"
+  },
+  {
+    "id": "case-131",
+    "title": "配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+    "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ❌ 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+    "requirementRefs": [
+      "系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ❌ 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+    "steps": [],
+    "coverageGap": "原用例将配置缺失/错误时降级与告警标为待澄清；需明确配置项、失败安全行为和告警标准。"
+  },
+  {
+    "id": "case-132",
+    "title": "P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 录入 weight 为空的在库图书物流编码 › bookCheck 返回业务错误 › ✅ P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 录入 weight 为空的在库图书物流编码 › bookCheck 返回业务错误 › ✅ P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显",
+    "steps": [],
+    "coverageGap": "需专用且确定不存在/未入库的图书编码 fixture；要证明toast及名称/定价/重量不回显，必须先用该编码触发查找（确认请求只读），并断言字段值为空。"
+  },
+  {
+    "id": "case-133",
+    "title": "P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 录入 weight 为空的在库图书物流编码 › bookCheck 返回业务错误 › ⚠️❌ P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 录入 weight 为空的在库图书物流编码 › bookCheck 返回业务错误 › ⚠️❌ P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）",
+    "steps": [],
+    "coverageGap": "需专用不存在图书编码并触发只读检索；还要精确定位当前行的图书ID/无效状态并确认提交控件禁用。当前DSL没有按行/隐藏字段断言，不能只用按钮禁用冒充“清空productId且置红”。"
+  },
+  {
+    "id": "case-134",
+    "title": "P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 忽略提示强行填数量并提交 › 调用 /dept/book/apply/submit › ⚠️❌ P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 忽略提示强行填数量并提交 › 调用 /dept/book/apply/submit › ⚠️❌ P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）"
+    ],
+    "priority": "P0",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-135",
+    "title": "P0 缺重图书不计入预估总重导致超重样书被提交发货",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 忽略提示强行填数量并提交 › 调用 /dept/book/apply/submit › ❌ P0 缺重图书不计入预估总重导致超重样书被提交发货",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-无重量图书过滤 › 忽略提示强行填数量并提交 › 调用 /dept/book/apply/submit › ❌ P0 缺重图书不计入预估总重导致超重样书被提交发货"
+    ],
+    "priority": "P0",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 缺重图书不计入预估总重导致超重样书被提交发货",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-136",
+    "title": "P1 录入 1 与 9999：均放行，小计=数量×定价",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ✅ P1 录入 1 与 9999：均放行，小计=数量×定价",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ✅ P1 录入 1 与 9999：均放行，小计=数量×定价"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 录入 1 与 9999：均放行，小计=数量×定价",
+    "steps": [],
+    "coverageGap": "需存在且已入库的测试书及其确定定价；填入1与9999并读取小计须逐条执行。DSL可填字段，但此项目无批准的可用编码/定价，且当前DSL没有金额计算表达式断言。"
+  },
+  {
+    "id": "case-137",
+    "title": "P1 录入 1000~9999 合法值：前端应允许（当前 max=999 卡死，BUG-003）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ❌ P1 录入 1000~9999 合法值：前端应允许（当前 max=999 卡死，BUG-003）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ❌ P1 录入 1000~9999 合法值：前端应允许（当前 max=999 卡死，BUG-003）"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 录入 1000~9999 合法值：前端应允许（当前 max=999 卡死，BUG-003）",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "1000"
+      },
+      {
+        "action": "assertValue",
+        "label": "数量（册）",
+        "value": "1000"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "9999"
+      },
+      {
+        "action": "assertValue",
+        "label": "数量（册）",
+        "value": "9999"
+      }
+    ],
+    "coverageGap": "需可用测试书/表单初态；可在不提交情况下填1000和9999并读回，尚不能据此证明最终保存/服务端也允许。"
+  },
+  {
+    "id": "case-138",
+    "title": "P2 录入 0/负数/小数/字母：拦截，提交按钮不点亮",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ❌ P2 录入 0/负数/小数/字母：拦截，提交按钮不点亮",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ❌ P2 录入 0/负数/小数/字母：拦截，提交按钮不点亮"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P2 录入 0/负数/小数/字母：拦截，提交按钮不点亮",
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "0"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "-1"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "1.5"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "abc"
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      }
+    ],
+    "coverageGap": "需隔离表单与已知字段/提交控件；0/负数/小数/字母需要分别尝试，HTML number输入可能拒收部分字符串。必须逐项断言字段无效或提交禁用，禁止点击提交。"
+  },
+  {
+    "id": "case-139",
+    "title": "P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ⚠️❌ P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 样书明细-数量上限边界 › 数量输入框录入边界值 › 前端 formatNumberInput 与后端 buildAndCheckGoods 双侧校验 › ⚠️❌ P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-140",
+    "title": "P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ⚠️❌ P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ⚠️❌ P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-141",
+    "title": "P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ❌ P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ❌ P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-142",
+    "title": "P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ❌ P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ❌ P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）"
+    ],
+    "priority": "P2",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-143",
+    "title": "收件人>20字/详细地址>20字：服务端已正确拦截",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ✅ 收件人>20字/详细地址>20字：服务端已正确拦截",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 收件信息-服务端最终防线 › 直连 submit 接口构造非法报文 › checkReceiverInfo 服务端校验 › ✅ 收件人>20字/详细地址>20字：服务端已正确拦截"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "收件人>20字/详细地址>20字：服务端已正确拦截",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-144",
+    "title": "P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ⚠️❌ P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ⚠️❌ P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-145",
+    "title": "P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ❌ P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ❌ P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）"
+    ],
+    "priority": "P1",
+    "category": "input-validation",
+    "confidence": "medium",
+    "coverageAreas": [
+      "input-validation"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）",
+    "steps": [],
+    "coverageGap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。"
+  },
+  {
+    "id": "case-146",
+    "title": "P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ⚠️❌ P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 提交-参数必填与事务边界 › 直连 submit 缺 costClient / 落库阶段异常 › 服务端校验与事务边界 › ⚠️❌ P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）",
+    "steps": [],
+    "coverageGap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。"
+  },
+  {
+    "id": "case-147",
+    "title": "P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 审批回调-并发与判空 › 回调与补偿Job并发 / spRecords缺失 › handleApprovalCallback 幂等与健壮性 › ⚠️❌ P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 审批回调-并发与判空 › 回调与补偿Job并发 / spRecords缺失 › handleApprovalCallback 幂等与健壮性 › ⚠️❌ P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）",
+    "steps": [],
+    "coverageGap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。"
+  },
+  {
+    "id": "case-148",
+    "title": "P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 审批回调-并发与判空 › 回调与补偿Job并发 / spRecords缺失 › handleApprovalCallback 幂等与健壮性 › ❌ P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 审批回调-并发与判空 › 回调与补偿Job并发 / spRecords缺失 › handleApprovalCallback 幂等与健壮性 › ❌ P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）",
+    "steps": [],
+    "coverageGap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。"
+  },
+  {
+    "id": "case-149",
+    "title": "P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ⚠️❌ P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ⚠️❌ P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）",
+    "steps": [],
+    "coverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。"
+  },
+  {
+    "id": "case-150",
+    "title": "P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ✅ P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ✅ P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token",
+    "steps": [],
+    "coverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。"
+  },
+  {
+    "id": "case-151",
+    "title": "P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ✅ P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ✅ P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限"
+    ],
+    "priority": "P0",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限",
+    "steps": [],
+    "coverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。"
+  },
+  {
+    "id": "case-152",
+    "title": "P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ❌ P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ❌ P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）"
+    ],
+    "priority": "P1",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）",
+    "steps": [],
+    "coverageGap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。"
+  },
+  {
+    "id": "case-153",
+    "title": "P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ❌ P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 登录鉴权-串号与深链回跳 › 同设备切换员工 / 未登录打开深链 › permission.ts 登录态与回跳 › ❌ P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）"
+    ],
+    "priority": "P2",
+    "category": "authorization",
+    "confidence": "medium",
+    "coverageAreas": [
+      "authorization"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）",
+    "steps": [],
+    "coverageGap": "需要源代码/安全测试环境来审查token存储与OAuth state生成；禁止读取/输出真实用户token，当前页面可见UI无法证明安全属性。"
+  },
+  {
+    "id": "case-154",
+    "title": "P1 已退单订单：应有状态文案（当前后端仅2/3/4/5无退单，BUG-009）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 订单状态展示 › 查看含已退单/发货中/撤回状态的订单与申请 › 状态文案与配色 › ❌ P1 已退单订单：应有状态文案（当前后端仅2/3/4/5无退单，BUG-009）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 订单状态展示 › 查看含已退单/发货中/撤回状态的订单与申请 › 状态文案与配色 › ❌ P1 已退单订单：应有状态文案（当前后端仅2/3/4/5无退单，BUG-009）"
+    ],
+    "priority": "P1",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P1 已退单订单：应有状态文案（当前后端仅2/3/4/5无退单，BUG-009）",
+    "steps": [],
+    "coverageGap": "需要含“已退单”状态的专用订单fixture；仅查看当前无此状态的列表无法验证文案。"
+  },
+  {
+    "id": "case-155",
+    "title": "P2 发货中/审核中/撤回：前端应有对应配色（当前退化默认灰，BUG-009）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 订单状态展示 › 查看含已退单/发货中/撤回状态的订单与申请 › 状态文案与配色 › ❌ P2 发货中/审核中/撤回：前端应有对应配色（当前退化默认灰，BUG-009）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 订单状态展示 › 查看含已退单/发货中/撤回状态的订单与申请 › 状态文案与配色 › ❌ P2 发货中/审核中/撤回：前端应有对应配色（当前退化默认灰，BUG-009）"
+    ],
+    "priority": "P2",
+    "category": "resilience",
+    "confidence": "medium",
+    "coverageAreas": [
+      "resilience"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "irreversible",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "P2 发货中/审核中/撤回：前端应有对应配色（当前退化默认灰，BUG-009）",
+    "steps": [],
+    "coverageGap": "需分别预置发货中/审核中/撤回状态记录；DSL目前没有颜色/计算样式断言，文本可见只能部分覆盖状态文案，不能验证配色。"
+  },
+  {
+    "id": "case-156",
+    "title": "待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 白盒扫描补充验证（代码走查·本次新增） › 端能力对称 › H5「我的申请」按编号搜索 › 与PC端历史申请记录对比 › 🔄待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）",
+    "requirementRefs": [
+      "白盒扫描补充验证（代码走查·本次新增） › 端能力对称 › H5「我的申请」按编号搜索 › 与PC端历史申请记录对比 › 🔄待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）"
+    ],
+    "priority": "P2",
+    "category": "other",
+    "confidence": "low",
+    "coverageAreas": [
+      "other"
+    ],
+    "selectedForRegression": true,
+    "preconditions": [
+      "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+    ],
+    "preconditionsConfirmed": false,
+    "testData": [],
+    "sideEffectRisk": "unknown",
+    "cleanup": "只在隔离测试环境执行；本轮不提交、不保存、不触发审批/锁单/出库/订单/库存/消息。",
+    "kind": "visible",
+    "expected": "[需澄清] 待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）",
+    "steps": [],
+    "coverageGap": "原用例明确待澄清H5是否支持申请编号搜索；需产品确认范围后再分解接受/不接受能力。"
+  }
+]

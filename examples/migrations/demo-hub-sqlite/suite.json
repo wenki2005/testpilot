@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "name": "Demo Hub sample SQLite migration verification",
+  "baseline": "baseline.sql",
+  "fixtures": ["fixtures.sql"],
+  "migrations": [
+    { "id": "001-add-status", "file": "migrations/001-add-status.sql" },
+    { "id": "002-partial-invalid", "file": "migrations/002-partial-invalid.sql" }
+  ],
+  "scenarios": [
+    {
+      "id": "upgrade-preserves-data",
+      "title": "Add a status column and preserve/backfill existing user rows",
+      "migrations": ["001-add-status"],
+      "checks": [
+        {
+          "id": "status-data",
+          "title": "Existing records retain names and receive the declared status",
+          "query": "SELECT name, status FROM users ORDER BY id",
+          "expectedRows": [
+            { "name": "Ada", "status": "active" },
+            { "name": "Lin", "status": "legacy" }
+          ]
+        },
+        {
+          "id": "schema-column",
+          "title": "The migration adds the expected column to the users table",
+          "query": "SELECT name FROM pragma_table_info('users') WHERE name = 'status'",
+          "expectedRows": [{ "name": "status" }]
+        }
+      ]
+    },
+    {
+      "id": "failed-migration-rolls-back",
+      "title": "A migration with a valid first statement and invalid second statement rolls back atomically",
+      "migrations": ["002-partial-invalid"],
+      "expectMigrationFailure": "002-partial-invalid",
+      "checks": [
+        {
+          "id": "no-partial-table",
+          "title": "The table created before the error is absent after rollback",
+          "query": "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'partial_table'",
+          "expectedRows": []
+        },
+        {
+          "id": "baseline-rows-retained",
+          "title": "Fixture rows remain unchanged after the failed migration",
+          "query": "SELECT id, name FROM users ORDER BY id",
+          "expectedRows": [{ "id": 1, "name": "Ada" }, { "id": 2, "name": "Lin" }]
+        }
+      ]
+    }
+  ]
+}

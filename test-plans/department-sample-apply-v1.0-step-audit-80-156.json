@@ -1,0 +1,1866 @@
+{
+  "title": "部门申样书 156 用例 xmind-80 至 xmind-156 步骤与执行条件审计",
+  "generatedAt": "2026-10-17T18:01:08.771Z",
+  "source": {
+    "file": "C:/Users/A/Documents/WXWork/1688857165920788/Cache/File/2026-10/部门申样书_V1.0_测试用例.xmind",
+    "suiteFile": "test-plans/department-sample-apply-v1.0-full-suite.json",
+    "caseIds": "xmind-80..xmind-156",
+    "count": 77,
+    "targetUrl": "https://cdn.yibentushu.com/test-sample-apply/#/home"
+  },
+  "scopeAndSafety": {
+    "approvedProjectModified": false,
+    "liveWebsiteVisited": false,
+    "browserTouched": false,
+    "principle": "仅按需求原文和现有受限 BrowserStep DSL 做静态审计；不生成未知业务输入，不声称已运行或通过；所有涉及保存、提交、审批、锁单、订单、消息/库存/出库的动作须在隔离测试环境。"
+  },
+  "dslActionsObserved": [
+    "assertText",
+    "assertVisible",
+    "assertNotVisible",
+    "assertExactVisible",
+    "assertRoleVisible",
+    "assertValue",
+    "assertDisabled",
+    "assertFieldInvalid",
+    "assertRoleDisabled",
+    "assertMaxLengthOrMessage",
+    "assertNoHorizontalOverflow",
+    "setViewport",
+    "fillByLabel",
+    "selectByLabel",
+    "clickByRole",
+    "clickExactText"
+  ],
+  "classificationCounts": {
+    "safeBrowserAssertable": 0,
+    "partialUiWithNamedGap": 23,
+    "apiDataOrSideEffectPrerequisite": 48,
+    "naOrClarification": 6
+  },
+  "classificationDefinitions": {
+    "safeBrowserAssertable": "完整验收条件可用已支持的只读浏览器断言证明，不依赖未知数据、危险动作或后端状态。",
+    "partialUiWithNamedGap": "允许用DSL验证需求的明确可见切片，但结果不能覆盖原需求；gap中列出缺失的夹具、动作或数据断言。",
+    "apiDataOrSideEffectPrerequisite": "需要API/服务端/权限/第三方/DB或业务副作用测试环境与夹具。",
+    "naOrClarification": "原文明确范围外、已澄清排除，或验收口径待补充；不得默认判通过。"
+  },
+  "groups": {
+    "safeBrowserAssertable": [],
+    "partialUiWithNamedGap": [
+      80,
+      81,
+      82,
+      83,
+      84,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      96,
+      110,
+      132,
+      133,
+      136,
+      137,
+      138,
+      154,
+      155
+    ],
+    "apiDataOrSideEffectPrerequisite": [
+      85,
+      97,
+      98,
+      99,
+      100,
+      101,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      119,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      134,
+      135,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153
+    ],
+    "naOrClarification": [
+      95,
+      102,
+      118,
+      120,
+      131,
+      156
+    ]
+  },
+  "cases": [
+    {
+      "id": "xmind-80",
+      "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+      "priority": "P1",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单号"
+        },
+        {
+          "action": "assertVisible",
+          "text": "状态"
+        },
+        {
+          "action": "assertVisible",
+          "text": "价格"
+        },
+        {
+          "action": "assertVisible",
+          "text": "收货信息"
+        },
+        {
+          "action": "assertVisible",
+          "text": "总本数"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单号"
+        },
+        {
+          "action": "assertVisible",
+          "text": "状态"
+        },
+        {
+          "action": "assertVisible",
+          "text": "价格"
+        },
+        {
+          "action": "assertVisible",
+          "text": "收货信息"
+        },
+        {
+          "action": "assertVisible",
+          "text": "总本数"
+        }
+      ],
+      "gap": "列表字段可见不能证明实际订单号、状态、价格、收件信息、首本书及总本数正确；需已登录的订单样例/数据断言，且20条分页需至少21条记录。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-81",
+      "title": "无订单：展示空状态",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "无订单：展示空状态",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "无订单"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "无订单"
+        }
+      ],
+      "gap": "空态只能在有权限且订单列表真实为空的隔离账号/夹具下验证；当前会话数据未提供。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-82",
+      "title": "模糊匹配返回对应订单",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "模糊匹配返回对应订单",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单列表"
+        },
+        {
+          "action": "assertVisible",
+          "text": "关键字搜索"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "button",
+          "name": "搜索"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单列表"
+        },
+        {
+          "action": "assertVisible",
+          "text": "关键字搜索"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "button",
+          "name": "搜索"
+        }
+      ],
+      "gap": "需要确定的搜索字段、测试关键词和含/不含匹配项的订单 fixture；只看搜索框与按钮不能证明模糊匹配生效。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-83",
+      "title": "无匹配：提示无结果",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "无匹配：提示无结果",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单列表"
+        },
+        {
+          "action": "assertVisible",
+          "text": "订单编号"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "button",
+          "name": "搜索"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单列表"
+        },
+        {
+          "action": "assertVisible",
+          "text": "订单编号"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "button",
+          "name": "搜索"
+        }
+      ],
+      "gap": "需隔离的不存在关键词和确定的无结果文案；现有步骤没有填入关键词或断言结果内容。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-84",
+      "title": "展示对应订单详情",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "展示对应订单详情",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单"
+        },
+        {
+          "action": "assertVisible",
+          "text": "订单列表"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单"
+        },
+        {
+          "action": "assertVisible",
+          "text": "订单列表"
+        }
+      ],
+      "gap": "需已知订单 fixture、结果项定位与详情视图唯一字段；“订单”标签不足以证实打开的是对应订单。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-86",
+      "title": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "link",
+          "name": "订单详情"
+        },
+        {
+          "action": "assertVisible",
+          "text": "订单异常"
+        },
+        {
+          "action": "assertVisible",
+          "text": "联系对应运营"
+        },
+        {
+          "action": "assertVisible",
+          "text": "取消"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单异常"
+        },
+        {
+          "action": "assertVisible",
+          "text": "联系对应运营"
+        },
+        {
+          "action": "assertVisible",
+          "text": "取消"
+        }
+      ],
+      "gap": "72小时阈值、取消状态由定时/后端逻辑产生；需隔离且可控时钟/预置订单 fixture。不得在生产数据中等待或触发取消。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-87",
+      "title": "展示申请编号、申请时间、申请用途、申请人、申请诉求(仅第一本书)及总本数、申请状态",
+      "priority": "P1",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "展示申请编号、申请时间、申请用途、申请人、申请诉求(仅第一本书)及总本数、申请状态",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请编号"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请时间"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请用途"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请人"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请诉求"
+        },
+        {
+          "action": "assertVisible",
+          "text": "总本数"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请状态"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请编号"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请时间"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请用途"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请人"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请诉求"
+        },
+        {
+          "action": "assertVisible",
+          "text": "总本数"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请状态"
+        }
+      ],
+      "gap": "静态字段标签不证明申请数据准确或“仅第一本书/总本数”聚合正确；需已登录申请记录 fixture 和字段值断言。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-88",
+      "title": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请编号"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "button",
+          "name": "复制"
+        },
+        {
+          "action": "assertText",
+          "text": "复制"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "申请编号"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "button",
+          "name": "复制"
+        }
+      ],
+      "gap": "仅能安全确认复制控件存在；验证一键复制效果需点击并读取剪贴板的能力/权限，当前 BrowserStep DSL 没有剪贴板断言。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-89",
+      "title": "按用途筛选（营销用书/产品用书）生效",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "按用途筛选（营销用书/产品用书）生效",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "按样书用途"
+        },
+        {
+          "action": "assertVisible",
+          "text": "营销用书"
+        },
+        {
+          "action": "assertVisible",
+          "text": "产品用书"
+        },
+        {
+          "action": "assertVisible",
+          "text": "审批状态"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "按样书用途"
+        },
+        {
+          "action": "assertVisible",
+          "text": "营销用书"
+        },
+        {
+          "action": "assertVisible",
+          "text": "产品用书"
+        }
+      ],
+      "gap": "控件存在不证明筛选生效；需分别预置营销/产品用途记录，并筛选后断言结果集合。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-90",
+      "title": "按状态筛选（待审批/已通过/已驳回）生效",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "按状态筛选（待审批/已通过/已驳回）生效",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "审批状态"
+        },
+        {
+          "action": "assertVisible",
+          "text": "待审批"
+        },
+        {
+          "action": "assertVisible",
+          "text": "已通过"
+        },
+        {
+          "action": "assertVisible",
+          "text": "已驳回"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "审批状态"
+        },
+        {
+          "action": "assertVisible",
+          "text": "待审批"
+        },
+        {
+          "action": "assertVisible",
+          "text": "已通过"
+        },
+        {
+          "action": "assertVisible",
+          "text": "已驳回"
+        }
+      ],
+      "gap": "控件存在不证明状态筛选生效；需待审批/已通过/已驳回各自的记录 fixture 和结果断言。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-91",
+      "title": "无符合条件记录：空状态",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "无符合条件记录：空状态",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "无符合条件记录"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "无符合条件记录"
+        }
+      ],
+      "gap": "需隔离的零匹配筛选条件/账号，以证明真正出现空状态。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-92",
+      "title": "关联企微认证信息正确展示",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "关联企微认证信息正确展示",
+      "existingDraftSteps": [
+        {
+          "action": "clickByRole",
+          "role": "tab",
+          "name": "我的"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "tab",
+          "name": "我的"
+        },
+        {
+          "action": "assertVisible",
+          "text": "个人信息"
+        },
+        {
+          "action": "assertVisible",
+          "text": "用户名"
+        },
+        {
+          "action": "assertVisible",
+          "text": "手机号"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertRoleVisible",
+          "role": "tab",
+          "name": "我的"
+        },
+        {
+          "action": "assertVisible",
+          "text": "个人信息"
+        },
+        {
+          "action": "assertVisible",
+          "text": "用户名"
+        },
+        {
+          "action": "assertVisible",
+          "text": "手机号"
+        }
+      ],
+      "gap": "字段出现不证明与企微账号关联正确；需用户批准的测试账号及其预期姓名/手机号/部门值，避免读取或输出真实个人信息。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-93",
+      "title": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+      "existingDraftSteps": [
+        {
+          "action": "assertRoleVisible",
+          "role": "link",
+          "name": "我的申请"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "link",
+          "name": "订单物流"
+        },
+        {
+          "action": "clickByRole",
+          "role": "link",
+          "name": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "全部"
+        },
+        {
+          "action": "assertVisible",
+          "text": "20条/页"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertRoleVisible",
+          "role": "link",
+          "name": "我的申请"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "link",
+          "name": "订单物流"
+        },
+        {
+          "action": "clickByRole",
+          "role": "link",
+          "name": "我的申请"
+        },
+        {
+          "action": "assertVisible",
+          "text": "全部"
+        },
+        {
+          "action": "assertVisible",
+          "text": "20条/页"
+        }
+      ],
+      "gap": "静态“20条/页”不证明分页大小、加载时序或数据实时性；需至少21条受控记录、分页动作/数量断言及可测性能阈值，当前DSL没有等待时间/集合计数断言。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-94",
+      "title": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+      "existingDraftSteps": [
+        {
+          "action": "setViewport",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "action": "assertVisible",
+          "text": "样书申请"
+        },
+        {
+          "action": "setViewport",
+          "width": 1280,
+          "height": 800
+        },
+        {
+          "action": "assertVisible",
+          "text": "样书申请"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "setViewport",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "action": "assertVisible",
+          "text": "样书申请"
+        },
+        {
+          "action": "assertNoHorizontalOverflow"
+        },
+        {
+          "action": "setViewport",
+          "width": 1280,
+          "height": 800
+        },
+        {
+          "action": "assertVisible",
+          "text": "样书申请"
+        },
+        {
+          "action": "assertNoHorizontalOverflow"
+        }
+      ],
+      "gap": "可用DSL直接检查390×844与1280×800两种viewport的关键内容和横向溢出；这不能证明底层共用同一份代码，也未覆盖所有交互同构。",
+      "sourcePreconditions": [],
+      "sourceRisk": "none",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-96",
+      "title": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单明细"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "订单明细"
+        },
+        {
+          "action": "assertNotVisible",
+          "text": "统计看板"
+        }
+      ],
+      "gap": "需PC后台可用的授权角色；需要确认“订单明细列表”存在且统计看板/统计入口不存在。当前目标URL和账号是否具备PC后台权限未知。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-110",
+      "title": "原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示",
+      "priority": "P1",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需提供旧系统入口URL/页面和预期新地址；现有DSL无当前URL断言，点链接也可能离开授权目标origin，不能凭文本存在判定已下线/正确跳转。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-132",
+      "title": "P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显",
+      "priority": "P0",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "P0 提示「该图书不存在或尚未入库」，图书名称/定价/重量不回显",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "该图书不存在或尚未入库"
+        }
+      ],
+      "gap": "需专用且确定不存在/未入库的图书编码 fixture；要证明toast及名称/定价/重量不回显，必须先用该编码触发查找（确认请求只读），并断言字段值为空。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-133",
+      "title": "P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）",
+      "priority": "P0",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "P0 前端应清空该行 productId 并置红禁止提交（当前仅toast不清空，BUG-013）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertFieldInvalid",
+          "label": "自编码"
+        },
+        {
+          "action": "assertRoleDisabled",
+          "role": "button",
+          "name": "提交"
+        }
+      ],
+      "gap": "需专用不存在图书编码并触发只读检索；还要精确定位当前行的图书ID/无效状态并确认提交控件禁用。当前DSL没有按行/隐藏字段断言，不能只用按钮禁用冒充“清空productId且置红”。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-136",
+      "title": "P1 录入 1 与 9999：均放行，小计=数量×定价",
+      "priority": "P1",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "P1 录入 1 与 9999：均放行，小计=数量×定价",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "1"
+        },
+        {
+          "action": "assertValue",
+          "label": "数量（册）",
+          "value": "1"
+        }
+      ],
+      "gap": "需存在且已入库的测试书及其确定定价；填入1与9999并读取小计须逐条执行。DSL可填字段，但此项目无批准的可用编码/定价，且当前DSL没有金额计算表达式断言。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-137",
+      "title": "P1 录入 1000~9999 合法值：前端应允许（当前 max=999 卡死，BUG-003）",
+      "priority": "P1",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "P1 录入 1000~9999 合法值：前端应允许（当前 max=999 卡死，BUG-003）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "1000"
+        },
+        {
+          "action": "assertValue",
+          "label": "数量（册）",
+          "value": "1000"
+        }
+      ],
+      "gap": "需可用测试书/表单初态；可在不提交情况下填1000和9999并读回，尚不能据此证明最终保存/服务端也允许。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-138",
+      "title": "P2 录入 0/负数/小数/字母：拦截，提交按钮不点亮",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "P2 录入 0/负数/小数/字母：拦截，提交按钮不点亮",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "0"
+        },
+        {
+          "action": "assertDisabled",
+          "label": "数量（册）"
+        }
+      ],
+      "gap": "需隔离表单与已知字段/提交控件；0/负数/小数/字母需要分别尝试，HTML number输入可能拒收部分字符串。必须逐项断言字段无效或提交禁用，禁止点击提交。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-154",
+      "title": "P1 已退单订单：应有状态文案（当前后端仅2/3/4/5无退单，BUG-009）",
+      "priority": "P1",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "P1 已退单订单：应有状态文案（当前后端仅2/3/4/5无退单，BUG-009）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "已退单"
+        }
+      ],
+      "gap": "需要含“已退单”状态的专用订单fixture；仅查看当前无此状态的列表无法验证文案。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-155",
+      "title": "P2 发货中/审核中/撤回：前端应有对应配色（当前退化默认灰，BUG-009）",
+      "priority": "P2",
+      "classification": "partialUiWithNamedGap",
+      "requirementText": "P2 发货中/审核中/撤回：前端应有对应配色（当前退化默认灰，BUG-009）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [
+        {
+          "action": "assertVisible",
+          "text": "发货中"
+        },
+        {
+          "action": "assertVisible",
+          "text": "审核中"
+        },
+        {
+          "action": "assertVisible",
+          "text": "撤回"
+        }
+      ],
+      "gap": "需分别预置发货中/审核中/撤回状态记录；DSL目前没有颜色/计算样式断言，文本可见只能部分覆盖状态文案，不能验证配色。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-85",
+      "title": "展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证API/服务端/第三方集成或业务数据，需专用隔离环境、测试身份/数据、接口契约及结果读取能力；当前公开H5页面不足以判定。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-97",
+      "title": "可查看/编辑「员工福利订单」「部门用书订单」页面",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "可查看/编辑「员工福利订单」「部门用书订单」页面",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-98",
+      "title": "可查看/编辑「内部订单管理」板块下所有页面",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "可查看/编辑「内部订单管理」板块下所有页面",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-99",
+      "title": "「内部订单管理」菜单不可见，直接访问URL返回无权限",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "「内部订单管理」菜单不可见，直接访问URL返回无权限",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需授权的非管理员账号、内部订单管理直接URL，以及隔离权限测试环境；这是访问控制测试，不能用已登录页面的菜单文本替代服务端拒绝。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-100",
+      "title": "OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-101",
+      "title": "72小时后无物流单状态：订单状态变更为「订单取消」",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "72小时后无物流单状态：订单状态变更为「订单取消」",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-103",
+      "title": "用书类型筛选（全部/营销用书/产品用书）生效",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "用书类型筛选（全部/营销用书/产品用书）生效",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-104",
+      "title": "划归客户支持下拉筛选与模糊搜索",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "划归客户支持下拉筛选与模糊搜索",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-105",
+      "title": "发货方式（全部/快递仓发货/物流仓发货）筛选生效",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "发货方式（全部/快递仓发货/物流仓发货）筛选生效",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-106",
+      "title": "物流单号/企微审批单号支持模糊与精准搜索",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "物流单号/企微审批单号支持模糊与精准搜索",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-107",
+      "title": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-108",
+      "title": "迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-109",
+      "title": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-111",
+      "title": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-112",
+      "title": "迁移后历史订单详情、物流信息、备注字段无丢失",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "迁移后历史订单详情、物流信息、备注字段无丢失",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要PC管理后台权限、测试订单数据、迁移前基线/旧系统对照；查询/编辑/导出或迁移对比可能读写业务数据，应在隔离环境执行。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-113",
+      "title": "P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-114",
+      "title": "「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需管理员与非管理员两种隔离角色账号，验证菜单/路由/后端权限一致。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-115",
+      "title": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+      "existingDraftSteps": [
+        {
+          "action": "assertVisible",
+          "text": "部门用书申请单"
+        }
+      ],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "UI 脚本待补"
+    },
+    {
+      "id": "xmind-116",
+      "title": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-117",
+      "title": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需消息队列/企微测试接收人或mock，断言文案和目标用户；不可给真实上级发送测试消息。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-119",
+      "title": "通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-121",
+      "title": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-122",
+      "title": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-123",
+      "title": "开单返回错误信息：前端toast展示错误原因",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "开单返回错误信息：前端toast展示错误原因",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-124",
+      "title": "先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-125",
+      "title": "库存查询失败：进入锁单失败分支",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "库存查询失败：进入锁单失败分支",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-126",
+      "title": "每10分钟拉取一次物流最新信息",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "每10分钟拉取一次物流最新信息",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-127",
+      "title": "无物流信息且超72小时：置订单异常/取消",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "无物流信息且超72小时：置订单异常/取消",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及审批回调、锁单、开单、出库、物流刷新或迁移回滚等服务端流程/副作用；需隔离环境、可控时钟与下游 mock，需确认读写接口契约及清理方法。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-128",
+      "title": "企微OA审批模板ID配置正确",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "企微OA审批模板ID配置正确",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-129",
+      "title": "快递仓仓库ID配置正确（长沙仓/天津仓）",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "快递仓仓库ID配置正确（长沙仓/天津仓）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-130",
+      "title": "旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺）",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需接口契约、受控配置/沙箱账号及脱敏的预期配置值；不能从H5可见页面推断正确配置或第三方返回内容。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-134",
+      "title": "P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P0 服务端 buildAndCheckGoods 应对 weight 空同口径拒绝，不得按0计放行（当前按0计，BUG-001）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-135",
+      "title": "P0 缺重图书不计入预估总重导致超重样书被提交发货",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P0 缺重图书不计入预估总重导致超重样书被提交发货",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-139",
+      "title": "P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P1 直连API传 qty=99999：后端应拒绝（当前仅校验qty<=0无上限，BUG-003）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-140",
+      "title": "P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P1 province/city/county 传空：服务端应拒绝（当前未校验，BUG-002）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-141",
+      "title": "P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P2 receiverPhone=00000000000/12345678901：应按1[3-9]\\d{9}拒绝（当前\\d{11}放过，BUG-007）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-142",
+      "title": "P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P2 remark 超30字：服务端应拒绝（当前无长度校验，BUG-008）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-143",
+      "title": "收件人>20字/详细地址>20字：服务端已正确拦截",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "收件人>20字/详细地址>20字：服务端已正确拦截",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-144",
+      "title": "P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P1 costClientId/costClientName 传空：应必填校验拒绝（当前直接落库，BUG-006）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-145",
+      "title": "P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P1 bookUsage 空/非法：应显式参数校验提示清晰（当前仅resolveTemplateId间接抛错，BUG-006）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "要求验证服务端拒绝、数据库写入/不写入或业务计算；需要API schema/测试凭据/隔离数据及响应、数据库或审计日志读取。不得向生产接口发送变更请求。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-146",
+      "title": "P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P1 createApproval成功后落库异常：不得残留孤儿企微审批单（当前事务内先审批后落库，BUG-004）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-147",
+      "title": "P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P1 回调与补偿Job并发同一单：不重复锁单不重复流转（当前无锁无事务，BUG-005）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-148",
+      "title": "P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P2 回调报文 spRecords 为null：应判空跳过不抛NPE（当前未判空，BUG-012）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "涉及事务回滚、并发去重或回调异常；需可注入失败/并发的服务端集成测试和数据库/外部审批侧验证。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-149",
+      "title": "P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P0 A登录后同设备交B打开：应识别非本人强制重新授权，B不见A数据（当前有token即用，BUG-010）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-150",
+      "title": "P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P0 A分享纯URL给B、B自己设备企微打开：B走自己授权拿自己token，不携带A的token",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-151",
+      "title": "P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限",
+      "priority": "P0",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P0 B用自己token改applyNo访问A的申请详情/物流：后端applicantUserId归属校验拒绝返回无权限",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-152",
+      "title": "P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）",
+      "priority": "P1",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P1 未登录打开深链登录后：应回跳原深链（当前固定跳首页，BUG-011）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需两个隔离身份、登录/深链回跳控制和申请归属fixture；需要跨账号服务端授权验证，不能从当前单一登录会话推出。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-153",
+      "title": "P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）",
+      "priority": "P2",
+      "classification": "apiDataOrSideEffectPrerequisite",
+      "requirementText": "P2 token明文存localStorage、OAuth state固定：应加固（BUG-014）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "需要源代码/安全测试环境来审查token存储与OAuth state生成；禁止读取/输出真实用户token，当前页面可见UI无法证明安全属性。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "需测试环境/API/人工验证"
+    },
+    {
+      "id": "xmind-95",
+      "title": "// 本期不做统计看板，待后续需求提出时再实现",
+      "priority": "P2",
+      "classification": "naOrClarification",
+      "requirementText": "// 本期不做统计看板，待后续需求提出时再实现",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "原需求明确本期不做统计看板，标为范围外；保留来源但不计测试通过。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "none",
+      "sourceDisposition": "本期范围外"
+    },
+    {
+      "id": "xmind-102",
+      "title": "// 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除",
+      "priority": "P2",
+      "classification": "naOrClarification",
+      "requirementText": "// 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "原需求已澄清“其他出库单号”本期不作为头部筛选项；建议改成否定验收：筛选区不存在该项，并以PC筛选区为验证页面；本次归到范围澄清，不能算已通过。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "none",
+      "sourceDisposition": "本期范围外"
+    },
+    {
+      "id": "xmind-118",
+      "title": "推送失败：🔄待澄清 消息推送失败是否重试与告警",
+      "priority": "P2",
+      "classification": "naOrClarification",
+      "requirementText": "[需澄清] 推送失败：🔄待澄清 消息推送失败是否重试与告警",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "原用例将推送失败后的重试/告警策略标为待澄清；需产品/运营定义最大重试、告警目标、时限，再设计用例。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "待澄清"
+    },
+    {
+      "id": "xmind-120",
+      "title": "接口异常：🔄待澄清 审批接口失败的容错与重试",
+      "priority": "P2",
+      "classification": "naOrClarification",
+      "requirementText": "[需澄清] 接口异常：🔄待澄清 审批接口失败的容错与重试",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "原用例将审批接口失败的容错与重试标为待澄清；需明确可重试错误、次数/间隔、补偿与用户提示。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "irreversible",
+      "sourceDisposition": "待澄清"
+    },
+    {
+      "id": "xmind-131",
+      "title": "配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+      "priority": "P2",
+      "classification": "naOrClarification",
+      "requirementText": "[需澄清] 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "原用例将配置缺失/错误时降级与告警标为待澄清；需明确配置项、失败安全行为和告警标准。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "待澄清"
+    },
+    {
+      "id": "xmind-156",
+      "title": "待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）",
+      "priority": "P2",
+      "classification": "naOrClarification",
+      "requirementText": "[需澄清] 待澄清 H5是否提供申请编号搜索（后端已支持applyNo入参、PC有搜索框、H5无，BUG-015）",
+      "existingDraftSteps": [],
+      "proposedReadOnlyDslSteps": [],
+      "gap": "原用例明确待澄清H5是否支持申请编号搜索；需产品确认范围后再分解接受/不接受能力。",
+      "sourcePreconditions": [
+        "需要目标系统专用测试环境和/或测试账号、接口 mock/沙箱数据"
+      ],
+      "sourceRisk": "unknown",
+      "sourceDisposition": "待澄清"
+    }
+  ],
+  "summary": {
+    "keyFinding": "xmind-80..156 共77项中，本次静态审计没有发现可仅凭当前DSL并在无额外测试夹具下完整覆盖原验收条件的用例；这不是“不可补”，而是当前步骤缺少数据/身份/API/状态夹具。可先执行UI可见切片，随后用隔离API/服务端套件补全。",
+    "nextDependencies": [
+      "PC管理后台的QA入口与可复用测试账号（至少管理员/普通员工及A/B两名员工）",
+      "测试申请/订单/物流数据：空列表、无匹配、筛选分类、各订单状态、21+分页记录、已退单记录",
+      "用于商品检索和数量校验的明确QA书籍编码与定价/重量fixture",
+      "服务端OpenAPI或接口文档、QA API base URL、认证角色/凭据、可读回数据库/审计结果",
+      "企微审批/旺店通/易诚通/物流/消息的测试租户或mock、可控时钟、失败注入、补偿与清理方案",
+      "澄清用例118/120/131/156的验收口径；确认95范围外，102转为“筛选项不存在”的负向检查",
+      "扩展DSL支持剪贴板断言、集合/行/单元格断言、URL断言、颜色断言、字段值/计算断言、网络/API断言/轮询和用例级数据fixture后再覆盖对应UI部分"
+    ]
+  }
+}

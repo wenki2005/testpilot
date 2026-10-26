@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "name": "Read-only API smoke and contract checks",
+  "description": "Example only. Set the base URL to a local or dedicated test environment.",
+  "cases": [
+    {
+      "id": "health-status",
+      "title": "Health endpoint returns HTTP 200",
+      "request": { "method": "GET", "path": "/api/health", "timeoutMs": 5000 },
+      "expect": { "status": 200, "maxDurationMs": 3000 }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+const runId = '074bc5be-1ad8-4ef8-82b3-64493584b269';
+const dir = `artifacts/demo/document-tests/runs/${runId}`;
+const run = JSON.parse(fs.readFileSync(`${dir}/run.json`, 'utf8'));
+const summary = xs => ['passed', 'failed', 'blocked'].map(status => `${status} ${xs.filter(x => x.status === status).length}`).join(' / ');
+const blockedReasons = new Map();
+for (const item of run.deterministic.results.filter(x => x.status === 'blocked')) blockedReasons.set(item.detail, (blockedReasons.get(item.detail) ?? 0) + 1);
+const failed = run.comparisons.filter(x => x.deterministic === 'failed' || x.computerUse === 'failed' || !x.aligned).map(c => {
+  const d = run.deterministic.results.find(x => x.id === c.id);
+  const a = run.ai.results.find(x => x.id === c.id);
+  return `### ${c.id}｜${c.title}\n\n- 确定性：${d?.status ?? 'missing'}；${d?.detail ?? '无详情'}\n- Computer Use：${a?.status ?? 'missing'}；${a?.detail ?? '无详情'}\n- 对齐：${c.aligned ? '是' : '否'}；${c.issue || '两通道发现同一失败'}\n`;
+}).join('\n');
+const body = `# 部门申样书全量运行诊断\n\n- Run：${run.id}\n- 目标：${run.caseScope.selectedCaseIds.length}/${run.caseScope.totalCases} 条用例；排除 ${run.caseScope.excludedCaseIds.length} 条\n- 总结：${run.overall}；双通道最终对齐：${run.finalReady ? '是' : '否'}；报告/脚本包：${run.packageReady ? '已生成' : '未生成'}\n- 确定性：${run.deterministic.summary}（${summary(run.deterministic.results)}）\n- Computer Use：${run.ai.summary}（${summary(run.ai.results)}）\n\n## 为什么大面积阻塞\n\n这不是 141 个已确认产品缺陷，而是 141 条没有进入执行：\n\n${[...blockedReasons].map(([reason, count]) => `- ${count} 条：${reason}`).join('\n')}\n\n此外，XMind 156 条基线中仅 46 条有可执行步骤，110 条为空。导入/规划阶段把“需要账号或测试环境”的通用占位前置条件复制到大量页面只读检查上，并通过业务描述关键词将 API/审批/订单词误标为 irreversible；因此只读页面行为也被挡住。\n\n## 步骤为什么不够用\n\n首次对 107 条空步骤调用生成器，模型给每条都写了至少一条，但其中不少只检查“样书申请/样书用途”等通用页面文字，无法证明后端备注、审批、库存、接口、客户过滤等真正预期。根因是工具 schema 强制 steps 至少一项，服务器仅验证 DSL 格式，没有验证断言是否覆盖预期。这批草稿已撤回，项目恢复到之前审核通过的版本。\n\n本轮的 156 条逐条状态仍由原运行器计算；生成脚本包包含完整范围，但这不等同于 156 条都执行成功。\n\n## 已确认产品问题\n\n${failed || '- 无失败或差异'}\n\ncase-47 是确定性通过、Computer Use 阻塞：脚本只检查提交按钮禁用，未能证明“三级地区未选全时字段标红”；这是脚本断言过弱，需要补准确可观察状态。case-94 本轮脚本只确认标题可见，无法验证移动端布局；上一轮 Computer Use 已报告 390px 视口内容裁切，因此不能宣称响应式通过。\n\n## 已修复的 TestPilot 代码\n\n- 允许步骤规划器返回空步骤，避免用通用标题断言凑数。\n- 只对风险明确为只读、前置条件确认、预期清晰的用例生成浏览器步骤；后端、待澄清与账号/夹具依赖保留原因。\n- 两条执行通道都拒绝只检查通用页面标题的“假覆盖”。\n- 自动运行偏好关闭确认时，更新后只自动批准可执行的安全子集，其余仍逐项阻塞。\n- 新增回归测试覆盖以上门禁和响应式溢出断言；本地 TypeScript 检查、server build 与相关单测通过。\n\n当前已运行的服务早于这些代码修改。为了保住当前登录 Edge 会话，本轮没有重启服务；以上代码需服务重载后才会生效。\n\n## 完成 156 条真正验证所需的输入\n\n1. 为 39 条可转为页面行为的用例补齐逐条 DSL 步骤并复核预期。\n2. 11 条待澄清用例先从需求方确认判定标准。\n3. 其余 API/联调、角色和历史订单类用例需要真实 OpenAPI/接口文档、隔离测试环境、测试账号及可清理夹具；不能在生产站点通过点击提交来伪造覆盖。\n\n运行产物：\n- 报告：\`${dir}/report.md\`\n- 运行 JSON：\`${dir}/run.json\`\n- 可复用脚本包：\`${dir}/testpilot-package.zip\`\n`;
+fs.writeFileSync('test-plans/department-sample-apply-v1.0-run-074bc5be-analysis.md', body, 'utf8');
+console.log(JSON.stringify({runId: run.id, total: run.caseScope.totalCases, selected: run.caseScope.selectedCaseIds.length, deterministic: summary(run.deterministic.results), computerUse: summary(run.ai.results), overall: run.overall, report: 'test-plans/department-sample-apply-v1.0-run-074bc5be-analysis.md'}));

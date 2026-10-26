@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "name": "Word Runner · D:/work/word-runner-demo",
+  "sourceRoot": "D:/work/word-runner-demo",
+  "scriptFiles": [
+    "package.json",
+    "serve.cjs",
+    "config.js",
+    "engine.js",
+    "tests/engine.cjs",
+    "tests/browser.cjs"
+  ],
+  "service": {
+    "bin": "node",
+    "args": ["serve.cjs"],
+    "env": { "PORT": "{PORT}" },
+    "healthUrl": "http://127.0.0.1:{PORT}/",
+    "startupTimeoutMs": 15000
+  },
+  "suite": {
+    "version": 1,
+    "name": "Word Runner deterministic engine + canvas browser tests",
+    "cases": [
+      {
+        "id": "word-runner-engine",
+        "title": "Seeded engine invariants and exhaustive arithmetic route proofs",
+        "command": {
+          "bin": "npm.cmd",
+          "args": ["test"],
+          "timeoutMs": 60000
+        }
+      },
+      {
+        "id": "word-runner-browser",
+        "title": "Local canvas game, responsive layouts, touch and keyboard browser acceptance",
+        "command": {
+          "bin": "npm.cmd",
+          "args": ["run", "test:browser"],
+          "timeoutMs": 180000
+        }
+      }
+    ]
+  },
+  "preserveArtifacts": ["artifacts"]
+}

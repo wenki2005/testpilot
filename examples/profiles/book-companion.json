@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "name": "Book Companion · D:/work/book-companion-service-demo",
+  "sourceRoot": "D:/work/book-companion-service-demo",
+  "scriptFiles": [
+    "package.json",
+    "server.mjs",
+    "domain.js",
+    "tests/domain.test.mjs",
+    "tests/browser.cjs"
+  ],
+  "service": {
+    "bin": "node",
+    "args": ["server.mjs"],
+    "env": { "PORT": "{PORT}" },
+    "healthUrl": "http://127.0.0.1:{PORT}/",
+    "startupTimeoutMs": 15000
+  },
+  "suite": {
+    "version": 1,
+    "name": "Book Companion domain + local service browser tests",
+    "cases": [
+      {
+        "id": "book-companion-domain",
+        "title": "Domain state, answer history, report integrity, and content validation",
+        "command": {
+          "bin": "npm.cmd",
+          "args": ["test"],
+          "timeoutMs": 30000
+        }
+      },
+      {
+        "id": "book-companion-browser",
+        "title": "Local loopback service and responsive Playwright acceptance flows",
+        "command": {
+          "bin": "npm.cmd",
+          "args": ["run", "test:browser"],
+          "timeoutMs": 180000,
+          "env": {
+            "BROWSER_PATH": "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+          }
+        }
+      }
+    ]
+  },
+  "preserveArtifacts": ["artifacts"]
+}

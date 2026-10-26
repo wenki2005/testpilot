@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "name": "Demo Hub · D:/work/demo-hub",
+  "sourceRoot": "D:/work/demo-hub",
+  "excludePaths": [
+    ".venv",
+    "data",
+    "artifacts",
+    "cloudbase",
+    "deploy",
+    "releases",
+    "__pycache__"
+  ],
+  "suite": {
+    "version": 1,
+    "name": "Demo Hub local API, SQLite migration, and backup/restore tests",
+    "cases": [
+      {
+        "id": "demo-hub-local-api-db",
+        "title": "Flask API and isolated SQLite migration, backup/restore regression suite",
+        "command": {
+          "bin": "D:/work/demo-hub/.venv/Scripts/python.exe",
+          "args": ["-m", "unittest", "discover", "-s", "tests", "-p", "test_api.py", "-v"],
+          "timeoutMs": 60000,
+          "env": { "PYTHONDONTWRITEBYTECODE": "1" }
+        }
+      }
+    ]
+  }
+}

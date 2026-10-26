@@ -1,0 +1,626 @@
+[
+  {
+    "id": "case-1",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-2",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-3",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-4",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-5",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-6",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-7",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-8",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-9",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-10",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-11",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-12",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-13",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-14",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-15",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-16",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-17",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-18",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-19",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-20",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-21",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-22",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-23",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-24",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-25",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-26",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-27",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-28",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-29",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-30",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-31",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-32",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-33",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-34",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-35",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-36",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-37",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-38",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-39",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-40",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-41",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-42",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-43",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-44",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-45",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-46",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-47",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-48",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-49",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-50",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-51",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-52",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-53",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-54",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-55",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-56",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-57",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-58",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-59",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-60",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-61",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-62",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-63",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-64",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-65",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-66",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-67",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-68",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-69",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-70",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-71",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-72",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-73",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-74",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-75",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-76",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-77",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-78",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-79",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-80",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-81",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-82",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-83",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-84",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-85",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-86",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-87",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-88",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-89",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-90",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-91",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-92",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-93",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-94",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-95",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-96",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-97",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-98",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-99",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-100",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-101",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-102",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-103",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-104",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-105",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-106",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-107",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-108",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-109",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-110",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-111",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-112",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-113",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-114",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-115",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-116",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-117",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-118",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-119",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-120",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-121",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-122",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-123",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-124",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-125",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-126",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-127",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-128",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-129",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-130",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-131",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-132",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-133",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-134",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-135",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-136",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-137",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-138",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-139",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-140",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-141",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-142",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-143",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-144",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-145",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-146",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-147",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-148",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-149",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-150",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-151",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-152",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-153",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-154",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-155",
+    "selectedForRegression": true
+  },
+  {
+    "id": "case-156",
+    "selectedForRegression": true
+  }
+]

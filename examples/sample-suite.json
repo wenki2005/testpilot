@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "name": "sample-command-suite",
+  "description": "Example suite that executes an existing project check through the deterministic runner.",
+  "cases": [
+    {
+      "id": "node-runtime-available",
+      "title": "Node runtime is available",
+      "command": {
+        "bin": "node",
+        "args": ["--version"],
+        "timeoutMs": 10000,
+        "expectedExitCode": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "name": "Plural Runner · D:/work/plural-runner-demo",
+  "sourceRoot": "D:/work/plural-runner-demo",
+  "scriptFiles": [
+    "package.json",
+    "tests/engine.cjs"
+  ],
+  "suite": {
+    "version": 1,
+    "name": "Plural Runner deterministic engine tests",
+    "cases": [
+      {
+        "id": "plural-runner-engine",
+        "title": "Existing deterministic engine and seeded route-invariant checks",
+        "command": {
+          "bin": "npm.cmd",
+          "args": ["test"],
+          "timeoutMs": 60000
+        }
+      }
+    ]
+  }
+}

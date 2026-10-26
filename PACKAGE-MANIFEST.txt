@@ -1,0 +1,9 @@
+TestPilot handoff snapshot
+Created: 2026-10-26
+Source: D:\test agent\testpilot-mvp
+Git branch: main
+HEAD: 66e61d2
+Git remote: none configured for TestPilot source repo
+Changed paths captured: 60
+Excluded: .git history, node_modules, dist, web/dist, artifacts, _tmp, .playwright-cli, test-artifacts, output, research, and .env
+The folder contains a source snapshot of the working tree, including uncommitted and untracked source changes.

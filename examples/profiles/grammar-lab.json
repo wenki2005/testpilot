@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "name": "Grammar Lab · D:/work/grammar-lab-demo",
+  "sourceRoot": "D:/work/grammar-lab-demo",
+  "scriptFiles": ["package.json", "tests/model.cjs", "tests/browser.cjs"],
+  "optionalScriptFiles": ["tests/testpilot-generated.json", "tests/testpilot-generated.cjs"],
+  "service": {
+    "bin": "node",
+    "args": ["serve.cjs"],
+    "env": { "PORT": "{PORT}" },
+    "healthUrl": "http://127.0.0.1:{PORT}/",
+    "startupTimeoutMs": 15000
+  },
+  "suite": {
+    "version": 1,
+    "name": "Grammar Lab existing tests (model + browser)",
+    "cases": [
+      {
+        "id": "grammar-lab-npm-test",
+        "title": "Documented npm test: model assertions and Playwright browser flow",
+        "command": {
+          "bin": "npm.cmd",
+          "args": ["test"],
+          "timeoutMs": 180000,
+          "env": {
+            "DEMO_URL": "{DEMO_URL}",
+            "BROWSER_PATH": "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
+          }
+        }
+      }
+    ]
+  },
+  "preserveArtifacts": ["artifacts"]
+}

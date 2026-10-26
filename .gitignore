@@ -1,0 +1,14 @@
+node_modules/
+dist/
+web/dist/
+artifacts/
+.env
+
+# local scratch / runtime output that must not be versioned
+_tmp/
+.playwright-cli/
+output/*.log
+*.log
+
+# test temp data (see tests/test-data-dir.mjs)
+test-artifacts/

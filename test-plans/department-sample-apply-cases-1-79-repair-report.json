@@ -1,0 +1,1312 @@
+{
+  "title": "申样书 XMind cases 1–79: executable-step repair audit",
+  "createdAt": "2026-10-18",
+  "source": {
+    "inventory": "test-plans/department-sample-apply-v1.0-full-suite.json",
+    "historicalBrowserEvidence": "D:/test agent/sample-apply-e2e/reports/current-page.png (captured 2026-10-15); D:/test agent/sample-apply-e2e/reports/latest.json; D:/test agent/sample-apply-e2e/run.mjs",
+    "liveSiteAccessed": false,
+    "approvedProjectModified": false
+  },
+  "method": "Case-by-case review against source wording, supported BrowserStep DSL and historical screenshot/independent E2E evidence. Only read-only page assertions and transient input edits are proposed. No steps are claimed executed in this audit.",
+  "counts": {
+    "safe": 8,
+    "partial": 23,
+    "prerequisite": 38,
+    "clarification": 10
+  },
+  "caseGroups": {
+    "safe": [
+      "xmind-31",
+      "xmind-39",
+      "xmind-40",
+      "xmind-41",
+      "xmind-43",
+      "xmind-44",
+      "xmind-45",
+      "xmind-48"
+    ],
+    "partial": [
+      "xmind-1",
+      "xmind-2",
+      "xmind-4",
+      "xmind-21",
+      "xmind-22",
+      "xmind-25",
+      "xmind-26",
+      "xmind-27",
+      "xmind-29",
+      "xmind-32",
+      "xmind-33",
+      "xmind-34",
+      "xmind-35",
+      "xmind-37",
+      "xmind-38",
+      "xmind-42",
+      "xmind-46",
+      "xmind-47",
+      "xmind-49",
+      "xmind-52",
+      "xmind-79",
+      "xmind-10",
+      "xmind-30"
+    ],
+    "prerequisite": [
+      "xmind-6",
+      "xmind-7",
+      "xmind-8",
+      "xmind-9",
+      "xmind-11",
+      "xmind-12",
+      "xmind-13",
+      "xmind-14",
+      "xmind-15",
+      "xmind-17",
+      "xmind-18",
+      "xmind-19",
+      "xmind-24",
+      "xmind-50",
+      "xmind-51",
+      "xmind-53",
+      "xmind-54",
+      "xmind-55",
+      "xmind-56",
+      "xmind-57",
+      "xmind-58",
+      "xmind-59",
+      "xmind-60",
+      "xmind-61",
+      "xmind-62",
+      "xmind-63",
+      "xmind-64",
+      "xmind-65",
+      "xmind-66",
+      "xmind-67",
+      "xmind-68",
+      "xmind-69",
+      "xmind-70",
+      "xmind-73",
+      "xmind-74",
+      "xmind-75",
+      "xmind-77",
+      "xmind-78"
+    ],
+    "clarification": [
+      "xmind-3",
+      "xmind-5",
+      "xmind-16",
+      "xmind-20",
+      "xmind-23",
+      "xmind-28",
+      "xmind-36",
+      "xmind-71",
+      "xmind-72",
+      "xmind-76"
+    ]
+  },
+  "cases": [
+    {
+      "id": "xmind-1",
+      "title": "在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "小额样书申请"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "radio",
+          "name": "本人申领"
+        },
+        {
+          "action": "assertVisible",
+          "text": "收货信息"
+        }
+      ],
+      "remainingGap": "These checks only prove the signed-in form is visible. To prove current WeCom identity/name/company/department is auto-filled, need an approved test account and expected identity fixture plus value assertions; screenshot does not show identity fields.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-2",
+      "title": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "小额样书申请"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "radio",
+          "name": "本人申领"
+        }
+      ],
+      "remainingGap": "Cannot test unauthorized employee with this authenticated employee session. Requires a dedicated unauthorized account or auth mock and verified denial route/toast; do not switch/clear the user login.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-3",
+      "title": "待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）",
+      "classification": "clarification-required",
+      "status": "not_executable_until_requirement_clarified",
+      "steps": [],
+      "reason": "XMind explicitly marks兼职身份判定数据源/口径待澄清."
+    },
+    {
+      "id": "xmind-4",
+      "title": "本人申请：申请人取当前企微登录人姓名与部门",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertRoleVisible",
+          "role": "radio",
+          "name": "本人申领"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "radio",
+          "name": "代人申领"
+        },
+        {
+          "action": "assertVisible",
+          "text": "收件信息"
+        }
+      ],
+      "remainingGap": "Visible choices are proven; selected applicant name/department correctness requires identity fixture and assertValue for the mapped fields. Screenshot has no identity values in viewport.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-5",
+      "title": "代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径",
+      "classification": "clarification-required",
+      "status": "not_executable_until_requirement_clarified",
+      "steps": [],
+      "reason": "XMind explicitly marks被代申请人字段口径待澄清."
+    },
+    {
+      "id": "xmind-6",
+      "title": "后端备注=「发送样书」+该流程企微审批编号+用户选填备注",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Backend remark composition; requires isolated backend/approval fixture."
+    },
+    {
+      "id": "xmind-7",
+      "title": "推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "WDT/ECT stock-out classification side effect; isolated integration sandbox."
+    },
+    {
+      "id": "xmind-8",
+      "title": "费用划归客户通常为外部客户（合作客户）",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Accounting/customer allocation; backend business rule and safe test record."
+    },
+    {
+      "id": "xmind-9",
+      "title": "审批流=企微架构直属上级单级审批",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "WeCom approval routing; test org/approver fixture and sandbox."
+    },
+    {
+      "id": "xmind-10",
+      "title": "页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertExactVisible",
+          "text": "如有调样、周边产品等样书申请需求，请联系运营OA申请"
+        }
+      ],
+      "evidence": "2026-10-15 historical screenshot shows this orange instruction; exact copy matches source.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them.",
+      "remainingGap": "XMind requires exact copy “如有调样、周边产品等样书申请需求，请OA申请”, while historical screenshot reads “如有调样、周边产品等样书申请需求，请联系运营OA申请”. Assert the requirement wording as a regression reproducer; resolve the acceptance copy before calling it passed.",
+      "evidenceRefs": [
+        "XMind source expected text",
+        "historical screenshot current-page.png"
+      ]
+    },
+    {
+      "id": "xmind-11",
+      "title": "后端备注=「内部样书」+企微审批编号+用户选填备注",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Backend remark composition for internal-book flow."
+    },
+    {
+      "id": "xmind-12",
+      "title": "推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "WDT/ECT outbound classification side effect; isolated integration sandbox."
+    },
+    {
+      "id": "xmind-13",
+      "title": "费用划归客户通常为内部部门（部门费用）",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Accounting/customer allocation; backend business rule."
+    },
+    {
+      "id": "xmind-14",
+      "title": "审批流=直属上级单级审批",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Approval routing requires test org/approver fixture."
+    },
+    {
+      "id": "xmind-15",
+      "title": "产品用书不论本数（3本/5本）均归为赠送出库类型",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Outbound classification and 3-vs-5 quantity business rule require inventory/ERP sandbox."
+    },
+    {
+      "id": "xmind-16",
+      "title": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）",
+      "classification": "na_or_scope_note",
+      "status": "not_a_test_pass",
+      "steps": [],
+      "reason": "Phase exclusion: XMind states publisher-use not in this release (planned phase 2/3). Track as N/A for current release, not passed."
+    },
+    {
+      "id": "xmind-17",
+      "title": "1004.00 外部客户—合作客户：正常展示可选",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Customer code 1004.00/category requires seeded customer API data."
+    },
+    {
+      "id": "xmind-18",
+      "title": "1004.06 内部客户—部门费用：正常展示可选",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Customer code 1004.06/category requires seeded customer API data."
+    },
+    {
+      "id": "xmind-19",
+      "title": "其他分类（信用客户1004.01/呆账客户1004.02/内部结算客户1004.03/内部客户其他1004.04/控价不发货1004.05）：不展示",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Negative filtering across five customer categories requires customer dataset/API contract."
+    },
+    {
+      "id": "xmind-20",
+      "title": "待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
+      "classification": "clarification-required",
+      "status": "not_executable_until_requirement_clarified",
+      "steps": [],
+      "reason": "Customer interface是否返回客户分类字段、降级过滤口径尚待后端确认."
+    },
+    {
+      "id": "xmind-21",
+      "title": "命中关键词：下拉展示匹配客户名称供选择",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "费用划归客户"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "费用划归客户",
+          "value": "不存在的测试客户"
+        },
+        {
+          "action": "assertText",
+          "text": "输入关键词模糊搜索客户"
+        }
+      ],
+      "remainingGap": "The page has a customer search field (screenshot). A match result cannot be asserted without seeded customer data; no-result UX requires the exact current empty-state text and API fixture. Also DSL cannot assert dropdown item count.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-22",
+      "title": "无匹配客户：下拉无结果并提示",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "费用划归客户"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "费用划归客户",
+          "value": "不存在的测试客户"
+        },
+        {
+          "action": "assertText",
+          "text": "输入关键词模糊搜索客户"
+        }
+      ],
+      "remainingGap": "This is only the search prompt, not proof that a no-match state appears. Need deterministic no-match query and known empty-state wording/API fixture; DSL lacks collection-count assertion.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-23",
+      "title": "接口异常：🔄待澄清 客户接口失败时的前端降级提示",
+      "classification": "clarification-required",
+      "status": "not_executable_until_requirement_clarified",
+      "steps": [],
+      "reason": "Customer API error fallback message is explicitly marked待澄清."
+    },
+    {
+      "id": "xmind-24",
+      "title": "客户列表为最新数据（非缓存历史快照）",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Freshness versus cache requires controlled customer data and API/cache telemetry."
+    },
+    {
+      "id": "xmind-25",
+      "title": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "自编码"
+        },
+        {
+          "action": "assertVisible",
+          "text": "图书名称"
+        },
+        {
+          "action": "assertVisible",
+          "text": "出版社"
+        },
+        {
+          "action": "assertVisible",
+          "text": "定价(元)"
+        },
+        {
+          "action": "assertVisible",
+          "text": "小计(元)"
+        }
+      ],
+      "remainingGap": "Screenshot proves table columns, not returned book metadata. Need a known valid book-code fixture and expected title/publisher/price/weight; screenshot shows no weight column in the table.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-26",
+      "title": "编码不存在/输入错误：输入框边框变红，显示「未获取图书信息」",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "自编码",
+          "value": "NOT-A-BOOK-CODE"
+        },
+        {
+          "action": "assertFieldInvalid",
+          "label": "自编码"
+        },
+        {
+          "action": "assertVisible",
+          "text": "未获取图书信息"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "自编码",
+          "value": ""
+        }
+      ],
+      "remainingGap": "The screenshot shows the 自编码 input but not the error state. Need confirmed nonexistent code and fresh observed error text; invalid border may be trigger-dependent. Do not infer the failed lookup from the input alone.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-27",
+      "title": "输入非数字：校验拦截，不调用接口",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "自编码",
+          "value": "ABC"
+        },
+        {
+          "action": "assertFieldInvalid",
+          "label": "自编码"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "自编码",
+          "value": ""
+        }
+      ],
+      "remainingGap": "UI invalid-state can be checked safely, but “does not call API” cannot be proven by BrowserStep DSL; needs request interception/telemetry test or local API mock.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-28",
+      "title": "待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
+      "classification": "clarification-required",
+      "status": "not_executable_until_requirement_clarified",
+      "steps": [],
+      "reason": "Book API weight field existence is explicitly marked待澄清."
+    },
+    {
+      "id": "xmind-29",
+      "title": "正整数（1~9999）：小计=数量×定价，总计=所有图书小计之和，预估总重=∑(数量×单本重量)",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "数量（册）"
+        },
+        {
+          "action": "assertVisible",
+          "text": "图书名称"
+        },
+        {
+          "action": "assertVisible",
+          "text": "定价(元)"
+        },
+        {
+          "action": "assertVisible",
+          "text": "小计(元)"
+        },
+        {
+          "action": "assertText",
+          "text": "总计"
+        },
+        {
+          "action": "assertText",
+          "text": "预估总重"
+        }
+      ],
+      "remainingGap": "These are structure checks only. Arithmetic needs known product price/weight plus quantities and expected totals; live product data is uncontrolled. Screenshot shows table/totals but no populated sample.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-30",
+      "title": "数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "样书明细"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "0"
+        },
+        {
+          "action": "assertRoleDisabled",
+          "role": "button",
+          "name": "提交申请"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "-1"
+        },
+        {
+          "action": "assertRoleDisabled",
+          "role": "button",
+          "name": "提交申请"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "1.5"
+        },
+        {
+          "action": "assertRoleDisabled",
+          "role": "button",
+          "name": "提交申请"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "abc"
+        },
+        {
+          "action": "assertRoleDisabled",
+          "role": "button",
+          "name": "提交申请"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": ""
+        }
+      ],
+      "evidence": "Screenshot shows quantity table header “数量（册）”; historical E2E confirmed disabled submit control exists. No submit action; ephemeral values only.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them.",
+      "remainingGap": "The historical E2E found a .button-disabled control, but did not prove its accessible role/name. This proposed role assertion needs fresh locator confirmation; no submit is clicked. Also verify each invalid value is accepted by the input before interpreting the disabled assertion.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot quantity column",
+        "historical E2E disabled-submit assertion used CSS class"
+      ]
+    },
+    {
+      "id": "xmind-31",
+      "title": "数量>9999：前端拦截提示超出范围",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "数量（册）",
+          "value": "10000"
+        },
+        {
+          "action": "assertText",
+          "text": "超出范围"
+        }
+      ],
+      "evidence": "Screenshot confirms quantity field/header; historical E2E filled 9999 and observed clamp to 999 (known likely product defect). This safe probe should run to record current behavior; do not claim pass from source alone.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-32",
+      "title": "P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertText",
+          "text": "如申请总重量超过19公斤，需物流等发货方式请OA申请"
+        }
+      ],
+      "remainingGap": "The screenshot shows a >19kg advisory, but not the XMind’s >19kg toast and submission-disabled behavior. Need test book with known unit weight, a safe quantity fixture, and current exact toast/disabled expectation; must never submit.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-33",
+      "title": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "clickExactText",
+          "text": "继续添加样书"
+        },
+        {
+          "action": "assertVisible",
+          "text": "自编码"
+        },
+        {
+          "action": "assertVisible",
+          "text": "数量（册）"
+        },
+        {
+          "action": "assertVisible",
+          "text": "出版社"
+        },
+        {
+          "action": "assertVisible",
+          "text": "定价(元)"
+        }
+      ],
+      "remainingGap": "The screenshot grounds the add button and first-row columns. DSL has no row-count assertion, so visible columns can all belong to the original row; add-row success is not yet proved. Need count/row-scoped assertion in DSL.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-34",
+      "title": "新增行编码同样需通过易诚通校验，否则边框变红",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "自编码",
+          "value": "NOT-A-BOOK-CODE"
+        },
+        {
+          "action": "assertFieldInvalid",
+          "label": "自编码"
+        },
+        {
+          "action": "assertVisible",
+          "text": "未获取图书信息"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "自编码",
+          "value": ""
+        }
+      ],
+      "remainingGap": "New row behavior is not row-scoped; requires no-match product fixture and row-scoped field assertion/selection. Current DSL may resolve first matching table column only.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-35",
+      "title": "每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增）",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "clickExactText",
+          "text": "继续添加样书"
+        },
+        {
+          "action": "assertRoleVisible",
+          "role": "button",
+          "name": "删除"
+        }
+      ],
+      "remainingGap": "A delete control is not evidenced in screenshot, and DSL cannot scope it to a newly added row or assert row count/restoration. Historical E2E clicked 删除 on an unsaved row; keep this isolated and verify count via a runner with row-count support.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-36",
+      "title": "待澄清 样书明细可添加的最大行数限制",
+      "classification": "clarification-required",
+      "status": "not_executable_until_requirement_clarified",
+      "steps": [],
+      "reason": "Maximum sample-book line count is unspecified."
+    },
+    {
+      "id": "xmind-37",
+      "title": "发货方式固定为「快递」，无其他可选",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertValue",
+          "label": "发货方式",
+          "value": "仅支持快递"
+        }
+      ],
+      "remainingGap": "Screenshot and historical E2E show “仅支持快递”; XMind expects “快递”. Treat as an acceptance-text mismatch requiring product-owner clarification, even though the visible value itself is safely assertable.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-38",
+      "title": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertValue",
+          "label": "发货方式",
+          "value": "仅支持快递"
+        }
+      ],
+      "remainingGap": "This asserts the H5 field only. Determining the actual courier from a WDT store default is integration behavior and needs WDT sandbox data/contract.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-39",
+      "title": "0<字数≤30：正常提交",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "备注",
+          "value": "仅做页面校验"
+        },
+        {
+          "action": "assertValue",
+          "label": "备注",
+          "value": "仅做页面校验"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "备注",
+          "value": ""
+        }
+      ],
+      "evidence": "Screenshot shows remarks placeholder; historical E2E confirmed editable and cleared field.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-40",
+      "title": ">30字：限制输入或提示超长",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "备注",
+          "value": "1234567890123456789012345678901"
+        },
+        {
+          "action": "assertMaxLengthOrMessage",
+          "label": "备注",
+          "maxLength": 30,
+          "message": "超长"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "备注",
+          "value": ""
+        }
+      ],
+      "evidence": "Historical E2E filled 31 chars and verified value is capped at 30; screenshot identifies remarks input.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-41",
+      "title": "文本≤20字：通过",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "收件人",
+          "value": "测试收件人"
+        },
+        {
+          "action": "assertValue",
+          "label": "收件人",
+          "value": "测试收件人"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "收件人",
+          "value": ""
+        }
+      ],
+      "evidence": "Screenshot shows 收件人 field; historical E2E confirms it accepts up to 20 chars.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-42",
+      "title": "为空：字段标红提示必填",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "收件人",
+          "value": "临时校验"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "收件人",
+          "value": ""
+        },
+        {
+          "action": "assertFieldInvalid",
+          "label": "收件人"
+        },
+        {
+          "action": "assertText",
+          "text": "必填"
+        }
+      ],
+      "remainingGap": "Safe transient input is possible; screenshot only shows empty input, not the error. No blur action exists, so must validate that fill-to-empty triggers the visible required error. If blur is required, add a bounded blur/focus DSL step.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-43",
+      "title": ">20字：限制输入",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "收件人",
+          "value": "ABCDEFGHIJKLMNOPQRSTUVWXY"
+        },
+        {
+          "action": "assertValue",
+          "label": "收件人",
+          "value": "ABCDEFGHIJKLMNOPQRST"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "收件人",
+          "value": ""
+        }
+      ],
+      "evidence": "Historical E2E verified 21 chars are capped at 20; screenshot identifies recipient field.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-44",
+      "title": "11位数字：通过",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "手机号码",
+          "value": "13800138000"
+        },
+        {
+          "action": "assertValue",
+          "label": "手机号码",
+          "value": "13800138000"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "手机号码",
+          "value": ""
+        }
+      ],
+      "evidence": "Screenshot identifies phone input; historical E2E tests the same field with invalid value. This checks only accepted 11-digit input value, not backend identity.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-45",
+      "title": "非11位/含非数字字符：红色提示「手机号格式错误」P1",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "手机号码",
+          "value": "123"
+        },
+        {
+          "action": "assertText",
+          "text": "手机号格式错误"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "手机号码",
+          "value": ""
+        }
+      ],
+      "evidence": "Screenshot identifies phone input; historical E2E already ran invalid phone and FAILED to observe expected prompt. Keep as executable regression reproducer, not as expected pass.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-46",
+      "title": "逐级选择成功回填所在地区",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertText",
+          "text": "所在地区"
+        },
+        {
+          "action": "assertVisible",
+          "text": "请选择省"
+        },
+        {
+          "action": "assertVisible",
+          "text": "请选择市"
+        },
+        {
+          "action": "assertVisible",
+          "text": "请选择区"
+        }
+      ],
+      "remainingGap": "The screenshot grounds three selectors. DSL has no placeholder-targeted click and no cascading option inventory; successful province/city/district selection and selected-value assertion need known region fixture and locator support.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-47",
+      "title": "未选全三级：提交校验标红",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertText",
+          "text": "所在地区"
+        },
+        {
+          "action": "assertRoleDisabled",
+          "role": "button",
+          "name": "提交申请"
+        }
+      ],
+      "remainingGap": "A disabled submit button does not prove that missing province/city/district fields are marked red. resolveDocumentField only locates input/textarea (not the three selects), so the required direct invalid assertion cannot currently address region selectors. Add select-aware field resolution/invalid check or mark the case blocked; never report it passed from disabled-submit alone.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-48",
+      "title": "手动输入≤20字：通过",
+      "classification": "safe-browser-assertable",
+      "status": "scriptable_not_live_verified",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "详细地址",
+          "value": "测试地址一号"
+        },
+        {
+          "action": "assertValue",
+          "label": "详细地址",
+          "value": "测试地址一号"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "详细地址",
+          "value": ""
+        }
+      ],
+      "evidence": "Screenshot shows detailed-address input; historical E2E verified 21 chars cap at 20.",
+      "limitations": "These are proposed safe transient UI checks; this audit did not execute them."
+    },
+    {
+      "id": "xmind-49",
+      "title": "未填写：标红提示必填",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "fillByLabel",
+          "label": "详细地址",
+          "value": "临时校验"
+        },
+        {
+          "action": "fillByLabel",
+          "label": "详细地址",
+          "value": ""
+        },
+        {
+          "action": "assertFieldInvalid",
+          "label": "详细地址"
+        },
+        {
+          "action": "assertText",
+          "text": "必填"
+        }
+      ],
+      "remainingGap": "Safe transient input is possible; screenshot shows field placeholder but not required error. No blur action exists; confirm input-to-empty produces error, otherwise add bounded blur DSL action.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-50",
+      "title": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Creates a pending approval record; never run against production/read-only session."
+    },
+    {
+      "id": "xmind-51",
+      "title": "存在漏填或格式校验失败：对应字段输入框标红，不跳转",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Submit-validation/no-navigation behavior must be tested in isolated environment with submit mutation safely intercepted."
+    },
+    {
+      "id": "xmind-52",
+      "title": "必填未完成时提交按钮置灰不可点击",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertRoleDisabled",
+          "role": "button",
+          "name": "提交申请"
+        }
+      ],
+      "remainingGap": "The historical runner observed a disabled-submit control but selected it by undocumented CSS class, not accessible role/name. Fresh DOM evidence is needed to verify accessible name “提交申请”; this is a safe assertion and must not click.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    },
+    {
+      "id": "xmind-53",
+      "title": "待审核：状态按钮置灰",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Existing approval record/status fixture and verified detail route."
+    },
+    {
+      "id": "xmind-54",
+      "title": "审核通过：状态按钮绿色",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Approved-record fixture; color assertion also requires visual/color-capable DSL."
+    },
+    {
+      "id": "xmind-55",
+      "title": "审核驳回：状态按钮红色，展示驳回原因文案，支持重新申请或联系审批人",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Rejected-record fixture; exact color/reason/content test requires seeded record and color assertion capability."
+    },
+    {
+      "id": "xmind-56",
+      "title": "全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "All eight status records, read-only routes and link expectation fixtures."
+    },
+    {
+      "id": "xmind-57",
+      "title": "仅申请发起人本人可见并可进入「查看明细」入口",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Owner account plus owned application record."
+    },
+    {
+      "id": "xmind-58",
+      "title": "代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Two identities (applicant/delegate) and access-control fixture."
+    },
+    {
+      "id": "xmind-59",
+      "title": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Two identities and another user’s seeded record; authorization integration test."
+    },
+    {
+      "id": "xmind-60",
+      "title": "直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需）",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Approver role/account and route fixture; acceptance says H5 detail not required, clarify whether N/A."
+    },
+    {
+      "id": "xmind-61",
+      "title": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Existing approval detail and its child detail record; navigation state fixture."
+    },
+    {
+      "id": "xmind-62",
+      "title": "长沙快递总仓有货：锁定长沙仓发货",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Warehouse stock fixture and lock operation; isolated inventory sandbox."
+    },
+    {
+      "id": "xmind-63",
+      "title": "长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Chansha empty/Tianjin available stock fixture and lock operation."
+    },
+    {
+      "id": "xmind-64",
+      "title": "两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Both warehouse shortage fixtures; inventory/lock side effect."
+    },
+    {
+      "id": "xmind-65",
+      "title": "开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Controlled open-order API failure injection and UI error contract."
+    },
+    {
+      "id": "xmind-66",
+      "title": "重新按仓库优先级请求库存查询并再次锁单",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Retry/warehouse priority orchestration and inventory sandbox."
+    },
+    {
+      "id": "xmind-67",
+      "title": "重试仍缺货：保持锁单失败状态",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Repeat shortage fixture and persisted lock-failed state."
+    },
+    {
+      "id": "xmind-68",
+      "title": "旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发）",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "WDT→ECT outbound integration; sandbox only."
+    },
+    {
+      "id": "xmind-69",
+      "title": "物流快递单号回传至H5供员工查看物流轨迹",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Courier tracking callback/integration fixture."
+    },
+    {
+      "id": "xmind-70",
+      "title": "其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号）",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Internal virtual order mapping and H5 redaction require backend/WDT fixture."
+    },
+    {
+      "id": "xmind-71",
+      "title": "// 前置：本期均走旺店通快递仓发货",
+      "classification": "na_or_scope_note",
+      "status": "not_a_test_pass",
+      "steps": [],
+      "reason": "Prerequisite/scope note only: current release uses WDT courier warehouse. Not a test case and should not count as pass."
+    },
+    {
+      "id": "xmind-72",
+      "title": "不触发物流仓WMS锁定/推送逻辑",
+      "classification": "na_or_scope_note",
+      "status": "not_a_test_pass",
+      "steps": [],
+      "reason": "Explicitly excluded WMS lock/push logic in current phase. N/A, not passed."
+    },
+    {
+      "id": "xmind-73",
+      "title": "申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Created application record plus DB/API readback; side-effecting setup in sandbox only."
+    },
+    {
+      "id": "xmind-74",
+      "title": "商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Controlled product API current-value fixture/contract."
+    },
+    {
+      "id": "xmind-75",
+      "title": "多行样书明细逐行展示小计，总计=∑小计、预估总重=∑(数量×单本重量)",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Known multi-book prices/weights and persisted application record; arithmetic/data readback."
+    },
+    {
+      "id": "xmind-76",
+      "title": "待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致）",
+      "classification": "clarification-required",
+      "status": "not_executable_until_requirement_clarified",
+      "steps": [],
+      "reason": "Stored-value versus real-time recomputation after product price/weight changes is explicitly unresolved."
+    },
+    {
+      "id": "xmind-77",
+      "title": "商品接口查询失败：对应字段降级提示，不阻塞整页加载",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Injected product API failure and agreed graceful-degradation message."
+    },
+    {
+      "id": "xmind-78",
+      "title": "收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显",
+      "classification": "api_data_or_business_fixture_prerequisite",
+      "status": "not_safe_on_current_production_browser",
+      "steps": [],
+      "reason": "Created application record and DB/API readback for exact persisted values."
+    },
+    {
+      "id": "xmind-79",
+      "title": "页面纯只读，无编辑/提交/删除入口",
+      "classification": "partial-ui-plus-named-gap",
+      "status": "partial",
+      "steps": [
+        {
+          "action": "assertVisible",
+          "text": "申请编号"
+        }
+      ],
+      "remainingGap": "The screenshot is the editable home form, not a read-only detail page. Need a stable read-only detail URL/test record fixture and explicit forbidden control names; current page alone cannot prove no edit/submit/delete entry.",
+      "evidenceRefs": [
+        "XMind source case",
+        "historical screenshot / independent runner where named in the gap"
+      ]
+    }
+  ]
+}

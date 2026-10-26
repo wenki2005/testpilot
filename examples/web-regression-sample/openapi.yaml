@@ -1,0 +1,152 @@
+openapi: 3.1.0
+info:
+  title: Northstar Local Regression Sample API
+  version: 1.0.0
+  description: Synthetic loopback-only API used by the TestPilot regression sample.
+servers:
+  - url: http://127.0.0.1:4328
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Read local sample health
+      responses:
+        '200':
+          description: The sample server is ready.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status:
+                    type: string
+                    const: ok
+  /api/records:
+    get:
+      operationId: listRecords
+      summary: List synthetic records
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Maximum number of returned records.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 25
+      responses:
+        '200':
+          description: The matching synthetic records.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Record'
+        '400':
+          description: The limit query parameter is outside the supported range.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createRecord
+      summary: Create a run-scoped synthetic record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRecord'
+      responses:
+        '201':
+          description: The synthetic record was created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+        '400':
+          description: The body does not satisfy the record contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: The record ID already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/records/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: The synthetic record identifier.
+        schema:
+          type: string
+    get:
+      operationId: getRecord
+      summary: Read a synthetic record by identifier
+      responses:
+        '200':
+          description: The requested synthetic record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Record'
+        '404':
+          description: No record exists for the requested identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteRecord
+      summary: Delete a synthetic record by identifier
+      responses:
+        '204':
+          description: The record was removed.
+        '404':
+          description: No record exists for the requested identifier.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    NewRecord:
+      type: object
+      additionalProperties: false
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+    Record:
+      type: object
+      required: [id, name, state]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        state:
+          type: string
+          enum: [active]
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string

@@ -1,0 +1,66 @@
+{
+  "name": "testpilot-mvp",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "TestPilot local demo: deterministic tests and bounded Pi agents with evidence and regression reports.",
+  "engines": {
+    "node": ">=22.19"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "node scripts/clean.mjs && tsc -p tsconfig.json && vite build web",
+    "build:server": "tsc -p tsconfig.json",
+    "build:web": "vite build web",
+    "demo": "node --env-file-if-exists=.env --import tsx src/demo/server.ts",
+    "package:demo": "node scripts/package-demo.mjs",
+    "demo:start": "node dist/demo/server.js",
+    "mcp": "node --import tsx src/mcp/server.ts",
+    "mcp:start": "node dist/mcp/server.js",
+    "dev:web": "vite web --host 127.0.0.1",
+    "sample:regression": "node examples/web-regression-sample/server.mjs",
+    "sample:regression:seed": "node --import tsx examples/web-regression-sample/seed-project.mjs",
+    "sample:regression:verify": "node --import tsx examples/web-regression-sample/verify-regression.mjs",
+    "test:demo": "npm run test:all",
+    "start": "node dist/cli.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck:web": "tsc --noEmit -p web/tsconfig.json",
+    "test:all": "node scripts/run-tests.mjs",
+    "test:clean": "node scripts/clean-test-artifacts.mjs"
+  },
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.6",
+    "@types/node": "^22.19.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.4"
+  },
+  "dependencies": {
+    "@earendil-works/pi-agent-core": "^1.2.0",
+    "@earendil-works/pi-ai": "^1.2.0",
+    "@modelcontextprotocol/server": "^2.3.1",
+    "@platformatic/openapi-schema-validator": "^3.0.0",
+    "cross-spawn": "^7.0.6",
+    "fflate": "^0.8.3",
+    "https-proxy-agent": "^9.1.0",
+    "mysql2": "^3.24.6",
+    "pdfjs-dist": "^6.4.299",
+    "playwright": "^1.64.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typebox": "^1.3.27",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "peerDependencies": {
+    "@midscene/web": "^1.16.0"
+  },
+  "peerDependenciesMeta": {
+    "@midscene/web": {
+      "optional": true
+    }
+  }
+}
