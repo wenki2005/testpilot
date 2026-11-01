@@ -20,6 +20,7 @@ function run({
     caseScopeKnown: true,
     caseScope: { selectedCaseIds: selected, excludedCaseIds: [], totalCases: Object.keys(versions).length },
     caseVersions: versions,
+    caseInventory: Object.fromEntries(Object.keys(versions).map(caseId => [caseId, `Title ${caseId}`])),
     caseTitles: Object.fromEntries(Object.keys(versions).map(caseId => [caseId, `Title ${caseId}`])),
     caseVersion: 'project-revision',
     finalReady,

@@ -67,7 +67,7 @@ test('document project UI links only an approved API suite and saves explicit ma
   browser = await chromium.launch({ channel: 'msedge', headless: true });
   const page = await browser.newPage();
   await page.goto(`${baseUrl}/?documentProject=${projectId}`, { waitUntil: 'networkidle' });
-  const modulePicker = page.locator('.doc-module-picker');
+  const modulePicker = page.locator('.doc-module-picker').filter({ has: page.getByText('按模块选择', { exact: true }) });
   await modulePicker.locator('summary').click();
   const moduleOptions = modulePicker.locator('.doc-module-picker-list label');
   let permissionModule;
@@ -92,7 +92,7 @@ test('document project UI links only an approved API suite and saves explicit ma
   ], 'editable module paths should survive project persistence');
   const apiPanel = page.locator('.doc-api-contract');
   await apiPanel.waitFor();
-  assert.match(await apiPanel.textContent(), /映射候选.*不会自动勾选|不会自动勾选.*映射候选/);
+  assert.match(await apiPanel.textContent(), /只映射已审核的 API 套件；候选项需人工确认/);
   await apiPanel.locator('summary').click();
   const suitePicker = apiPanel.getByLabel('已审核 API suite');
   await suitePicker.selectOption(candidate.id);
