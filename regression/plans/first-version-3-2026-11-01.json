@@ -1,0 +1,118 @@
+{
+    "systemId":  "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "runs":  [
+                 {
+                     "batchId":  "81c714a3-028b-4ca8-9f55-97534bcf9a1f",
+                     "date":  "2026-11-01",
+                     "counts":  {
+                                    "passed":  15,
+                                    "failed":  0,
+                                    "blocked":  2,
+                                    "error":  0,
+                                    "not_executed":  0
+                                },
+                     "note":  "35 通过（scoped deleteSampleRow）；92 缺手机号/头像；38 原预期含旺店通默认快递，执行路径 api-contract，需契约/业务确认"
+                 },
+                 {
+                     "batchId":  "cf499d8e-e367-4c47-8036-c4fd246f425e",
+                     "date":  "2026-11-01",
+                     "counts":  {
+                                    "passed":  15,
+                                    "failed":  0,
+                                    "blocked":  2,
+                                    "error":  0,
+                                    "not_executed":  0
+                                },
+                     "note":  "runner 已支持 deleteSampleRow；全部模块 job completed；35 通过；92/38 阻塞"
+                 }
+             ],
+    "systemName":  "部门申样系统",
+    "modules":  [
+                    {
+                        "moduleName":  "登录入口与公共基础",
+                        "moduleId":  "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+                        "versionId":  "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+                        "caseIds":  [
+                                        "xmind-92"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "申样申请与经销商数据",
+                        "moduleId":  "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+                        "versionId":  "b2b96a53-8f7e-4c66-9a7f-564474c38a2f",
+                        "caseIds":  [
+                                        "xmind-17",
+                                        "xmind-18",
+                                        "xmind-21",
+                                        "xmind-22",
+                                        "xmind-25",
+                                        "xmind-33",
+                                        "xmind-37",
+                                        "xmind-40",
+                                        "xmind-43",
+                                        "xmind-46",
+                                        "xmind-35",
+                                        "xmind-38"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "申请记录与审批详情",
+                        "moduleId":  "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+                        "versionId":  "f0a757e4-52cf-4955-b810-91429ab5e710",
+                        "caseIds":  [
+                                        "xmind-91"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "订单与物流",
+                        "moduleId":  "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+                        "versionId":  "0cc0b28a-54e1-47d4-9f46-def2b5df829a",
+                        "caseIds":  [
+                                        "xmind-81",
+                                        "xmind-83"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "PC/H5 横向适配",
+                        "moduleId":  "a1288838-bcb7-43a2-b79c-179e54132ebb",
+                        "versionId":  "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+                        "caseIds":  [
+                                        "xmind-94"
+                                    ]
+                    }
+                ],
+    "schema":  1,
+    "knownIssues":  [
+                        {
+                            "caseId":  "xmind-92",
+                            "status":  "blocked",
+                            "reason":  "getInfo 未返回手机号/认证头像"
+                        },
+                        {
+                            "caseId":  "xmind-35",
+                            "status":  "resolved",
+                            "reason":  "scoped deleteSampleRow 已实现；v3 全量通过"
+                        },
+                        {
+                            "caseId":  "xmind-38",
+                            "status":  "blocked",
+                            "reason":  "原预期含旺店通默认快递（服务端/接口证据），执行路径判 api-contract；需 OpenAPI/契约或业务确认 UI 口径"
+                        }
+                    ],
+    "name":  "第一版扩充（申样v3 12条）-2026-11-01",
+    "kind":  "testpilot-regression-plan",
+    "scope":  "custom",
+    "excluded":  [
+                     {
+                         "caseId":  "xmind-29",
+                         "reason":  "BUG-003：数量上限 9999 被前端 max:999 截断，保留失败"
+                     },
+                     {
+                         "caseId":  "xmind-52",
+                         "reason":  "逆向/必填校验，后续再加"
+                     }
+                 ],
+    "createdAt":  "2026-11-01",
+    "note":  "申样 v3：35 已通过；38 需旺店通契约/业务确认，暂不计通过。原 76/131 保留在 v1。",
+    "runMode":  "fixed"
+}

@@ -20,6 +20,7 @@ export function departmentReadOnlyKind(check:Pick<BrowserCheck,'expected'|'sourc
  if(e==='为空：字段标红提示必填'&&s.includes('填写收件人'))return 'recipient-required';
  if(e==='未填写：标红提示必填'&&s.includes('填写详细地址'))return 'address-required';
  if(e==='发货方式固定为「快递」，无其他可选'&&s.includes('发货方式'))return 'courier-fixed';
+ if(/快递公司由旺店通店铺默认快递决定/u.test(e)&&s.includes('发货方式'))return 'courier-fixed';
  if(e==='1004.00 外部客户—合作客户：正常展示可选'&&s.includes('客户列表数据范围'))return 'customer-external';
  if(e==='1004.06 内部客户—部门费用：正常展示可选'&&s.includes('客户列表数据范围'))return 'customer-internal';
  if(e==='命中关键词：下拉展示匹配客户名称供选择'&&s.includes('费用划归客户'))return 'customer-match';

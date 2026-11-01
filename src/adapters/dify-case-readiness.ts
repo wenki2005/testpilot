@@ -19,7 +19,8 @@ export function difyBlocker(check:BrowserCheck,reason:string):{blockerCode:DifyB
   if(/员工端-(?:用书审批详情页|申请表单明细展示页|历史申请记录页|订单列表页|订单详情页)/u.test(source))return {blockerCode:'fixture-required',detail:'此条需要本人可见且状态明确的申请/订单记录；当前空态或成功连接数据库不能证明详情、审批、筛选及分页正确。',nextAction:'按原预期准备本人可见的已有记录和对应状态；仍从同轮网页、接口、数据库对照，不借用他人的申请、不自动造单。'};
   if(source.includes('提交时实时调接口'))return {blockerCode:'write-required',detail:'来源要求在提交时核对最新客户数据；只读搜索成功不能代替提交阶段的实时查询。',nextAction:'在明确授权的可写测试沙箱核对提交事件与最新数据，保留当前只读范围。'};
   if(source.includes('费用划归客户')&&e.startsWith('其他分类'))return {blockerCode:'fixture-required',detail:'需要五种排除分类的明确客户基线与查询证据；仅两个允许分类的可选结果或无匹配空态，不能证明全部排除规则。',nextAction:'补信用、呆账、内部结算、内部其他、控价不发货的分类基线，区分分类排除与无效数据过滤，再逐一核对。'};
-  if(source.includes('样书明细区')&&!/原始用例的业务预期/.test(reason))return {blockerCode:'fixture-required',detail:'图书查询/计算仍缺满足原预期的完整本轮证据；候选编码、定价和重量已找到，不再归因于数据库未连接。',nextAction:'完成确切 bookCheck 只读策略确认、固定图书数据与重量单位核对，再补名称、出版社、价格、数量和重量的完整断言；其他必填为空导致按钮禁用不能代替数量校验。'};
+  const sampleRowDelete=/每行提供删除按钮|可删除误加的样书行/u.test(e)||(check.steps??[]).some(step=>step.action==='deleteSampleRow');
+  if(source.includes('样书明细区')&&!sampleRowDelete&&!/原始用例的业务预期/.test(reason))return {blockerCode:'fixture-required',detail:'图书查询/计算仍缺满足原预期的完整本轮证据；候选编码、定价和重量已找到，不再归因于数据库未连接。',nextAction:'完成确切 bookCheck 只读策略确认、固定图书数据与重量单位核对，再补名称、出版社、价格、数量和重量的完整断言；其他必填为空导致按钮禁用不能代替数量校验。'};
   if(/编码存在|命中关键词|小计.*[=＝]|总计.*[=＝]|∑/u.test(e))return {blockerCode:'fixture-required',detail:'缺少固定图书/客户输入及对应预期数据，或尚无完整数据断言。',nextAction:'准备稳定编码、关键词与预期结果；金额/重量须逐项核算，不能只检查标题可见。'};
   if(/历史记录|申请详情|审批详情|物流轨迹/u.test(e))return {blockerCode:'fixture-required',detail:'需要当前账号可见且状态明确的业务记录。',nextAction:'准备本人可见的已有记录；不借用他人申请，不自动创建申请。'};
   if(/逐级选择|回填|无其他可选|无其他选项|可选择|展示可选/u.test(e)||/断言|不能证明|覆盖/u.test(reason))return {blockerCode:'assertion-incomplete',detail:reason.startsWith('原包状态')||/尚无固定步骤/.test(reason)?'缺少能完整验证选择、回填或选项范围的固定步骤和断言。':reason,nextAction:'补实际操作及对应值/选项全集断言；只看到文字或控件不能算通过。'};

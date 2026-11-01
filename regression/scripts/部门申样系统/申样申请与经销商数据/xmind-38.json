@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
-    "version": 1,
-    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+    "id": "b2b96a53-8f7e-4c66-9a7f-564474c38a2f",
+    "version": 3,
+    "digest": "97bff41881379e10d8d0b2313a565352023aa0cde7191f867755b38ee0e896ef"
   },
   "case": {
     "id": "xmind-38",
@@ -32,19 +32,24 @@
   },
   "script": {
     "format": "BrowserStep[]",
-    "status": "no-steps",
-    "source": "none",
-    "storedStepCount": 0,
-    "cachedStepCount": 0,
-    "cacheFresh": false,
-    "stepCount": 0,
-    "steps": []
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 3,
+    "cachedStepCount": 1,
+    "cacheFresh": true,
+    "stepCount": 1,
+    "steps": [
+      {
+        "action": "assertExactVisible",
+        "text": "仅支持快递"
+      }
+    ]
   },
   "readiness": {
-    "hasFixedSteps": false,
-    "coverageGap": "原始预期要求固定选项或不存在其他选择，当前步骤没有完整的选项集合断言；仅看到目标文本不能证明没有其他选项。",
-    "detail": "原始预期要求固定选项或不存在其他选择，当前步骤没有完整的选项集合断言；仅看到目标文本不能证明没有其他选项。",
-    "nextAction": "补实际操作及对应值/选项全集断言；只看到文字或控件不能算通过。"
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
   },
-  "caseDigest": "62c0c917a918ec4543e3a9689184535e9e1d53b657cbc1c1174d4ed8535a3cdd"
+  "caseDigest": "f5c1ec6669e54fa364037cc8bbb2595f555948f42cddfde55ea6972cbd90e770"
 }
