@@ -47,6 +47,7 @@ export async function captureDifyBlockedEvidence(dataRoot:string,project:import(
   await page.route('**/*',policy);
   const department=target.origin==='https://cdn.yibentushu.com'&&target.pathname.startsWith('/test-sample-apply/');
   const backend=/本期PC后台/.test(item.expected)||item.source.includes('管理端后台');
+  const courierRule=/快递公司由旺店通店铺默认快递决定/u.test(item.expected);
   const route=!backend&&/员工端-(?:历史申请记录|用书审批详情|申请表单明细)/.test(item.source)?'/apply':!backend&&/员工端-订单/.test(item.source)?'/logistics':'/home';
   if(department){const url=new URL(project.targetUrl);url.hash=route;await page.goto('about:blank');await page.goto(url.href,{waitUntil:'domcontentloaded',timeout:15000});await page.locator(route==='/apply'?'.pc-page-apply':route==='/logistics'?'.pc-page-logistics':'.pc-page-home').waitFor({state:'visible',timeout:10000});}
   if(await isLoginPage(page))return;signal.throwIfAborted();await page.bringToFront();
@@ -54,7 +55,7 @@ export async function captureDifyBlockedEvidence(dataRoot:string,project:import(
   const shot=await captureDifyPng(page,client);
   const evidence=createHash('sha256').update(item.id).digest('hex')+'.png',directory=path.join(dataRoot,'dify-web-modules','evidence',jobId);
   await mkdir(directory,{recursive:true});await writeFile(path.join(directory,evidence),shot);
-  return {evidence,evidenceNote:backend?'本轮前置阻塞现场：当前连接员工申样页面，没有管理后台入口和角色；未执行后台业务断言。':'本轮前置阻塞现场：展示同账号对应入口/列表的实际状态；业务断言尚未执行，不将截图视为用例通过。'};
+  return {evidence,evidenceNote:courierRule?'本轮前置阻塞现场：H5 只显示“仅支持快递”，没有旺店通默认快递的接口/配置读回；未执行该业务断言，不将截图视为通过。':backend?'本轮前置阻塞现场：当前连接员工申样页面，没有管理后台入口和角色；未执行后台业务断言。':'本轮前置阻塞现场：展示同账号对应入口/列表的实际状态；业务断言尚未执行，不将截图视为用例通过。'};
  }finally{
   if(timer)clearTimeout(timer);await style?.evaluate(el=>el.parentNode?.removeChild(el)).catch(()=>{});await client?.detach().catch(()=>{});
   if(page.url()!==original){await page.goto('about:blank').catch(()=>{});await page.goto(original,{waitUntil:'domcontentloaded',timeout:15000}).catch(()=>{});}

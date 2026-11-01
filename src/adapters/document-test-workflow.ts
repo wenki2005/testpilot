@@ -1302,6 +1302,7 @@ export function browserStepDraftBlockReason(item: BrowserCheck): string | undefi
   if (!networkNoCall && /依赖\/范围：(?:api_data_or_business_fixture_prerequisite|clarification-required)/u.test(item.coverageGap ?? "")) return `项目已标记此项依赖外部夹具或范围澄清：${item.coverageGap}`;
   if (!networkNoCall && /(?:需要|需).{0,32}(?:fixture|测试夹具|测试账号|历史记录|隔离环境|接口契约|预期数据|角色账号)/iu.test(item.coverageGap ?? "")) return `缺少可重复的测试数据或环境：${item.coverageGap}`;
   if (!networkNoCall && /(?:后端|服务端|数据库|事务|回调|并发|白盒|localStorage|OAuth|token|接口字段|接口返回|接口异常|调用接口|创建审批单|锁仓|其他出库单|落库|库存扣减|迁移回滚|幂等|接口调用次数|请求次数|字段落库|数据库字段)/iu.test(text)) return "验收点依赖 API/服务端/数据库证据；需要真实接口契约、隔离测试环境及对应日志或数据读回。";
+  if (/快递公司由旺店通店铺默认快递决定/u.test(text)) return "验收点依赖旺店通店铺默认快递的配置/接口读回；H5 只显示“仅支持快递”，不能证明快递公司由旺店通决定。需要 OpenAPI/契约或测试环境读回；若读回与预期不符，再记为被测系统缺陷。";
   if (/(?:账号切换|越权|串号|管理员|其他角色|无权限|非本公司员工|在职员工|企微架构|角色=|角色为|发起人本人|非发起人|被代申请人|直属上级|申请人本人)/iu.test(text)) return "验收点依赖指定身份/角色；需要可复用的测试账号或认证态切换能力。";
   // Source breadcrumbs often mention an API or a business object even when the
   // expected result is a safe visible field/message assertion. Do not let that
