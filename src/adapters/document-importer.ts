@@ -7,7 +7,7 @@ export interface ImportedDocument {
   format: "xmind" | "pdf" | "markdown" | "text";
   text: string;
   nodeCount?: number;
-  testCases?: Array<{ title: string; source: string; modulePath?: string[]; expected: string; priority?: "P0" | "P1" | "P2" | "P3"; requirementRefs?: string[]; category?: CaseCategory; confidence?: CaseConfidence; coverageAreas?: CaseCategory[] }>;
+  testCases?: Array<{ id?: string; title: string; source: string; modulePath?: string[]; expected: string; steps?: unknown[]; preconditions?: string[]; testData?: string[]; status?: string; priority?: "P0" | "P1" | "P2" | "P3"; requirementRefs?: string[]; category?: CaseCategory; confidence?: CaseConfidence; coverageAreas?: CaseCategory[] }>;
 }
 
 const MAX_ARCHIVE_ENTRIES = 2_000;
@@ -18,13 +18,64 @@ export async function extractDocument(fileName: string, bytes: Uint8Array): Prom
   let result: ImportedDocument;
   if (ext === ".xmind") result = extractXmind(bytes);
   else if (ext === ".pdf") result = await extractPdf(bytes);
+  else if (ext === ".csv") result = extractCaseCsv(bytes);
   else if (ext === ".md" || ext === ".markdown") result = { format: "markdown", text: stripMarkdownFrontMatter(decodeText(bytes)) };
   else if (ext === ".txt") result = { format: "text", text: decodeText(bytes) };
-  else throw new Error("支持的文档格式为 PDF、XMind、Markdown 和 TXT。");
+  else throw new Error("支持的格式为测试用例 CSV 包、PDF、XMind、Markdown 和 TXT。");
   const text = result.text.replace(/\u0000/g, "").trim();
   if (!text) throw new Error("没有从文档中提取到可读文字。");
   if (text.length > MAX_SOURCE_TEXT) throw new Error(`提取文本超过 ${MAX_SOURCE_TEXT} 字符上限，请拆分文档后重试。`);
   return { ...result, text };
+}
+
+function extractCaseCsv(bytes: Uint8Array): ImportedDocument {
+  const text = decodeText(bytes).replace(/^\uFEFF/, "");
+  const rows: string[][] = [];
+  let row: string[] = [], field = "", quoted = false;
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i]!;
+    if (quoted) {
+      if (char === '"' && text[i + 1] === '"') { field += '"'; i += 1; }
+      else if (char === '"') quoted = false;
+      else field += char;
+    } else if (char === '"' && field.length === 0) quoted = true;
+    else if (char === ",") { row.push(field); field = ""; }
+    else if (char === "\n") { row.push(field.replace(/\r$/, "")); rows.push(row); row = []; field = ""; }
+    else field += char;
+  }
+  if (quoted) throw new Error("CSV 文件包含未闭合的引号。");
+  if (field.length || row.length) { row.push(field.replace(/\r$/, "")); rows.push(row); }
+  const headers = (rows.shift() ?? []).map(value => value.trim());
+  const index = (name: string) => headers.indexOf(name);
+  for (const name of ["case_id", "title", "steps", "expected_result"]) if (index(name) < 0) throw new Error(`测试用例 CSV 缺少必需列：${name}。`);
+  const cases = rows.filter(cells => cells.some(cell => cell.trim())).map((cells, rowIndex) => {
+    const cell = (name: string) => { const at = index(name); return at < 0 ? "" : (cells[at] ?? "").trim(); };
+    let steps: unknown[] = [];
+    if (cell("steps")) {
+      try { const parsed: unknown = JSON.parse(cell("steps")); if (!Array.isArray(parsed)) throw new Error(); steps = parsed; }
+      catch { throw new Error(`CSV 第 ${rowIndex + 2} 行 steps 不是有效的 JSON 数组。`); }
+    }
+    const title = cell("title");
+    const source = cell("xmind_path") || cell("case_id") || title;
+    const priorityMatch = source.match(/\bP([0-3])\b/i);
+    const expected = cell("expected_result");
+    if (title.length > 500 || expected.length > 12000 || source.length > 12000) throw new Error('CSV 标题、预期或来源超出支持长度，请拆分过长的单条用例；不会截断内容。');
+    const preconditions = cell("preconditions").split(/\r?\n|；|;/).map(value => value.trim()).filter(Boolean);
+    return {
+      id: cell("case_id") || `csv-${rowIndex + 1}`,
+      title: title.replace(/\s+P[0-3]\s*$/i, ""), source,
+      modulePath: source.split(/\s*[›>]\s*/).slice(0, -1).filter(Boolean).slice(0, 8),
+      expected, steps, preconditions,
+      testData: [cell("client")].filter(Boolean), status: cell("status"),
+      priority: (priorityMatch ? `P${priorityMatch[1]}` : "P2") as "P0" | "P1" | "P2" | "P3",
+      requirementRefs: [source], category: inferCaseCategory(`${title} ${source}`),
+      confidence: /待澄清|待确认|需补充/.test(title) ? "low" as const : confidenceFromExpectation(expected),
+      coverageAreas: [inferCaseCategory(`${title} ${source}`)],
+    };
+  });
+  if (!cases.length) throw new Error("CSV 中没有可导入的测试用例。");
+  if (cases.length > 200) throw new Error(`CSV 包含 ${cases.length} 条用例，单项目最多 200 条；请按模块拆分上传。`);
+  return { format: "markdown", text: cases.map(item => `- ${item.title}\n  预期：${item.expected}`).join("\n"), testCases: cases };
 }
 
 function decodeText(bytes: Uint8Array): string {

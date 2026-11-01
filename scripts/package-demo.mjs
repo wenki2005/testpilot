@@ -22,8 +22,9 @@
  */
 
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync, cpSync, mkdirSync, mkdtempSync, renameSync, lstatSync } from "node:fs";
 import path from "node:path";
+import {execFileSync} from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { zipSync } from "fflate";
 
@@ -39,7 +40,7 @@ function parseArgs(argv) {
       process.exit(0);
     } else throw new Error(`Unknown argument: ${argv[i]}`);
   }
-  const defaultDir = path.resolve(repoRoot, "..", "dist-packages", "TestPilot-Demo-0.2.0-Windows");
+  const defaultDir = path.resolve(repoRoot, "..", "dist-packages", `TestPilot-Demo-${JSON.parse(readFileSync(path.join(repoRoot,"package.json"),"utf8")).version}-Windows`);
   const dir = path.resolve(args.dir ?? defaultDir);
   const zip = path.resolve(args.zip ?? `${dir}.zip`);
   return { dir, zip };
@@ -122,21 +123,54 @@ function totalSize(dir, files) {
   return files.reduce((sum, f) => sum + statSync(path.join(dir, f)).size, 0);
 }
 
-function main() {
-  const { dir, zip } = parseArgs(process.argv.slice(2));
-  if (!existsSync(dir)) throw new Error(`Package directory not found: ${dir}`);
-
-  assertLauncherEncoding(dir);
-  console.log("launcher encoding: OK");
-
-  const files = listFiles(dir);
-  const manifestCount = writeManifest(dir, files);
-  console.log(`manifest: ${manifestCount} entries regenerated`);
-
-  const zipEntries = buildZip(dir, zip, listFiles(dir));
-  const sizeMb = (statSync(zip).size / (1024 * 1024)).toFixed(2);
-  console.log(`zip: ${zip} (${zipEntries} entries, ${sizeMb} MB)`);
-  console.log(`package: ${dir} (${totalSize(dir, listFiles(dir)) / (1024 * 1024) | 0} MB)`);
+function assemblePackage(dir) {
+  const copy = (rel) => {
+    const target=path.join(dir,rel);mkdirSync(path.dirname(target),{recursive:true});
+    cpSync(path.join(repoRoot,rel),target,{recursive:true,filter:file=>!lstatSync(file).isSymbolicLink()});
+  };
+  for(const file of ['package.json','package-lock.json','tsconfig.json','README.md','PRODUCT.md','src','web/src','web/index.html','web/tsconfig.json','web/vite.config.ts','packaging/windows'])copy(file);
+  for(const file of ['clean.mjs','clean-test-artifacts.mjs','package-demo.mjs','run-tests.mjs','test-browser-processes.mjs'])copy('scripts/'+file);
+  for(const rel of ['examples/api-suite.sample.json','examples/sample-suite.json','examples/migrations','examples/source-test-fixture','examples/profiles/quantity-sample.json','examples/web-regression-sample'])copy(rel);
+  for(const name of ['source-test-agent.test.mjs','source-agent-evidence.test.mjs','source-agent-model-protocol.test.mjs','command-process-tree.test.mjs','playwright-test-adapter.test.mjs','test-runner-ownership.test.mjs'])copy('tests/'+name);
+  copy('tests/browser/text-evidence.spec.ts');copy('playwright.config.ts');
+  for(const file of ['启动演示.cmd','start-demo.ps1'])cpSync(path.join(repoRoot,'packaging/windows',file),path.join(dir,file));
+  for(const file of ['快速开始-中文.md','版本更新-0.3.0.md'])cpSync(path.join(repoRoot,'packaging/windows',file),path.join(dir,file));
+  console.log('stage: public README');
+  writeFileSync(path.join(dir,'README.md'),readFileSync(path.join(repoRoot,'packaging/windows/快速开始-中文.md')));
+  console.log('stage: public config');
+  writeFileSync(path.join(dir,'.env.example'),'# Optional model configuration. Settings can also be entered in the app.\r\nTESTPILOT_API_KEY=\r\nTESTPILOT_BASE_URL=https://api.openai.com/v1\r\nTESTPILOT_MODEL=gpt-4.1-mini\r\n');
+  execFileSync(process.execPath,[path.join(repoRoot,'node_modules/typescript/bin/tsc'),'-p',path.join(repoRoot,'tsconfig.json'),'--outDir',path.join(dir,'dist')],{cwd:repoRoot,stdio:'inherit',windowsHide:true});
+  execFileSync(process.execPath,[path.join(repoRoot,'node_modules/vite/bin/vite.js'),'build','web','--outDir',path.join(dir,'web/dist'),'--emptyOutDir'],{cwd:repoRoot,stdio:'inherit',windowsHide:true});
+  const version=JSON.parse(readFileSync(path.join(repoRoot,'package.json'),'utf8')).version;
+  writeFileSync(path.join(dir,'RELEASE.json'),JSON.stringify({name:'TestPilot',version,builtAt:new Date().toISOString(),platform:'Windows',node:process.version,source:'Fresh TypeScript and Vite builds',codexRequired:false,firstRunRequiresNetwork:true},null,2));
 }
 
+function assertCleanContents(dir) {
+  const forbidden=listFiles(dir).filter(f=>/(^|\/)(?:node_modules|runtime-data|artifacts|output|test-artifacts|\.git|browser-profiles)(\/|$)/i.test(f)||/(^|\/)\.env(?:\..*)?$/.test(f)&&f!=='.env.example'||/model-settings\.json$/i.test(f));
+  if(forbidden.length)throw Error('Private or generated files in distribution: '+forbidden.join(', '));
+  const settings=path.join(repoRoot,'artifacts/demo/model-settings.json');
+  const secrets=[];
+  if(existsSync(settings)){const v=JSON.parse(readFileSync(settings,'utf8'));if(typeof v.apiKey==='string'&&v.apiKey.length>=8)secrets.push(v.apiKey);}
+  const privateEnv=path.join(repoRoot,'.env');
+  if(existsSync(privateEnv))for(const line of readFileSync(privateEnv,'utf8').split(/\r?\n/)){const match=/^(?:export\s+)?[A-Z_]*(?:KEY|TOKEN|PASSWORD|SECRET)[A-Z_]*\s*=\s*(.+)$/.exec(line);if(match){const value=match[1].trim().replace(/^['"]|['"]$/g,'');if(value.length>=8)secrets.push(value);}}
+  for(const file of listFiles(dir)){
+    const bytes=readFileSync(path.join(dir,file));
+    if(secrets.some(secret=>bytes.includes(Buffer.from(secret))))throw Error('A local credential was found in '+file);
+  }
+}
+
+function main() {
+  const { dir, zip } = parseArgs(process.argv.slice(2));
+  if(existsSync(dir)||existsSync(zip))throw Error('Refusing to overwrite an existing release; use a new --dir and --zip.');
+  mkdirSync(path.dirname(dir),{recursive:true});mkdirSync(path.dirname(zip),{recursive:true});
+  const stage=mkdtempSync(path.join(path.dirname(dir),'.testpilot-package-'));
+  try {
+    assemblePackage(stage);assertLauncherEncoding(stage);assertCleanContents(stage);
+    writeManifest(stage,listFiles(stage));
+    renameSync(stage,dir);
+    const entries=buildZip(dir,zip,listFiles(dir));
+    writeFileSync(zip+'.sha256',sha256(readFileSync(zip))+'  '+path.basename(zip)+'\r\n');
+    console.log(JSON.stringify({dir,zip,entries,zipBytes:statSync(zip).size,sha256:sha256(readFileSync(zip)),launcherEncoding:'verified',privateFiles:'excluded'}));
+  } catch(error) { console.error('Build artifacts retained for inspection: '+stage);throw error; }
+}
 main();

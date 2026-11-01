@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
+import { inspectTextRenderSupport } from "./browser-text-evidence.js";
 import type { GeneratedTestCase } from "./case-generation-agent.js";
 import { validateCaseGenerationTrace } from "./case-generation-handoff.js";
 import { mkdir, readFile, readdir, rename, unlink, writeFile } from "node:fs/promises";
@@ -15,7 +16,7 @@ import { completeChat } from "./compatible-chat.js";
 import { executeApprovedApiSuite, getApiSuiteCandidate } from "./api-suite-workflow.js";
 import { executeDocumentApiLane, type DocumentApiLane, type DocumentApiMapping } from "./api-document-lane.js";
 import type { DocumentImpactSuggestion } from "./document-impact-analysis.js";
-import { allowBrowserRequest, browserRequestPolicySource, clearLoginHandoff, getLoginHandoff, isLoginPage, waitForUserLogin } from "./login-handoff.js";
+import { allowBrowserRequest, browserRequestPolicySource, clearLoginHandoff, getLoginHandoff, isAuthenticationRoute, isLoginPage, waitForUserLogin } from "./login-handoff.js";
 import { caseCategories, caseCategoryLabels, confidenceFromExpectation, inferCaseCategory, type CaseCategory, type CaseConfidence } from "./document-test-types.js";
 import { getDocumentWorkflow } from "./document-workflow-record.js";
 import { containsCredentialLikeValue, redactSensitiveExportData } from "./document-sensitive-data.js";
@@ -65,7 +66,7 @@ export type DocumentSiteVersion = { id: string; label: string; environment: stri
 export type DocumentTestDataSet = { id: string; name: string; values: Record<string, string>; createdAt: string; updatedAt: string };
 export type DocumentSourceMaterial = { id: string; fileName: string; role: "requirements" | "coverage-reference" | "held-out-benchmark" | "website-content"; sha256: string; byteLength: number; createdAt: string };
 export type DocumentImpactAnalysis = { id: string; siteVersionId: string; siteVersionLabel: string; changeNotesSnapshot: string; caseVersion: string; analyzedAt: string; matchingMethod: "keyword-evidence"; suggestions: DocumentImpactSuggestion[]; unmatchedTerms: string[]; status: "pending" | "accepted" | "rejected"; selectedCaseIds?: string[]; reviewNotes?: string; reviewedAt?: string };
-export type DocumentProject = { id: string; name: string; fileName: string; workflowId?: string; siteVersions?: DocumentSiteVersion[]; activeSiteVersionId?: string; impactAnalyses?: DocumentImpactAnalysis[]; testDataSets?: DocumentTestDataSet[]; sourceMaterials?: DocumentSourceMaterial[]; materialTexts?: Record<string, string>; contextText?: string; sourceFiles?: string[]; sourceRoles?: Array<{ fileName: string; role: "requirements" | "coverage-reference" | "held-out-benchmark" | "website-content" }>; researchExamples?: Array<{ title: string; url: string; snippet: string }>; caseMode?: "existing" | "ai" | "both"; confirmationRequired?: boolean; generationWarning?: string; stepAuthoring?: { generatedAt: string; results: StepGenerationCaseResult[] }; workflowPlan?: string[]; caseGeneration?: { artifactId: string; version: number; generatedAt: string; digest: string; requirements: CaseGenerationRequirementSnapshot[]; qualitySummary: Record<string, unknown>; warnings: string[]; sources: Array<{ kind: string; label: string; reference?: string }>; transferredCases: Array<{ sourceCaseId: string; projectCaseId: string }> }; apiContract?: { suiteId?: string; mappings?: DocumentApiMapping[]; allowNetwork?: boolean; allowMutations?: boolean; allowConcurrency?: boolean }; sessionIdentityNote?: string; format: ImportedDocument["format"]; targetUrl: string; sourceText: string; cases: BrowserCheck[]; reviewStatus?: "draft" | "approved"; reviewNotes?: string; createdAt: string; updatedAt: string };
+export type DocumentProject = { id: string; name: string; fileName: string; workflowId?: string; siteVersions?: DocumentSiteVersion[]; activeSiteVersionId?: string; impactAnalyses?: DocumentImpactAnalysis[]; testDataSets?: DocumentTestDataSet[]; sourceMaterials?: DocumentSourceMaterial[]; materialTexts?: Record<string, string>; contextText?: string; sourceFiles?: string[]; sourceRoles?: Array<{ fileName: string; role: "requirements" | "coverage-reference" | "held-out-benchmark" | "website-content" }>; researchExamples?: Array<{ title: string; url: string; snippet: string }>; caseMode?: "existing" | "ai" | "both"; confirmationRequired?: boolean; generationWarning?: string; stepAuthoring?: { generatedAt: string; results: StepGenerationCaseResult[] }; workflowPlan?: string[]; caseGeneration?: { artifactId: string; version: number; generatedAt: string; digest: string; requirements: CaseGenerationRequirementSnapshot[]; qualitySummary: Record<string, unknown>; warnings: string[]; sources: Array<{ kind: string; label: string; reference?: string }>; transferredCases: Array<{ sourceCaseId: string; projectCaseId: string }> }; apiContract?: { suiteId?: string; mappings?: DocumentApiMapping[]; allowNetwork?: boolean; allowMutations?: boolean; allowConcurrency?: boolean }; sessionIdentityNote?: string; browserProfileIsolation?: boolean; format: ImportedDocument["format"]; targetUrl: string; sourceText: string; cases: BrowserCheck[]; reviewStatus?: "draft" | "approved"; reviewNotes?: string; createdAt: string; updatedAt: string };
 export type DocumentProjectRevisionKind = "case" | "steps" | "case-set" | "materials" | "test-data";
 export type DocumentProjectRevisionSummary = { id: string; projectId: string; kind: DocumentProjectRevisionKind; entityId: string; version: number; digest: string; createdAt: string; source: "saved-project" | "run-snapshot"; summary: string };
 export type DocumentProjectRevision = DocumentProjectRevisionSummary & { snapshot: unknown };
@@ -91,7 +92,7 @@ export type DocumentStepProbe = {
   detail: string;
 };
 type CaseGenerationRequirementSnapshot = { id: string; text: string; source: string; priority: string; confidence: string; scopeStatus: string; scopeRationale: string };
-type CaseResult = { id: string; title: string; status: "passed" | "failed" | "blocked" | "not-applicable" | "cancelled" | "not-run"; detail: string; durationMs: number };
+type CaseResult = { id: string; title: string; status: "passed" | "failed" | "blocked" | "not-applicable" | "cancelled" | "not-run"; detail: string; durationMs: number; evidence?: string };
 type LaneResult = { status: "passed" | "failed" | "blocked" | "not-applicable" | "cancelled"; summary: string; results: CaseResult[]; provider?: string; diagnostics?: string[] };
 export type ComparisonResolution = "aligned" | "mismatch" | "unresolved" | "not-applicable";
 export type DocumentCaseTriageCategory = "suspected-product-regression" | "case-or-expectation-review" | "locator-failure" | "environment-or-session" | "test-data-or-fixture" | "needs-review";
@@ -216,6 +217,17 @@ export function classifyComparison(left: CaseResult["status"], right: CaseResult
   if ((left === "passed" || left === "failed") && left === right) return "aligned";
   if (["blocked", "cancelled", "not-run"].includes(left) || ["blocked", "cancelled", "not-run"].includes(right)) return "unresolved";
   return "mismatch";
+}
+
+/** One report outcome for the browser/API lanes of a regression case. */
+function regressionReportOutcome(item: CaseComparison): "通过" | "失败" | "未验证" | "N/A" | "已取消" | "未运行" {
+  if (item.deterministic === "cancelled" || item.apiContract === "cancelled") return "已取消";
+  if (item.deterministic === "not-run" || item.apiContract === "not-run") return "未运行";
+  if (item.resolution === "unresolved") return "未验证";
+  if (item.resolution === "not-applicable") return "N/A";
+  if ((item.deterministic === "passed" || (item.deterministic === "not-applicable" && item.apiContract === "passed"))
+      && (!item.apiContract || item.apiContract === "passed")) return "通过";
+  return "失败";
 }
 
 function stableOutcomeForBaseline(run: DocumentRun, caseId: string): CaseResult["status"] | undefined {
@@ -345,7 +357,7 @@ export type DocumentRunProgress = {
   run?: DocumentRun;
   lastError?: string;
 };
-type ExecutionJournal = { version: 1; runId: string; projectId: string; workflowId?: string; runMode?: DocumentRunMode; scopePlan?: DocumentRunScopePlan; siteVersionSnapshot?: DocumentSiteVersion; materialVersion?: string; sourceMaterialsSnapshot?: DocumentSourceMaterial[]; baselineRunId?: string; testDataSetId?: string; parameterValues?: Record<string, string>; projectDigest: string; targetUrl: string; selectedCaseIds: string[]; startedAt: string; updatedAt: string; status: "running" | "completed" | "failed" | "cancelled"; stage: "starting" | "deterministic" | "computer-use" | "awaiting-login" | "analysis" | "report" | "packaging"; resumeCount: number; parentRunId?: string; retestNotes?: string; retestScopeNote?: string; caseResults?: Array<{ lane: "deterministic" | "computer-use"; id: string; title: string; status: CaseResult["status"]; detail: string; durationMs: number; updatedAt: string; actions?: number }>; currentCase?: { lane: "deterministic" | "computer-use"; id: string; title: string }; stepGeneration?: DocumentRun["stepGeneration"]; finalizationRun?: DocumentRun; lastError?: string };
+type ExecutionJournal = { version: 1; runId: string; projectId: string; workflowId?: string; runMode?: DocumentRunMode; scopePlan?: DocumentRunScopePlan; siteVersionSnapshot?: DocumentSiteVersion; materialVersion?: string; sourceMaterialsSnapshot?: DocumentSourceMaterial[]; baselineRunId?: string; testDataSetId?: string; parameterValues?: Record<string, string>; projectDigest: string; targetUrl: string; selectedCaseIds: string[]; startedAt: string; updatedAt: string; status: "running" | "completed" | "failed" | "cancelled"; stage: "starting" | "deterministic" | "computer-use" | "awaiting-login" | "analysis" | "report" | "packaging"; resumeCount: number; parentRunId?: string; retestNotes?: string; retestScopeNote?: string; caseResults?: Array<{ lane: "deterministic" | "computer-use"; id: string; title: string; status: CaseResult["status"]; detail: string; durationMs: number; updatedAt: string; actions?: number; evidence?: string }>; currentCase?: { lane: "deterministic" | "computer-use"; id: string; title: string }; stepGeneration?: DocumentRun["stepGeneration"]; finalizationRun?: DocumentRun; lastError?: string };
 export type DocumentRunRecovery = { runId: string; workflowId?: string; runMode?: DocumentRunMode; siteVersionSnapshot?: DocumentSiteVersion; baselineRunId?: string; testDataSetId?: string; parameterValues?: Record<string, string>; parentRunId?: string; retestSelection?: string[]; retestNotes?: string; retestScopeNote?: string; selectedCaseIds?: string[]; startedAt: string; updatedAt: string; stage: ExecutionJournal["stage"]; resumeCount: number; canResume: boolean; canFinalizePackage?: boolean; lastError?: string; isRunning?: boolean; progress?: { completed: number; total: number; currentCase?: { lane: "deterministic" | "computer-use"; id: string; title: string }; counts: Record<string, number> }; recordedResultCount?: number; recordedResults?: Array<{ lane: "deterministic" | "computer-use"; id: string; title: string; status: CaseResult["status"]; durationMs: number; updatedAt: string; actions?: number }>; reason: string };
 
 const baseDir = path.resolve(process.env.TESTPILOT_DATA_DIR ?? path.join(process.cwd(), "artifacts", "demo"), "document-tests");
@@ -790,7 +802,7 @@ export function validateCases(value: unknown): BrowserCheck[] {
   if (!Array.isArray(value) || value.length < 1 || value.length > maxCases) throw new Error(`测试用例需为 1–${maxCases} 条。`);
   const seenCaseIds = new Set<string>();
   return value.map((item: any, i) => {
-    if (!item || typeof item !== "object" || !["text", "visible", "field"].includes(item.kind) || typeof item.title !== "string" || !item.title.trim() || item.title.length > 160 || typeof item.expected !== "string" || item.expected.length > 300 || typeof item.source !== "string" || item.source.length > 500) throw new Error(`第 ${i + 1} 条用例无效。`);
+    if (!item || typeof item !== "object" || !["text", "visible", "field"].includes(item.kind) || typeof item.title !== "string" || !item.title.trim() || item.title.length > 500 || typeof item.expected !== "string" || item.expected.length > 12000 || typeof item.source !== "string" || item.source.length > 12000) throw new Error(`第 ${i + 1} 条用例无效。`);
     if (!Array.isArray(item.steps) || item.steps.length > 30) throw new Error(`第 ${i + 1} 条用例 steps 必须是最多 30 步的数组。`);
     const steps: BrowserStep[] = item.steps.map((step: any, j: number) => {
       if (!step || typeof step !== "object" || typeof step.action !== "string") throw new Error(`第 ${i + 1} 条第 ${j + 1} 步无效。`);
@@ -1279,7 +1291,7 @@ export function browserStepDraftBlockReason(item: BrowserCheck): string | undefi
   const text = `${item.title} ${item.expected}`;
   const trace = `${text} ${item.source}`;
   const networkNoCall = /(?:不得调用|不会调用|不能调用|不应发出|不会发出|不得发送|不调用|不触发|不发送|不发起|不产生|无需调用|没有调用|不应调用).{0,18}(?:接口|请求|api)|(?:接口|请求|api).{0,18}(?:不得调用|不会调用|不能调用|不应发出|不会发出|不得发送|不调用|不触发|不发送|不发起|不产生|不应调用)/iu.test(text);
-  if (/本期不做|本期不展示\/不可选|待后续需求/u.test(text)) return "该项在原需求中标为本期不做/范围外；保留在 156 条清单中并标记 N/A，不应生成失败用例。";
+  if (/本期不做|本期不展示\/不可选|待后续需求/u.test(text)) return "该项在原需求中标为本期不做/范围外；保留在原始清单中并标记 N/A，不应生成失败用例。";
   if (/^\[需澄清\]|待澄清|需澄清/u.test(text) || item.confidence === "low") return "验收预期待澄清；需要产品确认具体规则和通过条件。";
   if (!networkNoCall && /依赖\/范围：(?:api_data_or_business_fixture_prerequisite|clarification-required)/u.test(item.coverageGap ?? "")) return `项目已标记此项依赖外部夹具或范围澄清：${item.coverageGap}`;
   if (!networkNoCall && /(?:需要|需).{0,32}(?:fixture|测试夹具|测试账号|历史记录|隔离环境|接口契约|预期数据|角色账号)/iu.test(item.coverageGap ?? "")) return `缺少可重复的测试数据或环境：${item.coverageGap}`;
@@ -1441,8 +1453,8 @@ export async function probeDocumentStep(
   if (!release) return { ...base, status: "blocked", detail: "项目 Edge 会话正被占用；试定位未执行。" };
   let locatorKind = "页面元素定位";
   try {
-    const userDataDir = path.join(baseDir, "browser-profiles", project.id);
-    const session = await getExistingPersistentTestPage(userDataDir).catch(() => undefined);
+    const userDataDir = path.join(baseDir, "browser-profiles", project.browserProfileIsolation ? `isolated-${project.id}` : project.id);
+    const session = await getExistingPersistentTestPage(userDataDir, { isolated: project.browserProfileIsolation === true }).catch(() => undefined);
     if (!session || session.page.isClosed()) return {
       ...base, status: "blocked", detail: "未检测到可复用的项目 Edge 会话；试定位没有启动浏览器。",
     };
@@ -1514,8 +1526,22 @@ export function makeDocumentProject(input: { name: unknown; fileName: unknown; d
   const name = typeof input.name === "string" && input.name.trim() ? input.name.trim().slice(0, 120) : String(input.fileName).slice(0, 120);
   const extractedCases = input.caseMode === "ai" ? [] : input.document.testCases;
   if ((extractedCases?.length ?? 0) > maxCases) throw new Error(`资料中有 ${extractedCases!.length} 条用例，单项目上限 ${maxCases}；请拆分项目，系统不会静默截断。`);
+  const importedCaseIds = new Set<string>();
   const cases: BrowserCheck[] = extractedCases?.length
-    ? extractedCases.map((item, index) => ({ id: `xmind-${index + 1}`, title: item.title, source: item.source, ...(item.modulePath?.length ? { modulePath: item.modulePath } : {}), requirementRefs: item.requirementRefs ?? [item.source], priority: item.priority ?? "P2", category: item.category ?? inferCaseCategory(`${item.title} ${item.source}`), confidence: item.confidence ?? confidenceFromExpectation(item.expected), coverageAreas: item.coverageAreas ?? [item.category ?? inferCaseCategory(`${item.title} ${item.source}`)], lifecycleStatus: "draft" as const, selectedForRegression: false, preconditions: [], preconditionsConfirmed: true, testData: [], sideEffectRisk: "unknown" as const, cleanup: "", caseOrigin: "held-out-benchmark" as const, kind: "visible" as const, expected: item.expected, steps: [] }))
+    ? extractedCases.map((item, index) => {
+      const steps = Array.isArray(item.steps) ? item.steps as BrowserStep[] : [];
+      const held = typeof item.status === "string" && /^(?:hold|blocked|needs?[-_])/i.test(item.status);
+      const hasAssertion = steps.some(step => ["assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible", "assertRoleDisabled", "assertValue", "assertDisabled", "assertFieldInvalid", "assertMaxLengthOrMessage", "assertNoHorizontalOverflow"].includes(step.action));
+      const rawId = (item.id || `case-${index + 1}`).replace(/[^A-Za-z0-9_.:-]/g, "-").slice(0, 72) || `case-${index + 1}`;
+      const id = importedCaseIds.has(rawId) ? `${rawId}-${index + 1}`.slice(0, 80) : rawId;
+      importedCaseIds.add(id);
+      const preconditions = (item.preconditions ?? []).slice(0, 10).map(value => value.slice(0, 500));
+      const candidate: BrowserCheck = { id, title: item.title, source: item.source, ...(item.modulePath?.length ? { modulePath: item.modulePath.slice(0, 8).map(value => value.slice(0, 120)) } : {}), requirementRefs: item.requirementRefs ?? [item.source], priority: item.priority ?? "P2", category: item.category ?? inferCaseCategory(`${item.title} ${item.source}`), confidence: item.confidence ?? confidenceFromExpectation(item.expected), coverageAreas: item.coverageAreas ?? [item.category ?? inferCaseCategory(`${item.title} ${item.source}`)], lifecycleStatus: !held && steps.length > 0 && hasAssertion ? "runnable" : "draft", selectedForRegression: !held && steps.length > 0 && hasAssertion, preconditions, preconditionsConfirmed: preconditions.length === 0, testData: (item.testData ?? []).slice(0, 10).map(value => value.slice(0, 500)), sideEffectRisk: "unknown", cleanup: "", caseOrigin: "held-out-benchmark", kind: "visible", expected: item.expected, steps, ...(held ? { coverageGap: `原包状态：${item.status}；需先确认账号、环境或副作用条件。` } : {}) };
+      const plan = planCaseExecution(candidate);
+      candidate.executionRoute = plan.route; candidate.executionReason = plan.reason; candidate.nextAction = plan.nextAction;
+      try { return validateCases([candidate])[0]!; }
+      catch (error) { candidate.lifecycleStatus = "draft"; candidate.selectedForRegression = false; candidate.steps = []; candidate.coverageGap = `原包步骤未能通过安全校验：${error instanceof Error ? error.message : String(error)}`; return candidate; }
+    })
     : input.caseMode === "both" || input.caseMode === "ai" ? [] : createReviewCases(input.document.text);
   for (const item of cases) {
     const plan = planCaseExecution(item);
@@ -1526,9 +1552,16 @@ export function makeDocumentProject(input: { name: unknown; fileName: unknown; d
   return { id: randomUUID(), name, fileName: String(input.fileName).slice(0, 200), ...(input.sourceFiles?.length ? { sourceFiles: input.sourceFiles.slice(0, 8) } : {}), ...(input.researchExamples?.length ? { researchExamples: input.researchExamples.slice(0, 8) } : {}), caseMode: input.caseMode ?? "both", workflowPlan: ["规划阶段：按网址、说明和附件确定测试范围", "资料解析阶段：读取需求文件与已有测试用例", "公开资料阶段：查找测试案例并记录来源（若联网搜索可用）", "用例整理阶段：合并候选，补充边界场景和可判定预期", "双通道验证：确定性脚本与视觉 Computer Use 顺序运行并共享本轮浏览器页面"], format: input.document.format, targetUrl: safeTarget(input.targetUrl), sourceText: input.document.text, cases, reviewStatus: "draft", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
 }
 
-async function runLane(url: string, cases: BrowserCheck[], label: string, projectId: string, runId: string, page: Page, onLoginWait?: (waiting: boolean) => Promise<void>, onCaseResult?: (result: CaseResult) => Promise<void>, onCaseStart?: (item: BrowserCheck) => Promise<void>, signal?: AbortSignal): Promise<LaneResult> {
+async function runLane(url: string, cases: BrowserCheck[], label: string, projectId: string, runId: string, page: Page, onLoginWait?: (waiting: boolean) => Promise<void>, onCaseResult?: (result: CaseResult) => Promise<void>, onCaseStart?: (item: BrowserCheck) => Promise<void>, signal?: AbortSignal, captureEvidence = false, onCasePrepared?: (item: BrowserCheck, page: Page) => Promise<void>): Promise<LaneResult> {
   const results: CaseResult[] = [];
-  const record = async (result: CaseResult) => { results.push(result); await onCaseResult?.(result); };
+  const record = async (result: CaseResult) => {
+    if (captureEvidence && !page.isClosed()) {
+      const name = createHash('sha256').update(result.id).digest('hex') + '.png';
+      const directory = path.join(runsDir, runId, 'screenshots');
+      try { await mkdir(directory, { recursive: true }); await page.screenshot({ path: path.join(directory, name) }); result.evidence = name; } catch { /* Assertion results remain valid if screenshot capture fails. */ }
+    }
+    results.push(result); await onCaseResult?.(result);
+  };
   let activeItem: BrowserCheck | undefined;
   const stoppedDetail = (isCurrent: boolean) => isCurrent ? "运行在此用例期间被手动停止；当前结果未判定，可检查页面状态后定向重跑。" : "运行被手动停止；此用例尚未执行，可从部分结果中定向重跑。";
   const waitForVisibleText = async (expected: string, timeoutMs = 5000): Promise<boolean> => {
@@ -1620,7 +1653,7 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
         await page.route("**/*", async route => {
           const request = route.request();
           if (blockAllRequestsForValidation) { await route.abort("blockedbyclient"); return; }
-          if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null })) { await route.abort("blockedbyclient"); return; }
+          if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), authenticationPage: isAuthenticationRoute(page.url()), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null })) { await route.abort("blockedbyclient"); return; }
           if (request.isNavigationRequest() && request.frame().parentFrame() === null) {
             try { const requested = new URL(request.url()); if (requested.origin !== allowedOrigin && !/(?:login|signin|sso|auth|accounts|passport)/i.test(`${requested.hostname}${requested.pathname}`)) { await route.abort("blockedbyclient"); return; } }
             catch { await route.abort("blockedbyclient"); return; }
@@ -1641,6 +1674,10 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
           await record({ id: item.id, title: item.title, status: "blocked", detail: "页面重载后出现登录页；为避免重复扫码，本用例已阻塞。请确认原登录会话能在同一浏览器上下文中跨页面重载保持，再重跑。", durationMs: Date.now() - start });
           continue;
         }
+        // Optional adapter hook after the fresh baseline is loaded and auth is
+        // confirmed, but before any original assertion runs. Unset for all
+        // existing callers; adapters may wait for their own async page mount.
+        await onCasePrepared?.(item, page);
         requestObserver = request => {
           if (captureFetchOrXhr && (request.resourceType() === "fetch" || request.resourceType() === "xhr")) observedFetchOrXhr.push(`${request.method()} ${request.resourceType()}`);
         };
@@ -1748,9 +1785,8 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
             if (!await waitForVisibleText(step.text)) {
               const current = new URL(page.url());
               const framePaths = page.frames().map(frame => { try { const frameUrl = new URL(frame.url()); return `${frameUrl.pathname}${frameUrl.hash}`; } catch { return "unavailable"; } });
-              let renderSurfaceCount = 0;
-              for (const frame of page.frames()) renderSurfaceCount += await frame.locator("canvas,svg").count().catch(() => 0);
-              if (renderSurfaceCount > 0) throw new Error(`Blocked: 页面存在 ${renderSurfaceCount} 个 canvas/SVG 渲染面，但预期文本未暴露在 DOM/可访问文本层；请由 Computer Use 截图通道验证该视觉内容。页面=${current.pathname}${current.hash}；frames=${framePaths.join(",")}`);
+              const rendering = await inspectTextRenderSupport(page);
+              if (rendering.visualOnly) throw new Error(`Blocked: 页面仅有无可访问文本的 canvas 渲染面；需视觉断言验证预期内容。页面=${current.pathname}${current.hash}；frames=${framePaths.join(",")}`);
               throw new Error(`断言失败：期望可见文本未出现在页面或嵌入 frame：${step.text}；页面=${current.pathname}${current.hash}；frames=${framePaths.join(",")}`);
             }
           }
@@ -1948,7 +1984,7 @@ async function prepareSharedTargetPage(url: string, projectId: string, runId: st
   const allowedOrigin = new URL(url).origin;
   await page.route("**/*", async route => {
     const request = route.request();
-    if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null })) { await route.abort("blockedbyclient"); return; }
+    if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), authenticationPage: isAuthenticationRoute(page.url()), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null })) { await route.abort("blockedbyclient"); return; }
     if (request.isNavigationRequest() && request.frame().parentFrame() === null) {
       try {
         const requested = new URL(request.url());
@@ -2110,7 +2146,7 @@ function reportMarkdown(project: DocumentProject, run: DocumentRun, aiSummary: s
     "", "> 浏览器 runner 只执行标记为只读且前置条件已确认的用例；清理说明不会通过浏览器自动执行。API contract lane 只会执行已审核 suite 中明确配置、获准且指向隔离环境的 fixture setup/cleanup。测试数据字段应写合成数据说明或 fixture 引用，不应存放真实凭证或个人资料。",
     "", "## 执行摘要", "", aiSummary,
     run.runMode === "regression"
-      ? `- 用例结论：通过 ${run.comparisons.filter(item => item.resolution === "aligned" && item.deterministic === "passed").length}，失败 ${run.comparisons.filter(item => item.deterministic === "failed" || item.apiContract === "failed").length}，未验证/blocked ${comparisonCounts.unresolved}，N/A ${comparisonCounts.notApplicable}，缺少结果 ${comparisonCounts.missing}。`
+      ? `- 用例结论：通过 ${run.comparisons.filter(item => regressionReportOutcome(item) === "通过").length}，失败 ${run.comparisons.filter(item => regressionReportOutcome(item) === "失败").length}，未验证/blocked ${comparisonCounts.unresolved}，N/A ${comparisonCounts.notApplicable}，缺少结果 ${comparisonCounts.missing}。`
       : `- 逐用例比较：对齐 ${comparisonCounts.aligned}，不一致 ${comparisonCounts.mismatch}，未验证/blocked ${comparisonCounts.unresolved}，N/A ${comparisonCounts.notApplicable}，缺少比较记录 ${comparisonCounts.missing}。`,
     `- 执行证据条目：确定性 ${run.deterministic.results.filter(item => selectedSet.has(item.id)).length}、视觉 ${run.runMode === "regression" ? "未运行" : run.ai.results.filter(item => selectedSet.has(item.id)).length}、API ${run.apiContract?.results.filter(item => selectedSet.has(item.id)).length ?? 0}；${run.runMode === "regression" ? "本轮不调用模型。" : `合计 ${evidenceCount}。`} 此处计数代表逐用例结果记录，不表示每条都含截图或完整 trace。`,
     "", "## 重测与恢复记录", "",
@@ -2126,7 +2162,7 @@ function reportMarkdown(project: DocumentProject, run: DocumentRun, aiSummary: s
     "", ...lane("确定性用例", run.deterministic, selectedIds), ...(run.apiContract ? ["## API Contract 验证", "", run.apiContract.summary, ...(run.apiContract.scope?.length ? ["", "执行范围：", ...run.apiContract.scope.map(item => `- ${item}`)] : []), ...(run.apiContract.limitations?.length ? ["", "授权与限制：", ...run.apiContract.limitations.map(item => `- ${item}`)] : []), "", ...run.apiContract.results.filter(item => selectedSet.has(item.id)).map(item => `- ${scopeTagFor(item.id)}[${item.status}] ${item.title} (${item.id}) — ${item.detail}`), ""] : []), ...(run.runMode === "compare" ? lane("视觉 Computer Use 验证", run.ai, selectedIds) : []),
     ...(run.runMode === "compare" && run.ai.diagnostics?.length ? ["", "### Computer Use 全局诊断", "", ...run.ai.diagnostics.map(item => `- ${item}`)] : []), "",
     ...(run.runMode === "compare" ? run.ai.results.filter(item => selectedSet.has(item.id)).map(item => `- ${scopeTagFor(item.id)}[${item.status}] ${item.title} (${item.id}) — ${item.detail}`) : []), "", run.runMode === "regression" ? "## 逐用例回归结果" : "## 逐用例对比", "",
-    ...run.comparisons.map(item => `- ${scopeTagFor(item.id)}[${item.deterministic === "cancelled" || item.apiContract === "cancelled" ? "已取消" : item.deterministic === "not-run" || item.apiContract === "not-run" ? "未运行" : run.runMode === "regression" ? (item.resolution === "unresolved" ? "未验证" : item.resolution === "not-applicable" ? "N/A" : item.deterministic === "passed" && (!item.apiContract || item.apiContract === "passed") ? "通过" : "失败") : item.resolution === "mismatch" ? "结果不一致" : item.resolution === "unresolved" ? "未验证" : item.resolution === "not-applicable" ? "N/A" : item.aligned ? "结论一致" : "待处理"}] ${item.title} (${item.id}) — 脚本 ${item.deterministic}${run.runMode === "compare" ? ` / Computer Use ${item.computerUse}` : ""}${item.apiContract ? ` / API Contract ${item.apiContract}` : ""}${item.issue ? `：${item.issue}` : ""}${item.triage ? `；初步归类 ${triageCategoryLabels[item.triage.category]}（${item.triage.confidence === "evidence-based" ? "有直接证据" : "需复核"}）：${item.triage.detail}` : ""}${item.nextAction ? `；下一步：${item.nextAction}` : ""}`),
+    ...run.comparisons.map(item => `- ${scopeTagFor(item.id)}[${item.deterministic === "cancelled" || item.apiContract === "cancelled" ? "已取消" : item.deterministic === "not-run" || item.apiContract === "not-run" ? "未运行" : run.runMode === "regression" ? regressionReportOutcome(item) : item.resolution === "mismatch" ? "结果不一致" : item.resolution === "unresolved" ? "未验证" : item.resolution === "not-applicable" ? "N/A" : item.aligned ? "结论一致" : "待处理"}] ${item.title} (${item.id}) — 脚本 ${item.deterministic}${run.runMode === "compare" ? ` / Computer Use ${item.computerUse}` : ""}${item.apiContract ? ` / API Contract ${item.apiContract}` : ""}${item.issue ? `：${item.issue}` : ""}${item.triage ? `；初步归类 ${triageCategoryLabels[item.triage.category]}（${item.triage.confidence === "evidence-based" ? "有直接证据" : "需复核"}）：${item.triage.detail}` : ""}${item.nextAction ? `；下一步：${item.nextAction}` : ""}`),
     ...(run.baselineComparison ? ["", "## 历史基线对比", "", `- 基线运行：${run.baselineRunId}`,
       ...(run.baselineEnvironmentComparison === "different" ? ["- 当前与基线的环境标识或目标站点来源不同；请先确认环境差异不会解释本轮状态变化。"] : []),
       ...(run.baselineEnvironmentComparison === "unknown" ? ["- 当前运行或基线缺少有效的环境或目标站点来源记录，无法确认环境一致。"] : []),
@@ -2266,7 +2302,7 @@ export async function retryDocumentRunPackaging(runId: string): Promise<Document
   }
 }
 
-export async function executeDocumentRun(project: DocumentProject, options: { runId?: string; resumeRunId?: string; workflowId?: string; runMode?: DocumentRunMode; scopePlan?: DocumentRunScopePlan; siteVersionSnapshot?: DocumentSiteVersion; baselineRunId?: string; testDataSetId?: string; parameterValues?: Record<string, string>; parentRunId?: string; selectedCaseIds?: string[]; retestNotes?: string; retestScopeNote?: string; onStage?: (stage: ExecutionJournal["stage"]) => Promise<void>; beforeDeterministic?: (page: Page) => Promise<{ generatedCaseIds: string[]; caseResults?: StepGenerationCaseResult[]; warning?: string; requiresReview?: boolean }>; afterDeterministic?: (page: Page) => Promise<{ generatedCaseIds: string[]; caseResults?: StepGenerationCaseResult[]; warning?: string; requiresReview?: boolean }> } = {}): Promise<DocumentRun> {
+export async function executeDocumentRun(project: DocumentProject, options: { runId?: string; resumeRunId?: string; workflowId?: string; runMode?: DocumentRunMode; scopePlan?: DocumentRunScopePlan; siteVersionSnapshot?: DocumentSiteVersion; baselineRunId?: string; testDataSetId?: string; parameterValues?: Record<string, string>; parentRunId?: string; selectedCaseIds?: string[]; retestNotes?: string; retestScopeNote?: string; captureEvidence?: boolean; onCaseResult?: (result: CaseResult) => Promise<void>; onCasePrepared?: (item: BrowserCheck, page: Page) => Promise<void>; onStage?: (stage: ExecutionJournal["stage"]) => Promise<void>; beforeDeterministic?: (page: Page) => Promise<{ generatedCaseIds: string[]; caseResults?: StepGenerationCaseResult[]; warning?: string; requiresReview?: boolean }>; afterDeterministic?: (page: Page) => Promise<{ generatedCaseIds: string[]; caseResults?: StepGenerationCaseResult[]; warning?: string; requiresReview?: boolean }> } = {}): Promise<DocumentRun> {
   let startedAt = new Date().toISOString();
   const runId = options.resumeRunId ?? options.runId ?? randomUUID();
   let resumedJournal: ExecutionJournal | undefined;
@@ -2383,7 +2419,7 @@ export async function executeDocumentRun(project: DocumentProject, options: { ru
   const releasePageLease = acquireDocumentPageLease(project.id);
   if (!releasePageLease) throw new Error("该项目的共享浏览器页面正用于步骤生成或另一轮测试；请等待当前操作结束后重试。");
   const controller = new AbortController();
-  const userDataDir = path.join(baseDir, "browser-profiles", project.id);
+  const userDataDir = path.join(baseDir, "browser-profiles", project.browserProfileIsolation ? `isolated-${project.id}` : project.id);
   activeDocumentRuns.set(runId, { controller, userDataDir, acceptingCancel: true });
   journal.status = "running"; journal.stage = "starting"; journal.updatedAt = new Date().toISOString(); delete journal.lastError;
   journal.runMode ??= runMode;
@@ -2397,7 +2433,7 @@ export async function executeDocumentRun(project: DocumentProject, options: { ru
   activeBrowserRuns.add(project.id);
   try {
     await saveExecutionJournal(journal);
-    session = await launchPersistentTestPage(userDataDir);
+    session = await launchPersistentTestPage(userDataDir, { isolated: project.browserProfileIsolation === true });
     if (controller.signal.aborted) throw controller.signal.reason ?? new Error("cancelled by user");
     // Establish the authenticated application page before running any cases.
     // In particular, empty-step cases must not all short-circuit as blocked
@@ -2407,10 +2443,11 @@ export async function executeDocumentRun(project: DocumentProject, options: { ru
     if (controller.signal.aborted) throw controller.signal.reason ?? new Error("cancelled by user");
     await updateStage("deterministic");
     const persistCaseResult = async (lane: "deterministic" | "computer-use", result: CaseResult & { actions?: number }) => {
-      journal.caseResults = [...(journal.caseResults ?? []).filter(item => item.lane !== lane || item.id !== result.id), { lane, id: result.id, title: result.title, status: result.status, detail: result.detail.slice(0, 1200), durationMs: result.durationMs, updatedAt: new Date().toISOString(), ...(typeof result.actions === "number" ? { actions: result.actions } : {}) }];
+      journal.caseResults = [...(journal.caseResults ?? []).filter(item => item.lane !== lane || item.id !== result.id), { lane, id: result.id, title: result.title, status: result.status, detail: result.detail.slice(0, 1200), durationMs: result.durationMs, updatedAt: new Date().toISOString(), ...(result.evidence ? { evidence: result.evidence } : {}), ...(typeof result.actions === "number" ? { actions: result.actions } : {}) }];
       delete journal.currentCase;
       journal.updatedAt = new Date().toISOString();
       await saveExecutionJournal(journal);
+      if (lane === "deterministic") await options.onCaseResult?.(result);
     };
     const markCurrentCase = async (lane: "deterministic" | "computer-use", item: BrowserCheck) => { journal.currentCase = { lane, id: item.id, title: item.title }; journal.updatedAt = new Date().toISOString(); await saveExecutionJournal(journal); };
     const recoveredResults = journal.caseResults ?? [];
@@ -2478,7 +2515,7 @@ export async function executeDocumentRun(project: DocumentProject, options: { ru
         await saveExecutionJournal(journal);
       }
     }
-    deterministic = await runRecoverableLane<CaseResult>("deterministic", selectedCases, pending => runLane(project.targetUrl, pending, "确定性用例", project.id, runId, session!.page, waiting => updateStage(waiting ? "awaiting-login" : "deterministic"), result => persistCaseResult("deterministic", result), item => markCurrentCase("deterministic", item), controller.signal));
+    deterministic = await runRecoverableLane<CaseResult>("deterministic", selectedCases, pending => runLane(project.targetUrl, pending, "确定性用例", project.id, runId, session!.page, waiting => updateStage(waiting ? "awaiting-login" : "deterministic"), result => persistCaseResult("deterministic", result), item => markCurrentCase("deterministic", item), controller.signal, options.captureEvidence, options.onCasePrepared));
     if (!controller.signal.aborted && runMode === "compare" && options.afterDeterministic) {
       try {
         const originalSteps = new Map(selectedCases.map(item => [item.id, item.steps]));
@@ -2498,7 +2535,7 @@ export async function executeDocumentRun(project: DocumentProject, options: { ru
             updateRunCaseSnapshots(prepared.generatedCaseIds);
             selectedCases = resolveCasesForThisRun(project.cases.filter(item => runCaseIds.has(item.id)));
             const generated = selectedCases.filter(item => prepared.generatedCaseIds.includes(item.id));
-            const repairedLane = await runLane(project.targetUrl, generated, "新生成脚本验证", project.id, runId, session.page, waiting => updateStage(waiting ? "awaiting-login" : "deterministic"), result => persistCaseResult("deterministic", result), item => markCurrentCase("deterministic", item), controller.signal);
+            const repairedLane = await runLane(project.targetUrl, generated, "新生成脚本验证", project.id, runId, session.page, waiting => updateStage(waiting ? "awaiting-login" : "deterministic"), result => persistCaseResult("deterministic", result), item => markCurrentCase("deterministic", item), controller.signal, options.captureEvidence, options.onCasePrepared);
             const byId = new Map(deterministic.results.map(item => [item.id, item]));
             for (const result of repairedLane.results) byId.set(result.id, result);
             const results = selectedCases.map(item => byId.get(item.id) ?? { id: item.id, title: item.title, status: "blocked" as const, detail: "本轮未得到确定性结果。", durationMs: 0 });
@@ -2834,7 +2871,7 @@ export async function getDocumentProject(id: string): Promise<DocumentProject | 
 
 /** Inspect only an already-open project Edge page; this never launches, navigates, or replaces a browser. */
 export async function getDocumentProjectSessionStatus(
-  project: Pick<DocumentProject, "id" | "targetUrl" | "sessionIdentityNote">,
+  project: Pick<DocumentProject, "id" | "targetUrl" | "sessionIdentityNote" | "browserProfileIsolation">,
   targetUrl = project.targetUrl,
 ): Promise<DocumentProjectSessionStatus> {
   const checkedAt = new Date().toISOString();
@@ -2851,7 +2888,7 @@ export async function getDocumentProjectSessionStatus(
       : "项目 Edge 会话正被运行或步骤操作占用；为避免干扰，暂不检查页面。",
   };
 
-  const session = await getExistingPersistentTestPage(path.join(baseDir, "browser-profiles", project.id)).catch(() => undefined);
+  const session = await getExistingPersistentTestPage(path.join(baseDir, "browser-profiles", project.browserProfileIsolation ? `isolated-${project.id}` : project.id), { isolated: project.browserProfileIsolation === true }).catch(() => undefined);
   if (!session || session.page.isClosed()) return {
     state: "unavailable", occupied: false, manualLoginRequired: null, ...identity, checkedAt,
     message: "没有检测到可复用的项目 Edge 会话。运行时会连接或打开该项目的浏览器，并在需要时提示人工登录。",
@@ -2981,5 +3018,4 @@ export async function listDocumentRuns(projectId: string): Promise<DocumentRunLi
   }
   return [...completed, ...incomplete].sort((a, b) => b.startedAt.localeCompare(a.startedAt)).slice(0, 200);
 }
-
 

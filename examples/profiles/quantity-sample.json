@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "name": "数量校验样例（内置测试缺陷）",
+  "sourceRoot": "examples/source-test-fixture",
+  "scriptFiles": ["quantity.mjs", "requirements.md", "tests/quantity.test.mjs"],
+  "suite": {
+    "version": 1,
+    "name": "随包数量规则回归",
+    "cases": [{"id":"quantity-sample","title":"数量范围与非法输入（样例故意保留上限缺陷）","command":{"bin":"node","args":["--test","tests/quantity.test.mjs"],"cleanEnvironment":true,"timeoutMs":10000}}]
+  }
+}

@@ -1,0 +1,213 @@
+app:
+  description: 校验 API 套件或网页模块包的固定清单；网页用例由本机浏览器执行。无模型猜测，不接收目标地址、凭据、用例正文或响应正文。
+  icon: 🧪
+  icon_background: "#FFEAD5"
+  icon_type: emoji
+  mode: workflow
+  name: TestPilot 按模块固定执行
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+        - .JPG
+        - .JPEG
+        - .PNG
+        - .GIF
+        - .WEBP
+        - .SVG
+      allowed_file_types:
+        - image
+      allowed_file_upload_methods:
+        - local_file
+        - remote_url
+      enabled: false
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        knowledge_file_size_limit: 15
+        single_chunk_attachment_limit: 10
+        skill_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+          - local_file
+          - remote_url
+      number_limits: 3
+    opening_statement: ""
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ""
+      voice: ""
+  graph:
+    nodes:
+      - id: "1793160000001"
+        type: custom
+        data:
+          title: 已审核模块清单 / 实际结果
+          type: start
+          variables:
+            - variable: execution_json
+              label: 执行清单 JSON（不含凭据）
+              type: paragraph
+              required: true
+              max_length: 60000
+              options: []
+              default: ""
+          selected: false
+        position:
+          x: 80
+          y: 250
+        positionAbsolute:
+          x: 80
+          y: 250
+        sourcePosition: right
+        targetPosition: left
+        width: 242
+        height: 88
+      - id: "1793160000002"
+        type: custom
+        data:
+          title: 固定清单校验 / 实际状态汇总
+          type: code
+          code_language: python3
+          code: >
+            import json
+
+
+
+            def main(execution_json: str) -> dict:
+                data = json.loads(execution_json)
+                assert data.get('schema') == 1, 'invalid schema'
+                for key in ['run_id', 'module_id']:
+                    assert isinstance(data.get(key), str) and data[key], 'missing identity'
+                ids = data.get('case_ids')
+                phase = data.get('phase')
+                if phase == 'web-package-check':
+                    assert isinstance(ids, list) and 1 <= len(ids) <= 200, 'invalid web module size'
+                    assert isinstance(data.get('package_digest'), str) and len(data['package_digest']) == 64, 'invalid package digest'
+                    counts = data.get('status_counts')
+                    assert isinstance(counts, dict) and all(isinstance(v, int) and v >= 0 for v in counts.values()), 'invalid status counts'
+                    assert sum(counts.values()) == len(ids), 'status counts do not match case ids'
+                    assert len(set(ids)) == len(ids) and all(isinstance(v, str) and v for v in ids), 'duplicate or invalid case ids'
+                    result = {key: data[key] for key in ['schema', 'phase', 'run_id', 'module_id', 'package_digest', 'case_ids', 'status_counts']}
+                    result['action'] = 'check-approved-web-package'
+                    return {'result': json.dumps(result, ensure_ascii=False)}
+                for key in ['plan_digest', 'suite_digest']:
+                    assert isinstance(data.get(key), str) and data[key], 'missing identity'
+                assert isinstance(ids, list) and 1 <= len(ids) <= 20, 'invalid module size'
+                assert len(set(ids)) == len(ids) and all(isinstance(v, str) for v in ids), 'duplicate case ids'
+                result = {key: data[key] for key in ['schema', 'run_id', 'module_id', 'plan_digest', 'suite_digest', 'case_ids']}
+                result['phase'] = phase
+                if phase == 'dispatch':
+                    # The local runner independently checks this exact manifest against an
+                    # approved suite; the cloud never receives credentials or request URLs.
+                    assert 'results' not in data, 'dispatch cannot contain results'
+                    result['action'] = 'execute-approved-suite'
+                elif phase == 'report':
+                    rows = data.get('results')
+                    assert isinstance(rows, list) and len(rows) == len(ids), 'incomplete results'
+                    assert [r.get('case_id') for r in rows] == ids, 'results must match fixed order'
+                    counts = {'passed': 0, 'failed': 0, 'blocked': 0, 'error': 0, 'not_executed': 0}
+                    for row in rows:
+                        assert row.get('status') in counts, 'invalid execution status'
+                        counts[row['status']] += 1
+                    result['counts'] = counts
+                else:
+                    raise ValueError('unsupported phase')
+                return {'result': json.dumps(result, ensure_ascii=False)}
+          variables:
+            - variable: execution_json
+              value_selector:
+                - "1793160000001"
+                - execution_json
+              value_type: string
+          outputs:
+            result:
+              type: string
+              children: null
+          selected: false
+        position:
+          x: 382
+          y: 250
+        positionAbsolute:
+          x: 382
+          y: 250
+        sourcePosition: right
+        targetPosition: left
+        width: 242
+        height: 88
+      - id: "1793160000003"
+        type: custom
+        data:
+          title: 返回本机执行器
+          type: end
+          outputs:
+            - variable: result
+              value_selector:
+                - "1793160000002"
+                - result
+              value_type: string
+          selected: false
+        position:
+          x: 684
+          y: 250
+        positionAbsolute:
+          x: 684
+          y: 250
+        sourcePosition: right
+        targetPosition: left
+        width: 242
+        height: 88
+    edges:
+      - id: 1793160000001-source-1793160000002-target
+        type: custom
+        source: "1793160000001"
+        sourceHandle: source
+        target: "1793160000002"
+        targetHandle: target
+        data:
+          sourceType: start
+          targetType: code
+          isInIteration: false
+          isInLoop: false
+        zIndex: 0
+      - id: 1793160000002-source-1793160000003-target
+        type: custom
+        source: "1793160000002"
+        sourceHandle: source
+        target: "1793160000003"
+        targetHandle: target
+        data:
+          sourceType: code
+          targetType: end
+          isInIteration: false
+          isInLoop: false
+        zIndex: 0
+    viewport:
+      x: 0
+      y: 0
+      zoom: 1
+  rag_pipeline_variables: []

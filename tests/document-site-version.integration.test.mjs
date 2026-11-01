@@ -16,25 +16,29 @@ test('website versions bind UI runs, reports, packages and retests to the select
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-site-version-'));
   const projectId = 'site-version-fixture';
   const hits = { one: 0, two: 0, three: 0 };
-  const makeTarget = (key, includeLandingPage, buildMarker) => createServer((req, res) => {
+  // Deployed versions share an origin: otherwise the independent environment
+  // guard correctly refuses to attribute a cross-environment change to product.
+  const makeTarget = () => createServer((req, res) => {
+    const requestUrl = new URL(req.url ?? '/', 'http://127.0.0.1');
+    const key = ['two', 'three'].includes(requestUrl.searchParams.get('build')) ? requestUrl.searchParams.get('build') : 'one';
+    const includeLandingPage = key !== 'two';
+    const buildMarker = { one: 'Build one', two: 'Build two · regression introduced', three: 'Build three · regression fixed' }[key];
     hits[key]++;
-    const sessionView = new URL(req.url ?? '/', 'http://127.0.0.1').searchParams.get('session');
+    const sessionView = requestUrl.searchParams.get('session');
     const sessionScript = sessionView === 'primary'
       ? `<script>sessionStorage.setItem('testpilot-project-marker','primary');document.getElementById('project-session-marker').textContent='Session marker: '+sessionStorage.getItem('testpilot-project-marker')</script>`
       : `<script>document.getElementById('project-session-marker').textContent='Session marker: '+(sessionStorage.getItem('testpilot-project-marker')||'empty')</script>`;
     res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
     res.end(`<!doctype html><html><body><h1>${includeLandingPage ? 'Regression landing page' : 'Updated landing page'}</h1><p>${buildMarker}</p><p id="project-session-marker">Session marker: loading</p><label>Scenario marker<input aria-label="Scenario marker" value="${buildMarker}"></label>${sessionScript}</body></html>`);
   });
-  const targetOne = makeTarget('one', true, 'Build one');
-  const targetTwo = makeTarget('two', false, 'Build two · regression introduced');
-  const targetThree = makeTarget('three', true, 'Build three · regression fixed');
-  for (const server of [targetOne, targetTwo, targetThree]) {
+  const targetOne = makeTarget();
+  for (const server of [targetOne]) {
     server.listen(0, '127.0.0.1');
     await once(server, 'listening');
   }
   const urlOne = `http://127.0.0.1:${targetOne.address().port}/?session=primary`;
-  const urlTwo = `http://127.0.0.1:${targetTwo.address().port}/`;
-  const urlThree = `http://127.0.0.1:${targetThree.address().port}/`;
+  const urlTwo = `http://127.0.0.1:${targetOne.address().port}/?build=two`;
+  const urlThree = `http://127.0.0.1:${targetOne.address().port}/?build=three`;
   const demoServer = createServer();
   demoServer.listen(0, '127.0.0.1');
   await once(demoServer, 'listening');
@@ -139,7 +143,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   let browser;
   t.after(async () => {
     if (browser) await Promise.race([browser.close(), delay(5_000)]);
-    for (const server of [targetOne, targetTwo, targetThree]) {
+    for (const server of [targetOne]) {
       server.closeAllConnections();
       await Promise.race([new Promise(done => server.close(done)), delay(2_000)]);
     }
@@ -186,6 +190,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   await page.goto(`${baseUrl}/?documentProject=${projectId}`, { waitUntil: 'networkidle' });
   assert.equal(await page.getByLabel('步骤 1 动作').inputValue(), 'fillByLabel', 'the saved BrowserSteps are exposed in the visual editor');
   assert.equal(await page.getByLabel('步骤 2 字段标签').inputValue(), 'Scenario marker');
+  await page.locator('.doc-revision-disclosure > summary').click();
   await page.getByRole('heading', { name: '用例、步骤与资料修订' }).waitFor();
   await page.getByLabel('修订类型').selectOption('case');
   await page.getByLabel('修订实体 ID').fill('stable-landing');
@@ -215,6 +220,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   const versionTwo = registeredTwo.siteVersions.find(item => item.label === 'build-two');
   assert.ok(versionTwo);
   assert.equal(registeredTwo.activeSiteVersionId, versionTwo.id);
+  await page.locator('.doc-case-details > summary').click();
   const caseSelection = page.locator('.doc-case-select input');
   await caseSelection.uncheck();
   const analyzeImpactPromise = page.waitForResponse(response => response.url().endsWith(`/api/document-projects/${projectId}/impact-reviews`) && response.request().method() === 'POST');
@@ -267,7 +273,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
     }
     await page.getByLabel('历史回归基线').selectOption(selectedBaselineRunId);
     const responsePromise = page.waitForResponse(response => response.url().endsWith(`/api/document-projects/${projectId}/start`) && response.request().method() === 'POST');
-    await page.getByRole('button', { name: /^(运行常规回归|审核并运行常规回归)$/u }).click();
+    await page.getByRole('button', { name: /^(运行所选范围（1）|审核并运行所选范围（1）)$/u }).click();
     const response = await responsePromise;
     const responseBody = await response.text();
     assert.equal(response.status(), 202, responseBody);
@@ -403,6 +409,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   assert.equal(runTwo.testDataVersion, runOne.testDataVersion, 'the same data set and values retain one test-data version across website deployments');
   assert.equal(runTwo.baselineRunId, runOne.id);
   assert.equal(runTwo.baselineTestDataChanged, false, 'matching data snapshots do not produce a test-data drift warning');
+  assert.equal(runTwo.baselineEnvironmentComparison, 'same');
   assert.equal(runTwo.baselineComparison?.[0]?.disposition, 'regression');
   assert.equal(runTwo.comparisons[0]?.triage?.category, 'suspected-product-regression');
   assert.equal(runTwo.comparisons[0]?.triage?.confidence, 'tentative', 'the triage calls it a suspected regression pending human review');
@@ -459,7 +466,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   assert.ok(hits.two > 0, 'the latest deployment remains separately exercised');
 
   const createDraftPromise = page.waitForResponse(response => response.url().endsWith(`/api/document-projects/${projectId}/update`) && response.request().method() === 'POST');
-  await page.getByRole('button', { name: '创建并保存待完善用例草稿' }).click();
+  await page.getByRole('button', { name: '新增待完善用例', exact: true }).click();
   const createDraftResponse = await createDraftPromise;
   const createDraftBody = await createDraftResponse.text();
   assert.equal(createDraftResponse.status(), 200, createDraftBody);

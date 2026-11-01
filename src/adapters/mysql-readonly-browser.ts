@@ -105,6 +105,42 @@ export async function disconnectMysqlBrowser(): Promise<void> {
   if (current) await current.end();
 }
 
+/** Fixed, bounded SELECT projections for regression; no SQL or table name comes from a model. */
+export async function readDepartmentDatabaseSummary() {
+  return withReadOnlyConnection(requirePool(),async connection=>{
+    const [applications]=await connection.query<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS count FROM biz_dept_book_apply WHERE del_flag='0'");
+    const [goods]=await connection.query<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS count, COUNT(DISTINCT apply_id) AS applications FROM biz_dept_book_apply_goods WHERE del_flag='0'");
+    const [orphans]=await connection.query<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS count FROM biz_dept_book_apply_goods g LEFT JOIN biz_dept_book_apply a ON a.id=g.apply_id AND a.del_flag='0' WHERE g.del_flag='0' AND a.id IS NULL");
+    return {applications:Number(applications[0]!.count),goods:Number(goods[0]!.count),applicationsWithGoods:Number(goods[0]!.applications),orphanGoods:Number(orphans[0]!.count)};
+  });
+}
+
+/** Identifiers originate only from the current authenticated myList response and stay in memory. */
+export async function readDepartmentApplications(applyNos:string[]) {
+  if(!applyNos.length||applyNos.length>10||new Set(applyNos).size!==applyNos.length||applyNos.some(v=>typeof v!=='string'||v.length>100||!/^[A-Za-z0-9_-]+$/.test(v)))throw Error('当前账号申请记录范围无效。');
+  return withReadOnlyConnection(requirePool(),async connection=>{
+    const [rows]=await connection.execute<RowDataPacket[]>(`SELECT /*+ MAX_EXECUTION_TIME(5000) */ id,apply_no,examine_status,lock_status,apply_type,book_usage,total_amount,total_weight FROM biz_dept_book_apply WHERE del_flag='0' AND apply_no IN (${applyNos.map(()=>'?').join(',')}) LIMIT 11`,applyNos);
+    return rows;
+  });
+}
+
+export async function readDepartmentAccountCount(userId:string) {
+  if(!/^\d{1,20}$/.test(userId))throw Error('当前账号身份字段不符合约定。');
+  return withReadOnlyConnection(requirePool(),async connection=>{
+    const [rows]=await connection.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS count FROM biz_dept_book_apply WHERE del_flag='0' AND applicant_user_id=?",[userId]);
+    return Number(rows[0]!.count);
+  });
+}
+
+export async function readDepartmentGoods(applyNo:string) {
+  if(typeof applyNo!=='string'||applyNo.length>100||!/^[A-Za-z0-9_-]+$/.test(applyNo))throw Error('当前账号申请记录范围无效。');
+  return withReadOnlyConnection(requirePool(),async connection=>{
+    const [rows]=await connection.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ g.product_id,g.qty,g.price,g.subtotal,g.unit_weight FROM biz_dept_book_apply_goods g JOIN biz_dept_book_apply a ON a.id=g.apply_id WHERE a.del_flag='0' AND g.del_flag='0' AND a.apply_no=? LIMIT 101",[applyNo]);
+    if(rows.length>100)throw Error('明细超过本轮只读核验上限。');
+    return rows;
+  });
+}
+
 export async function listMysqlTables(): Promise<MysqlTable[]> {
   const current = requirePool();
   return withReadOnlyConnection(current, async connection => {

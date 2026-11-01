@@ -17,6 +17,19 @@
  */
 
 import { execFileSync } from "node:child_process";
+import path from "node:path";
+
+export function profileIsOwned(commandLine, roots) {
+  const match = /--user-data-dir(?:=|\s+)(?:"([^"]+)"|'([^']+)'|([^\s]+))/i.exec(commandLine);
+  const profile = match?.[1] ?? match?.[2] ?? match?.[3];
+  if (!profile) return false;
+  const normalize = p => path.win32.resolve(p).toLowerCase();
+  const candidate = normalize(profile);
+  return roots.some(root => {
+    const rel = path.win32.relative(normalize(root), candidate);
+    return rel !== '' && rel !== '..' && !rel.startsWith('..\\') && !path.win32.isAbsolute(rel);
+  });
+}
 
 /**
  * @param {string[]} roots Absolute directories that test browser profiles live under.
@@ -56,13 +69,11 @@ export function listTestBrowsers(roots, options = {}) {
   try { parsed = JSON.parse(trimmed); } catch { return []; }
   const rows = Array.isArray(parsed) ? parsed : [parsed];
 
-  const normalizedRoots = roots.map(r => r.replace(/\//g, "\\").toLowerCase());
   const results = [];
   for (const row of rows) {
     const commandLine = String(row.CommandLine ?? "");
     if (!commandLine) continue;
-    const normalizedCmd = commandLine.replace(/\//g, "\\").toLowerCase();
-    if (!normalizedRoots.some(root => normalizedCmd.includes(root))) continue;
+    if (!profileIsOwned(commandLine, roots)) continue;
 
     // CreationDate arrives as ISO-8601 on modern PowerShell; tolerate /Date(...)/ too.
     let startedAt = 0;

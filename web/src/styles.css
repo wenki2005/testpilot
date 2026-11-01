@@ -1812,3 +1812,7 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--blue); }
 .doc-tests-page .doc-baseline-list span,
 .doc-tests-page .doc-baseline-list small { font-size: 14px; line-height: 1.5; }
 .doc-tests-page .doc-baseline-group h4 { font-size: 15px; line-height: 1.45; }
+
+.source-agent-form { display: grid; gap: 16px; margin-bottom: 24px; }
+.source-agent-form label { display: grid; gap: 8px; }
+.source-agent-form textarea, .source-agent-form select { width: 100%; padding: 10px; border: 1px solid var(--border, #dce2ea); border-radius: 8px; font: inherit; }

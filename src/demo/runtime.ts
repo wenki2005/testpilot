@@ -18,6 +18,7 @@ import type {
   DemoRequest,
   RunContext,
 } from "./contracts.js";
+import { markDemoTimedOut, updateDemoProgress } from "./run-diagnostics.js";
 import { availableRoutes, defaultChecks, defaultRequirements } from "./sample.js";
 import { validateGrammarSteps, type GrammarStep } from "../adapters/grammar-test-script.js";
 import { validateCases, type BrowserCheck, type BrowserStep } from "../adapters/document-test-workflow.js";
@@ -392,6 +393,7 @@ function buildRequestTool(context: RunContext, actionState: { count: number; lim
       const start = Date.now();
       const abort = combineSignal(context.signal, REQUEST_TIMEOUT_MS);
       try {
+        updateDemoProgress(context, "http-request");
         const headers = { ...(check.headers ?? {}) };
         const init: RequestInit = { method, headers, signal: abort.signal };
         if (check.body !== undefined) {
@@ -400,6 +402,7 @@ function buildRequestTool(context: RunContext, actionState: { count: number; lim
         }
         const response = await fetch(url, { ...init, redirect: "error" });
         const body = await readBody(response);
+        updateDemoProgress(context, "http-response");
         const evidence: DemoEvidence = {
           id: `e${++actionState.evidenceIndex}`,
           method,
@@ -584,6 +587,7 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
   run.coverage.available = normalizeRoutes();
   const started = Date.now();
   const timeoutMs = effectiveProvider === "model" ? MODEL_TIMEOUT_MS : RUN_TIMEOUT_MS;
+  updateDemoProgress(context, effectiveProvider === "model" ? "model-request" : "tool");
   const runAbort = new AbortController();
   const onCancel = () => runAbort.abort(context.signal.reason);
   if (context.signal.aborted) onCancel();
@@ -690,6 +694,13 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
     agent.subscribe((update) => {
       const item = update as { type?: string; toolName?: string; message?: { role?: string; content?: unknown[] } };
       if (item.type === "agent_end") return;
+      if (item.type === "message_update" && item.message?.role === "assistant" && item.message.content?.length) {
+        const previous = run.diagnostics?.modelResponses ?? 0;
+        updateDemoProgress(abortContext, "model-response", { modelResponses: Math.max(1, previous + (previous === 0 ? 1 : 0)) });
+      }
+      if (item.type === "tool_execution_start" && item.toolName) {
+        updateDemoProgress(abortContext, "tool", { toolCalls: (run.diagnostics?.toolCalls ?? 0) + 1, currentTool: item.toolName });
+      }
       if (item.type === "error") event(abortContext, "error", "Agent runtime error", JSON.stringify(update));
       if (item.type === "turn_end") {
         const text = item.message?.content?.filter((part) => (part as { type?: string }).type === "text")
@@ -703,6 +714,10 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
     for (const check of scenarioChecks) registeredChecks.set(check.id, structuredClone(check));
     const scenarioCheckIds = scenarioChecks.map((check) => check.id);
     const userTask = `${includeContract ? `Use requirements: ${request.requirements}. First read GET /sample/openapi.json, which describes routes and schemas but not expected defect outcomes. Then call register_checks for any additional requirements-backed scenarios before the first test request; proposed expectations are marked as candidates for human review. ` : ""}Before execution call record_plan with every required check id and explain how the API contract supports the plan. Registered checks have immutable expected status/JSON values and source labels: ${JSON.stringify(scenarioChecks)}. For each call request_sample with its registered checkId, then call assert_response using the returned evidenceId and same checkId. You cannot modify registered expectations. Do not omit checks. Stop only after all assigned checks have assertions.`;
+    if (effectiveProvider === "model") {
+      updateDemoProgress(abortContext, "model-request", { modelRequests: (run.diagnostics?.modelRequests ?? 0) + 1 });
+      event(abortContext, "info", "模型调用开始", `第 ${run.diagnostics?.modelRequests ?? 1} 次调用；等待有效输出。`);
+    }
     const promptPromise = agent.prompt(userTask);
     await Promise.race([promptPromise, new Promise<void>((resolve) => runAbort.signal.addEventListener("abort", () => resolve(), { once: true }))]);
     if (!runAbort.signal.aborted) await promptPromise;
@@ -732,6 +747,7 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
   } finally {
     clearTimeout(timer);
     context.signal.removeEventListener("abort", onCancel);
+    if (runAbort.signal.aborted && context.signal.reason?.message !== "cancelled") markDemoTimedOut(abortContext);
     if (!completed && !run.summary) run.summary = "运行未完成；无法判定通过。";
     run.completedAt = new Date().toISOString();
     run.durationMs = Date.now() - started;

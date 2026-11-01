@@ -1,0 +1,6 @@
+case_id,title,steps,expected_result
+"sample-heading","样例标题显示","[{""action"":""assertText"",""text"":""模块测试样例""}]","页面显示模块测试样例"
+"sample-field","姓名输入与回显","[{""action"":""fillByLabel"",""label"":""姓名"",""value"":""测试员""},{""action"":""assertValue"",""label"":""姓名"",""value"":""测试员""}]","姓名字段回显测试员"
+"sample-disabled","提交按钮不可用","[{""action"":""assertRoleDisabled"",""role"":""button"",""name"":""提交""}]","提交按钮为禁用状态"
+"sample-no-script","页面提示文案「模块测试样例」","[]","页面显示完整文案：模块测试样例"
+"sample-failure-probe","已知缺失提示检出","[{""action"":""assertText"",""text"":""故障检出专用提示（此样例故意不提供）""}]","页面显示故障检出专用提示"

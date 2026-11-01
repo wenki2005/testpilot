@@ -11,6 +11,8 @@ import { loadApiSuite } from "./storage/api-suite-loader.js";
 import { runApiSuite } from "./adapters/api-test-adapter.js";
 import { loadSqliteMigrationSuite } from "./storage/sqlite-migration-suite.js";
 import { runSqliteMigrationSuite } from "./adapters/sqlite-migration-adapter.js";
+import { runSourceTestAgent, loadSourceResume } from "./adapters/source-test-agent.js";
+import { runPlaywrightTest } from "./adapters/playwright-test-adapter.js";
 
 function option(args: string[], name: string): string | undefined {
   const index = args.indexOf(name);
@@ -18,7 +20,7 @@ function option(args: string[], name: string): string | undefined {
 }
 
 function help(): void {
-  console.log(`TestPilot MVP\n\nCommands:\n  run --suite <file.json> [--project-root <path>] [--out <path>]\n  run --profile <name> [--out <path>]\n  run-api --suite <file.json> --base-url <url> [--allow-network] [--allow-mutations] [--allow-concurrency] [--out <path>]\n  run-migrations --suite <file.json> [--project-root <path>] [--out <path>]\n  plan --requirements <file.md> [--out <path>]\n  explore --goal <text> [--scope <text>] [--out <path>]\n\nNamed project profiles run existing test commands without a shell in a disposable project copy. The API runner targets one origin and requires explicit flags for non-loopback targets, mutating HTTP methods and concurrent batches. The SQLite migration runner creates a new in-memory database per scenario, rejects unsafe commands, and writes normalized reports plus a reusable source package.`);
+  console.log(`TestPilot MVP\n\nCommands:\n  run --suite <file.json> [--project-root <path>] [--out <path>]\n  run --profile <name> [--out <path>]\n  run-api --suite <file.json> --base-url <url> [--allow-network] [--allow-mutations] [--allow-concurrency] [--out <path>]\n  run-migrations --suite <file.json> [--project-root <path>] [--out <path>]\n  test-agent --source-root <path> --goal-file <requirements.md> [--mode plan|generate|diagnose] [--timeout-ms 300000] [--out <path>]\n  run-playwright --project-root <path> --config <file> [--out <path>]\n  plan --requirements <file.md> [--out <path>]\n  explore --goal <text> [--scope <text>] [--out <path>]\n\nNamed project profiles run existing test commands without a shell in a disposable project copy. The API runner targets one origin and requires explicit flags for non-loopback targets, mutating HTTP methods and concurrent batches. The SQLite migration runner creates a new in-memory database per scenario, rejects unsafe commands, and writes normalized reports plus a reusable source package.`);
 }
 
 async function main(): Promise<void> {
@@ -26,6 +28,29 @@ async function main(): Promise<void> {
   if (!command || command === "--help" || command === "-h") return help();
 
   const outputRoot = resolve(option(args, "--out") ?? "artifacts/runs");
+  if (command === "run-playwright") {
+    const root = option(args, "--project-root");
+    const config = option(args, "--config");
+    if (!root || !config) throw new Error("run-playwright requires --project-root and --config");
+    const result = await runPlaywrightTest({ projectRoot: root, config, outputRoot });
+    console.log(`${result.status.toUpperCase()} — ${result.reportPath}`);
+    if (result.status !== "passed") process.exitCode = result.status === "failed" ? 1 : 2;
+    return;
+  }
+  if (command === "test-agent") {
+    const resumeFile=option(args,"--resume-run");
+    const resumed=resumeFile?await loadSourceResume(resolve(resumeFile)):undefined;
+    const sourceRoot = option(args, "--source-root")??resumed?.sourceRoot;
+    const goalFile = option(args, "--goal-file");
+    const goal = goalFile ? await readFile(resolve(goalFile), "utf8") : option(args, "--goal")??resumed?.goal;
+    if (!sourceRoot || !goal) throw new Error("test-agent requires --source-root and --goal or --goal-file");
+    const mode = option(args, "--mode") ?? resumed?.mode ?? "diagnose";
+    if (!["plan", "generate", "diagnose"].includes(mode)) throw new Error("--mode must be plan, generate or diagnose");
+    const run = await runSourceTestAgent({ sourceRoot, goal, candidateFiles:[...(resumed?.candidateFiles??[]),...(option(args,"--candidate-file")?[option(args,"--candidate-file")!]:[])], mode: mode as "plan" | "generate" | "diagnose", outputRoot, ...(option(args, "--timeout-ms") ? { timeoutMs: Number(option(args, "--timeout-ms")) } : {}), onProgress: e => console.log(JSON.stringify(e)) });
+    console.log(`${run.status.toUpperCase()} — ${run.reportPath}`);
+    if (run.status === "blocked") process.exitCode = 2;
+    return;
+  }
   const orchestrator = new TestOrchestrator([
     new DeterministicEngine(),
     new PlanningEngineScaffold("requirements"),
