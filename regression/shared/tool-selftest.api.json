@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "name": "工具自测 · 本机固定只读接口（非业务回归）",
+  "description": "契约来自 TestPilot src/demo/sample.ts 的内置样例，仅验证工具执行机制，不作为部门申样书业务回归结果。按实际 TestPilot 端口设置 baseUrl 后，创建和审核新套件。",
+  "baseUrl": "http://127.0.0.1:4317/sample/",
+  "cases": [
+    {
+      "id": "tool-health",
+      "title": "内置样例健康检查",
+      "source": "TestPilot src/demo/sample.ts: GET /sample/health",
+      "requirementRefs": ["TOOL-SELFTEST-HEALTH"],
+      "request": { "method": "GET", "path": "/sample/health", "timeoutMs": 5000 },
+      "expect": { "status": 200, "json": { "ok": true } }
+    },
+    {
+      "id": "tool-catalog",
+      "title": "内置样例完整商品目录与价格",
+      "source": "TestPilot src/demo/sample.ts: products / GET /sample/products",
+      "requirementRefs": ["TOOL-SELFTEST-CATALOG"],
+      "request": { "method": "GET", "path": "/sample/products", "timeoutMs": 5000 },
+      "expect": {
+        "status": 200,
+        "json": {
+          "products": [
+            { "id": "sku-1", "name": "经典咖啡", "price": 120 },
+            { "id": "sku-2", "name": "旅行杯", "price": 80 }
+          ]
+        }
+      }
+    }
+  ]
+}

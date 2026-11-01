@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+
+// Audits saved real rounds; --ui also includes the round started by the actual page button.
+// Never creates another workflow call.
+const base=process.env.TESTPILOT_VERIFY_URL??'http://127.0.0.1:4319',root=base+'/api/system-module-regression';
+const directory='artifacts/dify-minimal',ids=['xmind-17','xmind-18','xmind-25','xmind-29','xmind-33','xmind-37','xmind-46','xmind-52'];
+const before=JSON.parse(await readFile(directory+'/before.json','utf8'));const rounds=[];
+const names=['round-1','round-2',...(process.argv.includes('--ui')?['round-ui']:[])];
+for(const name of names){
+ const old=JSON.parse(await readFile(`${directory}/${name}.json`,'utf8'));const response=await fetch(root+'/batches/'+old.id);assert.equal(response.status,200);const batch=await response.json();await writeFile(`${directory}/${name}.json`,JSON.stringify(batch,null,2));assert.equal(batch.phase,'completed');assert.equal(batch.jobs.length,1);const job=batch.jobs[0];assert.deepEqual(job.selectedCaseIds,ids);assert.equal(job.phase,'completed');assert.ok(job.executionFinished&&job.documentRunId);assert.equal(job.results.length,8);assert.equal(batch.counts.blocked,0);assert.equal(batch.counts.not_executed,0);assert.equal(batch.counts.error,0);assert.ok(job.difyRuns.every(r=>r.status==='succeeded'&&r.id&&r.phase!=='prepare'));
+ assert.deepEqual(job.difyRuns.map(r=>r.phase),['dispatch','database-summary','report']);
+ for(const result of job.results){const original=before.cases.find(c=>c.id===result.caseId);assert.equal(result.expected,original.expected);assert.equal(result.title,original.title);assert.ok(['passed','failed'].includes(result.status));assert.ok(result.evidence);const image=await fetch(base+`/api/dify-web-modules/jobs/${job.id}/evidence/${result.evidence}`);assert.equal(image.status,200);assert.equal(Buffer.from(await image.arrayBuffer()).subarray(1,4).toString(),'PNG');}
+ const report=await fetch(root+'/batches/'+batch.id+'/report');assert.equal(report.status,200);const text=await report.text();for(const row of job.results)assert.ok(text.includes(row.expected));await writeFile(`${directory}/${name}-report.md`,text);
+ if(name==='round-ui'){const quantity=job.results.find(r=>r.caseId==='xmind-29');assert.equal(quantity.status,'failed');for(const pattern of [/下界 通过/,/多书计算 通过/,/上界 失败/,/预期数量 9999，实际为 999/])assert.match(quantity.detail,pattern);}
+ rounds.push({batchId:batch.id,jobId:job.id,documentRunId:job.documentRunId,profileId:batch.profileId,targetUrl:batch.targetUrl,counts:batch.counts,seconds:(Date.parse(batch.updatedAt)-Date.parse(batch.createdAt))/1000,difyRuns:job.difyRuns.map(r=>({id:r.id,phase:r.phase})),results:job.results.map(r=>({id:r.caseId,status:r.status,detail:r.detail,evidence:r.evidence})),steps:job.results.map(r=>({id:r.caseId,steps:r.steps}))});
+}
+for(const next of rounds.slice(1)){assert.deepEqual(rounds[0].steps,next.steps);assert.deepEqual(rounds[0].results.map(r=>({id:r.id,status:r.status})),next.results.map(r=>({id:r.id,status:r.status})));assert.equal(rounds[0].profileId,next.profileId);assert.equal(rounds[0].targetUrl,next.targetUrl);}assert.equal(new Set(rounds.map(r=>r.documentRunId)).size,rounds.length);
+const current=await fetch(root+'/modules/'+before.module.id).then(r=>r.json());assert.deepEqual(current.cases,before.cases);assert.deepEqual(current.module.coreCaseIds,before.module.coreCaseIds);assert.deepEqual(current.module.starterCaseIds,ids);
+const allBefore=JSON.parse(await readFile('.local/dify-core-baseline/readonly-expansion-before.json','utf8'));for(const m of allBefore.modules){const after=await fetch(root+'/modules/'+m.module.id).then(r=>r.json());assert.deepEqual(after.cases,m.cases);assert.deepEqual(after.module.coreCaseIds,m.module.coreCaseIds);}
+const proof={verifiedAt:new Date().toISOString(),scope:ids,original131CasesPreserved:true,originalCorePreserved:true,identicalFixedSteps:true,identicalOutcomes:true,sameRunScreenshots:8*rounds.length,rounds};await writeFile(directory+(process.argv.includes('--ui')?'/proof-ui.json':'/proof.json'),JSON.stringify(proof,null,2));console.log(JSON.stringify({counts:rounds.map(r=>r.counts),seconds:rounds.map(r=>r.seconds),originalsPreserved:true,screenshots:proof.sameRunScreenshots}));

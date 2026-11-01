@@ -21,7 +21,7 @@ test('workbench reviews and runs a SQLite migration suite without approving stal
   browser = await chromium.launch({ channel: 'msedge', headless: true });
   const page = await browser.newPage();
   await page.goto(base, { waitUntil: 'networkidle' });
-  await page.getByRole('button', { name: '更多' }).click();
+  await page.getByRole('button', { name: '工具', exact: true }).click();
   await page.getByRole('button', { name: '数据库迁移测试' }).click();
   await page.getByRole('heading', { name: '数据库迁移测试' }).waitFor();
   await page.getByLabel('套件定义 JSON').fill(JSON.stringify({ version: 1, name: 'Workbench SQLite suite', migrations: [{ id: '001-create-example', file: 'migrations/001-create-example.sql' }], scenarios: [{ id: 'create-example-table', title: 'Create the expected table', migrations: ['001-create-example'], checks: [{ id: 'table-exists', title: 'Table exists', query: "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sample_records'", expectedRows: [{ name: 'sample_records' }] }] }] }, null, 2));

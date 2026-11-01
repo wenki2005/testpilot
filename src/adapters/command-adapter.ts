@@ -1,4 +1,5 @@
 import spawn from "cross-spawn";
+import { spawn as spawnNative } from "node:child_process";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 import type { CaseResult, EvidenceItem, SuiteCase } from "../domain/types.js";
 
@@ -52,17 +53,27 @@ export async function executeCommand(testCase: SuiteCase, projectRoot: string, s
         ? safeEnvironment(testCase.command.env ?? {})
         : { ...process.env, ...testCase.command.env },
       shell: false,
+      detached: process.platform !== "win32",
       windowsHide: true,
       stdio: ["ignore", "pipe", "pipe"],
     });
 
-    const timer = setTimeout(() => {
-      timedOut = true;
-      child.kill("SIGTERM");
-      const forceKill = setTimeout(() => child.kill("SIGKILL"), 3_000);
-      forceKill.unref();
-    }, timeoutMs);
-    const abortChild = () => child.kill("SIGTERM");
+    let forceKill: NodeJS.Timeout | undefined;
+    const stopOwnedProcessTree = () => {
+      if (!child.pid) return;
+      if (process.platform === "win32") {
+        // Node --test and browsers create descendants. Killing only the parent
+        // leaves workers holding stdout open and defeats cancellation budgets.
+        const killer = spawnNative("taskkill.exe", ["/PID", String(child.pid), "/T", "/F"], { windowsHide: true, stdio: "ignore" });
+        killer.once("error", () => { child.kill("SIGKILL"); });
+      } else {
+        try { process.kill(-child.pid, "SIGTERM"); } catch { child.kill("SIGTERM"); }
+        forceKill = setTimeout(() => { try { process.kill(-child.pid!, "SIGKILL"); } catch { /* already exited */ } }, 1000);
+        forceKill.unref();
+      }
+    };
+    const timer = setTimeout(() => { timedOut = true; stopOwnedProcessTree(); }, timeoutMs);
+    const abortChild = stopOwnedProcessTree;
     signal?.addEventListener("abort", abortChild, { once: true });
     if (signal?.aborted) abortChild();
 
@@ -73,6 +84,7 @@ export async function executeCommand(testCase: SuiteCase, projectRoot: string, s
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      if (forceKill) clearTimeout(forceKill);
       signal?.removeEventListener("abort", abortChild);
       const capturedAt = new Date().toISOString();
       if (stdout) evidence.push({ kind: "stdout", content: stdout, capturedAt });

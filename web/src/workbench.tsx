@@ -1,3 +1,4 @@
+import SourceTestsPage from './source-tests-page';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { DemoAssertion, DemoCheck, DemoConfig, DemoMode, DemoRun } from '../../src/demo/contracts';
 import DocumentTestsPage from './document-tests-page';
@@ -6,9 +7,10 @@ import ApiSuitesPage from './api-suites-page';
 import SqliteMigrationPage from './sqlite-migration-page';
 import MysqlExplorerPage from './mysql-explorer-page';
 import SettingsPage from './settings-page';
+import RegressionWorkbenchPage from './regression-workbench-page';
 import CaseGeneratorPage, { type GenerationResult } from './case-generator-page';
 
-type Page = 'workbench' | 'history' | 'run-detail' | 'regressions' | 'architecture' | 'project-tests' | 'document-tests' | 'case-generator' | 'api-suites' | 'sqlite-migrations' | 'mysql-browser' | 'settings';
+type Page = 'workbench' | 'history' | 'run-detail' | 'regressions' | 'architecture' | 'project-tests' | 'document-tests' | 'case-generator' | 'api-suites' | 'sqlite-migrations' | 'mysql-browser' | 'source-tests' | 'settings' | 'dify-regression' | 'module-regression';
 type Notice = { kind: 'error' | 'success' | 'info'; text: string } | null;
 type ProjectProfile = { id: string; name: string; suiteName: string };
 type ProjectRun = { id: string; profileId: string; profileName: string; suiteName: string; scriptId?: string; scriptVersion?: number; status: 'queued' | 'running' | 'passed' | 'failed' | 'blocked' | 'cancelled' | 'error'; startedAt: string; completedAt?: string; durationMs: number; summary: string; results: Array<{ caseId: string; title: string; status: string; actualExitCode: number | null; evidence: Array<{ kind: string; content: string }> }>; artifactFiles: string[] };
@@ -72,7 +74,11 @@ export default function App() {
   const [projectBusy, setProjectBusy] = useState(false);
   const [scriptRequirements, setScriptRequirements] = useState<Record<string, string>>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [page, setPage] = useState<Page>(() => window.location.hash.startsWith('#doc-') ? 'document-tests' : 'workbench');
+  const [page, setPage] = useState<Page>(() => {
+    const requestedPage = new URLSearchParams(window.location.search).get('page');
+    if (requestedPage === 'module-regression' || requestedPage === 'dify-regression') return requestedPage;
+    return window.location.hash.startsWith('#doc-') ? 'document-tests' : 'workbench';
+  });
   const requestedDocumentProjectId = new URLSearchParams(window.location.search).get('documentProject') ?? '';
   const requestedDocumentRunId = new URLSearchParams(window.location.search).get('documentRun') ?? '';
   const [notice, setNotice] = useState<Notice>(null);
@@ -269,19 +275,21 @@ export default function App() {
     setTargetKind('website'); setCaseMode('both'); setRequireConfirmation(false); setNotice(null);
   };
 
-  return <div className="app-shell agent-shell">
+  return <div className={`app-shell agent-shell ${page==='dify-regression'||page==='module-regression'?'sm-shell':''}`}>
     <aside className="sidebar">
       <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>QUALITY WORKBENCH</span></div></div>
       <div className="nav-section-label">测试空间</div>
       <nav aria-label="主导航" className="main-nav">
         <NavItem active={page === 'workbench'} icon="plus" label="新建测试" onClick={() => navigate('workbench')} />
         <NavItem active={page === 'document-tests'} icon="list" label="网页回归" onClick={() => { navigate('document-tests'); setMoreOpen(false); }} />
+        <NavItem active={page === 'dify-regression' || page === 'module-regression'} icon="nodes" label="Dify 回归工作台" onClick={() => { navigate('dify-regression'); setMoreOpen(false); }} />
         <NavItem active={page === 'regressions'} icon="check" label="回归用例" count={checks.length || undefined} onClick={() => { navigate('regressions'); setMoreOpen(false); }} />
         <NavItem active={page === 'history' || page === 'run-detail'} icon="clock" label="运行记录" count={runs.length || undefined} onClick={() => { navigate('history'); setMoreOpen(false); }} />
-        <NavItem active={moreOpen || ['architecture','project-tests','case-generator','api-suites','sqlite-migrations','mysql-browser','settings'].includes(page)} icon="layers" label="工具" onClick={() => setMoreOpen((open) => !open)} />
+        <NavItem active={moreOpen || ['architecture','project-tests','case-generator','api-suites','sqlite-migrations','mysql-browser','source-tests','settings'].includes(page)} icon="layers" label="工具" onClick={() => setMoreOpen((open) => !open)} />
       </nav>
       {moreOpen && <div className="nav-more-menu" aria-label="测试工具">
         <NavItem active={page === 'project-tests'} icon="box" label="本地项目与脚本" onClick={() => { navigate('project-tests'); setMoreOpen(false); }} />
+        <NavItem active={page === 'source-tests'} icon="nodes" label="代码测试 Agent" onClick={() => { navigate('source-tests'); setMoreOpen(false); }} />
         <NavItem active={page === 'case-generator'} icon="plus" label="生成测试用例" onClick={() => { navigate('case-generator'); setMoreOpen(false); }} />
         <NavItem active={page === 'api-suites'} icon="nodes" label="API 测试套件" onClick={() => { navigate('api-suites'); setMoreOpen(false); }} />
         <NavItem active={page === 'sqlite-migrations'} icon="database" label="数据库迁移测试" onClick={() => { navigate('sqlite-migrations'); setMoreOpen(false); }} />
@@ -330,10 +338,12 @@ export default function App() {
       {page === 'architecture' && <ArchitecturePage config={config} />}
       {page === 'project-tests' && <ProjectProfilesPage profiles={profiles} scripts={projectScripts} runs={projectRuns} busy={projectBusy} modelAvailable={config?.modelAvailable ?? false} requirements={scriptRequirements} setRequirement={(id, value) => setScriptRequirements((current) => ({ ...current, [id]: value }))} createCandidate={createScriptCandidate} generateCandidate={generateScriptCandidate} review={reviewProjectScript} runApproved={runApprovedScript} cancel={cancelProjectRun} />}
       {page === 'document-tests' && <DocumentTestsPage modelAvailable={config?.modelAvailable ?? false} computerUseAvailable={config?.computerUseAvailable ?? false} computerUseReason={config?.computerUseReason ?? 'Computer Use 配置状态不可用。'} computerUseModel={config?.computerUseModel ?? ''} initialProjectId={activeDocumentProjectId || requestedDocumentProjectId || undefined} initialRunId={requestedDocumentRunId || undefined} />}
+      {(page === 'module-regression' || page === 'dify-regression') && <RegressionWorkbenchPage />}
       {page === 'case-generator' && <CaseGeneratorPage modelAvailable={config?.modelAvailable ?? false} onTransfer={transferGeneratedCases} />}
       {page === 'api-suites' && <ApiSuitesPage openSuite={id => { setActiveApiSuiteId(id); setActiveApiAutoRun(false); setTargetKind('api'); setPage('workbench'); setNotice(null); }} />}
       {page === 'sqlite-migrations' && <SqliteMigrationPage />}
       {page === 'mysql-browser' && <MysqlExplorerPage />}
+      {page === 'source-tests' && <SourceTestsPage />}
       {page === 'settings' && <SettingsPage onSaved={refresh} />}
     </main>
   </div>;
@@ -342,7 +352,7 @@ export default function App() {
 function NavItem({ active, icon, label, count, onClick }: { active: boolean; icon: string; label: string; count?: number; onClick: () => void }) {
   return <button className={`nav-item ${active ? 'active' : ''}`} onClick={onClick} aria-current={active ? 'page' : undefined}><Icon name={icon}/><span>{label}</span>{count !== undefined && <small>{count}</small>}</button>;
 }
-function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', settings: '设置' })[page]; }
+function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', 'source-tests': '代码测试 Agent', 'dify-regression': 'Dify 回归工作台', 'module-regression': 'Dify 回归工作台', settings: '设置' })[page]; }
 function RunResults({ run, onSave, savedIds }: { run: DemoRun; onSave: (assertion: DemoAssertion) => void; savedIds: Set<string> }) {
   const [assertionFilter, setAssertionFilter] = useState<'all' | 'failed' | 'passed'>('all');
   const passed = run.assertions.filter((a) => a.status === 'passed').length;
@@ -444,4 +454,3 @@ function RegressionPage({ checks, busy, rerun }: { checks: DemoCheck[]; busy: bo
 function ArchitecturePage({ config }: { config: DemoConfig | null }) {
   return <div className="secondary-page architecture-page"><div className="page-heading"><div><div className="eyebrow">运行边界</div><h1>架构说明</h1><p>TestPilot 使用受限工具循环检查本地样本服务，也支持需求文档驱动的 Playwright 浏览器检查。</p></div><span className="mode-pill"><Icon name="nodes" size={15}/>{config?.framework ?? 'Pi'} Agent</span></div><div className="architecture-flow"><div className="arch-node"><span className="arch-node-icon"><Icon name="list"/></span><strong>测试入口</strong><small>固定用例 / 需求 / 探索 / 文档</small></div><span className="flow-arrow"><Icon name="arrow"/></span><div className="arch-node emphasized"><span className="arch-node-icon"><Icon name="nodes"/></span><strong>受限 Agent 循环</strong><small>{config?.framework ?? 'Pi'} · 动作预算控制</small></div><span className="flow-arrow"><Icon name="arrow"/></span><div className="arch-node"><span className="arch-node-icon"><Icon name="box"/></span><strong>样本 API / 浏览器应用</strong><small>受限 API 与只读风险边界</small></div><span className="flow-arrow"><Icon name="arrow"/></span><div className="arch-node"><span className="arch-node-icon"><Icon name="check"/></span><strong>断言与报告</strong><small>事件 / 证据 / 回归 / ZIP</small></div></div><div className="architecture-columns"><section className="architecture-card"><h2>执行模式</h2><div className="arch-mode"><span className="arch-mode-dot unavailable"/><div><strong>固定断言 runner</strong><p>“已有用例”和保存回归逐条执行既定断言，不调用模型，也不使用 Agent 自主判断。</p></div></div><div className="arch-mode"><span className="arch-mode-dot offline"/><div><strong>离线演示</strong><p>样本 API 需求测试与自主探索由脚本决策驱动受限工具循环；文档用例由无模型 Playwright runner 执行。</p></div></div><div className="arch-mode"><span className={`arch-mode-dot ${config?.modelAvailable ? 'online' : 'unavailable'}`}/><div><strong>真实模型</strong><p>{config?.modelAvailable ? `${config.modelLabel} 已配置。模型生成计划并通过受限样本工具检查，也可经 Pi Agent 生成文档独立检查。` : '当前尚未配置可用模型；AI 文档验证会被标记为阻塞，固定用例仍可运行。'}</p></div></div></section><section className="architecture-card"><h2>安全与证据</h2><ul className="architecture-bullets"><li>项目测试仅通过注册配置运行，不提供任意 shell。</li><li>文档测试使用新建浏览器上下文，并禁止提交表单和风险按钮。</li><li>每条浏览器用例都需先编辑并通过人工审核，修改后需重新审核。</li><li>固定用例不调用模型；独立 AI lane 将需求文本发送至配置的模型提供方。</li></ul></section></div><div className="scope-note"><strong>当前浏览器 DSL 边界</strong><p>支持按可访问标签填写与选择、点击经审核的安全非提交控件，以及检查文本、可见性、字段值和禁用状态。此版本不做截图视觉比较、任意 CSS/XPath 定位、文件上传、复杂多页工作流或提交后的服务端状态检查。</p></div></div>;
 }
-

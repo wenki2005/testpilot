@@ -149,7 +149,7 @@ test('main workbench creates and automatically executes an approved read-only AP
   assert.equal(retargetedRerun.status, 409, 'a targeted rerun cannot move an approved case to another host');
   assert.equal(targetHits, 2, 'invalid reruns must not reach the target');
 
-  await page.getByRole('button', { name: '更多' }).click();
+  await page.getByRole('button', { name: '工具', exact: true }).click();
   await page.getByRole('button', { name: 'API 测试套件' }).click();
   await page.getByRole('heading', { name: 'API 测试套件' }).waitFor();
   await page.getByRole('button', { name: /Workbench health checks/ }).waitFor();

@@ -1,14 +1,37 @@
+# Dependencies and generated builds
 node_modules/
 dist/
-web/dist/
-artifacts/
+coverage/
+*.tsbuildinfo
+
+# Credentials and per-machine configuration
 .env
+.env.*
+!.env.example
+!.env.regression.example
+.local/
+*.local.json
+*.local.env
+*.pem
+*.key
+*.p12
 
-# local scratch / runtime output that must not be versioned
-_tmp/
-.playwright-cli/
-output/*.log
-*.log
-
-# test temp data (see tests/test-data-dir.mjs)
+# Run state, evidence, browser sessions and database exports
+artifacts/
+runtime-data/
+test-results/
+playwright-report/
 test-artifacts/
+*.log
+*.sql.gz
+*.dump
+
+# Original distribution-only files
+/MANIFEST.sha256
+/TestPilot演示系统可用性测试报告2026-10-20.docx
+
+# Editor and OS files
+.idea/
+.DS_Store
+Thumbs.db
+~$*

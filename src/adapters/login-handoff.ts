@@ -29,6 +29,7 @@ export interface BrowserRequestPolicyContext {
   isNavigationRequest?: boolean;
   isMainFrameNavigation?: boolean;
   loginHandoffActive?: boolean;
+  authenticationPage?: boolean;
   authOrigins?: string[];
 }
 
@@ -66,6 +67,32 @@ export function browserRequestAllowed(method: string, requestUrl: string, contex
     // same registrable site; mutations and cross-site APIs remain blocked.
     const targetHost = (() => { try { return new URL(targetOrigin).hostname; } catch { return ""; } })();
     const sameRegistrableSite = registrableSite(targetHost) !== undefined && registrableSite(targetHost) === registrableSite(request.hostname);
+    const loginPhase = context.authenticationPage === true || context.loginHandoffActive === true;
+    // The QR iframe is the first auth request: its blocked/error frame cannot
+    // register itself in authOrigins. Bootstrap only WeCom's exact login origin
+    // and SSO path while the owned target page is at an authentication route.
+    const wecomSso = (request.origin === 'https://login.work.weixin.qq.com' && /^\/wwlogin\/sso(?:\/|$)/i.test(request.pathname))
+      || (request.origin === 'https://open.work.weixin.qq.com' && /^\/wwopen\/loginStorage\/?$/i.test(request.pathname));
+    const navigationOrApi = context.isNavigationRequest === true || /^(?:fetch|xhr)$/i.test(context.resourceType);
+    if (loginPhase && wecomSso && !mutationPath.test(request.pathname) && navigationOrApi
+      && (methodIsRead || (context.loginHandoffActive === true && /^(?:POST|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)))) return true;
+    // Chromium labels SDK module/CSS prefetches as "other", not script/style.
+    // Limit this exception to the observed WeCom SDK CDN and static suffixes.
+    if (loginPhase && methodIsRead && context.resourceType === 'other' && request.origin === 'https://wwcdn.weixin.qq.com'
+      && /^\/node\/(?:wwlogin|wwopen)\//i.test(request.pathname) && /\.(?:js|css)$/i.test(request.pathname)) return true;
+    // This application exchanges the QR callback code at a sibling API host.
+    // It is authentication, not a business mutation; never allow it outside
+    // the visible/manual login phase or on an unrelated host.
+    const wecomCodeExchange = /(?:^|\/)logWeChat\/dept-book\/?$/i.test(request.pathname);
+    if (loginPhase && sameRegistrableSite && wecomCodeExchange && /^(?:GET|HEAD|OPTIONS)$/i.test(method)
+      && /^(?:fetch|xhr)$/i.test(context.resourceType) && request.protocol === 'https:') return true;
+    // The supplied department-apply frontend uses myList and detail/{number};
+    // neither matches the generic read-verb-at-end rule. Explicitly allow only
+    // these documented test API reads, including their CORS preflight.
+    const departmentRead = targetOrigin === 'https://cdn.yibentushu.com' && request.origin === 'https://testapi.yibentushu.com'
+      && (/^\/supply-api\/dept\/book\/apply\/(?:myList|clientSearch|bookCheck|(?:detail|progress)\/[A-Za-z0-9_-]+)\/?$/.test(request.pathname)
+        || /^\/supply-api\/h5\/dept\/book\/order\/(?:myList|statusCount)\/?$/.test(request.pathname));
+    if(departmentRead && /^(?:GET|HEAD|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)) return true;
     const apiRequest = /^(?:GET|HEAD|POST|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)
       && sameRegistrableSite && !mutationPath.test(request.pathname) && (apiReadPath.test(request.pathname) || knownReadRoute.test(request.pathname));
     if (apiRequest && request.protocol === "https:") return true;
@@ -142,9 +169,17 @@ export async function requestLoginContinue(projectId: string): Promise<LoginHand
 
 export function clearLoginHandoff(projectId: string): void { handoffs.delete(projectId); }
 
+export function isAuthenticationRoute(value: string): boolean {
+  try {
+    const url=new URL(value);
+    const route=url.pathname+(url.hash.split('?')[0]??'');
+    return /(?:\/|#)(?:login|signin|sign-in|auth|sso)(?:[/?#]|$)/i.test(route)
+      && !/(?:\/|#)(?:callback|redirect|token)(?:\/|$)/i.test(route);
+  } catch { return false; }
+}
+
 export async function isLoginPage(page: Page): Promise<boolean> {
   if (page.isClosed()) return false;
-  const loginUrl = /(?:\/|#)(?:login|signin|sign-in|auth|sso)(?:[/?#]|$)/i;
   // Do not treat a logged-in page that merely mentions the WeCom brand or a
   // generic "请登录" hint as an authentication screen. Such false positives
   // used to surface the QR handoff again while the shared session was valid.
@@ -156,7 +191,7 @@ export async function isLoginPage(page: Page): Promise<boolean> {
     const frames = page.frames();
     for (const frame of frames) {
       const url = frame.url();
-      if (!/(?:callback|redirect|token)/i.test(url) && loginUrl.test(url)) return true;
+      if (isAuthenticationRoute(url)) return true;
       if (await frame.locator('input[type="password"], input[autocomplete="current-password"], input[autocomplete="one-time-code"]').count().catch(() => 0)) return true;
       const text = await frame.locator("body").innerText().catch(() => "");
       if (loginText.test(text)) return true;
@@ -175,6 +210,7 @@ export function allowBrowserRequest(method: string, requestUrl: string, projectI
     resourceType: context?.resourceType ?? "document",
     ...(context?.isNavigationRequest !== undefined ? { isNavigationRequest: context.isNavigationRequest } : {}),
     ...(context?.isMainFrameNavigation !== undefined ? { isMainFrameNavigation: context.isMainFrameNavigation } : {}),
+    ...(context?.authenticationPage !== undefined ? { authenticationPage: context.authenticationPage } : {}),
     loginHandoffActive: handoff?.status === "waiting_for_user",
     authOrigins: handoff?.authOrigins ?? [],
   });

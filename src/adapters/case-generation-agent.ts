@@ -42,7 +42,6 @@ function parseModelObject(raw: string): any {
   }
   throw new Error(lastIssue.slice(0, 160));
 }
-
 /** Requirements-to-case authoring only. It does not create runner DSL or execute anything. */
 export async function generateTestCaseDrafts(input: {
   requirementsText: string;
@@ -517,4 +516,3 @@ async function compareAgainstReferenceCases(cases: GeneratedTestCase[], requirem
   const canonicalItems = cases.map(item => allItems.get(item.id) ?? { aiCaseId: item.id, relation: "uncertain" as const, referenceCaseIds: [], rationale: "没有得到此用例的完整比较结果；待复核。" });
   return { referenceCount: references.length, evaluatedCases: canonicalItems.length, duplicateCandidates: canonicalItems.filter(item => item.relation === "duplicate").length, overlapCount: canonicalItems.filter(item => item.relation === "overlap").length, novelCount: canonicalItems.filter(item => item.relation === "novel").length, items: canonicalItems, semanticReviews: [...allReviews.values()] };
 }
-

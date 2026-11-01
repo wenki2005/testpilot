@@ -7,6 +7,7 @@ function normalizedWords(value: string): string[] {
 }
 
 export function isSensitiveExportField(value: string): boolean {
+  if (/密码|口令|验证码|密钥|令牌|会话凭据/u.test(value)) return true;
   const words = normalizedWords(value);
   if (words.some(word => ["password", "passwd", "passcode", "pwd", "token", "secret", "cookie", "authorization", "credential", "credentials"].includes(word))) return true;
   return words.includes("api") && words.includes("key")
@@ -48,7 +49,7 @@ export function redactSensitiveExportData(value: unknown): unknown {
     const locatorLabel = [record.label, record.placeholder, record.name]
       .filter((item): item is string => typeof item === "string")
       .join(" ");
-    const secretInput = /^(?:fillByLabel|fillByPlaceholder|fillByRoleIndex)$/u.test(action)
+    const secretInput = /^(?:fillByLabel|fillByPlaceholder|fillByRoleIndex|assertValue|assertValueByPlaceholder)$/u.test(action)
       && isSensitiveExportField(locatorLabel);
     const output: Record<string, unknown> = {};
     for (const [key, child] of Object.entries(record)) {

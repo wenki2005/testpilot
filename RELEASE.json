@@ -1,0 +1,10 @@
+{
+  "name": "TestPilot",
+  "version": "0.3.0",
+  "builtAt": "2026-10-28T02:47:52.422Z",
+  "platform": "Windows",
+  "node": "v22.23.2",
+  "source": "Fresh TypeScript and Vite builds",
+  "codexRequired": false,
+  "firstRunRequiresNetwork": true
+}

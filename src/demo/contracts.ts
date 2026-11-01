@@ -65,6 +65,14 @@ export interface DemoRun {
   coverage: { visited: string[]; available: string[]; untested: string[] };
   limitations: string[];
   summary: string;
+  diagnostics?: {
+    phase: "model-request" | "model-response" | "http-request" | "http-response" | "tool";
+    modelRequests: number;
+    modelResponses: number;
+    toolCalls: number;
+    currentTool?: string;
+    updatedAt: string;
+  };
   error?: string;
   fixedTarget: boolean;
 }

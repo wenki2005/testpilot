@@ -1,0 +1,11 @@
+module,method,path,frontend_function,purpose,effect,expected_source,status
+department-apply,GET,/dept/book/apply/clientSearch,clientSearch,费用划归客户搜索,read-only,XMind待确认,not-executed
+department-apply,GET,/dept/book/apply/bookCheck,bookCheck,图书编码校验,read-only,XMind待确认,not-executed
+department-apply,POST,/dept/book/apply/submit,applySubmit,提交申请,mutation,XMind待确认,not-executed
+applications-logistics,GET,/dept/book/apply/myList,applyMyList,我的申请列表,read-only,XMind待确认,not-executed
+applications-logistics,GET,/dept/book/apply/progress/{applyNo},applyProgress,申请进度,read-only,XMind待确认,not-executed
+applications-logistics,GET,/dept/book/apply/detail/{applyNo},applyDetail,申请明细,read-only,XMind待确认,not-executed
+applications-logistics,POST,/dept/book/apply/relock/{applyNo},applyRellock,重新锁单,mutation,XMind待确认,not-executed
+applications-logistics,GET,/h5/dept/book/order/myList,orderMyList,订单列表,read-only,XMind待确认,not-executed
+applications-logistics,GET,/h5/dept/book/order/statusCount,statusCount,订单状态统计,read-only,XMind待确认,not-executed
+applications-logistics,GET,/h5/dept/book/order/detail/{orderId},orderDetail,订单详情,read-only,XMind待确认,not-executed

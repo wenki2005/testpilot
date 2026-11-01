@@ -1,4 +1,9 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { DifyRegressionStore } from "../adapters/dify-regression.js";
+import { ModuleRegressionStore } from "../adapters/module-regression.js";
+import { DifyWebModuleStore } from "../adapters/dify-web-modules.js";
+import { SystemModuleRegression } from "../adapters/system-module-regression.js";
+import { webModuleDependencies } from "../adapters/dify-web-browser.js";
 import { createHash, randomUUID } from "node:crypto";
 import { containsCredentialLikeValue } from "../adapters/document-sensitive-data.js";
 import { mkdir, readFile, writeFile, stat, readdir, rename, lstat, realpath } from "node:fs/promises";
@@ -33,6 +38,7 @@ import { approveDocumentWorkflowStage, cancelDocumentWorkflow, completeDocumentW
 import { openApiOperationFacts, summarizeOpenApiSpecification } from "../adapters/openapi-summary.js";
 import { createSqliteMigrationCandidate, executeApprovedSqliteMigrationSuite, getSqliteMigrationCandidate, getSqliteMigrationRun, listSqliteMigrationCandidates, readSqliteMigrationRunArtifact, reviewSqliteMigrationCandidate, updateSqliteMigrationCandidate } from "../adapters/sqlite-migration-workflow.js";
 import { connectMysqlBrowser, disconnectMysqlBrowser, listMysqlColumns, listMysqlTables, mysqlBrowserConfig, mysqlBrowserStatus, readMysqlRows } from "../adapters/mysql-readonly-browser.js";
+import { runSourceTestAgent, loadSourceResume, type SourceTestRun } from "../adapters/source-test-agent.js";
 
 const host = "127.0.0.1";
 const port = Number(process.env.PORT ?? 4317);
@@ -40,6 +46,10 @@ const sourceDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(sourceDir, "../..");
 const artifactsDir = path.resolve(process.env.TESTPILOT_DATA_DIR ?? path.join(projectRoot, "artifacts", "demo"));
 const runsDir = path.join(artifactsDir, "runs");
+const difyRegression = new DifyRegressionStore(path.join(artifactsDir, "dify-regression"));
+const moduleRegression = new ModuleRegressionStore(artifactsDir);
+const difyWebModules = new DifyWebModuleStore(artifactsDir, webModuleDependencies(artifactsDir));
+const systemModules = new SystemModuleRegression(artifactsDir, difyWebModules, webModuleDependencies(artifactsDir));
 const regressionsFile = path.join(artifactsDir, "regressions.json");
 const distDir = path.join(projectRoot, "web", "dist");
 const MAX_BODY = 64 * 1024;
@@ -68,6 +78,21 @@ function validateCasesPreservingGenerationTrace(value: unknown, existing: Browse
 const PROJECT_SCRIPTS_FILE = path.join(artifactsDir, "project-scripts.json");
 const runs = new Map<string, DemoRun>();
 const controllers = new Map<string, AbortController>();
+type SourceJob = { id: string; profileId: string; mode: "plan" | "generate" | "diagnose"; status: "running" | "candidate" | "blocked" | "cancelled"; startedAt: string; events: Array<{ type: string; itemType?: string; exitCode?: number }>; result?: SourceTestRun; error?: string };
+const sourceJobs = new Map<string, SourceJob>();
+const sourceControllers = new Map<string, AbortController>();
+function launchSourceJob(profileId:string,goal:string,mode:SourceJob['mode'],sourceRoot:string,candidateFiles:string[]=[]):SourceJob {
+    const id = randomUUID(), controller = new AbortController();
+    const job: SourceJob = { id, profileId: profileId, mode: mode, status: "running", startedAt: new Date().toISOString(), events: [] };
+    sourceJobs.set(id, job); sourceControllers.set(id, controller);
+    while (sourceJobs.size > 100) { const first = sourceJobs.keys().next().value; if (first) sourceJobs.delete(first); }
+    void runSourceTestAgent({ sourceRoot: sourceRoot, goal: goal, mode: mode, candidateFiles, outputRoot: path.join(artifactsDir, "source-test-jobs"), signal: controller.signal, onProgress: event => { job.events.push(event); if (job.events.length > 100) job.events.shift(); } })
+      .then(result => { job.result = result; job.status = controller.signal.aborted ? "cancelled" : result.status; })
+      .catch(error => { job.status = controller.signal.aborted ? "cancelled" : "blocked"; job.error = "测试任务未完成，请检查 TestPilot 模型设置和目标项目配置。"; console.error("Source test job failed:", error instanceof Error ? error.name : "unknown"); })
+      .finally(() => sourceControllers.delete(id));
+
+    return job;
+}
 function requiresManualApiContractReview(project: { apiContract?: { allowNetwork?: boolean; allowMutations?: boolean; allowConcurrency?: boolean } }): boolean {
   return project.apiContract?.allowNetwork === true || project.apiContract?.allowMutations === true || project.apiContract?.allowConcurrency === true;
 }
@@ -92,7 +117,7 @@ interface ProjectScriptView extends Omit<ProjectScriptVersion, "suite" | "files"
   diff: string[];
   files: Array<{ path: string; content: string }>;
 }
-const registeredProfiles: ProjectProfileSummary[] = process.env.TESTPILOT_DISTRIBUTION_DEMO === "1" ? [] : [
+const registeredProfiles: ProjectProfileSummary[] = process.env.TESTPILOT_DISTRIBUTION_DEMO === "1" ? [{id:"quantity-sample",name:"数量校验样例（内置测试缺陷）",suiteName:"随包数量规则回归"}] : [
   { id: "grammar-lab", name: "Grammar Lab · D:/work/grammar-lab-demo", suiteName: "Grammar Lab existing tests (model + browser)" },
   { id: "plural-runner", name: "Plural Runner · D:/work/plural-runner-demo", suiteName: "Plural Runner deterministic engine tests" },
   { id: "book-companion", name: "Book Companion · D:/work/book-companion-service-demo", suiteName: "Book Companion domain + local service browser tests" },
@@ -695,6 +720,7 @@ async function overlayApprovedScriptFiles(projectRoot: string, files: Record<str
 async function loadRegisteredProfile(id: string): Promise<ProjectProfile> {
   if (!registeredProfiles.some((profile) => profile.id === id)) throw new Error("Unregistered project profile.");
   const profile = await loadProjectProfile(path.join(projectRoot, "examples", "profiles", `${id}.json`));
+  if(process.env.TESTPILOT_DISTRIBUTION_DEMO === "1"&&id==="quantity-sample")profile.sourceRoot=path.join(projectRoot,"examples","source-test-fixture");
   if (profile.name !== registeredProfiles.find((item) => item.id === id)?.name) throw new Error("Registered profile configuration changed unexpectedly.");
   return profile;
 }
@@ -1006,10 +1032,137 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     const limit = Number(url.searchParams.get("limit") ?? "25");
     try { json(res, 200, await readMysqlRows(decodeURIComponent(mysqlRowsRoute[1]!), offset, limit)); }
     catch (error) { fail(res, 422, error instanceof Error && (error.message.includes("尚未连接") || error.message.includes("必须在") || error.message.includes("找不到") || error.message.includes("无效")) ? error.message : "读取当前数据页失败；请确认连接有效且查询可在短时间内完成。"); }
+  }
+  if(req.method==='GET'&&url.pathname==='/sample/dify-module'){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(await readFile(path.join(projectRoot,'examples','dify-module-sample.html')));return;}
+  if (url.pathname.startsWith('/api/system-module-regression')) {
+    try {
+      const root='/api/system-module-regression';const route=url.pathname.slice(root.length);
+      if(req.method==='GET'&&route==='/template.md'){res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename=module-template.md'});res.end('# 模块名称\n\n## case-1 | 用例标题\n\n- 优先级：P1\n- 来源：原始需求或用例编号\n\n### 前置条件\n- 请填写需要的账号或业务记录条件\n\n### 操作步骤\n1. 打开模块入口\n2. 请填写实际操作\n\n### 预期结果\n请填写原始预期，不能使用实际执行结果替代\n');return;}
+      if(req.method==='GET'&&route===''){json(res,200,systemModules.state());return;}
+      if(req.method==='POST'&&route==='/systems'){json(res,200,systemModules.saveSystem(await bodyJson(req)));return;}
+      if(req.method==='POST'&&route==='/modules/import'){json(res,200,await systemModules.importModule(await documentBody(req)));return;}
+      if(req.method==='POST'&&route==='/modules/attach'){json(res,200,systemModules.attachLegacy(await bodyJson(req)));return;}
+      if(req.method==='POST'&&route==='/batches'){json(res,202,systemModules.start(await bodyJson(req)));return;}
+      const system=route.match(/^\/systems\/([0-9a-f-]{36})\/(selection|connect|continue|disconnect|accounts|account-selection)$/i);
+      if(req.method==='POST'&&system){const key=system[1]!;const action=system[2];const data=await bodyJson(req);if(action==='accounts')json(res,200,systemModules.addAccount(key,data));else if(action==='account-selection')json(res,200,systemModules.selectAccount(key,data.accountId));else if(action==='selection')json(res,200,systemModules.saveSelection(key,data.moduleIds));else if(action==='connect')json(res,202,systemModules.connect(key));else if(action==='continue')json(res,200,await systemModules.continueConnection(key));else json(res,200,await systemModules.cancelConnection(key));return;}
+      const module=route.match(/^\/modules\/([0-9a-f-]{36})(?:\/(archive|core|markdown))?$/i);
+      if(module){if(req.method==='POST'&&module[2]==='core'){json(res,200,systemModules.saveCore(module[1]!,await bodyJson(req)));return;}if(req.method==='GET'&&module[2]==='markdown'){const text=systemModules.markdown(module[1]!,url.searchParams.get('version')??undefined);res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename=module-cases.md'});res.end(text);return;}if(req.method==='GET'&&!module[2]){json(res,200,systemModules.cases(module[1]!,url.searchParams.get('version')??undefined));return;}if(req.method==='POST'&&module[2]==='archive'){json(res,200,systemModules.archiveModule(module[1]!, (await bodyJson(req)).archived));return;}}
+      const confirmation=route.match(/^\/batches\/([0-9a-f-]{36})\/confirm-case$/i);
+      if(req.method==='POST'&&confirmation){json(res,202,systemModules.confirmCase(confirmation[1]!,await bodyJson(req)));return;}
+      const batch=route.match(/^\/batches\/([0-9a-f-]{36})(?:\/(cancel|continue|retest|report|scripts|retry-report|retry-notification))?$/i);
+      if(batch){const key=batch[1]!;const action=batch[2];if(req.method==='GET'&&action==='scripts'){const bytes=await systemModules.scripts(key);res.writeHead(200,{'content-type':'application/zip','content-disposition':'attachment; filename=dify-fixed-scripts.zip'});res.end(bytes);return;}if(req.method==='GET'&&!action){json(res,200,systemModules.getBatch(key));return;}if(req.method==='GET'&&action==='report'){const report=systemModules.report(key).replaceAll('/api/dify-web-modules/',`http://${host}:${port}/api/dify-web-modules/`);res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename="system-regression-report.md"'});res.end(report);return;}if(req.method==='POST'){if(action==='retry-notification')json(res,200,await systemModules.retryNotification(key));else if(action==='retry-report')json(res,202,systemModules.retryReports(key));else if(action==='cancel')json(res,200,await systemModules.cancel(key));else if(action==='continue')json(res,200,await systemModules.continueBatch(key));else if(action==='retest')json(res,202,systemModules.retest(key,await bodyJson(req)));else {fail(res,404,'接口不存在。');}return;}}
+      fail(res,404,'接口不存在。');return;
+    }catch(error){fail(res,422,error instanceof Error?error.message:'系统模块操作失败。');return;}
+  }
+  if (url.pathname.startsWith('/api/dify-web-modules')) {
+    try {
+      if (req.method === 'GET' && url.pathname === '/api/dify-web-modules') { json(res,200,difyWebModules.state()); return; }
+      if (req.method === 'POST' && url.pathname === '/api/dify-web-modules/import') { const module=await difyWebModules.import(await documentBody(req)); json(res,200,{id:module.id,name:module.name,caseCount:module.project.cases.length}); return; }
+      if (req.method === 'POST' && url.pathname === '/api/dify-web-modules/jobs') { json(res,202,difyWebModules.start(await bodyJson(req))); return; }
+      const match=url.pathname.match(/^\/api\/dify-web-modules\/jobs\/([0-9a-f-]{36})(?:\/(retry|cancel|continue|retest|report|evidence)(?:\/([0-9a-f]{64}\.png))?)?$/i);
+      if (match) {
+        const key=match[1]!, action=match[2]; const job=difyWebModules.getJob(key);
+        if(req.method==='GET'&&!action){
+          const {snapshot,executionProject,...view}=job;const progress=job.documentRunId&&!job.executionFinished?await getDocumentRunProgress(job.documentRunId):undefined;
+          const results=view.results.map(row=>{const actual=progress?.results.find(r=>r.lane==='deterministic'&&r.id===row.caseId);return actual?{...row,status:['passed','failed','blocked'].includes(actual.status)?actual.status:'not_executed',detail:actual.detail,evidence:actual.evidence}:row;});
+          json(res,200,{...view,results,...(progress?{progress:{...progress.progress,currentCase:progress.currentCase}}:{})});return;
+        }
+        if(req.method==='GET'&&action==='report'){const report=difyWebModules.reportForExport(key).replaceAll('/api/dify-web-modules/',`http://${host}:${port}/api/dify-web-modules/`);res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename="module-report.md"'});res.end(report);return;}
+        if(req.method==='GET'&&action==='evidence'&&match[3]){const row=job.results.find(r=>r.evidence===match[3]);if(!row||row.evidenceOrigin!=='preflight'&&!job.documentRunId){fail(res,404,'没有该证据。');return;}const file=row.evidenceOrigin==='preflight'?path.join(artifactsDir,'dify-web-modules','evidence',job.id,match[3]):path.join(artifactsDir,'document-tests','runs',job.documentRunId!,'screenshots',match[3]);const bytes=await readFile(file);res.writeHead(200,{'content-type':'image/png','cache-control':'no-store'});res.end(bytes);return;}
+        if(req.method==='POST'){
+          if(action==='retry'){json(res,202,await difyWebModules.retry(key));return;}
+          if(action==='cancel'){json(res,200,await difyWebModules.cancel(key));return;}
+          if(action==='continue'){json(res,200,await difyWebModules.continue(key));return;}
+          if(action==='retest'){const data=await bodyJson(req);const selected=data.selectedCaseIds??job.results.filter(r=>!r.outOfScope&&['failed','blocked','not_executed'].includes(r.status)).map(r=>r.caseId);json(res,202,difyWebModules.start({moduleId:job.moduleId,parentJobId:job.id,selectedCaseIds:selected,confirmedCaseIds:data.confirmedCaseIds??[],requestId:data.requestId}));return;}
+        }
+      }
+      fail(res,404,'模块操作不存在。');
+    } catch(error) {fail(res,422,error instanceof Error?String(error.message).slice(0,500):'模块操作失败。');}
+    return;
+  }
+  if (url.pathname.startsWith("/api/module-regression")) {
+    try {
+      if (req.method === "GET" && url.pathname === "/api/module-regression") { json(res, 200, { ...moduleRegression.state(), records: await moduleRegression.unifiedRuns() }); return; }
+      if (req.method === "POST" && url.pathname === "/api/module-regression/plans") { json(res, 200, await moduleRegression.register(await bodyJson(req))); return; }
+      if (req.method === "POST" && url.pathname === "/api/module-regression/run") { json(res, 200, await moduleRegression.start(await bodyJson(req))); return; }
+      if (req.method === "POST" && url.pathname === "/api/module-regression/web-package-check") {
+        const data = await bodyJson(req);
+        if (!data || typeof data.projectId !== "string" || !/^[0-9a-f-]{36}$/i.test(data.projectId)) { fail(res, 400, "需要有效的模块项目编号。"); return; }
+        const project = await getDocumentProject(data.projectId);
+        if (!project) { fail(res, 404, "模块用例包不存在或已被删除。"); return; }
+        const cases = project.cases;
+        const statusCounts = { runnable: 0, held: 0, draft: 0 };
+        for (const item of cases) {
+          if (item.lifecycleStatus === "runnable" && item.sideEffectRisk === "none" && item.selectedForRegression !== false && (!item.preconditions?.length || item.preconditionsConfirmed === true)) statusCounts.runnable++;
+          else if (item.sideEffectRisk !== "none" || (item.preconditions?.length ?? 0) > 0 && item.preconditionsConfirmed !== true) statusCounts.held++;
+          else statusCounts.draft++;
+        }
+        const manifest = {
+          schema: 1 as const, phase: "web-package-check" as const, run_id: randomUUID(), module_id: project.id,
+          package_digest: createHash("sha256").update(JSON.stringify({ cases: project.cases, sourceFiles: project.sourceFiles ?? [project.fileName] })).digest("hex"),
+          case_ids: cases.map(item => createHash("sha256").update(`${project.id}:${item.id}`).digest("hex")), status_counts: statusCounts,
+        };
+        json(res, 200, await moduleRegression.checkWebPackage(manifest)); return;
+      }
+      fail(res, 404, "not found");
+    } catch (error) { fail(res, 422, error instanceof Error ? error.message : "模块回归操作失败。"); }
+    return;
+  }
+  if (url.pathname.startsWith("/api/dify-regression")) {
+    try {
+      if (req.method === "GET" && url.pathname === "/api/dify-regression") { json(res, 200, difyRegression.state()); return; }
+      if (req.method === "POST") {
+        const data = await documentBody(req);
+        const action = url.pathname.slice("/api/dify-regression/".length);
+        const value = action === "import" ? difyRegression.importBaseline(data)
+          : action === "xmind" ? difyRegression.importXmind(data.name, data.bytesBase64)
+          : action === "generate" ? difyRegression.start(data)
+          : action === "review" ? difyRegression.review(data)
+          : action === "runs" ? difyRegression.createRun(data)
+          : action === "result" ? difyRegression.recordResult(data) : undefined;
+        if (value) { json(res, 200, value); return; }
+      }
+      fail(res, 404, "not found");
+    } catch (error) { fail(res, 422, error instanceof Error ? error.message : "回归记录操作失败。"); }
     return;
   }
   if (req.method === "GET" && url.pathname === "/api/health") { json(res, 200, { ok: true }); return; }
   if (req.method === "GET" && url.pathname === "/api/config") { json(res, 200, config()); return; }
+  if (req.method === "GET" && url.pathname === "/api/source-test-jobs") {
+    json(res, 200, { provider: "testpilot-pi-agent", authentication: "Uses TestPilot model settings; no Codex login or executable.", profiles: registeredProfiles, jobs: [...sourceJobs.values()].reverse() }); return;
+  }
+  if (req.method === "POST" && url.pathname === "/api/source-test-jobs") {
+    let data: any; try { data = await bodyJson(req); } catch { fail(res, 400, "无效的测试任务。"); return; }
+    if (!data || typeof data !== "object" || Array.isArray(data) || Object.keys(data).some(k => !["profileId", "goal", "mode"].includes(k)) || typeof data.profileId !== "string" || !registeredProfiles.some(p => p.id === data.profileId) || typeof data.goal !== "string" || !data.goal.trim() || data.goal.length > 30000 || !["plan", "generate", "diagnose"].includes(data.mode)) { fail(res, 400, "请选择已注册项目，并填写测试目标和有效模式。"); return; }
+    if (containsCredentialLikeValue(data.goal)) { fail(res, 422, "目标中疑似含凭据，请使用测试角色或环境变量引用。"); return; }
+    if (sourceControllers.size) { fail(res, 409, "已有源码测试任务正在运行，请等待完成或停止。"); return; }
+    const profile = await loadRegisteredProfile(data.profileId);
+    const job = launchSourceJob(data.profileId,data.goal,data.mode,profile.sourceRoot);
+    json(res, 202, job); return;
+  }
+  const resumeSourceJob=url.pathname.match(/^\/api\/source-test-jobs\/([0-9a-f-]{36})\/resume$/i);
+  if(req.method==='POST'&&resumeSourceJob){
+    const previous=sourceJobs.get(resumeSourceJob[1]!);
+    if(!previous?.result){fail(res,404,'没有可继续的任务产物。');return;}
+    if(sourceControllers.size){fail(res,409,'已有源码任务正在执行。');return;}
+    try{
+      const input=req.headers['content-length']?await bodyJson(req):{};
+      if(!input||typeof input!=='object'||Array.isArray(input)||Object.keys(input).some(key=>key!=='feedback')||(input.feedback!==undefined&&(typeof input.feedback!=='string'||input.feedback.length>10000))){fail(res,400,'继续任务的补充说明无效。');return;}
+      if(containsCredentialLikeValue(input.feedback??'')){fail(res,422,'补充说明中疑似含凭据。');return;}
+      const resumed=await loadSourceResume(path.join(path.dirname(previous.result.reportPath),'run.json'));
+      if(input.feedback?.trim())resumed.goal+='\nUser continuation feedback:\n'+input.feedback.trim();
+      if(resumed.goal.length>30000){fail(res,422,'补充后的测试目标超过长度限制。');return;}
+      if(!resumed.goal){fail(res,422,'旧版产物没有保留测试目标，请创建新任务。');return;}
+      const job=launchSourceJob(previous.profileId,resumed.goal,resumed.mode,resumed.sourceRoot,resumed.candidateFiles);
+      json(res,202,job);
+    }catch{fail(res,422,'任务副本不可继续，请检查已保存的产物。');}
+    return;
+  }
+  const sourceJobCancel = url.pathname.match(/^\/api\/source-test-jobs\/([0-9a-f-]{36})\/cancel$/i);
+  if (req.method === "POST" && sourceJobCancel) {
+    const job = sourceJobs.get(sourceJobCancel[1]!); if (!job) { fail(res, 404, "测试任务不存在。"); return; }
+    sourceControllers.get(job.id)?.abort(); json(res, 200, { id: job.id, cancellationRequested: true }); return;
+  }
   if (req.method === "GET" && url.pathname === "/api/settings") { json(res, 200, { ...readModelSettingsForUi(), computerUse: computerUseConfiguration() }); return; }
   if (req.method === "POST" && url.pathname === "/api/settings") {
     let data: any; try { data = await bodyJson(req); } catch (error) { fail(res, 400, String((error as Error).message)); return; }
@@ -1492,16 +1645,17 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
           return { file, bytes, document };
         }));
         await recordDocumentPreparation(task, "reading-materials", "completed", `已解析 ${imported.length} 份资料，共提取 ${imported.reduce((sum, item) => sum + (item.document.testCases?.length ?? 0), 0)} 条已有测试用例。`);
-        await recordDocumentPreparation(task, "web-research", "running", "正在查找公开测试案例参考；参考内容只用于覆盖启发，不视为目标应用事实。");
-        const research = await searchTestExamples(`${new URL(data.targetUrl).hostname} web application QA test case examples`, { limit: 5, timeoutMs: 15_000 });
-        await recordDocumentPreparation(task, "web-research", research.results.length ? "completed" : "warning", research.results.length ? `找到 ${research.results.length} 条公开参考。` : `没有可用公开参考：${research.notice}`);
+        const caseMode = data.caseMode === "existing" || data.caseMode === "ai" || data.caseMode === "both" ? data.caseMode : "both";
+        const directCasePack = imported.length === 1 && imported[0]!.file.fileName.toLocaleLowerCase().endsWith(".csv") && (imported[0]!.document.testCases?.length ?? 0) > 0;
+        await recordDocumentPreparation(task, "web-research", directCasePack ? "completed" : "running", directCasePack ? "已识别模块用例包；保留包内用例和步骤，跳过联网搜索及自动补测。" : "正在查找公开测试案例参考；参考内容只用于覆盖启发，不视为目标应用事实。");
+        const research = directCasePack ? { results: [], notice: "模块 CSV 直接导入模式已跳过公开搜索。", provider: "skipped" } : await searchTestExamples(`${new URL(data.targetUrl).hostname} web application QA test case examples`, { limit: 5, timeoutMs: 15_000 });
+        if (!directCasePack) await recordDocumentPreparation(task, "web-research", research.results.length ? "completed" : "warning", research.results.length ? `找到 ${research.results.length} 条公开参考。` : `没有可用公开参考：${research.notice}`);
         const fileName = imported.map(({ file }) => file.fileName).join("、").slice(0, 200);
         const resolvedSources = resolveDocumentInputRoles(imported.map(({ file, document }) => ({ fileName: file.fileName, requestedRole: file.role ?? "auto", document })));
         let sourceText = resolvedSources.requirementsText;
-        const caseMode = data.caseMode === "existing" || data.caseMode === "ai" || data.caseMode === "both" ? data.caseMode : "both";
         let websiteReadWarning = "";
         let websiteContent = "";
-        try { websiteContent = await readPublicWebsiteText(data.targetUrl); }
+        try { if (!directCasePack) websiteContent = await readPublicWebsiteText(data.targetUrl); }
         catch (error) { websiteReadWarning = error instanceof Error ? error.message : String(error); }
         if (websiteContent) sourceText = [sourceText, `# 网站可公开读取的页面文字\n\n${websiteContent}`].filter(Boolean).join("\n\n---\n\n");
         if (!sourceText.trim() && caseMode !== "existing") sourceText = `# 网站探索目标\n\n目标网址：${data.targetUrl}\n\n请根据目标页面中实际可观察到的内容设计测试用例；业务规则或登录后状态无法确认时，明确标注待澄清，不得猜测预期。`;
@@ -2416,6 +2570,8 @@ let shuttingDown = false;
 const shutdown = () => {
   if (shuttingDown) return;
   shuttingDown = true;
+  systemModules.close();
+  difyWebModules.close();
   server.close(() => { void Promise.all([closePersistentTestPages(), disconnectMysqlBrowser()]).finally(() => process.exit(0)); });
 };
 process.once("SIGINT", shutdown);

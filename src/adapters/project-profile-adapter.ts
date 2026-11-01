@@ -1,5 +1,5 @@
 import { createServer, request as httpRequest } from "node:http";
-import { cp, mkdtemp, mkdir, rm, stat } from "node:fs/promises";
+import { cp, mkdtemp, mkdir, rm, stat, lstat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, relative, resolve, sep, join } from "node:path";
 import { spawn } from "cross-spawn";
@@ -20,7 +20,8 @@ export async function prepareProfile(profile: ProjectProfile): Promise<PreparedP
   const excluded = new Set((profile.excludePaths ?? []).map((item) => item.replaceAll("\\", "/").replace(/^\.\//, "").toLowerCase()));
   await cp(sourceRoot, projectRoot, {
     recursive: true,
-    filter: (sourcePath) => {
+    filter: async (sourcePath) => {
+      if ((await lstat(sourcePath)).isSymbolicLink()) return false;
       const rel = relative(sourceRoot, sourcePath).replaceAll("\\", "/").toLowerCase();
       if (/(^|\/)(?:\.git|node_modules|\.env(?:\..*)?)($|\/)/.test(rel)) return false;
       return ![...excluded].some((item) => rel === item || rel.startsWith(`${item}/`));
@@ -51,7 +52,7 @@ export async function prepareProfile(profile: ProjectProfile): Promise<PreparedP
       env,
       async close() {
         if (service) await stopService(service);
-        await rm(tempRoot, { recursive: true, force: true });
+        await rm(tempRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
       },
     };
   } catch (error) {

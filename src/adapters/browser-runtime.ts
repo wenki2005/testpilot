@@ -102,10 +102,10 @@ export async function resetPersistentCaseBaseline(page: Page, targetUrl: string,
   if (scrollY > 1) throw new Error(`无法重置用例滚动基线；预期 scrollY=0，实际为 ${scrollY}。`);
 }
 
-async function createPersistentTestPage(userDataDir: string, projectId: string) {
+async function createPersistentTestPage(userDataDir: string, projectId: string, isolated = false) {
   await mkdir(path.resolve(userDataDir), { recursive: true });
   const headless = process.env.TESTPILOT_BROWSER_HEADLESS === "1";
-  if (resolveModelSettings().browserCdpEndpoint) {
+  if (!isolated && resolveModelSettings().browserCdpEndpoint) {
     const browser = await launchTestBrowser({ headless });
     const context = browser.contexts()[0];
     if (!context) { await browser.close().catch(() => undefined); throw new Error("Edge CDP 浏览器上下文已断开。"); }
@@ -157,9 +157,9 @@ async function createPersistentTestPage(userDataDir: string, projectId: string) 
  * Reusing the same page preserves sessionStorage based login state and avoids
  * repeatedly opening and closing Edge between runs.
  */
-export async function launchPersistentTestPage(userDataDir: string) {
+export async function launchPersistentTestPage(userDataDir: string, options: { isolated?: boolean } = {}) {
   const key = path.resolve(userDataDir);
-  const configuredEndpoint = resolveModelSettings().browserCdpEndpoint ?? "";
+  const configuredEndpoint = options.isolated ? 'isolated-profile' : resolveModelSettings().browserCdpEndpoint ?? "";
   const current = persistentSessions.get(key);
   if (current) {
     const session = await current.catch(() => undefined);
@@ -169,7 +169,7 @@ export async function launchPersistentTestPage(userDataDir: string) {
   }
 
   const projectId = path.basename(key);
-  const creating: Promise<PersistentSession> = createPersistentTestPage(key, projectId).then(session => ({ ...session, endpoint: configuredEndpoint }));
+  const creating: Promise<PersistentSession> = createPersistentTestPage(key, projectId, options.isolated).then(session => ({ ...session, endpoint: configuredEndpoint }));
   persistentSessions.set(key, creating);
   try { return await creating; }
   catch (error) { if (persistentSessions.get(key) === creating) persistentSessions.delete(key); throw error; }
@@ -188,19 +188,19 @@ export async function disconnectPersistentTestPage(userDataDir: string): Promise
 }
 
 /** Look up a live managed page without launching, closing, or replacing a browser session. */
-export async function getExistingPersistentTestPage(userDataDir: string) {
+export async function getExistingPersistentTestPage(userDataDir: string, options: { isolated?: boolean } = {}) {
   const key = path.resolve(userDataDir);
   let current = persistentSessions.get(key);
   if (!current) {
     const projectId = path.basename(key);
-    const configured = resolveModelSettings().browserCdpEndpoint;
+    const configured = options.isolated ? undefined : resolveModelSettings().browserCdpEndpoint;
     const saved = await readSavedSession(projectSessionFile(key, projectId), projectId);
     const endpoint = configured ?? saved?.cdpEndpoint;
     if (!endpoint || !saved?.targetId) return undefined;
     const connecting: Promise<PersistentSession> = connectManagedEdge(key, projectId, endpoint, saved.targetId, saved.pid, false)
       .then(session => {
         if (!session) throw new Error("The saved project tab is no longer available.");
-        return { ...session, endpoint: configured ?? "" } as PersistentSession;
+        return { ...session, endpoint: options.isolated ? 'isolated-profile' : configured ?? "" } as PersistentSession;
       });
     persistentSessions.set(key, connecting);
     try { await connecting; }
@@ -209,7 +209,7 @@ export async function getExistingPersistentTestPage(userDataDir: string) {
   }
   if (!current) return undefined;
   const session = await current.catch(() => undefined);
-  if (!session || session.page.isClosed() || session.endpoint !== (resolveModelSettings().browserCdpEndpoint ?? "")) return undefined;
+  if (!session || session.page.isClosed() || session.endpoint !== (options.isolated ? 'isolated-profile' : resolveModelSettings().browserCdpEndpoint ?? "")) return undefined;
   return session;
 }
 
