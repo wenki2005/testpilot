@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+    "name": "申请记录与审批详情",
+    "archived": false
+  },
+  "version": {
+    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+    "version": 1,
+    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
+  },
+  "case": {
+    "id": "xmind-58",
+    "title": "代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限",
+    "priority": "P0",
+    "expected": "代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ❌ 代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限 P0",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-用书审批详情页",
+      "查看申请明细（本次需求变更补齐）",
+      "审批详情页「申请编号」右侧展示「查看明细",
+      "」入口，点击进入申请表单明细展示页"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "stored",
+    "storedStepCount": 1,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 1,
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "无权限"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "缺少指定身份与页面业务字段的完整对照证据；窗口已登录不等于身份字段已验证。",
+    "nextAction": "明确本轮账号/角色及应显示的字段，补姓名、部门或权限的直接对照；不只检查控件可见。"
+  },
+  "caseDigest": "e1e4c7c3121fe99632154d91017353192538b057dea9c5c0fcdcfd76edea292c"
+}

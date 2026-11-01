@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+    "name": "PC/H5 横向适配",
+    "archived": false
+  },
+  "version": {
+    "id": "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+    "version": 1,
+    "digest": "4ec80893c8cddcae150321ff33c9050ef38ab2e7c90c60b857321985bd563214"
+  },
+  "case": {
+    "id": "xmind-95",
+    "title": "// 本期不做统计看板，待后续需求提出时再实现",
+    "priority": "P2",
+    "expected": "// 本期不做统计看板，待后续需求提出时再实现",
+    "source": "部门申样书_V1.0_测试用例.xmind › PC端适配 › 申请数据看板页 › // 本期不做统计看板，待后续需求提出时再实现",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "PC端适配",
+      "申请数据看板页"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "no-steps",
+    "source": "none",
+    "storedStepCount": 0,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 0,
+    "steps": []
+  },
+  "readiness": {
+    "hasFixedSteps": false,
+    "coverageGap": "原包状态：needs-steps；需先确认账号、环境或副作用条件。",
+    "detail": "原用例尚未形成可靠的只读固定步骤。",
+    "nextAction": "基于当前页面补充定位和直接断言，并验证后固化；重复调用 AI 不保证补齐。"
+  },
+  "caseDigest": "36d6c3dabaea3674016c7cea5874c42ce3a5f103e915d375706be40067c4d1df"
+}

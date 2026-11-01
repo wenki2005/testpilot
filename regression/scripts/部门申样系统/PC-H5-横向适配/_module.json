@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+    "name": "PC/H5 横向适配",
+    "archived": false
+  },
+  "version": {
+    "id": "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+    "version": 1,
+    "digest": "4ec80893c8cddcae150321ff33c9050ef38ab2e7c90c60b857321985bd563214"
+  },
+  "counts": {
+    "cases": 3,
+    "fixed": 2,
+    "derived": 0,
+    "noSteps": 1
+  },
+  "cases": [
+    {
+      "id": "xmind-94",
+      "title": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+      "priority": "P2",
+      "file": "xmind-94.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 4,
+      "caseDigest": "0e0d59562f0beef0bb9863e07e2d0ceeafd418c4234dd0342288d248e75721d0"
+    },
+    {
+      "id": "xmind-95",
+      "title": "// 本期不做统计看板，待后续需求提出时再实现",
+      "priority": "P2",
+      "file": "xmind-95.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "36d6c3dabaea3674016c7cea5874c42ce3a5f103e915d375706be40067c4d1df",
+      "coverageGap": "原包状态：needs-steps；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-96",
+      "title": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+      "priority": "P2",
+      "file": "xmind-96.json",
+      "status": "fixed",
+      "scriptSource": "stored",
+      "stepCount": 1,
+      "caseDigest": "7f02e212ee39ccc43a398b144fd18f2ec0b565eca0e4f3809eb3116ca9fa5dd6",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+    "name": "登录入口与公共基础",
+    "archived": false
+  },
+  "version": {
+    "id": "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+    "version": 1,
+    "digest": "a2e1c31660c3b5fbf8621f9f51412d60db796a88e0893d3d1701de2be097df72"
+  },
+  "case": {
+    "id": "xmind-116",
+    "title": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+    "priority": "P2",
+    "expected": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 订单库存不足锁单失败 › ✅ 推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "企微消息通知",
+      "消息推送触发场景",
+      "订单库存不足锁单失败"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "no-steps",
+    "source": "none",
+    "storedStepCount": 0,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 0,
+    "steps": []
+  },
+  "readiness": {
+    "hasFixedSteps": false,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "缺少对应业务事件、授权通知目标及真实投递证据；Dify 自身执行成功不等于业务通知发送成功。",
+    "nextAction": "补齐该集成的测试入口、契约和事件记录；涉及创建、锁单或真实通知时需明确授权，不能仅凭页面文字通过。"
+  },
+  "caseDigest": "d695aee192b56959e5268b73586dc6abc9c867865f2ec51c1153672686fe3721"
+}

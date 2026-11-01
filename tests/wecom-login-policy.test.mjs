@@ -51,6 +51,16 @@ test('WeCom QR polling is scoped to SSO and only manual login can send authentic
  assert.equal(call('GET','https://login.work.weixin.qq.com/wwlogin/sso/delete',{...context,loginHandoffActive:true}),false);
 });
 
+test('current WeCom QR widget can poll the monoApi SSO status path only during login',()=>{
+ const status='https://login.work.weixin.qq.com/wwlogin/monoApi/sso/login/getWebQrCodeStatus?lang=zh_CN&ajax=1&f=json';
+ const context={...frame,resourceType:'xhr',isNavigationRequest:false};
+ assert.equal(call('POST',status,{...context,loginHandoffActive:true}),true);
+ assert.equal(call('GET',status,context),true);
+ assert.equal(call('POST',status,context),false);
+ assert.equal(call('POST','https://login.work.weixin.qq.com/wwlogin/monoApi/sso/login/delete',{...context,loginHandoffActive:true}),false);
+ assert.equal(call('GET','https://login.work.weixin.qq.com/wwlogin/monoApi/other',context),false);
+});
+
 test('the same-site QR code exchange is allowed only during login; business mutations remain blocked',()=>{
  const context={...frame,resourceType:'xhr',isNavigationRequest:false};
  const exchange='https://testapi.yibentushu.com/logWeChat/dept-book?code=TEST_SENTINEL';

@@ -1,5 +1,7 @@
 # TestPilot 交接说明
 
+> **历史快照（2026-10-26），已过时。** 最新交接请看 `docs/collaboration/Dify新电脑交接-2026-11-01.md` 和 `docs/collaboration/dify-core-regression-progress.md` 的最后一节；本文只用于追溯当时的工作树，不代表当前分支、端口或远端状态。
+
 ## 快照与范围
 
 这是一份 **2026-10-26 的源码交接快照**，供下一位 Agent 在现有实现上继续工作。它不是安装包，也不是已验证可直接上线的发行版。快照基于本机 D:\test agent\testpilot-mvp 的完整工作树，包含当时已跟踪的修改与未跟踪源码；没有清理或覆盖原工作区。

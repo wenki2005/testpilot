@@ -11,7 +11,9 @@
 - regression/department-apply：A 负责的申样表单模块。
 - regression/applications-logistics：B 负责的申请记录、详情及物流模块。
 - regression/shared：两人复用的执行说明或公共工具，改动需写清影响。
-- docs/collaboration：分工、交接和当前接入状态。
+- regression/packs：按模块导入的原始用例包（CSV/Markdown）。
+- regression/scripts：从 TestPilot 模块版本生成的固定步骤镜像，只读生成物，不手改。
+- docs/collaboration：分工、交接和当前接入状态；脚本与目录规范见 `docs/collaboration/回归脚本与目录规范.md`。
 - docs/target-system：被测对象结构和接口索引，只记录必要的技术信息。
 - .local、artifacts、runtime-data：本机配置、原始运行状态及证据，不加入 Git。
 
@@ -37,3 +39,11 @@
 - MySQL 结构查看不代表 TestPilot 已实现 MySQL runner。现有 SQLite migration runner 不能直接运行在 MySQL。
 - 交接写清修改、执行命令、实际结果、尚未验证项及公共文件影响。
 - Git 提交和远端推送遵循当前用户授权；未提供远端地址时只完成本地准备。
+
+## 代码与脚本规范（2026-11-01）
+
+- 固定步骤以 TestPilot 模块版本为准；`regression/scripts/` 是生成镜像，不手改。改用例后重新运行 `npm run scripts:export`，再 `npm run scripts:check`。
+- `scripts/` 只放构建、启动、导入导出等入口；一次性验收/审计脚本放 `scripts/verify/` 并在 `scripts/README.md` 登记；`regression/scripts/` 只放生成物。
+- 不同栏目/负责人已有独立系统，保持独立；不合并、不代改他人系统，不把两边的批次/报告混在一起。
+- 脚本文件名用动词开头，路径和用例编号能直接定位；不新增“最终版/临时版”命名。
+- 规范与目录树见 `docs/collaboration/回归脚本与目录规范.md`。

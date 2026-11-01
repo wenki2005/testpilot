@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+    "name": "PC/H5 横向适配",
+    "archived": false
+  },
+  "version": {
+    "id": "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+    "version": 1,
+    "digest": "4ec80893c8cddcae150321ff33c9050ef38ab2e7c90c60b857321985bd563214"
+  },
+  "case": {
+    "id": "xmind-96",
+    "title": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+    "priority": "P2",
+    "expected": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+    "source": "部门申样书_V1.0_测试用例.xmind › PC端适配 › 申请数据看板页 › ❌ 本期PC后台仅提供订单明细列表，不提供申请数据统计看板 P2",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "PC端适配",
+      "申请数据看板页"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "stored",
+    "storedStepCount": 1,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 1,
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "订单明细"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "此条验证经销商管理后台，而当前绑定目标是员工申样 H5；缺少该后台入口、指定角色及对应数据证据。",
+    "nextAction": "绑定实际管理后台和有授权的角色会话，准备迁移或订单基线；不能用 H5 页面替代后台验收。"
+  },
+  "caseDigest": "7f02e212ee39ccc43a398b144fd18f2ec0b565eca0e4f3809eb3116ca9fa5dd6"
+}

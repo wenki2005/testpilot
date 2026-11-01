@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-4",
+    "title": "本人申请：申请人取当前企微登录人姓名与部门",
+    "priority": "P2",
+    "expected": "本人申请：申请人取当前企微登录人姓名与部门",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 申请人类型 › 选择本人申请/代人申请 › 表单带出对应申请人信息 › ✅ 本人申请：申请人取当前企微登录人姓名与部门",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "申请人类型",
+      "选择本人申请/代人申请",
+      "表单带出对应申请人信息"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "stored",
+    "storedStepCount": 3,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 3,
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "申请人类型"
+      },
+      {
+        "action": "assertRoleVisible",
+        "role": "radio",
+        "name": "本人申请"
+      },
+      {
+        "action": "assertRoleVisible",
+        "role": "radio",
+        "name": "代人申请"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "缺少指定身份与页面业务字段的完整对照证据；窗口已登录不等于身份字段已验证。",
+    "nextAction": "明确本轮账号/角色及应显示的字段，补姓名、部门或权限的直接对照；不只检查控件可见。"
+  },
+  "caseDigest": "a7162006c30bf8ab37a9afadebffbf870ce3913f37d7aa69a1e2c5724b38a0f7"
+}

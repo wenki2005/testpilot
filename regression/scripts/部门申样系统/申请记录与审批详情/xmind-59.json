@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+    "name": "申请记录与审批详情",
+    "archived": false
+  },
+  "version": {
+    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+    "version": 1,
+    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
+  },
+  "case": {
+    "id": "xmind-59",
+    "title": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据",
+    "priority": "P0",
+    "expected": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-用书审批详情页 › 查看申请明细（本次需求变更补齐） › 审批详情页「申请编号」右侧展示「查看明细 >」入口，点击进入申请表单明细展示页 › ❌ 越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据 P0",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-用书审批详情页",
+      "查看申请明细（本次需求变更补齐）",
+      "审批详情页「申请编号」右侧展示「查看明细",
+      "」入口，点击进入申请表单明细展示页"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "stored",
+    "storedStepCount": 2,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 2,
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "申请编号"
+      },
+      {
+        "action": "assertVisible",
+        "text": "查看明细"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "此条需要本人可见且状态明确的申请/订单记录；当前空态或成功连接数据库不能证明详情、审批、筛选及分页正确。",
+    "nextAction": "按原预期准备本人可见的已有记录和对应状态；仍从同轮网页、接口、数据库对照，不借用他人的申请、不自动造单。"
+  },
+  "caseDigest": "170925b9123b736168ed28df4d305df4b5ea2ae2a3d53f48ec20e45fd16a5c80"
+}

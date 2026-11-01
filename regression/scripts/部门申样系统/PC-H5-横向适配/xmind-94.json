@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+    "name": "PC/H5 横向适配",
+    "archived": false
+  },
+  "version": {
+    "id": "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+    "version": 1,
+    "digest": "4ec80893c8cddcae150321ff33c9050ef38ab2e7c90c60b857321985bd563214"
+  },
+  "case": {
+    "id": "xmind-94",
+    "title": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+    "priority": "P2",
+    "expected": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+    "source": "部门申样书_V1.0_测试用例.xmind › PC端适配 › 页面适配 › 样书申请页/历史记录页/订单物流页 › ✅ PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致 P2",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "PC端适配",
+      "页面适配",
+      "样书申请页/历史记录页/订单物流页"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 4,
+    "cachedStepCount": 4,
+    "cacheFresh": true,
+    "stepCount": 4,
+    "steps": [
+      {
+        "action": "setViewport",
+        "width": 1280,
+        "height": 800
+      },
+      {
+        "action": "assertNoHorizontalOverflow"
+      },
+      {
+        "action": "assertText",
+        "text": "费用划归客户"
+      },
+      {
+        "action": "assertText",
+        "text": "收件人"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "0e0d59562f0beef0bb9863e07e2d0ceeafd418c4234dd0342288d248e75721d0"
+}

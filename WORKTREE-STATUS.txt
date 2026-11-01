@@ -1,3 +1,4 @@
+HISTORICAL SNAPSHOT 2026-10-26 - paths below are the old machine's uncommitted snapshot, not the current working tree; superseded by docs/collaboration/Dify新电脑交接-2026-11-01.md.
  M .env.example
  M package-lock.json
  M package.json

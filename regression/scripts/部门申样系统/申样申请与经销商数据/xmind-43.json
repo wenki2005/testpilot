@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-43",
+    "title": ">20字：限制输入",
+    "priority": "P2",
+    "expected": ">20字：限制输入",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 填写收件人 › ❌ >20字：限制输入",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "收件信息",
+      "填写收件人",
+      "❌"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 4,
+    "cachedStepCount": 4,
+    "cacheFresh": true,
+    "stepCount": 4,
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "收货信息"
+      },
+      {
+        "action": "assertVisible",
+        "text": "收件人"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "收件人",
+        "value": "ABCDEFGHIJKLMNOPQRSTUVWXY"
+      },
+      {
+        "action": "assertValue",
+        "label": "收件人",
+        "value": "ABCDEFGHIJKLMNOPQRST"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "fccec33e0ad04566a66a47f2cd8ca3400b0f296cf2effde2c0adab4cb255d13a"
+}

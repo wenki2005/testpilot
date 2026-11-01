@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e94394e3-827b-4775-a8d0-69b376f468c6",
+    "name": "补充只读用例（2026-11-01）",
+    "archived": false
+  },
+  "version": {
+    "id": "8a0dd581-7527-48da-919b-d9c81f33beb8",
+    "version": 5,
+    "digest": "4c649e5f19fe30ec75f889603e5c3e040e521f45a70a5cb7e492e176347d688b"
+  },
+  "case": {
+    "id": "local-27",
+    "title": "输入非数字：数量字段被清空（只读补充）",
+    "priority": "P2",
+    "expected": "输入非数字：数量字段被清空（只读补充）",
+    "source": "补充 › 非数字",
+    "modulePath": [
+      "补充"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 4,
+    "cachedStepCount": 4,
+    "cacheFresh": true,
+    "stepCount": 4,
+    "steps": [
+      {
+        "action": "clickExactText",
+        "text": "继续添加样书"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "abc"
+      },
+      {
+        "action": "blurByLabel",
+        "label": "数量（册）"
+      },
+      {
+        "action": "assertValue",
+        "label": "数量（册）",
+        "value": ""
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "7aea0b26d115b039dbc844b59e613e72ac1dee539956a1e3fb953cd438b3f5e0"
+}

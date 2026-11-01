@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-21",
+    "title": "命中关键词：下拉展示匹配客户名称供选择",
+    "priority": "P2",
+    "expected": "命中关键词：下拉展示匹配客户名称供选择",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 费用划归客户 › 输入关键词模糊搜索客户 › 在过滤后的客户范围内检索 › ✅ 命中关键词：下拉展示匹配客户名称供选择",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "费用划归客户",
+      "输入关键词模糊搜索客户",
+      "在过滤后的客户范围内检索"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 1,
+    "cachedStepCount": 3,
+    "cacheFresh": true,
+    "stepCount": 3,
+    "steps": [
+      {
+        "action": "fillByRoleIndex",
+        "role": "combobox",
+        "index": 1,
+        "value": "0001CL201231000001"
+      },
+      {
+        "action": "fillByRoleIndex",
+        "role": "combobox",
+        "index": 1,
+        "value": "0001CL20123100000"
+      },
+      {
+        "action": "assertText",
+        "text": "费用划归客户"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "b3336f087b7a7b9270643cf68349fa8e5a4f8ee6f89ff8bcf192dd074c53b0a0"
+}

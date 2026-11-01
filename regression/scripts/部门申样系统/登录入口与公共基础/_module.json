@@ -1,0 +1,168 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+    "name": "登录入口与公共基础",
+    "archived": false
+  },
+  "version": {
+    "id": "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+    "version": 1,
+    "digest": "a2e1c31660c3b5fbf8621f9f51412d60db796a88e0893d3d1701de2be097df72"
+  },
+  "counts": {
+    "cases": 13,
+    "fixed": 5,
+    "derived": 0,
+    "noSteps": 8
+  },
+  "cases": [
+    {
+      "id": "xmind-1",
+      "title": "在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门",
+      "priority": "P0",
+      "file": "xmind-1.json",
+      "status": "fixed",
+      "scriptSource": "stored",
+      "stepCount": 2,
+      "caseDigest": "6b7075c44e6caa2db2e7b48ee7833b2775acc50003c3f6683522fa1a61d84265",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-2",
+      "title": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单",
+      "priority": "P0",
+      "file": "xmind-2.json",
+      "status": "fixed",
+      "scriptSource": "stored",
+      "stepCount": 3,
+      "caseDigest": "41922de5b2e5dcce492cfc8683260bd9c7823a81718308ab536be1fdf88fa94f",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-3",
+      "title": "待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）",
+      "priority": "P2",
+      "file": "xmind-3.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "559ad2a6ce97b00bc1029c233a23887d7f5245bf510e0d7247bfb988943812e0",
+      "coverageGap": "原包状态：hold-clarification；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-92",
+      "title": "关联企微认证信息正确展示",
+      "priority": "P2",
+      "file": "xmind-92.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 2,
+      "caseDigest": "8e0427a6804d6ccd97e33a62cbfb3f9f3fe3a58e4c5a2b1ce988c0e281e26d52"
+    },
+    {
+      "id": "xmind-93",
+      "title": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+      "priority": "P2",
+      "file": "xmind-93.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 2,
+      "caseDigest": "971a5e1d55f483dea5c6fbb5220f4a769c06e59ea9cb52b425e563429680bb63"
+    },
+    {
+      "id": "xmind-115",
+      "title": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+      "priority": "P2",
+      "file": "xmind-115.json",
+      "status": "fixed",
+      "scriptSource": "stored",
+      "stepCount": 1,
+      "caseDigest": "cc1c4e5516f53d00ffe45899e55891f298a794c0a14615eb354123626662dea8",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-116",
+      "title": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
+      "priority": "P2",
+      "file": "xmind-116.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "d695aee192b56959e5268b73586dc6abc9c867865f2ec51c1153672686fe3721",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-117",
+      "title": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+      "priority": "P2",
+      "file": "xmind-117.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "13fbdc587b67682b8f432e701ffd88bec57ceb98077de24f3bbadc8471dd85a4",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-118",
+      "title": "推送失败：🔄待澄清 消息推送失败是否重试与告警",
+      "priority": "P2",
+      "file": "xmind-118.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "ed679e29578d199d634624c3c84c4976a533d647bdd9d74ba2e39702fdcf50f5",
+      "coverageGap": "原包状态：hold-clarification；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-128",
+      "title": "企微OA审批模板ID配置正确",
+      "priority": "P0",
+      "file": "xmind-128.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "68551fb27ed10da17d489b8d37502c82bfbf1211e656e5bafc3d1d70db09bb4d",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-129",
+      "title": "快递仓仓库ID配置正确（长沙仓/天津仓）",
+      "priority": "P0",
+      "file": "xmind-129.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "a1d39c9774e74063d238993166e2bb68e55b038c1c25ddadf5403fe462fa92dc",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-130",
+      "title": "旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺）",
+      "priority": "P0",
+      "file": "xmind-130.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "da0b0499cbc7d421104abc2f5278e720a16f31bd464bedeb3affaf43baf68b4e",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-131",
+      "title": "配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+      "priority": "P2",
+      "file": "xmind-131.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "4fee227fb766fd18f7f8f3f36903df09eb5f2f2426c5a117ed8f17bf41389a73",
+      "coverageGap": "原包状态：hold-clarification；需先确认账号、环境或副作用条件。"
+    }
+  ]
+}

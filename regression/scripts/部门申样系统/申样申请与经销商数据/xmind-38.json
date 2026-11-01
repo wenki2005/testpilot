@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-38",
+    "title": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
+    "priority": "P2",
+    "expected": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 发货方式 › 查看发货方式选项 › 仅支持快递，H5不展示快递公司选择 › ✅ 快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式） P2",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "发货方式",
+      "查看发货方式选项",
+      "仅支持快递，H5不展示快递公司选择"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "no-steps",
+    "source": "none",
+    "storedStepCount": 0,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 0,
+    "steps": []
+  },
+  "readiness": {
+    "hasFixedSteps": false,
+    "coverageGap": "原始预期要求固定选项或不存在其他选择，当前步骤没有完整的选项集合断言；仅看到目标文本不能证明没有其他选项。",
+    "detail": "原始预期要求固定选项或不存在其他选择，当前步骤没有完整的选项集合断言；仅看到目标文本不能证明没有其他选项。",
+    "nextAction": "补实际操作及对应值/选项全集断言；只看到文字或控件不能算通过。"
+  },
+  "caseDigest": "62c0c917a918ec4543e3a9689184535e9e1d53b657cbc1c1174d4ed8535a3cdd"
+}

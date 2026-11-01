@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-52",
+    "title": "必填未完成时提交按钮置灰不可点击",
+    "priority": "P2",
+    "expected": "必填未完成时提交按钮置灰不可点击",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ❌ 必填未完成时提交按钮置灰不可点击",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "提交申请",
+      "点击「提交申请」按钮",
+      "校验全部必填项与格式"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 0,
+    "cachedStepCount": 3,
+    "cacheFresh": true,
+    "stepCount": 3,
+    "steps": [
+      {
+        "action": "fillByPlaceholder",
+        "placeholder": "请输入收件人姓名",
+        "value": ""
+      },
+      {
+        "action": "assertValueByPlaceholder",
+        "placeholder": "请输入收件人姓名",
+        "value": ""
+      },
+      {
+        "action": "assertRoleDisabled",
+        "role": "button",
+        "name": "提交申请"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "dffee7779f0f6566bf0c6c99d878aeb9a5e3f2a02afa1be5f20e2fbcc9196e46"
+}

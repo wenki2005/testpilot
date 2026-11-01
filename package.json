@@ -28,6 +28,9 @@
     "typecheck:web": "tsc --noEmit -p web/tsconfig.json",
     "test:all": "node scripts/run-tests.mjs",
     "test:clean": "node scripts/clean-test-artifacts.mjs",
+    "scripts:export": "node scripts/export-regression-scripts.mjs",
+    "scripts:check": "node scripts/check-regression-scripts.mjs",
+    "plan:run": "node scripts/run-regression-plan.mjs",
     "test:browser": "playwright test",
     "test:playwright": "node dist/cli.js run-playwright",
     "agent:source": "node dist/cli.js test-agent"

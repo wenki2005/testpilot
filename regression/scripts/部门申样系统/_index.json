@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "modules": [
+    {
+      "id": "e94394e3-827b-4775-a8d0-69b376f468c6",
+      "name": "补充只读用例（2026-11-01）",
+      "archived": false,
+      "dir": "部门申样系统/补充只读用例（2026-11-01）",
+      "version": {
+        "id": "8a0dd581-7527-48da-919b-d9c81f33beb8",
+        "version": 5,
+        "digest": "4c649e5f19fe30ec75f889603e5c3e040e521f45a70a5cb7e492e176347d688b"
+      },
+      "counts": {
+        "cases": 2,
+        "fixed": 2,
+        "derived": 0,
+        "noSteps": 0
+      }
+    },
+    {
+      "id": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+      "name": "PC/H5 横向适配",
+      "archived": false,
+      "dir": "部门申样系统/PC-H5-横向适配",
+      "version": {
+        "id": "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+        "version": 1,
+        "digest": "4ec80893c8cddcae150321ff33c9050ef38ab2e7c90c60b857321985bd563214"
+      },
+      "counts": {
+        "cases": 3,
+        "fixed": 2,
+        "derived": 0,
+        "noSteps": 1
+      }
+    },
+    {
+      "id": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+      "name": "订单与物流",
+      "archived": false,
+      "dir": "部门申样系统/订单与物流",
+      "version": {
+        "id": "0cc0b28a-54e1-47d4-9f46-def2b5df829a",
+        "version": 1,
+        "digest": "7dfd1b37f0c251cccda92cf1a0b8b67455e5dcf58411aa92d3a543104da1a47d"
+      },
+      "counts": {
+        "cases": 7,
+        "fixed": 6,
+        "derived": 0,
+        "noSteps": 1
+      }
+    },
+    {
+      "id": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+      "name": "申请记录与审批详情",
+      "archived": false,
+      "dir": "部门申样系统/申请记录与审批详情",
+      "version": {
+        "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+        "version": 1,
+        "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
+      },
+      "counts": {
+        "cases": 32,
+        "fixed": 13,
+        "derived": 0,
+        "noSteps": 19
+      }
+    },
+    {
+      "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "name": "申样申请与经销商数据",
+      "archived": false,
+      "dir": "部门申样系统/申样申请与经销商数据",
+      "version": {
+        "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+        "version": 1,
+        "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+      },
+      "counts": {
+        "cases": 76,
+        "fixed": 26,
+        "derived": 0,
+        "noSteps": 50
+      }
+    },
+    {
+      "id": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "name": "登录入口与公共基础",
+      "archived": false,
+      "dir": "部门申样系统/登录入口与公共基础",
+      "version": {
+        "id": "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+        "version": 1,
+        "digest": "a2e1c31660c3b5fbf8621f9f51412d60db796a88e0893d3d1701de2be097df72"
+      },
+      "counts": {
+        "cases": 13,
+        "fixed": 5,
+        "derived": 0,
+        "noSteps": 8
+      }
+    }
+  ]
+}

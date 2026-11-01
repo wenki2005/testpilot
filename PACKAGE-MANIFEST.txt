@@ -1,3 +1,4 @@
+HISTORICAL SNAPSHOT 2026-10-26 - superseded by docs/collaboration/Dify新电脑交接-2026-11-01.md. The HEAD/remote/changed-paths below describe the old snapshot, not the current repository.
 TestPilot handoff snapshot
 Created: 2026-10-26
 Source: D:\test agent\testpilot-mvp

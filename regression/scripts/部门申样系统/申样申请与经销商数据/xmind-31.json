@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-31",
+    "title": "数量>9999：前端拦截提示超出范围",
+    "priority": "P2",
+    "expected": "数量>9999：前端拦截提示超出范围",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入图书数量 › 自动计算小计、总计与预估总重 › ❌ 数量>9999：前端拦截提示超出范围 P2",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "样书明细区",
+      "输入图书数量",
+      "自动计算小计、总计与预估总重",
+      "❌ 数量"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 2,
+    "cachedStepCount": 3,
+    "cacheFresh": true,
+    "stepCount": 3,
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "value": "10000"
+      },
+      {
+        "action": "blurByLabel",
+        "label": "数量（册）"
+      },
+      {
+        "action": "assertText",
+        "text": "超出范围"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "da677200c17cf892896802931ea5db1fcbabca92117ed3a454852f93bc5bfff6"
+}

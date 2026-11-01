@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "baseUrl": "http://127.0.0.1:4319",
+  "systems": [
+    {
+      "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+      "name": "部门申样系统",
+      "dir": "部门申样系统",
+      "modules": 6,
+      "cases": 133,
+      "fixed": 54,
+      "derived": 0,
+      "noSteps": 79
+    }
+  ],
+  "totals": {
+    "systems": 1,
+    "modules": 6,
+    "cases": 133,
+    "fixed": 54,
+    "derived": 0,
+    "noSteps": 79
+  }
+}

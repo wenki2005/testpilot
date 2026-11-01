@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-25",
+    "title": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)",
+    "priority": "P0",
+    "expected": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ✅ 编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤) P0",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "样书明细区",
+      "输入物流编码（自编码/erp编码）",
+      "调用易诚通图书信息接口校验编码"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 0,
+    "cachedStepCount": 5,
+    "cacheFresh": true,
+    "stepCount": 5,
+    "steps": [
+      {
+        "action": "fillByLabel",
+        "label": "自编码",
+        "rowIndex": 0,
+        "value": "1012500025"
+      },
+      {
+        "action": "blurByLabel",
+        "label": "自编码",
+        "rowIndex": 0
+      },
+      {
+        "action": "assertExactVisible",
+        "text": "开心25春小学生同步作文3年级下册XH"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "数量（册）",
+        "rowIndex": 0,
+        "value": "1"
+      },
+      {
+        "action": "blurByLabel",
+        "label": "数量（册）",
+        "rowIndex": 0
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "ef59938793ed26365132bd6e3c703e62567f54ad47ffd8218dafb701e9e09668"
+}

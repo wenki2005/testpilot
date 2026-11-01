@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+    "name": "订单与物流",
+    "archived": false
+  },
+  "version": {
+    "id": "0cc0b28a-54e1-47d4-9f46-def2b5df829a",
+    "version": 1,
+    "digest": "7dfd1b37f0c251cccda92cf1a0b8b67455e5dcf58411aa92d3a543104da1a47d"
+  },
+  "counts": {
+    "cases": 7,
+    "fixed": 6,
+    "derived": 0,
+    "noSteps": 1
+  },
+  "cases": [
+    {
+      "id": "xmind-80",
+      "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+      "priority": "P1",
+      "file": "xmind-80.json",
+      "status": "fixed",
+      "scriptSource": "stored",
+      "stepCount": 5,
+      "caseDigest": "20142bf3a6a9608aed1f13fcd78aa3cb9c7010b4a3ed77233c6ff83555165895",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-81",
+      "title": "无订单：展示空状态",
+      "priority": "P2",
+      "file": "xmind-81.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 2,
+      "caseDigest": "e67b017763d40e15abbaf6934e6f3b2cea1eb23dc6326ba58805a63346121d05"
+    },
+    {
+      "id": "xmind-82",
+      "title": "模糊匹配返回对应订单",
+      "priority": "P2",
+      "file": "xmind-82.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 2,
+      "caseDigest": "783e57c43e93e856fa010e32eec1897d171bc10ed8fee901ba8e36b186ae50a6"
+    },
+    {
+      "id": "xmind-83",
+      "title": "无匹配：提示无结果",
+      "priority": "P2",
+      "file": "xmind-83.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 5,
+      "caseDigest": "03cfaa4a375fb14418e6a1960d0dd1d0d02799d266bd950e0e2a47ec14f09830"
+    },
+    {
+      "id": "xmind-84",
+      "title": "展示对应订单详情",
+      "priority": "P2",
+      "file": "xmind-84.json",
+      "status": "fixed",
+      "scriptSource": "stored",
+      "stepCount": 2,
+      "caseDigest": "15d14ad5bef1a5f61cbc745a1e7314a78315ccd85c3198a8b2f899a39b91a2e2",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-85",
+      "title": "展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次",
+      "priority": "P1",
+      "file": "xmind-85.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "34702c069b3a5e7c42aed881850ddebf63f0ab76eabefa17c641478f52a33dc8",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    },
+    {
+      "id": "xmind-86",
+      "title": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
+      "priority": "P2",
+      "file": "xmind-86.json",
+      "status": "fixed",
+      "scriptSource": "stored",
+      "stepCount": 5,
+      "caseDigest": "77f09b293ecc0dbc935c384b9f5ecfbbfdced2597de2b126dcbb9efbca55aee9",
+      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+    }
+  ]
+}

@@ -2,9 +2,13 @@
 
 继续 Dify 开发或换电脑，请先读 [Dify 新电脑交接](docs/collaboration/Dify新电脑交接-2026-11-01.md)；代码、工作台本机配置与登录态的迁移方式不同。
 
+> 两种用法，别混：
+> - **发行 ZIP**：包内带预编译的 `dist/`，按下面“启动”双击 `启动演示.cmd`，默认 4317。
+> - **从 GitHub 源码克隆**：`dist/` 不在 Git 里，先 `npm ci`、`npm run build`，再按 [Dify 新电脑交接](docs/collaboration/Dify新电脑交接-2026-11-01.md) 导入配置；Dify 回归用 `scripts/start-dify.ps1`（默认 4319，需先按交接第 3 节创建 `.env`），不要用本文件下面的 4317 演示流程。
+
 这是独立的本地测试应用。**不需要安装 Codex、登录 Codex 或购买 Codex 订阅。**
 
-## 启动
+## 启动（发行 ZIP）
 
 1. 准备 Windows、Node.js 22.19.0 或更新版本，以及 Microsoft Edge。
 2. 完整解压 ZIP，建议放在自己的普通文件夹里；不要在压缩包内直接运行。
@@ -36,7 +40,7 @@
 
 ## 自检与升级
 
-包内带有预编译的 `dist/` 和 `web/dist/`，正常启动无需重新构建。`MANIFEST.sha256` 是逐文件校验清单，`RELEASE.json` 记录版本与构建时间。
+发行 ZIP 包内带有预编译的 `dist/` 和 `web/dist/`，正常启动无需重新构建；从 GitHub 源码克隆则没有 `dist/`，必须先 `npm run build`。`MANIFEST.sha256` 是逐文件校验清单，`RELEASE.json` 记录版本与构建时间。
 
 随包自检是可移植子集，可在目录中执行 `npm run test:all`；不包含开发机上其他项目的集成测试。浏览器自检使用 Edge。
 

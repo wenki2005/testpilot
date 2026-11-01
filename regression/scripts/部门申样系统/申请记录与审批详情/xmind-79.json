@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+    "name": "申请记录与审批详情",
+    "archived": false
+  },
+  "version": {
+    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+    "version": 1,
+    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
+  },
+  "case": {
+    "id": "xmind-79",
+    "title": "页面纯只读，无编辑/提交/删除入口",
+    "priority": "P2",
+    "expected": "页面纯只读，无编辑/提交/删除入口",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-申请表单明细展示页（本次新增·只读·实时） › 表单明细回显 › 展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码 › ✅ 页面纯只读，无编辑/提交/删除入口 P2",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-申请表单明细展示页（本次新增·只读·实时）",
+      "表单明细回显",
+      "展示申请人、样书用途、费用划归客户、样书明细、总计、预估总重、发货方式、备注、收件人、手机号码"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "no-steps",
+    "source": "none",
+    "storedStepCount": 0,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 0,
+    "steps": []
+  },
+  "readiness": {
+    "hasFixedSteps": false,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "此条需要本人可见且状态明确的申请/订单记录；当前空态或成功连接数据库不能证明详情、审批、筛选及分页正确。",
+    "nextAction": "按原预期准备本人可见的已有记录和对应状态；仍从同轮网页、接口、数据库对照，不借用他人的申请、不自动造单。"
+  },
+  "caseDigest": "24d9051165efd7216423a960cc223975ddbcde05d51e9ac398c2b591a2988621"
+}

@@ -23,3 +23,16 @@ A、B 替换成真实姓名。先共同跑通一条用例，再各自挑选三�
 5. 通过任务分支提交和合并，不在 main 上开展日常开发。
 
 当前模块目录只包含规划和空白任务表，不包含假定可执行的业务套件。前端接口返回结构、测试账号与正式 XMind 基线尚需核实。
+
+## 固定脚本镜像（2026-11-01）
+
+固定步骤的只读镜像在 `regression/scripts/`，按 `<系统>/<模块>/<用例>.json` 就能找到每条用例的脚本；索引是 `_index.json` 和 `_module.json`。
+
+- 生成：`npm run scripts:export`（TestPilot 运行在 4319）
+- 校验：`npm run scripts:check`
+- 规范：[回归脚本与目录规范](../docs/collaboration/回归脚本与目录规范.md)
+- 不要手改生成目录；改用例请改 TestPilot 模块版本后重新导出。
+
+## 第一版固定清单
+
+`regression/plans/first-version-2026-11-01.json` 固定了第一版 15 条（5 个模块、版本、用例编号）；用 `npm run plan:run -- --plan regression/plans/first-version-2026-11-01.json --dry-run` 校验，去掉 `--dry-run` 创建批次。详见 [plans/README](plans/README.md)。

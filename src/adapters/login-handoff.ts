@@ -70,8 +70,10 @@ export function browserRequestAllowed(method: string, requestUrl: string, contex
     const loginPhase = context.authenticationPage === true || context.loginHandoffActive === true;
     // The QR iframe is the first auth request: its blocked/error frame cannot
     // register itself in authOrigins. Bootstrap only WeCom's exact login origin
-    // and SSO path while the owned target page is at an authentication route.
-    const wecomSso = (request.origin === 'https://login.work.weixin.qq.com' && /^\/wwlogin\/sso(?:\/|$)/i.test(request.pathname))
+    // and SSO paths while the owned target page is at an authentication route.
+    // WeCom's current QR widget polls /wwlogin/monoApi/sso/login/getWebQrCodeStatus,
+    // so the plain /wwlogin/sso prefix alone leaves the QR unable to detect a scan.
+    const wecomSso = (request.origin === 'https://login.work.weixin.qq.com' && /^\/wwlogin\/(?:sso|monoApi\/sso)(?:\/|$)/i.test(request.pathname))
       || (request.origin === 'https://open.work.weixin.qq.com' && /^\/wwopen\/loginStorage\/?$/i.test(request.pathname));
     const navigationOrApi = context.isNavigationRequest === true || /^(?:fetch|xhr)$/i.test(context.resourceType);
     if (loginPhase && wecomSso && !mutationPath.test(request.pathname) && navigationOrApi

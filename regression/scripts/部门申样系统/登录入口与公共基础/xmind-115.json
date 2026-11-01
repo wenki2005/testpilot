@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+    "name": "登录入口与公共基础",
+    "archived": false
+  },
+  "version": {
+    "id": "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+    "version": 1,
+    "digest": "a2e1c31660c3b5fbf8621f9f51412d60db796a88e0893d3d1701de2be097df72"
+  },
+  "case": {
+    "id": "xmind-115",
+    "title": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+    "priority": "P2",
+    "expected": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+    "source": "部门申样书_V1.0_测试用例.xmind › 企微消息通知 › 消息推送触发场景 › 员工创建部门用书申请单 › ✅ 推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "企微消息通知",
+      "消息推送触发场景",
+      "员工创建部门用书申请单"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "stored",
+    "storedStepCount": 1,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 1,
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "部门用书申请单"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "缺少对应业务事件、授权通知目标及真实投递证据；Dify 自身执行成功不等于业务通知发送成功。",
+    "nextAction": "补齐该集成的测试入口、契约和事件记录；涉及创建、锁单或真实通知时需明确授权，不能仅凭页面文字通过。"
+  },
+  "caseDigest": "cc1c4e5516f53d00ffe45899e55891f298a794c0a14615eb354123626662dea8"
+}

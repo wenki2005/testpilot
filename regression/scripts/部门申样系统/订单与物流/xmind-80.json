@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+    "name": "订单与物流",
+    "archived": false
+  },
+  "version": {
+    "id": "0cc0b28a-54e1-47d4-9f46-def2b5df829a",
+    "version": 1,
+    "digest": "7dfd1b37f0c251cccda92cf1a0b8b67455e5dcf58411aa92d3a543104da1a47d"
+  },
+  "case": {
+    "id": "xmind-80",
+    "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+    "priority": "P1",
+    "expected": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-订单列表页 › 查看订单列表 › 按订单生成时间倒序展示 › ✅ 展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条 P1",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-订单列表页",
+      "查看订单列表",
+      "按订单生成时间倒序展示"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "stored",
+    "storedStepCount": 5,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 5,
+    "steps": [
+      {
+        "action": "assertVisible",
+        "text": "订单号"
+      },
+      {
+        "action": "assertVisible",
+        "text": "状态"
+      },
+      {
+        "action": "assertVisible",
+        "text": "价格"
+      },
+      {
+        "action": "assertVisible",
+        "text": "收货信息"
+      },
+      {
+        "action": "assertVisible",
+        "text": "总本数"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "此条需要本人可见且状态明确的申请/订单记录；当前空态或成功连接数据库不能证明详情、审批、筛选及分页正确。",
+    "nextAction": "按原预期准备本人可见的已有记录和对应状态；仍从同轮网页、接口、数据库对照，不借用他人的申请、不自动造单。"
+  },
+  "caseDigest": "20142bf3a6a9608aed1f13fcd78aa3cb9c7010b4a3ed77233c6ff83555165895"
+}

@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+    "name": "登录入口与公共基础",
+    "archived": false
+  },
+  "version": {
+    "id": "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+    "version": 1,
+    "digest": "a2e1c31660c3b5fbf8621f9f51412d60db796a88e0893d3d1701de2be097df72"
+  },
+  "case": {
+    "id": "xmind-131",
+    "title": "配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+    "priority": "P2",
+    "expected": "[需澄清] 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+    "source": "部门申样书_V1.0_测试用例.xmind › 系统配置依赖 › 关键配置项就绪校验 › 上线前配置参数完整性 › ❌ 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "系统配置依赖",
+      "关键配置项就绪校验",
+      "上线前配置参数完整性"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "no-steps",
+    "source": "none",
+    "storedStepCount": 0,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 0,
+    "steps": []
+  },
+  "readiness": {
+    "hasFixedSteps": false,
+    "coverageGap": "原包状态：hold-clarification；需先确认账号、环境或副作用条件。",
+    "detail": "原始用例的业务预期尚未澄清。",
+    "nextAction": "确认原始业务口径并建立新版本；不依据当前页面猜测预期。"
+  },
+  "caseDigest": "4fee227fb766fd18f7f8f3f36903df09eb5f2f2426c5a117ed8f17bf41389a73"
+}
