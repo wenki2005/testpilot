@@ -12,29 +12,28 @@
     "archived": false
   },
   "version": {
-    "id": "b2b96a53-8f7e-4c66-9a7f-564474c38a2f",
-    "version": 3,
-    "digest": "97bff41881379e10d8d0b2313a565352023aa0cde7191f867755b38ee0e896ef"
+    "id": "27cba321-4fa2-4c23-84d5-b0dfb23a5406",
+    "version": 5,
+    "digest": "57b9b3fda7259b9bc14837b6358251fa53511f409699001bd633fd9292810169"
   },
   "case": {
-    "id": "xmind-38",
-    "title": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
+    "id": "xmind-38a",
+    "title": "H5 仅支持快递，不提供快递选择",
     "priority": "P2",
-    "expected": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
-    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 发货方式 › 查看发货方式选项 › 仅支持快递，H5不展示快递公司选择 › ✅ 快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式） P2",
+    "expected": "发货方式固定为「快递」，无其他可选",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 发货方式 › 查看发货方式选项 › ✅ H5 仅支持快递，不提供快递选择 P2",
     "modulePath": [
       "部门申样书_V1.0_测试用例.xmind",
       "员工端-样书申请表单页",
       "发货方式",
-      "查看发货方式选项",
-      "仅支持快递，H5不展示快递公司选择"
+      "查看发货方式选项"
     ]
   },
   "script": {
     "format": "BrowserStep[]",
     "status": "fixed",
     "source": "cache",
-    "storedStepCount": 3,
+    "storedStepCount": 1,
     "cachedStepCount": 1,
     "cacheFresh": true,
     "stepCount": 1,
@@ -51,5 +50,5 @@
     "detail": "",
     "nextAction": ""
   },
-  "caseDigest": "f5c1ec6669e54fa364037cc8bbb2595f555948f42cddfde55ea6972cbd90e770"
+  "caseDigest": "75360a531941e6c90a9cb489ce80a43a026eb931a0f4edc996e123e770f18683"
 }

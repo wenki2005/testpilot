@@ -51,6 +51,7 @@ export default function SystemModuleWorkbench(){
   async function retest(mode:'failed'|'unfinished'|'pending'){if(!batch)return;const b=await api<BatchView>(`/batches/${batch.id}/retest`,{mode,requestId:crypto.randomUUID()});setBatchId(b.id);setExpanded('');setDetailId('');}
   function moduleResult(id:string){
     const module=modules.find(m=>m.id===id);if(!module)return {label:'待执行',type:'not_executed'};
+    if(batch){const entry=batch.entries.find(e=>e.moduleId===id);const job=entry?batch.jobs.find(j=>j.id===entry.jobId):undefined;if(job)return {label:job.results.length?minimumSummary(job):labels[job.phase],type:job.phase==='completed'?job.outcome:activeJob(job)?'running':'blocked'};}
     const wanted=scope==='all'?undefined:presetIds(module);if(scope!=='all'&&!wanted?.length)return {label:'未配置',type:'not_executed'};
     for(const b of history){
       if((b.scope??'all')!==scope||b.profileId!==(system?.activeAccountId??system?.profileId))continue;

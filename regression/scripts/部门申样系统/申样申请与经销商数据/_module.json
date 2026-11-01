@@ -12,15 +12,15 @@
     "archived": false
   },
   "version": {
-    "id": "b2b96a53-8f7e-4c66-9a7f-564474c38a2f",
-    "version": 3,
-    "digest": "97bff41881379e10d8d0b2313a565352023aa0cde7191f867755b38ee0e896ef"
+    "id": "27cba321-4fa2-4c23-84d5-b0dfb23a5406",
+    "version": 5,
+    "digest": "57b9b3fda7259b9bc14837b6358251fa53511f409699001bd633fd9292810169"
   },
   "counts": {
-    "cases": 12,
+    "cases": 13,
     "fixed": 12,
     "derived": 0,
-    "noSteps": 0
+    "noSteps": 1
   },
   "cases": [
     {
@@ -134,14 +134,25 @@
       "caseDigest": "5400ecac321823e0c35a234978c1e5e2dd48aa1e4f646aeabf194b528bce37d6"
     },
     {
-      "id": "xmind-38",
-      "title": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）",
+      "id": "xmind-38a",
+      "title": "H5 仅支持快递，不提供快递选择",
       "priority": "P2",
-      "file": "xmind-38.json",
+      "file": "xmind-38a.json",
       "status": "fixed",
       "scriptSource": "cache",
       "stepCount": 1,
-      "caseDigest": "f5c1ec6669e54fa364037cc8bbb2595f555948f42cddfde55ea6972cbd90e770"
+      "caseDigest": "75360a531941e6c90a9cb489ce80a43a026eb931a0f4edc996e123e770f18683"
+    },
+    {
+      "id": "xmind-38b",
+      "title": "旺店通店铺默认快递决定快递公司",
+      "priority": "P2",
+      "file": "xmind-38b.json",
+      "status": "no-steps",
+      "scriptSource": "none",
+      "stepCount": 0,
+      "caseDigest": "7a3f869e733b53eb2bf3fac5e5da8172257b0b92432cbe77930452d6f6b2f64b",
+      "coverageGap": "尚无固定步骤"
     }
   ]
 }

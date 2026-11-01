@@ -9,18 +9,18 @@
       "name": "部门申样系统",
       "dir": "部门申样系统",
       "modules": 6,
-      "cases": 69,
+      "cases": 70,
       "fixed": 40,
       "derived": 0,
-      "noSteps": 29
+      "noSteps": 30
     }
   ],
   "totals": {
     "systems": 1,
     "modules": 6,
-    "cases": 69,
+    "cases": 70,
     "fixed": 40,
     "derived": 0,
-    "noSteps": 29
+    "noSteps": 30
   }
 }
