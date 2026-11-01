@@ -237,3 +237,9 @@
 - 定向复测：API/SQLite 原页面 2 项通过；基线比较 6 项通过；API 映射页面 1 项通过；网站版本完整浏览器链 1 项通过（含原失败、恢复、不可变证据和重测断言）。整合目录最终 **17 项 Playwright 页面检查通过**。只重测新增修订及失败项，未再次跑 11 分钟的全库检查，因此不编造新的全库汇总数字。
 - 剩余两个旧测试叶节点是外部环境缺失：`demo-hub-profile.integration.test.mjs` 需要 `D:\work\demo-hub`；`demo-integration.test.mjs` 的注册项目子测试需要 `D:\work\grammar-lab-demo` 等原项目。未复制或伪造外部项目，未把这些失败改成 passed/skip；它们不属于部门申样 Dify 业务验收。新电脑运行 `test:all` 前同样需要这些外部依赖。
 - 发布代码经过配置密钥和常见令牌模式检查；运行目录、私有交接 ZIP、数据库连接密码、API Key 和浏览器 profile 不进入公开提交。私人仓库删除需先确认上述创建者 PR 合并，再执行并记录实际 API 结果；不将“已提交删除请求”当成已删除。
+
+### 实际发布结果与个人仓库删除阻塞
+
+- 已核验创建者 PR #1 为 closed/merged，代码合并提交 `9f4b19f5a66b757a418ce8039eaf0626df273557`，已从 GitHub 拉取创建者 main 校验，发布 checkout 干净。后续文档状态更新另行合并，不改已验收代码。
+- 删除 `LYX-shb/testpilot-regression` 的实际 REST DELETE 被 GitHub 403 拒绝；未删除成功。已尝试通过 Chrome 的现有浏览器连接打开设置页，但连接请求失败，无法在已登录页面代办。没有反复请求权限、扩大凭据权限或谎称已删。只剩用户在旧仓库 Settings 的 Danger Zone 里完成删除，确认为旧仓库完整名称，不能删创建者仓库。
+- 删除前 Git bundle 验证通过，保留 22 个 refs 的完整历史（含未合并 PDF 分支），另存当前 Dify 本地提交的恢复 bundle、5 个旧 PR 元数据、PDF 未提交 patch 和未跟踪文件到私人交接包。旧演示目录仍保留，未 reset/clean；只切换默认远端指向创建者，旧远端保留为备份名称。
