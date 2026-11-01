@@ -263,6 +263,7 @@
 
 - 第一版计划 `regression/plans/first-version-2026-11-01.json`：5 个模块 15 条，固定版本和用例编号；`29`（BUG-003）和 `52`（逆向/后续再加）暂不纳入。`npm run plan:run -- --plan ... --dry-run` 校验通过。
 - 第一版真实批次 `80fa8d11-298c-4706-9f83-4d807322cbcc`：13 通过、0 失败、2 阻塞。`xmind-92` 因缺手机号/认证头像阻塞；`xmind-46` 首轮地区下拉点击 4 秒超时阻塞，单条重测批次 `11de0916-66b8-4ea9-9019-b7c9a1000962` 通过。不把重测结果拼回原批次，也不把阻塞算通过。
+- 交互超时从 4s 调整为 8s 后重放批次 `770331fa-cfa2-4af6-b650-4ebf4bac66d9`：14 通过、0 失败、1 阻塞（仅 92），46 通过；第一版流程稳定性验证完成。该超时修改尚未提交。
 - 新增 `regression/scripts/` 固定步骤镜像：6 个模块、133 条用例；有固定步骤 54（含运行期场景缓存 `cachedSteps`）、无步骤 79。`npm run scripts:export` 确定性导出，`npm run scripts:check` 0 错误；镜像按 `<系统>/<模块>/<用例>.json` 可直接找到脚本。
 - 新增 `npm run plan:run`、`regression/plans/`、`docs/collaboration/回归脚本与目录规范.md`、`scripts/README.md`、`scripts/verify/README.md`，并在 `AGENTS.md` 增加代码/脚本规范；新增 `tests/regression-scripts-layout.test.mjs` 3 项通过。
 - 以上改动均未提交、未推送；原 131 条、17 条最小范围和旧版本未改。

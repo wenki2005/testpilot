@@ -1577,7 +1577,10 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
     return false;
   };
   try {
-    page.setDefaultTimeout(4000);
+    // Dropdown options can mount after the first paint (Element Plus transition).
+    // 4s was tight enough to block a valid region selection during the 17-case run;
+    // 8s keeps failures bounded while avoiding that transient false block.
+    page.setDefaultTimeout(8000);
     for (let caseIndex = 0; caseIndex < cases.length; caseIndex++) {
       const item = cases[caseIndex]!;
       if (signal?.aborted) {
