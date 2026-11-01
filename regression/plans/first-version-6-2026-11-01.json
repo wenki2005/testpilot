@@ -1,0 +1,118 @@
+{
+    "systemId":  "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "runs":  [
+                 {
+                     "batchId":  "b9c9c33d-43aa-4dfd-80e2-0a1fed4bd04f",
+                     "date":  "2026-11-01",
+                     "counts":  {
+                                    "passed":  18,
+                                    "failed":  0,
+                                    "blocked":  3,
+                                    "error":  0,
+                                    "not_executed":  0
+                                },
+                     "note":  "补充4条通过；92/38b阻塞；94因新建记录导致PC/H5空态对照数据条件不满足而阻塞"
+                 }
+             ],
+    "systemName":  "部门申样系统",
+    "modules":  [
+                    {
+                        "moduleName":  "登录入口与公共基础",
+                        "moduleId":  "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+                        "versionId":  "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+                        "caseIds":  [
+                                        "xmind-92"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "申样申请与经销商数据",
+                        "moduleId":  "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+                        "versionId":  "27cba321-4fa2-4c23-84d5-b0dfb23a5406",
+                        "caseIds":  [
+                                        "xmind-17",
+                                        "xmind-18",
+                                        "xmind-21",
+                                        "xmind-22",
+                                        "xmind-25",
+                                        "xmind-33",
+                                        "xmind-37",
+                                        "xmind-40",
+                                        "xmind-43",
+                                        "xmind-46",
+                                        "xmind-35",
+                                        "xmind-38a",
+                                        "xmind-38b"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "补充只读用例（2026-11-01）",
+                        "moduleId":  "e94394e3-827b-4775-a8d0-69b376f468c6",
+                        "versionId":  "2b1c7bba-0d48-42d9-ba05-7dc2c40a8284",
+                        "caseIds":  [
+                                        "local-27",
+                                        "local-38",
+                                        "local-record-visible",
+                                        "local-record-nomatch"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "订单与物流",
+                        "moduleId":  "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+                        "versionId":  "0cc0b28a-54e1-47d4-9f46-def2b5df829a",
+                        "caseIds":  [
+                                        "xmind-81",
+                                        "xmind-83"
+                                    ]
+                    },
+                    {
+                        "moduleName":  "PC/H5 横向适配",
+                        "moduleId":  "a1288838-bcb7-43a2-b79c-179e54132ebb",
+                        "versionId":  "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+                        "caseIds":  [
+                                        "xmind-94"
+                                    ]
+                    }
+                ],
+    "schema":  1,
+    "knownIssues":  [
+                        {
+                            "caseId":  "xmind-92",
+                            "status":  "blocked",
+                            "reason":  "getInfo 缺手机号/认证头像"
+                        },
+                        {
+                            "caseId":  "xmind-38b",
+                            "status":  "blocked",
+                            "reason":  "旺店通默认快递需接口契约/读回"
+                        },
+                        {
+                            "caseId":  "xmind-94",
+                            "status":  "blocked",
+                            "reason":  "已创建1条待审批申请，PC本人列表不再为空，PC/H5两端空态对照无法执行；非目标缺陷"
+                        }
+                    ],
+    "name":  "第一版扩充（申样13+补充4）-2026-11-01",
+    "kind":  "testpilot-regression-plan",
+    "scope":  "custom",
+    "excluded":  [
+                     {
+                         "caseId":  "xmind-29",
+                         "reason":  "BUG-003"
+                     },
+                     {
+                         "caseId":  "xmind-52",
+                         "reason":  "逆向/后续"
+                     },
+                     {
+                         "caseId":  "xmind-38",
+                         "reason":  "已拆38a/38b"
+                     },
+                     {
+                         "caseId":  "xmind-91",
+                         "reason":  "已创建1条待审批记录，空态不再成立；改用补充无匹配用例"
+                     }
+                 ],
+    "createdAt":  "2026-11-01",
+    "note":  "使用测试申请 202611010002 增加记录可见/无匹配补充用例；原 91 空态因已有记录不再执行。",
+    "runMode":  "fixed"
+}

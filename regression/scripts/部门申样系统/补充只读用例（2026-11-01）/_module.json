@@ -12,13 +12,13 @@
     "archived": false
   },
   "version": {
-    "id": "8a0dd581-7527-48da-919b-d9c81f33beb8",
-    "version": 5,
-    "digest": "4c649e5f19fe30ec75f889603e5c3e040e521f45a70a5cb7e492e176347d688b"
+    "id": "2b1c7bba-0d48-42d9-ba05-7dc2c40a8284",
+    "version": 7,
+    "digest": "f489a26a6dcd417544948fdbc4dfbaac5df7cd230cadf2a0ad488a588f6f7cf3"
   },
   "counts": {
-    "cases": 2,
-    "fixed": 2,
+    "cases": 4,
+    "fixed": 4,
     "derived": 0,
     "noSteps": 0
   },
@@ -42,6 +42,26 @@
       "scriptSource": "cache",
       "stepCount": 1,
       "caseDigest": "13a7ef8e6c4c5e68551ef71b10f31a8c15f16b44facfdbf15fb3a0840779b7e6"
+    },
+    {
+      "id": "local-record-visible",
+      "title": "本人申请记录显示刚创建的待审批申请",
+      "priority": "P2",
+      "file": "local-record-visible.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 3,
+      "caseDigest": "d7c5a4660ccb0bd57eba1d842e1f08cab5f56cd2cb05d8b65fe851f032ec2414"
+    },
+    {
+      "id": "local-record-nomatch",
+      "title": "搜索不存在申请编号：暂无申请记录",
+      "priority": "P2",
+      "file": "local-record-nomatch.json",
+      "status": "fixed",
+      "scriptSource": "cache",
+      "stepCount": 5,
+      "caseDigest": "0b8b24181b302caa5b368d5222a05b0719ed312a89c6f82d03dfb8ce0efa1c69"
     }
   ]
 }

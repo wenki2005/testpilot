@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
-    "version": 1,
-    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
+    "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
+    "version": 2,
+    "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
   },
   "case": {
     "id": "xmind-58",
@@ -47,9 +47,9 @@
   },
   "readiness": {
     "hasFixedSteps": true,
-    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
-    "detail": "缺少指定身份与页面业务字段的完整对照证据；窗口已登录不等于身份字段已验证。",
-    "nextAction": "明确本轮账号/角色及应显示的字段，补姓名、部门或权限的直接对照；不只检查控件可见。"
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
   },
   "caseDigest": "e1e4c7c3121fe99632154d91017353192538b057dea9c5c0fcdcfd76edea292c"
 }

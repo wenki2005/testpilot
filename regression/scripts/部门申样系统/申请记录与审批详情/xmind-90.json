@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
-    "version": 1,
-    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
+    "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
+    "version": 2,
+    "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
   },
   "case": {
     "id": "xmind-90",
@@ -33,7 +33,7 @@
     "format": "BrowserStep[]",
     "status": "fixed",
     "source": "cache",
-    "storedStepCount": 5,
+    "storedStepCount": 6,
     "cachedStepCount": 2,
     "cacheFresh": true,
     "stepCount": 2,

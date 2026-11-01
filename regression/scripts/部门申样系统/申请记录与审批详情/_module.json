@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
-    "version": 1,
-    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
+    "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
+    "version": 2,
+    "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
   },
   "counts": {
     "cases": 32,
@@ -31,8 +31,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 6,
-      "caseDigest": "38a60fb5aa6b44a898bf9ca49e07ac968035562ee3d91347d0b30a966bb1f5ac",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "38a60fb5aa6b44a898bf9ca49e07ac968035562ee3d91347d0b30a966bb1f5ac"
     },
     {
       "id": "xmind-54",
@@ -65,7 +64,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "0a664b7a84b1a31b00d5ba0234a2354a763d7d5b81b574a70cd017a98bfcfec1",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-57",
@@ -75,8 +74,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 2,
-      "caseDigest": "9899169cbdb7ca292eb3501fd0c904b0b00c3a8cd2ddade9c542cc6a5864e112",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "9899169cbdb7ca292eb3501fd0c904b0b00c3a8cd2ddade9c542cc6a5864e112"
     },
     {
       "id": "xmind-58",
@@ -86,8 +84,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 1,
-      "caseDigest": "e1e4c7c3121fe99632154d91017353192538b057dea9c5c0fcdcfd76edea292c",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "e1e4c7c3121fe99632154d91017353192538b057dea9c5c0fcdcfd76edea292c"
     },
     {
       "id": "xmind-59",
@@ -97,8 +94,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 2,
-      "caseDigest": "170925b9123b736168ed28df4d305df4b5ea2ae2a3d53f48ec20e45fd16a5c80",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "170925b9123b736168ed28df4d305df4b5ea2ae2a3d53f48ec20e45fd16a5c80"
     },
     {
       "id": "xmind-60",
@@ -108,8 +104,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 1,
-      "caseDigest": "904a8584e5ae25d9e513966e86fbe3b679a20d62839a3398680caa7ffe782140",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "904a8584e5ae25d9e513966e86fbe3b679a20d62839a3398680caa7ffe782140"
     },
     {
       "id": "xmind-61",
@@ -119,8 +114,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 2,
-      "caseDigest": "73a4b7bef74bd6ba016fc34e337bcd2ca6b00a0b8fd27f9eb00bc40c19df880a",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "73a4b7bef74bd6ba016fc34e337bcd2ca6b00a0b8fd27f9eb00bc40c19df880a"
     },
     {
       "id": "xmind-62",
@@ -131,7 +125,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "2d23a9cde4d6345f6dc19ebb6e8fe7c16239af8fbb8df4390188a8c2c9c0380b",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-63",
@@ -142,7 +136,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "278e2736fb127a1373f951cb241d25ca32f63779225d0ba6fa6e3b2af0af3647",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-64",
@@ -153,7 +147,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "3079dae04472cc309bc6eb6137e17569a57620e78e97f1d78a234e6d5ad73231",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-65",
@@ -164,7 +158,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "2f6049520ae69dc02d80c5e1fc2aa3e2bb42b0271c04a25f0badc19aebac4dbc",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-66",
@@ -175,7 +169,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "0e22d3736d0bcd2afe68d9357dd1e9a4a729a37c05cd5a3bd202b31caa4655ee",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-67",
@@ -186,7 +180,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "dafdc85f06c9b2a6256e9a6b11ecb9537784dd9ae6c0807d65c596ec64a2abde",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-68",
@@ -197,7 +191,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "756db69f02e7b4f8864ffcfea0a4f3e8cdd972d56ae5f601fb321a45718c2688",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-69",
@@ -208,7 +202,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "fddcad182c9f916eb14cd21c5692df07711f78da382780400c6d903d169bc02e",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-70",
@@ -219,7 +213,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "6cff4918b2c598e0550676beca46abb1ea0132a82e7355ea1f68f18bc6a482f1",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-71",
@@ -230,7 +224,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "2f0f043b4e41ecfe8c2255d4c809de5919866ba807f71c9e67fa23295f9fc0cd",
-      "coverageGap": "原包状态：needs-steps；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-72",
@@ -241,7 +235,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "808e3dfd8260cd5575640c97e51e55bc3393f120fee0fa16120a5ccb3900d830",
-      "coverageGap": "原包状态：needs-steps；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-73",
@@ -252,7 +246,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "920fb414d8c84aefd196da44db31eb5f4130c912cabc6ae141629eb02236becc",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-74",
@@ -263,7 +257,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "d3605ad3dfb00b66b018033e737d8a008e6445de61e4622435848da2e71eca9b",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-75",
@@ -274,7 +268,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "4c2df9fb8d5091016633d5ed9ade0247cb2e511592bf1f0f14152df93dfa9da8",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-76",
@@ -285,7 +279,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "2717e5a700392338e5338d5cde554207e680e77bdf7fe8d9b869db63c1821475",
-      "coverageGap": "原包状态：hold-clarification；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-77",
@@ -296,7 +290,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "ecba9943d4be765ddfe6998de0c0df704f4b1f634dbff71020cc2b4e62c7679a",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-78",
@@ -307,7 +301,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "7e1748dae1d65f20e78dc5daf1d41c93fc42f603e5c46a56eb7928402de6f28e",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-79",
@@ -318,7 +312,7 @@
       "scriptSource": "none",
       "stepCount": 0,
       "caseDigest": "24d9051165efd7216423a960cc223975ddbcde05d51e9ac398c2b591a2988621",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "coverageGap": "尚无固定步骤"
     },
     {
       "id": "xmind-87",
@@ -328,8 +322,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 8,
-      "caseDigest": "f3a23b2d97b89f159275694a179abba50410321b59bac6a911c9082a45c2f286",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "f3a23b2d97b89f159275694a179abba50410321b59bac6a911c9082a45c2f286"
     },
     {
       "id": "xmind-88",
@@ -339,8 +332,7 @@
       "status": "fixed",
       "scriptSource": "stored",
       "stepCount": 4,
-      "caseDigest": "dcd033b2e2114653e6c88b3d6067810013855114a14e0c4c933aa5d8027bc8a2",
-      "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。"
+      "caseDigest": "dcd033b2e2114653e6c88b3d6067810013855114a14e0c4c933aa5d8027bc8a2"
     },
     {
       "id": "xmind-89",
