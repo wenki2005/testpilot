@@ -5,7 +5,7 @@ import './system-module-workbench.css';
 import {supportsDepartmentDatabase} from '../../src/domain/regression-database-contract';
 
 const root='/api/system-module-regression';
-const labels:Record<string,string>={queued:'等待开始',running:'正在回归',completed:'本轮结束',cancelled:'已取消',interrupted:'未完成',preflight:'连接测试窗口','awaiting-login':'等待登录',preparing:'Dify 计划',dispatching:'Dify 派发',executing:'网页执行',reporting:'Dify 汇总',error:'未完成',blocked:'阻塞',passed:'通过',failed:'失败',not_executed:'未执行'};
+const labels:Record<string,string>={queued:'等待开始',running:'正在回归',completed:'本轮结束',cancelled:'已取消',interrupted:'未完成',preflight:'连接测试窗口','awaiting-login':'等待登录',preparing:'Dify 计划',dispatching:'Dify 派发',executing:'网页执行',reporting:'Dify 汇总',error:'未完成',blocked:'阻塞',passed:'完成',failed:'失败',not_executed:'未执行'};
 const notificationLabels:Record<string,string>={disabled:'未启用','not-needed':'无需通知',sending:'发送中',sent:'已发送',failed:'发送失败',partial:'部分送达',uncertain:'接收结果待核对'};
 const activeJob=(job:WebModuleJobView)=>!['completed','error','blocked','cancelled','interrupted'].includes(job.phase);
 const minimumSummary=(job:WebModuleJobView)=>{const results=job.results.filter(r=>!r.outOfScope);return results.length?['passed','failed','blocked','not_executed','error'].flatMap(status=>{const count=results.filter(r=>r.status===status).length;return count?[count+' '+labels[status]]:[];}).join(' · '):labels[job.outcome];};
@@ -57,7 +57,8 @@ export default function SystemModuleWorkbench(){
       const e=b.entries.find(e=>e.moduleId===id&&e.versionId===latest(module).id);if(!e)continue;
       const j=b.jobs.find(j=>j.id===e.jobId);const actual=e.selectedCaseIds??j?.selectedCaseIds;
       if(wanted&&JSON.stringify([...wanted].sort())!==JSON.stringify([...(actual??[])].sort()))continue;
-      return j?{label:activeJob(j)?labels[j.phase]:j.phase==='completed'?(scope==='starter'?minimumSummary(j):labels[j.outcome]):labels[j.phase],type:j.phase==='completed'?j.outcome:activeJob(j)?'running':'blocked'}:{label:b.phase==='running'?'等待执行':'未执行',type:'not_executed'};
+      if(!j){return {label:b.phase==='running'?'等待执行':'未执行',type:'not_executed'};}
+      return {label:j.results.length?minimumSummary(j):labels[j.phase],type:j.phase==='completed'?j.outcome:activeJob(j)?'running':'blocked'};
     }
     return {label:'待执行',type:'not_executed'};
   }
