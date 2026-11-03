@@ -21,6 +21,8 @@ import { caseCategories, caseCategoryLabels, confidenceFromExpectation, inferCas
 import { getDocumentWorkflow } from "./document-workflow-record.js";
 import { containsCredentialLikeValue, redactSensitiveExportData } from "./document-sensitive-data.js";
 import { normalizeDocumentCaseEntryPath, resolveDocumentCaseEntryUrl } from "./document-case-entry.js";
+import {excludedCaseReason} from './document-case-scope.js';
+import {connectedEvidenceKind} from './dify-connected-contract.js';
 
 export type BrowserStep =
   | { action: "fillByLabel"; label: string; value: string; rowIndex?: number }
@@ -990,7 +992,7 @@ export function planCaseExecution(item: Pick<BrowserCheck, "title" | "source" | 
   if (/^\[需澄清\]|待澄清|需澄清|尚未明确/u.test(text)) return { route: "clarification", reason: "验收范围或通过条件尚未定稿。", nextAction: "由产品负责人确认规则，然后拆成可判定的接受/拒绝用例。" };
   if (/(?:没有指定字段|未指定字段|未明确(?:具体)?(?:字段|格式|非法值|触发时机)|需产品确认.{0,30}(?:字段|格式|非法值))/u.test(text)) return { route: "clarification", reason: "来源缺少可复现的字段、非法值或触发条件，当前不能写出可靠输入脚本。", nextAction: "补充字段名、非法合成值、触发方式和可观察结果；若触发需要提交，则提供隔离沙箱与回滚方案。" };
   if (/(?:旧|原).{0,60}入口.{0,36}(?:下线|跳转|重定向)/u.test(text) && !/(?:https?:\/\/|(?:旧|新).{0,16}(?:URL|地址|路由)\s*[=:：]\s*\S+)/iu.test(text)) return { route: "clarification", reason: "旧入口下线/跳转缺少旧地址、新地址及可判定条件，当前页面无法证明入口迁移结果。", nextAction: "补充旧系统 URL、新系统 URL 和预期跳转/下线行为；确认后再加入 URL 断言和允许的导航范围。" };
-  if (/本期不做|本期不展示\/不可选|待后续需求|明确不纳入/u.test(`${text} ${sourcePath}`)) return { route: "out-of-scope", reason: "来源将此项标记为本期范围外。", nextAction: "保留在需求追踪中；确认版本范围后标记 N/A，不计为通过。" };
+  const excluded=excludedCaseReason(item);if(excluded)return {route:'out-of-scope',reason:excluded,nextAction:'保留原始范围说明；负向验收不得按“不做”关键词跳过。'};
   if (/(?:源代码|源码|OAuth|token.{0,12}(?:存储|明文)|localStorage|静态扫描|依赖漏洞|安全审查)/iu.test(text)) return { route: "source-review", reason: "验收需要读取源码、构建产物或安全扫描证据，页面操作无法证明。", nextAction: "关联目标仓库/构建产物和安全规则，在源码审查通道执行并附扫描结果。" };
   if (/(?:后端|服务端|数据库|事务|回调|并发|接口契约|契约|接口字段|接口返回|接口异常|落库|库存扣减|锁仓|推送至|审批流|企微审批|旺店通|易诚通|接口调用次数|请求次数|数据一致性|幂等|消息队列|企微消息)/iu.test(text)) return { route: "api-contract", reason: "验收点涉及服务端、集成或持久化结果；目前没有该目标的 API 契约/隔离环境证据。", nextAction: "提供 OpenAPI/接口契约、隔离测试环境和读回方式后，生成并运行 API/契约用例；有独立可见子断言时保留 UI 部分检查。" };
   if (/(?:账号切换|越权|串号|非本公司员工|在职员工|企微登录|当前登录人|管理员|无权限|直属上级|发起人本人|非发起人|被代申请人|审批人)/iu.test(text)) return { route: "fixture-or-role", reason: "验收依赖特定账号身份、角色或组织关系，当前登录会话不能代表所需身份。", nextAction: "准备专用测试账号/认证态与预期身份数据；保留当前 Edge 登录态，不自动切换用户。" };
@@ -1282,7 +1284,8 @@ export function isSafeReadOnlyBrowserCase(item: BrowserCheck): boolean {
   // evidence. It does not make an already authored and reviewed read-only
   // script unsafe to execute. Keep the clarification and prerequisite gates
   // below; the project approval gate is enforced by the run entry point.
-  if (!item.steps?.length || identityExpectation || backendExpectation && !item.coverageGap && !networkNoCall || /^\[需澄清\]|待澄清|需澄清/u.test(text) || (actionablePreconditions(item).length > 0 && item.preconditionsConfirmed !== true)) return false;
+  const connected=!!connectedEvidenceKind(item);
+  if (!item.steps?.length || identityExpectation&&!connected || backendExpectation && !item.coverageGap && !networkNoCall&&!connected || /^\[需澄清\]|待澄清|需澄清/u.test(text) || (actionablePreconditions(item).length > 0 && item.preconditionsConfirmed !== true)) return false;
   return item.steps.every(step => {
     if (step.action === "clickByRole") return !/提交|保存|删除|支付|付款|确认|下单|发送|重置|退出|注销|submit|save|delete|pay|checkout|confirm|place\s*order|send|reset|log\s*out/i.test(step.name);
     if (step.action === "triggerClientValidation") return true; // dedicated action blocks every request during the client validation click
@@ -1570,6 +1573,7 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
     results.push(result); await onCaseResult?.(result);
   };
   let activeItem: BrowserCheck | undefined;
+  let caseRequestPolicy: ((route: import('playwright').Route) => Promise<void>) | undefined;
   const stoppedDetail = (isCurrent: boolean) => isCurrent ? "运行在此用例期间被手动停止；当前结果未判定，可检查页面状态后定向重跑。" : "运行被手动停止；此用例尚未执行，可从部分结果中定向重跑。";
   const waitForVisibleText = async (expected: string, timeoutMs = 5000): Promise<boolean> => {
     const deadline = Date.now() + timeoutMs;
@@ -1660,7 +1664,7 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
         await page.setViewportSize({ width: 1280, height: 720 }).catch(() => undefined);
         const allowedOrigin = new URL(caseUrl).origin;
         let blockAllRequestsForValidation = false;
-        await page.route("**/*", async route => {
+        caseRequestPolicy = async route => {
           const request = route.request();
           if (blockAllRequestsForValidation) { await route.abort("blockedbyclient"); return; }
           if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), authenticationPage: isAuthenticationRoute(page.url()), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null })) { await route.abort("blockedbyclient"); return; }
@@ -1669,7 +1673,8 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
             catch { await route.abort("blockedbyclient"); return; }
           }
           await route.continue();
-        });
+        };
+        await page.route("**/*", caseRequestPolicy);
         // Reload the same managed tab for each case. This clears SPA memory and
         // transient UI state while retaining the browser context and storage.
         // If authentication does not survive, block without asking for QR again.
@@ -1919,6 +1924,10 @@ async function runLane(url: string, cases: BrowserCheck[], label: string, projec
         ? { id: item.id, title: item.title, status: "not-applicable" as const, detail: "需求来源标记为本期范围外；保留追溯，不计为通过。", durationMs: 0 }
         : { id: item.id, title: item.title, status: "blocked" as const, detail: `浏览器未能开始执行。${hint}${reason}`, durationMs: 0 });
     return { status: signal?.aborted ? "cancelled" : "blocked", summary: signal?.aborted ? `运行被手动停止。${failedToStart.filter(item => item.status === "cancelled").length} 条正在执行的用例已标记取消，其余未执行用例已标记未运行。` : `${reason}${hint}`, results: failedToStart };
+  } finally {
+    // This tab remains open for the user. A completed/cancelled read-only run
+    // must not keep aborting subsequent, explicitly authorized manual actions.
+    if (caseRequestPolicy) await page.unroute("**/*", caseRequestPolicy).catch(() => undefined);
   }
   if (signal?.aborted) {
     const cancelled = results.filter(item => item.status === "cancelled").length;
@@ -2626,6 +2635,9 @@ export async function executeDocumentRun(project: DocumentProject, options: { ru
   } finally {
     clearLoginHandoff(project.id);
     // Keep the project page and its live login state open for the next run.
+    // Release initial-page and case interception before releasing this lease.
+    // Otherwise a read-only run silently blocks the user's later submissions.
+    await session?.page.unrouteAll({ behavior: "wait" }).catch(() => undefined);
     activeBrowserRuns.delete(project.id);
     activeDocumentRuns.delete(runId);
     releasePageLease();

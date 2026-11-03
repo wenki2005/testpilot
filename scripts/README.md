@@ -20,12 +20,24 @@
 | `test-browser-processes.mjs` | 测试进程/浏览器清理辅助 |
 | `package-demo.mjs` | 打包 Windows 演示包 |
 | `start-dify.ps1` | 启动 Dify 回归工作台（默认 4319） |
+| `start-fixed-regression.ps1` | 在原 4321 地址加载固定回归版本，复用 `demo-toolrun` 数据和原账号；有活动任务时拒绝重启，启动前核对旧服务身份，不建立新演示实例 |
 | `dify-machine-transfer.mjs` | 导出/导入系统、模块版本、最小范围和固定测试数据 |
 | `build-dify-module.mjs` | 从用例表构建 Dify 模块包 |
 | `package-department-sample-suite.mjs` | 打包部门申样用例集 |
 | `export-regression-scripts.mjs` | 从运行中的 TestPilot 导出固定步骤镜像到 `regression/scripts/`（默认数据目录 `artifacts/demo`） |
 | `check-regression-scripts.mjs` | 校验镜像与当前模块版本一致、无过期文件 |
 | `run-regression-plan.mjs` | 按 `regression/plans/*.json` 的固定版本/用例清单创建 fixed 批次；支持 `--dry-run` |
+
+### 恢复后的固定回归
+
+原服务入口为 `http://127.0.0.1:4321`，数据目录为演示包的 `artifacts/demo-toolrun`。
+运行 `启动固定回归.cmd` 加载当前已构建版本；`-Restart` 仅在核实本机服务身份且没有活动任务时重启。
+
+固定清单：`regression/plans/fixed-recovery-21-2026-11-02.json`（原17条加4条字段校验，保留失败和阻塞）；`fixed-recovery-131-2026-11-02.json` 保留原始五模块全量范围。
+使用 `node scripts/run-regression-plan.mjs --plan <清单> --base-url http://127.0.0.1:4321` 执行。
+
+脚本镜像导出和检查可加 `--system-id <系统ID> --active-only`，只包含指定系统的未归档模块；两条命令必须使用相同的服务、数据目录和筛选参数。
+镜像只记录固定子步骤；需要查询读回、样式或完整表单有效性转换的用例应从工作台运行完整核验。
 
 ## 一次性验收/审计（历史位置，后续迁到 `scripts/verify/`）
 

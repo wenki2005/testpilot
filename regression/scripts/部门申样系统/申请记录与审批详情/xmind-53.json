@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
-    "version": 2,
-    "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
+    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+    "version": 1,
+    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
   },
   "case": {
     "id": "xmind-53",
@@ -32,35 +32,19 @@
   "script": {
     "format": "BrowserStep[]",
     "status": "fixed",
-    "source": "stored",
+    "source": "cache",
     "storedStepCount": 6,
-    "cachedStepCount": 0,
-    "cacheFresh": false,
-    "stepCount": 6,
+    "cachedStepCount": 2,
+    "cacheFresh": true,
+    "stepCount": 2,
     "steps": [
       {
-        "action": "assertVisible",
-        "text": "申请编号"
-      },
-      {
-        "action": "assertVisible",
-        "text": "申请流程"
-      },
-      {
-        "action": "assertVisible",
-        "text": "申请人"
-      },
-      {
-        "action": "assertVisible",
-        "text": "申请时间"
+        "action": "blurByLabel",
+        "label": "收件人"
       },
       {
         "action": "assertExactVisible",
-        "text": "待审核"
-      },
-      {
-        "action": "assertDisabled",
-        "label": "状态按钮"
+        "text": "收货信息"
       }
     ]
   },
@@ -70,5 +54,5 @@
     "detail": "",
     "nextAction": ""
   },
-  "caseDigest": "38a60fb5aa6b44a898bf9ca49e07ac968035562ee3d91347d0b30a966bb1f5ac"
+  "caseDigest": "5ea87ec66fe5bb9cd3a46d657887f3484dd9c0496577893c9b001a4dfa1b8f52"
 }

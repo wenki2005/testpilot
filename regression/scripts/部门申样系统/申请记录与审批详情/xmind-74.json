@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
-    "version": 2,
-    "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
+    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+    "version": 1,
+    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
   },
   "case": {
     "id": "xmind-74",
@@ -41,9 +41,9 @@
   },
   "readiness": {
     "hasFixedSteps": false,
-    "coverageGap": "尚无固定步骤",
-    "detail": "此条需要本人可见且状态明确的申请/订单记录；当前空态或成功连接数据库不能证明详情、审批、筛选及分页正确。",
-    "nextAction": "按原预期准备本人可见的已有记录和对应状态；仍从同轮网页、接口、数据库对照，不借用他人的申请、不自动造单。"
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "该用例需要商品实时查询或正确链路的失败降级断言。已有本人记录、数据库和成功详情响应可供对照，但现有步骤尚未绑定上游实时调用或对应失败响应，不能统一归因于没有本人数据。",
+    "nextAction": "补明细商品字段对照，并定位上游调用/失败注入点；不能以无关bookCheck请求或页面标题代替完整预期。"
   },
   "caseDigest": "d3605ad3dfb00b66b018033e737d8a008e6445de61e4622435848da2e71eca9b"
 }

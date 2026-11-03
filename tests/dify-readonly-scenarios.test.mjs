@@ -6,6 +6,19 @@ import {reviewDepartmentReadOnly,sanitizeDifyReadObservation,observeDifyReadOnly
 import {difyCoverageGap} from '../dist/adapters/dify-case-quality.js';
 import {missingDirectAssertion} from '../dist/adapters/document-case-quality.js';
 import {isSafeReadOnlyBrowserCase} from '../dist/adapters/document-test-workflow.js';
+
+test('recipient length uses a uniquely observed control, preserving the original limit and rejecting ambiguity',()=>{
+ const c={id:'xmind-43',title:'>20字：限制输入',expected:'>20字：限制输入',source:'填写收件人',steps:[],preconditions:[],testData:[]};
+ const original=structuredClone(c),evidence=JSON.stringify({controls:[{placeholder:'请输入收件人姓名'}]});
+ const plan=reviewDepartmentReadOnly(c,evidence,'https://cdn.yibentushu.com/test-sample-apply/index.html#/home');
+ assert.equal(plan.kind,'recipient-length');
+ assert.equal(isSafeReadOnlyBrowserCase({...c,steps:plan.steps}),true);
+ assert.equal(missingDirectAssertion({...c,steps:plan.steps}),undefined);
+ assert.equal(reviewDepartmentReadOnly(c,JSON.stringify({controls:[{placeholder:'请输入收件人姓名'},{placeholder:'请输入收件人姓名'}]}),'https://cdn.yibentushu.com/test-sample-apply/index.html#/home'),undefined);
+ assert.equal(reviewDepartmentReadOnly(c,evidence,'https://other.example/'),undefined);
+ assert.equal(reviewDepartmentReadOnly({...c,expected:'不同预期'},evidence,'https://cdn.yibentushu.com/test-sample-apply/index.html#/home'),undefined);
+ assert.deepEqual(c,original);
+});
 import {validateDifyCustomerFixtures} from '../dist/adapters/dify-readonly-fixtures.js';
 
 const target='https://cdn.yibentushu.com/test-sample-apply/index.html#/home';
@@ -42,7 +55,7 @@ test('fixed courier only passes the Dify gate with a source-bound reviewed plan;
 
 test('actual browser waits for this query, rejects error-empty pages, and cannot reuse the previous case response',async()=>{
  const server=createServer((req,res)=>{res.setHeader('content-type','application/json');if(req.url.startsWith('/dept/book/apply/myList'))setTimeout(()=>res.end(JSON.stringify({code:200,total:0,rows:[]})),200);else res.end('{}');});server.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));const base=`http://127.0.0.1:${server.address().port}`;const browser=await chromium.launch({headless:true}).catch(()=>chromium.launch({channel:'msedge',headless:true})).catch(async error=>{server.closeAllConnections();await new Promise(r=>server.close(r));throw error;});const page=await browser.newPage();await page.goto(base);const observer=observeDifyReadOnlyResponses(page,base);
- try{await page.evaluate(()=>{void fetch('/dept/book/apply/myList');});const reads=await observer.take('application-empty');assert.equal(reads.length,1);await page.goto(base+'#/apply');const c=scenarios[0];const passed={status:'passed',detail:'空态已显示'};await verifyDepartmentReadOnlyResult(page,c,passed,reads);assert.equal(passed.status,'passed');assert.match(passed.detail,/总数 0/);const stale={status:'passed',detail:'Empty'};await verifyDepartmentReadOnlyResult(page,c,stale,[]);assert.equal(stale.status,'blocked');const failedRead={status:'passed',detail:'Empty'};await verifyDepartmentReadOnlyResult(page,c,failedRead,[{...reads[0],ok:false}]);assert.equal(failedRead.status,'blocked');const hasRows={status:'passed',detail:'Empty'};await verifyDepartmentReadOnlyResult(page,c,hasRows,[{...reads[0],rows:1,total:1}]);assert.equal(hasRows.status,'blocked');assert.equal((await observer.take()).length,0);
+ try{await page.evaluate(()=>{void fetch('/dept/book/apply/myList');});const reads=await observer.take('application-empty');assert.equal(reads.length,1);await page.goto(base+'#/apply');await page.setContent('<div>暂无申请记录</div>');const c=scenarios[0];const passed={status:'passed',detail:'空态已显示'};await verifyDepartmentReadOnlyResult(page,c,passed,reads);assert.equal(passed.status,'passed');assert.match(passed.detail,/总数 0/);const stale={status:'passed',detail:'Empty'};await verifyDepartmentReadOnlyResult(page,c,stale,[]);assert.equal(stale.status,'blocked');const failedRead={status:'passed',detail:'Empty'};await verifyDepartmentReadOnlyResult(page,c,failedRead,[{...reads[0],ok:false}]);assert.equal(failedRead.status,'blocked');const hasRows={status:'passed',detail:'Empty'};await verifyDepartmentReadOnlyResult(page,c,hasRows,[{...reads[0],rows:1,total:1}]);assert.equal(hasRows.status,'blocked');assert.equal((await observer.take()).length,0);
   const courier=source('发货方式固定为「快递」，无其他可选','原始XMind › 发货方式');await page.setContent('<div class="home-form-item"><label>发货方式：</label><span>仅支持快递</span></div>');const fixed={status:'passed',detail:'文案已找到'};await verifyDepartmentReadOnlyResult(page,courier,fixed,[]);assert.equal(fixed.status,'passed');assert.match(fixed.detail,/0 个/);await page.setContent('<div class="home-form-item"><label>发货方式：</label><span>仅支持快递</span><select><option>物流</option></select></div>');const extra={status:'passed',detail:'文案已找到'};await verifyDepartmentReadOnlyResult(page,courier,extra,[]);assert.equal(extra.status,'blocked');
   const region=source('逐级选择成功回填所在地区','省/市/区三级联动');const html=values=>'<div class="home-form-item"><label>所在地区</label>'+values.map(value=>'<div class="el-select"><input role="combobox"><span class="el-select__placeholder">'+value+'</span></div>').join('')+'</div>';
   await page.setContent(html(['湖南省','长沙市','芙蓉区']));const selected={status:'passed',detail:'文本已找到'};await verifyDepartmentReadOnlyResult(page,region,selected,[]);assert.equal(selected.status,'passed');

@@ -85,3 +85,50 @@ test('device verifier uses real independent layouts and current responses; missi
   assert.ok(screenshots.length>=2);assert.ok(requests.every(r=>r.method==='GET'));
  }finally{await browser.close();}
 });
+
+// Isolated tool fixture with records; never a real department-system business result.
+function recordsFixture(applyRows,orderRows){return `<!doctype html><meta charset="utf-8"><script type="module" src="/fixture-entry.js"></script><script>
+const mobile=navigator.userAgent.includes(' Mobile'),route=location.hash.slice(1),api=${JSON.stringify(api)};
+const applyRows=${JSON.stringify(applyRows)},orderRows=${JSON.stringify(orderRows)};
+if(route==='/home'){
+ document.write('<main class="'+(mobile?'page-home':'pc-page-home')+'">费用划归客户 发货方式 备注 收件人 手机号码 所在地区 详细地址<input placeholder="如有特殊要求请填写备注信息"><input placeholder="'+(mobile?'请输入收件人':'请输入收件人姓名')+'"></main>');fetch(api+'getInfo');
+}else if(route==='/apply'){
+ const body=applyRows.length?'<ul>'+applyRows.map(row=>'<li>'+row.applyNo+' '+row.text+'</li>').join('')+'</ul>':'暂无申请记录';
+ document.write('<main>'+body+'</main>');fetch(api+'dept/book/apply/myList');
+}else if(route==='/logistics'){
+ const body=orderRows.length?'<ul>'+orderRows.map(row=>'<li>'+row.orderNo+'</li>').join('')+'</ul>':(mobile?'暂无订单记录':'暂无订单物流记录');
+ document.write('<main>'+body+'<input placeholder="搜索订单号/书籍"></main>');
+ fetch(api+'h5/dept/book/order/myList');document.querySelector('input').onkeydown=e=>{if(e.key==='Enter')fetch(api+'h5/dept/book/order/myList?keyword='+encodeURIComponent(e.target.value))};
+}
+</script>`;}
+
+const consistent={pc:{apply:[{applyNo:'202611010001',examineStatus:0,bookUsage:1,text:'待审批'},{applyNo:'202611010002',examineStatus:1,bookUsage:2,text:'已通过'}],orders:[{orderNo:'OD20261101001'}],matched:['OD20261101001']},h5:null};
+consistent.h5={apply:consistent.pc.apply.map(row=>({...row})),orders:consistent.pc.orders.map(row=>({...row})),matched:consistent.pc.matched.slice()};
+
+test('cross-device verifier compares real records on both ends; inconsistent lists fail and the original expectation stays',async()=>{
+ const browser=await chromium.launch({headless:true}).catch(()=>chromium.launch({channel:'msedge',headless:true}));
+ const page=await browser.newPage({viewport:{width:1100,height:720}});let current=consistent;
+ await page.route('**/*',async route=>{
+  const request=route.request(),url=new URL(request.url()),mobile=request.headers()['user-agent']?.includes(' Mobile');
+  if(url.origin==='https://cdn.yibentushu.com'){const side=mobile?current.h5:current.pc;return route.fulfill({contentType:url.pathname==='/fixture-entry.js'?'text/javascript':'text/html',body:url.pathname==='/fixture-entry.js'?'':recordsFixture(side.apply,side.orders)});}
+  if(url.origin==='https://testapi.yibentushu.com'){
+   const side=mobile?current.h5:current.pc,headers={'access-control-allow-origin':'*'};
+   if(url.pathname.endsWith('/getInfo'))return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({code:200,user:{userId:'same-account',nickName:'PRIVATE_NAME'}})});
+   if(url.pathname.endsWith('/apply/myList'))return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({code:200,total:side.apply.length,rows:side.apply})});
+   if(url.pathname.endsWith('/order/myList')){const keyword=url.searchParams.get('keyword'),rows=keyword?side.matched.map(no=>({orderNo:no})):side.orders;return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({code:200,total:rows.length,rows})});}
+  }
+  return route.abort();
+ });
+ const save=async image=>{assert.equal(image.subarray(1,4).toString(),'PNG');return 'current-case.png';};
+ try{
+  const passed={status:'passed',detail:'base'};await verifyDifyDeviceResult(page,layout,passed,target,save);
+  assert.equal(passed.status,'passed',passed.detail);assert.match(passed.detail,/本人申请记录 2 条/);assert.match(passed.detail,/本人订单记录 1 条/);assert.match(passed.detail,/仅覆盖第一页/);assert.equal(passed.evidence,'current-case.png');
+  current={pc:consistent.pc,h5:{apply:[{applyNo:'202611010003',examineStatus:0,bookUsage:1,text:'待审批'},{applyNo:'202611010004',examineStatus:1,bookUsage:2,text:'已通过'}],orders:consistent.h5.orders,matched:consistent.h5.matched}};
+  const different={status:'passed',detail:'base'};await verifyDifyDeviceResult(page,layout,different,target,save);assert.equal(different.status,'failed');assert.match(different.detail,/申请编号集合不一致/);
+  current={pc:consistent.pc,h5:{apply:[],orders:[],matched:[]}};
+  const emptyH5={status:'passed',detail:'base'};await verifyDifyDeviceResult(page,layout,emptyH5,target,save);assert.equal(emptyH5.status,'failed');assert.match(emptyH5.detail,/总数或空态不一致/);
+  current={pc:consistent.pc,h5:{...consistent.h5,matched:['OD20261101001','OD20261101999']}};
+  const keyword={status:'passed',detail:'base'};await verifyDifyDeviceResult(page,layout,keyword,target,save);assert.equal(keyword.status,'failed');assert.match(keyword.detail,/命中的结果集合不一致/);
+  assert.ok(passed.detail.indexOf('PRIVATE_NAME')<0&&different.detail.indexOf('PRIVATE_NAME')<0);
+ }finally{await browser.close();}
+});

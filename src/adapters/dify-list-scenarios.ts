@@ -26,6 +26,18 @@ type Read={url:URL;rows:Record<string,unknown>[];total:number};
 const application='dept/book/apply/myList',orders='h5/dept/book/order/myList';
 const matches=(raw:string,suffix:string)=>{try{const u=new URL(raw);return u.origin==='https://testapi.yibentushu.com'&&u.pathname==='/supply-api/'+suffix;}catch{return false;}};
 
+/** These captions also occur inside record cards. Restrict clicks to the known
+ * application's filter groups, never an arbitrary record or generic button. */
+export async function applicationFilter(page:Page,usage:boolean,label:string){
+ const url=new URL(page.url());
+ if(url.origin!=='https://cdn.yibentushu.com'||!url.pathname.startsWith('/test-sample-apply/')||url.hash.split('?')[0]!=='#/apply')throw Error('Blocked: 当前不是部门申样申请列表，未点击筛选项。');
+ const groups=page.locator(usage?'.pc-page-apply > .apply-header .header-nav > ul, .page-apply > .apply-header > .nav:nth-of-type(1)':'.pc-page-apply .apply-seek-form .seek-states > ul, .page-apply > .apply-header > .nav:nth-of-type(2)').filter({visible:true});
+ if(await groups.count()!==1)throw Error('Blocked: 申请列表筛选栏未唯一定位，未猜测点击。');
+ const control=groups.locator('li').filter({hasText:new RegExp('^\\s*'+label+'\\s*$')}).filter({visible:true});
+ if(await control.count()!==1)throw Error('Blocked: 申请列表筛选栏内的选项未唯一定位，未猜测点击。');
+ return control;
+}
+
 /** Runtime-only row values never leave this callback. Persist counts, booleans
  * and fixed labels only; another account's records are never queried. */
 export async function verifyDifyListResult(page:Page,check:BrowserCheck,result:Result,targetUrl:string,saveEvidence:(png:Buffer)=>Promise<string>){
@@ -70,18 +82,18 @@ export async function verifyDifyListResult(page:Page,check:BrowserCheck,result:R
    if(kind==='order-matching-search'){
     if(!baseline.rows.length){result.status='blocked';result.detail='本轮同账号订单查询成功但为0条；缺少可匹配的本人订单，未使用他人订单或把无匹配空态当成模糊命中通过。';}
     else{
-     const originalOrder=baseline.rows[0]!,code=originalOrder.orderNo;
+     const originalOrder=baseline.rows[0]!,code=originalOrder.orderId;
      if(typeof code!=='string'||code.length<4)throw Error('Blocked: 本人订单缺少可唯一核对的订单编号，未猜测字段。');
      const keyword=code.slice(0,-2),input=page.getByPlaceholder('搜索订单号/书籍',{exact:true});
      const searched=await read(orders,async()=>{await input.fill(keyword);await input.press('Enter');await input.blur();},u=>u.searchParams.get('keyword')===keyword);
-     if(!searched.rows.some(row=>row.orderNo===code)||searched.rows.some(row=>!String(row.orderNo??'').includes(keyword)&&!String(row.firstBookName??'').includes(keyword)))throw Error('断言失败：部分订单关键词查询没有正确返回对应本人订单。');
+     if(!searched.rows.some(row=>row.orderId===code)||searched.rows.some(row=>!String(row.orderId??'').includes(keyword)&&!String(row.firstBookName??'').includes(keyword)))throw Error('断言失败：部分订单关键词查询没有正确返回对应本人订单。');
      result.detail='本轮使用本人列表中的订单编号部分关键词实际查询；成功响应包含原订单且当前页均匹配，业务编号未持久化。';
     }
    }else{
     const usage=kind==='application-usage-filter',key=usage?'bookUsage':'examineStatus';
     const options=usage?['营销用书','产品用书']:['待审批','已通过','已驳回'];let datasetComplete=baseline.total===baseline.rows.length&&baseline.rows.length>0;const used=new Set<string>();
     for(const label of options){
-     const control=page.getByText(label,{exact:true}).filter({visible:true});if(await control.count()!==1)throw Error('Blocked: 申请列表筛选项不是唯一可见控件，未猜测点击。');
+     const control=await applicationFilter(page,usage,label);
      const response=await read(application,()=>control.click({timeout:5000}),u=>u.searchParams.has(key)&&u.searchParams.get(key)!=='');
      const value=response.url.searchParams.get(key)!;if(used.has(value))throw Error('断言失败：不同筛选项发送了相同筛选值。');used.add(value);
      if(response.rows.some(row=>String(row[key])!==value))throw Error('断言失败：'+label+'筛选返回了不属于该项的记录。');

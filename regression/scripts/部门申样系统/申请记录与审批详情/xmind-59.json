@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
-    "version": 2,
-    "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
+    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+    "version": 1,
+    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
   },
   "case": {
     "id": "xmind-59",
@@ -33,19 +33,19 @@
   "script": {
     "format": "BrowserStep[]",
     "status": "fixed",
-    "source": "stored",
+    "source": "cache",
     "storedStepCount": 2,
-    "cachedStepCount": 0,
-    "cacheFresh": false,
+    "cachedStepCount": 2,
+    "cacheFresh": true,
     "stepCount": 2,
     "steps": [
       {
-        "action": "assertVisible",
-        "text": "申请编号"
+        "action": "blurByLabel",
+        "label": "收件人"
       },
       {
-        "action": "assertVisible",
-        "text": "查看明细"
+        "action": "assertExactVisible",
+        "text": "收货信息"
       }
     ]
   },
@@ -55,5 +55,5 @@
     "detail": "",
     "nextAction": ""
   },
-  "caseDigest": "170925b9123b736168ed28df4d305df4b5ea2ae2a3d53f48ec20e45fd16a5c80"
+  "caseDigest": "c90c48c6c58e62495b0d1750aa79e9d565acaf7859a6331cee4073ecf843a8b4"
 }

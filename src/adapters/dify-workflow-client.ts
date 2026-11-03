@@ -18,14 +18,18 @@ export async function callDifyWorkflow(kind: 'prepare' | 'execution', inputs: Re
   let payload: any;
   try { payload = await response.json(); } catch { throw new DifyWorkflowError('Dify 未返回有效 JSON。'); }
   const workflowRunId = typeof payload.workflow_run_id === 'string' ? payload.workflow_run_id : undefined;
+  // Preserve real provider usage even when the run fails later; unknown stays unknown.
+  const num = (value: unknown) => Number.isFinite(Number(value)) ? Number(value) : null;
+  const usage = num(payload.data?.total_tokens) === null ? undefined : { prompt: num(payload.data?.prompt_tokens), completion: num(payload.data?.completion_tokens), total: num(payload.data?.total_tokens) };
+  const withUsage = (error: DifyWorkflowError) => { (error as DifyWorkflowError & { usage?: unknown }).usage = usage; return error; };
   if (payload.data?.status !== 'succeeded') {
     const reason = /missing identity/.test(String(payload.data?.error)) ? '已发布工作流与输入协议不兼容（missing identity）。' : '工作流节点执行失败，请查看对应的 Dify 运行日志。';
-    throw new DifyWorkflowError(`Dify ${reason}`, workflowRunId);
+    throw withUsage(new DifyWorkflowError(`Dify ${reason}`, workflowRunId));
   }
   let output: any;
-  try { output = typeof payload.data.outputs?.result === 'string' ? JSON.parse(payload.data.outputs.result) : payload.data.outputs?.result; } catch { throw new DifyWorkflowError('Dify result 不是有效 JSON。', workflowRunId); }
-  if (!output || typeof output !== 'object') throw new DifyWorkflowError('Dify 缺少 result 输出。', workflowRunId);
-  return {output, workflowRunId, tokens: Number(payload.data.total_tokens ?? 0)};
+  try { output = typeof payload.data.outputs?.result === 'string' ? JSON.parse(payload.data.outputs.result) : payload.data.outputs?.result; } catch { throw withUsage(new DifyWorkflowError('Dify result 不是有效 JSON。', workflowRunId)); }
+  if (!output || typeof output !== 'object') throw withUsage(new DifyWorkflowError('Dify 缺少 result 输出。', workflowRunId));
+  return {output, workflowRunId, usage, ...(typeof usage?.total === 'number' ? { tokens: usage.total } : {})};
 }
 
 export function cloudSafe<T>(value: T): T { return redactSensitiveExportData(value) as T; }

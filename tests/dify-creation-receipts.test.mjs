@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';import{mkdtemp,mkdir,writeFile,rm}from'node:fs/promises';import os from'node:os';import path from'node:path';
+import {readDepartmentCreationReceipts}from'../dist/adapters/dify-creation-receipts.js';
+test('creation proof requires the same profile, job-bound journal and completed submission',async t=>{
+ const parent=os.tmpdir(),root=await mkdtemp(path.join(parent,'dify-receipts-'));t.after(async()=>{assert.equal(path.dirname(root),path.resolve(parent));assert.ok(path.basename(root).startsWith('dify-receipts-'));await rm(root,{recursive:true,force:true});});
+ const folder=path.join(root,'dify-web-modules','authorized-writes');await mkdir(folder,{recursive:true});const jobId='f0000000-0000-4000-8000-000000000001',profile='f0000000-0000-4000-8000-000000000002';
+ const log={schema:1,jobId,profileId:profile,attempts:[{phase:'passed',applyNo:'202611030183'},{phase:'sending',applyNo:'202611030184'},{phase:'unknown',applyNo:'202611030185'}]};await writeFile(path.join(folder,jobId+'.json'),JSON.stringify(log));assert.deepEqual([...await readDepartmentCreationReceipts(root,profile)],['202611030183']);assert.equal((await readDepartmentCreationReceipts(root,'other')).size,0);await writeFile(path.join(folder,jobId+'.json'),JSON.stringify({...log,jobId:'mismatch'}));assert.equal((await readDepartmentCreationReceipts(root,profile)).size,0);
+});

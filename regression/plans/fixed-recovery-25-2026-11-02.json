@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "kind": "testpilot-regression-plan",
+  "name": "固定回归：原起步17条加8条字段校验-2026-11-02",
+  "systemId": "436847ad-f144-425f-b303-1ca9b22e0b52",
+  "systemName": "部门申样系统",
+  "runMode": "fixed",
+  "scope": "custom",
+  "modules": [
+    {
+      "moduleName": "登录入口与公共基础",
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "versionId": "875d7cc4-d8fb-4a00-bc0c-4d3df4ca1b4e",
+      "caseIds": [
+        "xmind-92"
+      ]
+    },
+    {
+      "moduleName": "申样申请与经销商数据",
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "versionId": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+      "caseIds": [
+        "xmind-17",
+        "xmind-18",
+        "xmind-21",
+        "xmind-22",
+        "xmind-25",
+        "xmind-29",
+        "xmind-33",
+        "xmind-37",
+        "xmind-40",
+        "xmind-43",
+        "xmind-46",
+        "xmind-52",
+        "xmind-30",
+        "xmind-41",
+        "xmind-44",
+        "xmind-48",
+        "xmind-42",
+        "xmind-45",
+        "xmind-47",
+        "xmind-49"
+      ]
+    },
+    {
+      "moduleName": "申请记录与审批详情",
+      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+      "versionId": "f0a757e4-52cf-4955-b810-91429ab5e710",
+      "caseIds": [
+        "xmind-91"
+      ]
+    },
+    {
+      "moduleName": "订单与物流",
+      "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+      "versionId": "0cc0b28a-54e1-47d4-9f46-def2b5df829a",
+      "caseIds": [
+        "xmind-81",
+        "xmind-83"
+      ]
+    },
+    {
+      "moduleName": "PC/H5 横向适配",
+      "moduleId": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+      "versionId": "4b06c8be-0d04-425b-99eb-f87d1f524efa",
+      "caseIds": [
+        "xmind-94"
+      ]
+    }
+  ],
+  "excluded": [],
+  "notes": [
+    "保留原始预期和历史失败/阻塞。",
+    "新增数量、收件人、手机号、详细地址和地区未选全校验。"
+  ]
+}

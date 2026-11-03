@@ -89,6 +89,13 @@ test('prerequisite-blocked cases retain job-bound context screenshots without in
  assert.equal(done.phase,'completed');assert.equal(done.results[0].status,'blocked');assert.equal(done.results[0].evidenceOrigin,'preflight');assert.match(done.results[0].evidenceNote,/未执行/);assert.equal(done.documentRunId,undefined);assert.equal(f.calls(),0);assert.equal(captured[0].jobId,done.id);assert.match(done.report,/截图说明/);assert.deepEqual(f.store.getModule(m.id).project.cases,original);
 });
 
+test('authorized write screenshots retain their execution origin without a shared document run or replay',async t=>{
+ let submissions=0;const f=await fixture(t,{authorizedWrites:async(_project,_job,checks)=>{submissions++;return checks.map(c=>({caseId:c.id,status:'passed',detail:'合成业务提交和独立落库核对成功',evidence:'c'.repeat(64)+'.png',evidenceNote:'本轮授权执行页面'}));}});
+ const m=await f.store.import({fileName:'write-origin.csv',targetUrl:'https://example.com/',bytesBase64:Buffer.from(csv([{id:'write-origin',title:'真实提交',expected:'提交成功',steps:[]}])).toString('base64')});
+ const original=structuredClone(m.project.cases);const done=await wait(f.store,f.store.start({moduleId:m.id,requestId:randomUUID(),runMode:'fixed'}).id);
+ assert.equal(done.phase,'completed');assert.equal(done.results[0].status,'passed');assert.equal(done.results[0].evidenceOrigin,'authorized-write');assert.deepEqual(done.authorizedWriteCaseIds,['write-origin']);assert.equal(done.documentRunId,undefined);assert.equal(submissions,1);assert.equal(f.calls(),0);assert.deepEqual(f.store.getModule(m.id).project.cases,original);
+});
+
 test('a browser interruption preserves each completed case before a final run exists',async t=>{
  const f=await fixture(t);let executions=0;f.deps.execute=async(_project,_id,ids,_stage,onResult)=>{executions++;onResult({id:ids[0],status:'passed',detail:'中断前已经完成的真实断言'});throw Error('测试浏览器连接中断');};const done=await wait(f.store,f.store.start({moduleId:f.imported.id,requestId:randomUUID()}).id);assert.equal(done.phase,'error');assert.equal(done.results[0].status,'passed');assert.equal(done.results[1].status,'not_executed');assert.equal(done.outcome,'blocked');await assert.rejects(()=>f.store.retry(done.id),/新建一轮重测/);assert.equal(executions,1);assert.match(f.store.renderReport(done),/通过 1/);
 });

@@ -2,6 +2,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { DifyRegressionStore } from "../adapters/dify-regression.js";
 import { ModuleRegressionStore } from "../adapters/module-regression.js";
 import { DifyWebModuleStore } from "../adapters/dify-web-modules.js";
+import { difyModuleEvidencePath } from "../adapters/dify-module-evidence-path.js";
 import { SystemModuleRegression } from "../adapters/system-module-regression.js";
 import { webModuleDependencies } from "../adapters/dify-web-browser.js";
 import { createHash, randomUUID } from "node:crypto";
@@ -50,6 +51,9 @@ const difyRegression = new DifyRegressionStore(path.join(artifactsDir, "dify-reg
 const moduleRegression = new ModuleRegressionStore(artifactsDir);
 const difyWebModules = new DifyWebModuleStore(artifactsDir, webModuleDependencies(artifactsDir));
 const systemModules = new SystemModuleRegression(artifactsDir, difyWebModules, webModuleDependencies(artifactsDir));
+// Many open workbench tabs poll the same multi-megabyte history. Serialize it
+// once per second so status polling does not starve browser protocol messages.
+let systemModuleStateCache:{expires:number;body:string}|undefined;
 const regressionsFile = path.join(artifactsDir, "regressions.json");
 const distDir = path.join(projectRoot, "web", "dist");
 const MAX_BODY = 64 * 1024;
@@ -1035,10 +1039,11 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
   }
   if(req.method==='GET'&&url.pathname==='/sample/dify-module'){res.writeHead(200,{'content-type':'text/html; charset=utf-8'});res.end(await readFile(path.join(projectRoot,'examples','dify-module-sample.html')));return;}
   if (url.pathname.startsWith('/api/system-module-regression')) {
+    if(req.method==='POST'){systemModuleStateCache=undefined;res.once('finish',()=>{systemModuleStateCache=undefined;});}
     try {
       const root='/api/system-module-regression';const route=url.pathname.slice(root.length);
       if(req.method==='GET'&&route==='/template.md'){res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename=module-template.md'});res.end('# 模块名称\n\n## case-1 | 用例标题\n\n- 优先级：P1\n- 来源：原始需求或用例编号\n\n### 前置条件\n- 请填写需要的账号或业务记录条件\n\n### 操作步骤\n1. 打开模块入口\n2. 请填写实际操作\n\n### 预期结果\n请填写原始预期，不能使用实际执行结果替代\n');return;}
-      if(req.method==='GET'&&route===''){json(res,200,systemModules.state());return;}
+      if(req.method==='GET'&&route===''){if(!systemModuleStateCache||systemModuleStateCache.expires<=Date.now())systemModuleStateCache={expires:Date.now()+1000,body:JSON.stringify(systemModules.state())};res.writeHead(200,{'content-type':'application/json; charset=utf-8','cache-control':'no-store'});res.end(systemModuleStateCache.body);return;}
       if(req.method==='POST'&&route==='/systems'){json(res,200,systemModules.saveSystem(await bodyJson(req)));return;}
       if(req.method==='POST'&&route==='/modules/import'){json(res,200,await systemModules.importModule(await documentBody(req)));return;}
       if(req.method==='POST'&&route==='/modules/attach'){json(res,200,systemModules.attachLegacy(await bodyJson(req)));return;}
@@ -1068,7 +1073,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
           json(res,200,{...view,results,...(progress?{progress:{...progress.progress,currentCase:progress.currentCase}}:{})});return;
         }
         if(req.method==='GET'&&action==='report'){const report=difyWebModules.reportForExport(key).replaceAll('/api/dify-web-modules/',`http://${host}:${port}/api/dify-web-modules/`);res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename="module-report.md"'});res.end(report);return;}
-        if(req.method==='GET'&&action==='evidence'&&match[3]){const row=job.results.find(r=>r.evidence===match[3]);if(!row||row.evidenceOrigin!=='preflight'&&!job.documentRunId){fail(res,404,'没有该证据。');return;}const file=row.evidenceOrigin==='preflight'?path.join(artifactsDir,'dify-web-modules','evidence',job.id,match[3]):path.join(artifactsDir,'document-tests','runs',job.documentRunId!,'screenshots',match[3]);const bytes=await readFile(file);res.writeHead(200,{'content-type':'image/png','cache-control':'no-store'});res.end(bytes);return;}
+        if(req.method==='GET'&&action==='evidence'&&match[3]){const file=difyModuleEvidencePath(artifactsDir,job,match[3]);if(!file){fail(res,404,'没有该证据。');return;}const bytes=await readFile(file);res.writeHead(200,{'content-type':'image/png','cache-control':'no-store'});res.end(bytes);return;}
         if(req.method==='POST'){
           if(action==='retry'){json(res,202,await difyWebModules.retry(key));return;}
           if(action==='cancel'){json(res,200,await difyWebModules.cancel(key));return;}
@@ -1126,7 +1131,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     } catch (error) { fail(res, 422, error instanceof Error ? error.message : "回归记录操作失败。"); }
     return;
   }
-  if (req.method === "GET" && url.pathname === "/api/health") { json(res, 200, { ok: true }); return; }
+  if (req.method === "GET" && url.pathname === "/api/health") { json(res, 200, { ok: true, regressionMode: "fixed", experimentalToolController: false }); return; }
   if (req.method === "GET" && url.pathname === "/api/config") { json(res, 200, config()); return; }
   if (req.method === "GET" && url.pathname === "/api/source-test-jobs") {
     json(res, 200, { provider: "testpilot-pi-agent", authentication: "Uses TestPilot model settings; no Codex login or executable.", profiles: registeredProfiles, jobs: [...sourceJobs.values()].reverse() }); return;

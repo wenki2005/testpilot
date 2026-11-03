@@ -61,13 +61,16 @@ export function readCachedSteps(dataDir) {
  * Read every system/module/version/case from the live TestPilot API.
  * Archived modules are included and marked, so the mirror stays complete.
  */
-export async function collectRegistry(baseUrl = DEFAULT_BASE_URL, dataDir = 'artifacts/demo') {
+export async function collectRegistry(baseUrl = DEFAULT_BASE_URL, dataDir = 'artifacts/demo', options = {}) {
   const state = await getJson(baseUrl, '/api/system-module-regression');
+  if (options.systemId && !(state.systems ?? []).some(item => item.id === options.systemId)) throw Error('指定系统不存在。');
   const cache = readCachedSteps(dataDir);
   const systems = [];
   for (const system of state.systems ?? []) {
+    if (options.systemId && system.id !== options.systemId) continue;
     const modules = [];
     for (const module of (state.modules ?? []).filter((item) => item.systemId === system.id)) {
+      if (options.activeOnly && module.archived) continue;
       const pack = await getJson(baseUrl, `/api/system-module-regression/modules/${module.id}`);
       const readiness = new Map((pack.readiness ?? []).map((item) => [item.caseId, item]));
       const moduleCache = cache.get(pack.version.id) ?? {};
@@ -252,6 +255,7 @@ export function buildMirror(registry) {
     '',
     '目录：`<系统>/<模块>/<用例>.json`，每个用例一份 BrowserStep 固定步骤；`_module.json` 和 `_index.json` 是索引。',
     '场景类用例（图书/列表/设备等）的步骤可能由运行期只读场景生成，标记为 `derived-at-run`，并在有缓存时导出缓存步骤。',
+    '镜像只记录 BrowserStep，不是完整独立执行包。查询读回、样式与完整表单有效性转换等补充核验须由 TestPilot 固定回归入口执行；不能只运行缓存子步骤便宣称整条通过。',
     '',
     '校验：`npm run scripts:check`。修改用例请改 TestPilot 模块版本，再重新导出，不要手改本目录。',
     '',

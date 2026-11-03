@@ -13,7 +13,7 @@ export function reviewDifyDevice(check:BrowserCheck,evidence:string,targetUrl?:s
  let url:URL;try{url=new URL(targetUrl??'');}catch{return;}if(url.origin!=='https://cdn.yibentushu.com'||!url.pathname.startsWith('/test-sample-apply/'))return;
  let controls:Array<{placeholder?:string}>;try{controls=JSON.parse(evidence).controls??[];}catch{return;}if(controls.filter(c=>c.placeholder==='请输入收件人姓名').length!==1)return;
  const steps:BrowserCheck['steps']=[...(kind==='cross-device-layout'?[{action:'setViewport' as const,width:1280,height:800},{action:'assertNoHorizontalOverflow' as const}]:[]),{action:'assertText',text:'费用划归客户'},{action:'assertText',text:'收件人'}];
- return {kind,steps,detail:kind==='profile-display'?'只读审核：同一账号切到移动布局的“我的”，对照本轮 getInfo 的姓名、手机号和头像；缺字段不以空白通过，证据遮蔽个人信息，完成后恢复原设备。':'只读审核：同一账号实际加载 PC/H5 布局，核对共同应用入口、申请字段输入、两端申请列表空态、订单搜索及查询参数/结果、横向溢出；不把缩小桌面窗口冒充 H5，完成后恢复原设备。'};
+ return {kind,steps,detail:kind==='profile-display'?'只读审核：同一账号切到移动布局的“我的”，对照本轮 getInfo 的姓名、手机号和头像；缺字段不以空白通过，证据遮蔽个人信息，完成后恢复原设备。':'只读审核：同一账号实际加载 PC/H5 布局，核对共同应用入口、申请字段输入、两端本人申请/订单列表内容（有记录逐条对照编号与状态，零记录单独保留空态）、订单搜索及查询参数/结果、横向溢出；不把缩小桌面窗口冒充 H5，完成后恢复原设备。'};
 }
 /** Wait for the target's async PC application shell before the preserved base
  * assertions run. This is limited to the known read-only cross-device case. */
@@ -38,6 +38,10 @@ type Result={status:string;detail:string;evidence?:string;evidenceNote?:string};
 const endpoint=(url:string,suffix:string)=>{try{const u=new URL(url);return u.origin==='https://testapi.yibentushu.com'&&u.pathname==='/supply-api/'+suffix;}catch{return false;}};
 const number=(v:unknown)=>typeof v==='number'||typeof v==='string'&&v.trim()!==''?Number(v):NaN;
 const isVisible=async(page:Page,text:string)=>page.getByText(text,{exact:true}).filter({visible:true}).count().then(n=>n>0);
+const asRows=(value:unknown):Record<string,unknown>[]=>Array.isArray(value)?value.filter((row):row is Record<string,unknown>=>!!row&&typeof row==='object'):[];
+type ApplyRecord={applyNo:string;examineStatus:unknown;bookUsage:unknown};
+type ApplySnapshot={total:number;rows:ApplyRecord[];empty:boolean};
+type OrderSnapshot={total:number;orderNos:string[];empty:boolean;keyword?:{query:string;matched:string[]}};
 
 /** Kept inside Dify's existing case lease. No new account, shared runner action or login bypass. */
 export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result:Result,targetUrl:string,saveEvidence?:(png:Buffer)=>Promise<string>){
@@ -83,7 +87,7 @@ export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result
    const matched=await name.count()===1&&await phone.count()===1&&await image.count()===1&&(await name.innerText()).trim()===String(user.nickName).trim()&&(await phone.innerText()).trim()===String(user.phonenumber).trim()&&await image.evaluate((el,expected)=>{const img=el as HTMLImageElement;return img.complete&&img.naturalWidth>0&&new URL(img.src,location.href).href===new URL(expected,location.href).href;},String(user.avatar));
    result.status=matched?'passed':'failed';result.detail=matched?'本轮认证接口与“我的”页面用户名、手机号、头像逐项一致；证据中的个人信息已遮蔽。':'断言失败：认证接口与“我的”页面用户名、手机号或头像显示不一致；未持久化具体个人字段。';await capture(true);return;
   }
-  let entry:string[]|undefined;let accountId:string|undefined;
+  let entry:string[]|undefined;let accountId:string|undefined;const snapshots:{label:string;apply:ApplySnapshot;orders:OrderSnapshot}[]=[];
   for(const mobile of [false,true]){
    const label=mobile?'H5':'PC';await setDevice(mobile);const identity=await response('getInfo',()=>load('/home'));
    if(!identity?.ok||identity.body?.code!==200||!identity.body.user?.userId)throw Error('Blocked: '+label+' 缺少当前账号认证响应。');
@@ -96,18 +100,61 @@ export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result
    const recipient=page.getByPlaceholder(mobile?'请输入收件人':'请输入收件人姓名',{exact:true});await recipient.fill('跨端测试');await recipient.blur();if(await recipient.inputValue()!=='跨端测试')throw Error('断言失败：'+label+' 收件人输入回显错误。');
    stages.push(label+'：识别到实际独立布局，共同字段与两类输入回显正确');
    const list=await response('dept/book/apply/myList',()=>load('/apply'));
-   if(!list?.ok||list.body?.code!==200||!Array.isArray(list.body.rows)||number(list.body.total)!==0||list.body.rows.length!==0)throw Error('Blocked: '+label+' 本人列表不满足本轮两端空态对照的数据条件。');
-   if(!await isVisible(page,'暂无申请记录'))throw Error('断言失败：'+label+' 本人列表的成功零条查询未展示空态。');await overflow(label+'申请列表');
+   if(!list?.ok||list.body?.code!==200||!Array.isArray(list.body.rows)||!Number.isFinite(number(list.body.total)))throw Error('Blocked: '+label+' 未取得本轮成功的本人申请列表查询，无法对照两端内容。');
+   const applyRows=asRows(list.body.rows),applyTotal=number(list.body.total);let apply:ApplySnapshot;
+   if(applyTotal===0&&applyRows.length===0){
+    if(!await isVisible(page,'暂无申请记录'))throw Error('断言失败：'+label+' 本人列表的成功零条查询未展示空态。');
+    apply={total:0,rows:[],empty:true};
+   }else{
+    if(!applyRows.length)throw Error('Blocked: '+label+' 本人申请列表总数非零但当前页没有记录行，未猜测分页。');
+    const keys=applyRows.map(row=>String(row.applyNo??''));if(keys.some(key=>!key))throw Error('Blocked: '+label+' 本人申请列表存在缺少申请编号的记录，无法逐条对照。');
+    const text=await page.locator('body').innerText();for(const key of keys)if(!text.includes(key))throw Error('断言失败：'+label+' 申请列表页面没有展示本条返回的申请编号，接口与页面不一致。');
+    apply={total:applyTotal,rows:applyRows.map(row=>({applyNo:String(row.applyNo??''),examineStatus:row.examineStatus,bookUsage:row.bookUsage})),empty:false};
+    stages.push(label+'：本人申请记录 '+applyTotal+' 条，第一页 '+keys.length+' 个申请编号在页面可见');
+   }
+   await overflow(label+'申请列表');
    const orders=await response('h5/dept/book/order/myList',()=>load('/logistics'));
-   if(!orders?.ok||orders.body?.code!==200||!Array.isArray(orders.body.rows)||number(orders.body.total)!==0||orders.body.rows.length!==0)throw Error('Blocked: '+label+' 订单列表不满足本轮两端空态对照的数据条件。');
-   if(!await isVisible(page,mobile?'暂无订单记录':'暂无订单物流记录'))throw Error('断言失败：'+label+' 订单成功零条查询未展示空态。');
-   const query='TP_CROSS_DEVICE_NO_MATCH';const search=page.getByPlaceholder('搜索订单号/书籍',{exact:true});
-   const searched=await response('h5/dept/book/order/myList',async()=>{await search.fill(query);await search.press('Enter');await search.blur();},query);
-   if(!searched?.ok||searched.body?.code!==200||!Array.isArray(searched.body.rows)||searched.body.rows.length!==0||number(searched.body.total)!==0)throw Error('Blocked: '+label+' 未取得本轮同关键词的成功订单搜索。');
-   if(!await isVisible(page,mobile?'暂无订单记录':'暂无订单物流记录'))throw Error('断言失败：'+label+' 无匹配订单搜索未正确回显空态。');await overflow(label+'订单搜索');
-   stages.push(label+'：申请/订单列表与关键词搜索的本轮零条响应及空态一致，三个页面无横向溢出');
+   if(!orders?.ok||orders.body?.code!==200||!Array.isArray(orders.body.rows)||!Number.isFinite(number(orders.body.total)))throw Error('Blocked: '+label+' 未取得本轮成功的本人订单查询，无法对照两端内容。');
+   const orderRows=asRows(orders.body.rows),orderTotal=number(orders.body.total);const orderNos=orderRows.map(row=>String(row.orderNo??''));const search=page.getByPlaceholder('搜索订单号/书籍',{exact:true});let order:OrderSnapshot;
+   if(orderTotal===0&&orderRows.length===0){
+    if(!await isVisible(page,mobile?'暂无订单记录':'暂无订单物流记录'))throw Error('断言失败：'+label+' 订单成功零条查询未展示空态。');
+    const query='TP_CROSS_DEVICE_NO_MATCH';
+    const searched=await response('h5/dept/book/order/myList',async()=>{await search.fill(query);await search.press('Enter');await search.blur();},query);
+    if(!searched?.ok||searched.body?.code!==200||!Array.isArray(searched.body.rows)||searched.body.rows.length!==0||number(searched.body.total)!==0)throw Error('Blocked: '+label+' 未取得本轮同关键词的成功订单搜索。');
+    if(!await isVisible(page,mobile?'暂无订单记录':'暂无订单物流记录'))throw Error('断言失败：'+label+' 无匹配订单搜索未正确回显空态。');
+    order={total:0,orderNos:[],empty:true};
+    stages.push(label+'：申请/订单列表与关键词搜索的本轮零条响应及空态一致');
+   }else{
+    if(!orderRows.length)throw Error('Blocked: '+label+' 本人订单总数非零但当前页没有记录行，未猜测分页。');
+    if(orderNos.some(no=>no.length<4))throw Error('Blocked: '+label+' 本人订单存在缺少可核对订单编号的记录，无法逐条对照。');
+    const text=await page.locator('body').innerText();for(const no of orderNos)if(!text.includes(no))throw Error('断言失败：'+label+' 订单列表页面没有展示本条返回的订单编号，接口与页面不一致。');
+    const query=orderNos[0]!.slice(0,-2);
+    const searched=await response('h5/dept/book/order/myList',async()=>{await search.fill(query);await search.press('Enter');await search.blur();},query);
+    if(!searched?.ok||searched.body?.code!==200||!Array.isArray(searched.body.rows))throw Error('Blocked: '+label+' 未取得本人订单编号上的关键词搜索结果。');
+    const matched=asRows(searched.body.rows).map(row=>String(row.orderNo??''));
+    if(!matched.includes(orderNos[0]!))throw Error('断言失败：'+label+' 部分订单编号搜索没有返回原订单。');
+    order={total:orderTotal,orderNos,empty:false,keyword:{query,matched}};
+    stages.push(label+'：本人订单记录 '+orderTotal+' 条，第一页 '+orderNos.length+' 个订单编号在页面可见，部分编号搜索命中原订单');
+   }
+   await overflow(label+'订单搜索');
+   snapshots.push({label,apply,orders:order});
   }
-  result.detail='本轮 PC 1280×800 与 H5 390×844 使用同一账号和应用入口；'+stages.join('；')+'。仅覆盖当前零记录状态，不宣称有记录详情/分页已验收。';await capture();
+  const pc=snapshots.find(snapshot=>snapshot.label==='PC'),h5=snapshots.find(snapshot=>snapshot.label==='H5');
+  if(!pc||!h5)throw Error('Blocked: 未取得两种布局的完整本轮数据，不能判定跨端一致。');
+  if(pc.apply.empty!==h5.apply.empty||pc.apply.total!==h5.apply.total)throw Error('断言失败：同一账号 PC/H5 本人申请列表总数或空态不一致（PC '+pc.apply.total+' 条 / H5 '+h5.apply.total+' 条）。');
+  if(pc.orders.empty!==h5.orders.empty||pc.orders.total!==h5.orders.total)throw Error('断言失败：同一账号 PC/H5 本人订单列表总数或空态不一致（PC '+pc.orders.total+' 条 / H5 '+h5.orders.total+' 条）。');
+  if(!pc.apply.empty){
+   const pcRows=pc.apply.rows.slice().sort((a,b)=>a.applyNo.localeCompare(b.applyNo)),h5Rows=h5.apply.rows.slice().sort((a,b)=>a.applyNo.localeCompare(b.applyNo));
+   if(JSON.stringify(pcRows.map(row=>row.applyNo))!==JSON.stringify(h5Rows.map(row=>row.applyNo)))throw Error('断言失败：同一账号 PC/H5 申请列表第一页的申请编号集合不一致。');
+   for(let index=0;index<pcRows.length;index++)if(String(pcRows[index]!.examineStatus)!==String(h5Rows[index]!.examineStatus)||String(pcRows[index]!.bookUsage)!==String(h5Rows[index]!.bookUsage))throw Error('断言失败：同一申请在 PC/H5 的审批状态或用书类型字段不一致。');
+  }
+  if(!pc.orders.empty){
+   if(JSON.stringify(pc.orders.orderNos.slice().sort())!==JSON.stringify(h5.orders.orderNos.slice().sort()))throw Error('断言失败：同一账号 PC/H5 订单列表第一页的订单编号集合不一致。');
+   if(JSON.stringify(pc.orders.keyword?.matched.slice().sort())!==JSON.stringify(h5.orders.keyword?.matched.slice().sort()))throw Error('断言失败：同一订单编号部分关键词在 PC/H5 命中的结果集合不一致。');
+  }
+  if(pc.apply.empty&&pc.orders.empty)result.detail='本轮 PC 1280×800 与 H5 390×844 使用同一账号和应用入口；'+stages.join('；')+'。仅覆盖当前零记录状态，不宣称有记录详情/分页已验收。';
+  else result.detail='本轮 PC 1280×800 与 H5 390×844 使用同一账号和应用入口；'+stages.join('；')+'。两端本人记录总数、第一页编号集合、状态与用书类型字段、订单编号集合及部分编号搜索命中一致；仅覆盖第一页，不宣称详情与全部分页已验收。';
+  await capture();
  }catch(error){const detail=error instanceof Error?error.message:String(error);result.status=detail.startsWith('断言失败：')?'failed':'blocked';result.detail=detail.replace(/^Blocked: /,'')+(stages.length?' 已完成：'+stages.join('；'):'');await capture(kind==='profile-display').catch(()=>{delete result.evidence;});}
  finally{
   try{await client.send('Network.setUserAgentOverride',{userAgent:original.ua});await page.setViewportSize({width:original.width,height:original.height});await page.goto('about:blank');await page.goto(original.url,{waitUntil:'domcontentloaded',timeout:15000});}catch{result.status='blocked';result.detail+='；原设备/页面恢复未完成，需先恢复账号窗口。';}

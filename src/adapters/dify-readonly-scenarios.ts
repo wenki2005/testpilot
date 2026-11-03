@@ -3,11 +3,19 @@ import {createHash} from 'node:crypto';
 import type {DifyCustomerFixture} from './dify-readonly-fixtures.js';
 import {difyBookKind} from './dify-book-scenarios.js';
 import {difyDeviceKind} from './dify-device-scenarios.js';
-import {difyListKind} from './dify-list-scenarios.js';
+import {applicationFilter,difyListKind} from './dify-list-scenarios.js';
+import {fieldValidityKind} from './dify-field-validity-scenarios.js';
+import {isSampleRowDelete,verifySampleRowDelete} from './dify-sample-row-scenarios.js';
+import {difyRecordKind} from './dify-record-scenarios.js';
+import {invalidBookKind} from './dify-invalid-book-scenarios.js';
+import {isExcludedCustomer} from './dify-excluded-customer-scenarios.js';
+import {clientValidationKind} from './dify-client-validation-scenarios.js';
+import {isApplicantIdentity} from './dify-applicant-identity-scenarios.js';
 import {actionablePreconditions,type BrowserCheck} from './document-test-workflow.js';
 import {browserRequestAllowed} from './login-handoff.js';
+import{connectedEvidenceKind}from'./dify-connected-contract.js';
 
-export type DepartmentReadOnlyKind='application-empty'|'order-empty'|'order-no-match'|'customer-no-match'|'quantity-range'|'phone-invalid'|'recipient-required'|'address-required'|'courier-fixed'|'region-selection'|'book-nonnumeric'|'customer-external'|'customer-internal'|'customer-match'|'book-row-add';
+export type DepartmentReadOnlyKind='application-empty'|'order-empty'|'order-no-match'|'customer-no-match'|'quantity-range'|'phone-invalid'|'recipient-required'|'recipient-length'|'address-required'|'courier-fixed'|'region-selection'|'region-incomplete'|'book-nonnumeric'|'customer-external'|'customer-internal'|'customer-match'|'book-row-add'|'sample-row-delete';
 export const noMatchProbe='TP_NO_MATCH_7E41_A023';
 export function departmentReadOnlyKind(check:Pick<BrowserCheck,'expected'|'source'>):DepartmentReadOnlyKind|undefined{
  const e=check.expected,s=check.source??'';
@@ -17,6 +25,7 @@ export function departmentReadOnlyKind(check:Pick<BrowserCheck,'expected'|'sourc
  if(e==='无匹配客户：下拉无结果并提示'&&s.includes('费用划归客户'))return 'customer-no-match';
  if(e==='数量>9999：前端拦截提示超出范围'&&s.includes('输入图书数量'))return 'quantity-range';
  if(e==='非11位/含非数字字符：红色提示「手机号格式错误」P1'&&s.includes('填写手机号码'))return 'phone-invalid';
+ if(e==='>20字：限制输入'&&s.includes('填写收件人'))return 'recipient-length';
  if(e==='为空：字段标红提示必填'&&s.includes('填写收件人'))return 'recipient-required';
  if(e==='未填写：标红提示必填'&&s.includes('填写详细地址'))return 'address-required';
  if(e==='发货方式固定为「快递」，无其他可选'&&s.includes('发货方式'))return 'courier-fixed';
@@ -25,24 +34,29 @@ export function departmentReadOnlyKind(check:Pick<BrowserCheck,'expected'|'sourc
  if(e==='1004.06 内部客户—部门费用：正常展示可选'&&s.includes('客户列表数据范围'))return 'customer-internal';
  if(e==='命中关键词：下拉展示匹配客户名称供选择'&&s.includes('费用划归客户'))return 'customer-match';
  if(e==='新增一行含物流编码、图书数量、图书名称、出版社、定价字段'&&s.includes('向下复制空白图书明细行'))return 'book-row-add';
+ if(isSampleRowDelete(check))return 'sample-row-delete';
  if(e==='逐级选择成功回填所在地区'&&s.includes('省/市/区三级联动'))return 'region-selection';
+ if(e==='未选全三级：提交校验标红'&&s.includes('省/市/区三级联动'))return 'region-incomplete';
  if(e==='输入非数字：校验拦截，不调用接口'&&s.includes('输入物流编码'))return 'book-nonnumeric';
 }
-export const needsDifyReadback=(check:Pick<BrowserCheck,'expected'|'source'>)=>{const k=departmentReadOnlyKind(check);return !!difyListKind(check)||!!difyDeviceKind(check)||!!difyBookKind(check)||!!k&&['application-empty','order-empty','order-no-match','customer-no-match','phone-invalid','courier-fixed','region-selection','customer-external','customer-internal','customer-match','book-row-add'].includes(k);};
-export const isDifyRecordIndependent=(check:Pick<BrowserCheck,'expected'|'source'>)=>!!difyDeviceKind(check)||!!difyBookKind(check)||!!departmentReadOnlyKind(check)||['必填未完成时提交按钮置灰不可点击','>30字：限制输入或提示超长','>20字：限制输入'].includes(check.expected);
+export const needsDifyReadback=(check:Pick<BrowserCheck,'expected'|'source'>)=>{const k=departmentReadOnlyKind(check);return !!connectedEvidenceKind(check)||isApplicantIdentity(check)||!!clientValidationKind(check)||isExcludedCustomer(check)||!!invalidBookKind(check)||!!difyRecordKind(check)||isSampleRowDelete(check)||!!fieldValidityKind(check)||!!difyListKind(check)||!!difyDeviceKind(check)||!!difyBookKind(check)||!!k&&['application-empty','order-empty','order-no-match','customer-no-match','phone-invalid','courier-fixed','region-selection','region-incomplete','customer-external','customer-internal','customer-match','book-row-add'].includes(k);};
+export const isDifyRecordIndependent=(check:Pick<BrowserCheck,'expected'|'source'>)=>isApplicantIdentity(check)||!!clientValidationKind(check)||!!fieldValidityKind(check)||!!difyDeviceKind(check)||!!difyBookKind(check)||!!departmentReadOnlyKind(check)||['必填未完成时提交按钮置灰不可点击','>30字：限制输入或提示超长','>20字：限制输入'].includes(check.expected);
 
 /** Only these source-bound scenarios can replace old shell steps; all other holds remain. */
 export function reviewDepartmentReadOnly(check:BrowserCheck,evidence:string,targetUrl?:string):{kind:DepartmentReadOnlyKind;steps:BrowserCheck['steps'];detail:string}|undefined{
  let url:URL;try{url=new URL(targetUrl??'');}catch{return;}
  if(url.origin!=='https://cdn.yibentushu.com'||!url.pathname.startsWith('/test-sample-apply/')||actionablePreconditions(check).length)return;
  const kind=departmentReadOnlyKind(check);if(!kind)return;
+ // The original expectation explicitly requires validation at submission.
+ // Selecting two regions and inspecting blur state cannot establish it.
+ if(kind==='region-incomplete')return;
  let page:{navigation?:string[];customerSearchIndex?:number;regionSearchIndexes?:number[];bookCodeLabel?:string;bookCodeAliasConfirmed?:boolean;customerFixtures?:DifyCustomerFixture[];controls?:Array<{placeholder?:string}>};try{page=JSON.parse(evidence);}catch{return;}
  const has=(value:string)=>page.controls?.filter(c=>c.placeholder===value).length===1;
  const nav=(value:string)=>page.navigation?.filter(n=>n===value).length===1;
  let steps:BrowserCheck['steps'];
  if(kind==='application-empty'){
   if(!nav('历史申请记录'))return;
-  steps=[{action:'clickExactText',text:'历史申请记录'},{action:'assertExactVisible',text:'暂无申请记录'}];
+  steps=[{action:'clickExactText',text:'历史申请记录'},{action:'assertText',text:'产品用书'}];
  }else if(kind==='order-empty'||kind==='order-no-match'){
   if(!nav('订单物流'))return;
   steps=kind==='order-empty'?[{action:'clickExactText',text:'订单物流'},{action:'assertExactVisible',text:'暂无订单物流记录'}]:[{action:'clickExactText',text:'订单物流'},{action:'assertText',text:'待发货'},{action:'fillByPlaceholder',placeholder:'搜索订单号/书籍',value:noMatchProbe},{action:'blurByPlaceholder',placeholder:'搜索订单号/书籍'},{action:'assertExactVisible',text:'暂无订单物流记录'}];
@@ -56,6 +70,9 @@ export function reviewDepartmentReadOnly(check:BrowserCheck,evidence:string,targ
  }else if(kind==='book-row-add'){
   if(!page.bookCodeAliasConfirmed||!['自编码','物流编码'].includes(page.bookCodeLabel??''))return;
   steps=[page.bookCodeLabel!,'数量（册）','图书名称','出版社','定价(元)'].map(text=>({action:'assertExactVisible' as const,text}));
+ }else if(kind==='sample-row-delete'){
+  if(!page.bookCodeAliasConfirmed||!['自编码','物流编码'].includes(page.bookCodeLabel??''))return;
+  steps=[{action:'assertExactVisible' as const,text:page.bookCodeLabel!},{action:'assertExactVisible' as const,text:'继续添加样书'}];
  }else if(kind==='region-selection'){
   const indexes=page.regionSearchIndexes;if(indexes?.length!==3||new Set(indexes).size!==3||indexes.some(i=>!Number.isInteger(i)||i<0||i>9))return;
   steps=['湖南省','长沙市','芙蓉区'].flatMap((value,i)=>[{action:'selectByRoleIndex' as const,role:'combobox' as const,index:indexes[i]!,value},{action:'assertExactVisible' as const,text:value}]);
@@ -67,14 +84,18 @@ export function reviewDepartmentReadOnly(check:BrowserCheck,evidence:string,targ
   steps=[{action:'fillByLabel',label:'数量（册）',value:'10000'},{action:'blurByLabel',label:'数量（册）'},{action:'assertText',text:'超出范围'}];
  }else if(kind==='courier-fixed'){
   if(!has('请输入收件人姓名'))return;steps=[{action:'assertExactVisible',text:'仅支持快递'}];
+ }else if(kind==='recipient-length'){
+  const placeholders=['请输入收件人姓名','请输入收件人'].filter(value=>has(value));if(placeholders.length!==1)return;
+  const placeholder=placeholders[0]!;steps=[{action:'assertVisible',text:'收货信息'},{action:'assertVisible',text:'收件人'},{action:'fillByPlaceholder',placeholder,value:'ABCDEFGHIJKLMNOPQRSTUVWXY'},{action:'assertValueByPlaceholder',placeholder,value:'ABCDEFGHIJKLMNOPQRST'}];
  }else if(kind==='recipient-required'||kind==='address-required'){
+
   if(kind==='recipient-required'?!has('请输入收件人姓名'):page.controls?.filter(c=>c.placeholder?.startsWith('请输入详细地址')).length!==1)return;
   const label=kind==='recipient-required'?'收件人':'详细地址';steps=[{action:'fillByLabel',label,value:''},{action:'blurByLabel',label},{action:'assertFieldInvalid',label},{action:'assertText',text:'必填'}];
  }else{
   if(!has('请输入手机号码'))return;
   steps=['123','12a45678901'].flatMap(value=>[{action:'fillByPlaceholder' as const,placeholder:'请输入手机号码',value},{action:'blurByPlaceholder' as const,placeholder:'请输入手机号码'},{action:'assertFieldInvalid' as const,label:'手机号码'},{action:'assertText' as const,text:'手机号格式错误'}]);
  }
- return {kind,steps,detail:'只读审核：'+({ 'application-empty':'实际进入本人申请列表，并检查本轮成功查询的零条结果与空态。','order-empty':'实际进入订单列表，核对无筛选成功查询为零条及空态。','order-no-match':'实际输入固定无匹配关键词并触发查询，核对本轮查询参数、零条结果与空态。','customer-no-match':'实际输入固定无匹配关键词，核对本轮客户查询为零条、下拉没有可选项且有空态提示。','quantity-range':'实际输入 10000 并失焦，保留原始超出范围提示断言。','phone-invalid':'分别输入短号码和含非数字字符的号码并失焦，核对字段错误、原始提示及提示颜色。','recipient-required':'清空收件人并失焦，检查字段自身错误和原始必填提示。','address-required':'清空详细地址并失焦，检查字段自身错误和原始必填提示。','customer-external':'使用只读数据库确认的 1004.00 固定编码搜索，核对本轮返回的同一客户、实际选择和字段回填。','customer-internal':'使用只读数据库确认的 1004.06 固定编码搜索，核对本轮返回的同一客户、实际选择和字段回填。','customer-match':'使用固定客户编码去掉末位的部分关键词查询，核对本轮命中项、实际选择和字段回填。','book-row-add':'使用原 XMind 明确的物流编码（自编码/erp编码）映射，实际新增一行并核对行数增加及五类空白字段；不只检查列标题。','region-selection':'依次选择湖南省、长沙市、芙蓉区，并核对当前地区字段三个选中值，不用隐藏下拉文字代替回填。','book-nonnumeric':'输入非数字编码并失焦，检查字段自身拦截和限定窗口内没有 fetch/XHR，包括被策略阻止的请求也不能忽略。','courier-fixed':'核对固定快递文案，并检查发货方式所在字段区域未提供其他可选控件。'}[kind])+' 未提交申请或写数据库。'};
+ return {kind,steps,detail:'只读审核：'+({ 'application-empty':'实际进入本人申请列表，并检查本轮成功查询的零条结果与空态。','order-empty':'实际进入订单列表，核对无筛选成功查询为零条及空态。','order-no-match':'实际输入固定无匹配关键词并触发查询，核对本轮查询参数、零条结果与空态。','customer-no-match':'实际输入固定无匹配关键词，核对本轮客户查询为零条、下拉没有可选项且有空态提示。','quantity-range':'实际输入 10000 并失焦，保留原始超出范围提示断言。','phone-invalid':'分别输入短号码和含非数字字符的号码并失焦，核对字段错误、原始提示及提示颜色。','recipient-length':'使用本轮唯一收件人输入框输入25字符，并核对原预期的20字符截断，不通过相邻同名标签猜测控件。','recipient-required':'清空收件人并失焦，检查字段自身错误和原始必填提示。','address-required':'清空详细地址并失焦，检查字段自身错误和原始必填提示。','customer-external':'使用只读数据库确认的 1004.00 固定编码搜索，核对本轮返回的同一客户、实际选择和字段回填。','customer-internal':'使用只读数据库确认的 1004.06 固定编码搜索，核对本轮返回的同一客户、实际选择和字段回填。','customer-match':'使用固定客户编码去掉末位的部分关键词查询，核对本轮命中项、实际选择和字段回填。','book-row-add':'使用原 XMind 明确的物流编码（自编码/erp编码）映射，实际新增一行并核对行数增加及五类空白字段；不只检查列标题。','region-selection':'依次选择湖南省、长沙市、芙蓉区，并核对当前地区字段三个选中值，不用隐藏下拉文字代替回填。','region-incomplete':'只选择湖南省和长沙市，直接检查所在地区字段自身无效状态。','sample-row-delete':'实际新增一行并执行行内删除，确认删除操作只影响未提交的样书行。','book-nonnumeric':'输入非数字编码并失焦，检查字段自身拦截和限定窗口内没有 fetch/XHR，包括被策略阻止的请求也不能忽略。','courier-fixed':'核对固定快递文案，并检查发货方式所在字段区域未提供其他可选控件。'}[kind])+' 未提交申请或写数据库。'};
 }
 
 export type DifyReadObservation={path:string;keyword:string;unfiltered:boolean;ok:boolean;rows?:number;total?:number;blockedByPolicy?:boolean;customers?:Array<{code:string;labelDigest:string}>};
@@ -92,11 +113,12 @@ export function observeDifyReadOnlyResponses(page:Page,targetUrl:string){
  const failed=(request:Request)=>{try{if(requests.get(request)!==epoch||!request.failure()?.errorText.includes('ERR_BLOCKED_BY_CLIENT')||browserRequestAllowed(request.method(),request.url(),{targetOrigin:new URL(targetUrl).origin,resourceType:request.resourceType()}))return;const read=sanitizeDifyReadObservation(request.url(),targetUrl,0,{});if(read)pending.push(Promise.resolve({...read,blockedByPolicy:true}));}catch{}};
  page.on('response',listener);
  page.on('requestfailed',failed);
- return {async take(kind?:DepartmentReadOnlyKind,customerKeyword?:string){const collected:DifyReadObservation[]=[];const deadline=Date.now()+6000;try{do{const batch=pending;pending=[];collected.push(...(await Promise.all(batch)).filter((o):o is DifyReadObservation=>!!o));if(!kind||['phone-invalid','quantity-range','recipient-required','address-required','courier-fixed','region-selection','book-nonnumeric','book-row-add'].includes(kind)||collected.some(r=>r.path===(kind==='application-empty'?'/dept/book/apply/myList':kind.startsWith('customer-')?'/dept/book/apply/clientSearch':'/h5/dept/book/order/myList')&&(['customer-no-match','order-no-match'].includes(kind)?r.keyword===noMatchProbe:kind.startsWith('customer-')?customerKeyword?r.keyword===customerKeyword:r.keyword!==''&&r.keyword!=='other'&&r.keyword!==noMatchProbe:r.unfiltered)))return collected;await new Promise(r=>setTimeout(r,100));}while(Date.now()<deadline);return collected;}finally{epoch++;}},close(){page.off('response',listener);page.off('request',started);page.off('requestfailed',failed);}};
+ return {async take(kind?:DepartmentReadOnlyKind,customerKeyword?:string){const collected:DifyReadObservation[]=[];const deadline=Date.now()+6000;try{do{const batch=pending;pending=[];collected.push(...(await Promise.all(batch)).filter((o):o is DifyReadObservation=>!!o));if(!kind||['phone-invalid','quantity-range','recipient-length','recipient-required','address-required','courier-fixed','region-selection','region-incomplete','sample-row-delete','book-nonnumeric','book-row-add'].includes(kind)||collected.some(r=>r.path===(kind==='application-empty'?'/dept/book/apply/myList':kind.startsWith('customer-')?'/dept/book/apply/clientSearch':'/h5/dept/book/order/myList')&&(['customer-no-match','order-no-match'].includes(kind)?r.keyword===noMatchProbe:kind.startsWith('customer-')?customerKeyword?r.keyword===customerKeyword:r.keyword!==''&&r.keyword!=='other'&&r.keyword!==noMatchProbe:r.unfiltered)))return collected;await new Promise(r=>setTimeout(r,100));}while(Date.now()<deadline);return collected;}finally{epoch++;}},close(){page.off('response',listener);page.off('request',started);page.off('requestfailed',failed);}};
 }
 
 export async function verifyDepartmentReadOnlyResult(page:Page,check:BrowserCheck,result:{status:string;detail:string;evidence?:string},observations:DifyReadObservation[]){
- const kind=departmentReadOnlyKind(check);if(!kind||['quantity-range','recipient-required','address-required','book-nonnumeric'].includes(kind)||!['passed','failed'].includes(result.status))return;
+ if(isSampleRowDelete(check)){await verifySampleRowDelete(page,check,result);return;}
+ const kind=departmentReadOnlyKind(check);if(!kind||['quantity-range','recipient-length','recipient-required','address-required','region-incomplete','sample-row-delete','book-nonnumeric'].includes(kind)||!['passed','failed'].includes(result.status))return;
  if(kind==='book-row-add'){
   if(result.status!=='passed')return;
   const tables=page.locator('table').filter({has:page.getByRole('columnheader',{name:'图书名称',exact:true})});if(await tables.count()!==1){result.status='blocked';result.detail='未取得唯一图书明细表格，不能推断新增行。';return;}
@@ -141,6 +163,29 @@ export async function verifyDepartmentReadOnlyResult(page:Page,check:BrowserChec
  }
  const path=kind==='application-empty'?'/dept/book/apply/myList':kind==='customer-no-match'?'/dept/book/apply/clientSearch':'/h5/dept/book/order/myList';
  const read=observations.filter(r=>r.path===path&&(kind==='order-no-match'||kind==='customer-no-match'?r.keyword===noMatchProbe:r.unfiltered)).at(-1);
+ if(kind==='application-empty'&&read?.ok&&result.status==='passed'){
+  if(new URL(page.url()).hash.split('?')[0]!=='#/apply'){result.status='blocked';result.detail='当前未停留在申请记录列表，未核验空态。';return;}
+  try{
+   let empty=read.rows===0&&read.total===0,filterLabel='';
+   for(const [usage,label,expectedValue]of [[true,'产品用书','2'],[false,'已通过','1'],[false,'已驳回','2']] as const){
+    if(empty)break;
+    let control;try{control=await applicationFilter(page,usage,label);}catch{continue;}
+    const requests=new Set<Request>(),key=usage?'bookUsage':'examineStatus';
+    const request=(r:Request)=>{try{const u=new URL(r.url());if(r.method()==='GET'&&u.origin==='https://testapi.yibentushu.com'&&u.pathname==='/supply-api/dept/book/apply/myList'&&!!u.searchParams.get(key))requests.add(r);}catch{}};
+    page.on('request',request);
+    const pending=page.waitForResponse(r=>requests.has(r.request()),{timeout:10000}).then(async r=>({ok:r.status()===200,body:await r.json(),url:r.url()})).catch(()=>undefined);
+    let response;try{await control.click({timeout:5000});response=await pending;}finally{page.off('request',request);}
+    if(!response?.ok||response.body?.code!==200||!Array.isArray(response.body.rows)||response.body.total===undefined)throw Error('Blocked: 未取得本条筛选触发的成功新查询。');
+    if(new URL(response.url).searchParams.get(key)!==expectedValue)throw Error('断言失败：'+label+'筛选发送的用途/审批状态值错误。');
+    if(!await control.evaluate(el=>el.classList.contains('active')))throw Error('断言失败：空态筛选没有选中'+label+'。');
+    empty=response.body.rows.length===0&&Number(response.body.total)===0;filterLabel+=(filterLabel?' / ':'')+label;
+   }
+   if(!empty)throw Error('Blocked: 本人用途/审批状态筛选仍有记录，未取得原预期要求的零匹配条件。');
+   try{await page.getByText('暂无申请记录',{exact:true}).filter({visible:true}).first().waitFor({state:'visible',timeout:5000});}catch{throw Error('断言失败：本条成功查询为零条，但页面没有展示申请空态。');}
+   result.detail='本条'+(filterLabel?'实际选择'+filterLabel+'，选中态正确，对应新查询返回':'无筛选新查询返回')+'0条、总数 0，页面展示暂无申请记录；只验证原来源“按用途/状态筛选后无符合条件记录”的空态，不代替有记录筛选集合用例。';delete result.evidence;
+  }catch(error){const message=error instanceof Error?error.message:'';result.status=message.startsWith('断言失败：')?'failed':'blocked';result.detail=message.replace(/^Blocked: /,'')||'申请空态补充核验未完成。';delete result.evidence;}
+  return;
+ }
  if(!read?.ok||read.rows!==0||(kind!=='customer-no-match'&&read.total!==0)){
   result.status='blocked';result.detail=read?.blockedByPolicy?'TestPilot 共享只读请求策略阻止了此查询；需确认共享白名单的最小放行范围后再执行，未把空白当通过。':!read?'未取得本条用例触发的查询证据，不能仅凭空态文字判断通过。':!read.ok?'本条查询接口未成功，不能把错误后的空白当作正常空态。':'本条查询并非已确认的零条结果，当前不满足空态前置。';return;
  }

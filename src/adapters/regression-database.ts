@@ -1,6 +1,6 @@
 import path from 'node:path';
 import type {Route} from 'playwright';
-import {readDepartmentDatabaseSummary,readDepartmentApplications,readDepartmentGoods,readDepartmentAccountCount} from './mysql-readonly-browser.js';
+import {readDepartmentDatabaseSummary,readDepartmentApplications,readDepartmentGoods,readDepartmentAccountCount,readDepartmentBlockerInventory} from './mysql-readonly-browser.js';
 import {acquireDocumentPageLease,type DocumentProject} from './document-test-workflow.js';
 import {launchPersistentTestPage,navigatePersistentPage} from './browser-runtime.js';
 import {allowBrowserRequest,isAuthenticationRoute,isLoginPage} from './login-handoff.js';
@@ -12,7 +12,7 @@ const numberEqual=(a:unknown,b:unknown)=>a!==null&&a!==undefined&&b!==null&&b!==
 /** All raw identifiers are ephemeral. Return only counts/booleans and fixed field labels. */
 export function compareDepartmentList(apiRows:Row[],databaseRows:Row[]):DatabaseCheck {
   if(!apiRows.length)return {id:'account-list',title:'当前账号申请列表',status:'blocked',detail:'当前账号没有返回申请记录；未使用其他人的数据代替。'};
-  if(apiRows.length>10||apiRows.some(r=>typeof r.applyNo!=='string')||new Set(apiRows.map(r=>r.applyNo)).size!==apiRows.length)return {id:'account-list',title:'当前账号申请列表',status:'blocked',detail:'列表结构或记录范围不符合核验约定。'};
+  if(apiRows.length>20||apiRows.some(r=>typeof r.applyNo!=='string')||new Set(apiRows.map(r=>r.applyNo)).size!==apiRows.length)return {id:'account-list',title:'当前账号申请列表',status:'blocked',detail:'列表结构或记录范围不符合核验约定。'};
   const fields=[['examineStatus','examine_status'],['lockStatus','lock_status']] as const;
   let mismatch=0;let comparisons=0;
   for(const row of apiRows){const matches=databaseRows.filter(r=>r.apply_no===row.applyNo);if(matches.length!==1){mismatch++;continue;}for(const [api,db] of fields){if(row[api]===undefined)continue;comparisons++;if(!numberEqual(row[api],matches[0]![db]))mismatch++;}}
@@ -57,13 +57,19 @@ export async function collectDepartmentDatabaseEvidence(root:string,project:Docu
     await session.page.goto(listUrl.href,{waitUntil:'domcontentloaded',timeout:15000});
     const list=await listResponse;signal.throwIfAborted();
     if(!list?.ok||Number(list.data?.code)!==200||!Array.isArray(list.data.rows))throw Error('list');
-    const rows:Row[]=list.data.rows.slice(0,10);
+    if(list.data.rows.length>20)throw Error('structure');
+    const rows:Row[]=list.data.rows;
     stage='list-database';
     const identity=await identityResponse;signal.throwIfAborted();
     const userId=identity?.data?.user?.userId;
     if(identity?.ok&&Number(identity.data?.code)===200&&/^\d{1,20}$/.test(String(userId))){
       const count=await readDepartmentAccountCount(String(userId));
       evidence.checks.push({id:'account-scope',title:'当前账号数据范围',status:count===Number(list.data.total)?'passed':'failed',detail:count===Number(list.data.total)?`当前登录身份在测试库有 ${count} 条有效申请，与无筛选列表的总数一致。`:`当前登录身份的有效申请数 ${count} 与列表总数 ${Number(list.data.total)} 不一致；需要检查环境、权限或并发更新。`});
+      if(count===Number(list.data.total)){
+        try{evidence.blockerInventory=await readDepartmentBlockerInventory(String(userId));evidence.checks.push({id:'blocker-inventory',title:'阻塞数据与关联字段排查',status:'passed',detail:'已按本轮认证身份区分本人/其他账号申请状态、多行明细，核对申请表订单引用、审批模板、失败日志、发送队列和物流关联；只保存计数，逐条阻塞说明保留未验证部分。查询成功不代表相关业务用例通过。'});}
+        catch{evidence.checks.push({id:'blocker-inventory',title:'阻塞数据与关联字段排查',status:'blocked',detail:'本轮扩展只读查询未完成，没有将查询失败解释为不存在字段或数据；已有网页核验继续。'});}
+        signal.throwIfAborted();
+      }
     }else evidence.checks.push({id:'account-scope',title:'当前账号数据范围',status:'blocked',detail:'未取得约定的当前登录身份字段，不能把全库记录数与个人列表相比。'});
     if(rows.some(r=>typeof r.applyNo!=='string'||!/^[A-Za-z0-9_-]{1,100}$/.test(r.applyNo)))throw Error('structure');
     const dbRows=rows.length?await readDepartmentApplications(rows.map(r=>r.applyNo as string)):[];

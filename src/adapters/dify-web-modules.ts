@@ -15,6 +15,10 @@ import {assertDifyExportSafe} from './dify-export-policy.js';
 import { missingDirectAssertion } from './document-case-quality.js';
 import {isDifyRecordIndependent} from './dify-readonly-scenarios.js';
 import { isSensitiveExportField } from './document-sensitive-data.js';
+import {excludedCaseReason}from './document-case-scope.js';
+import{connectedEvidenceKind}from'./dify-connected-contract.js';
+import{departmentBlockerDiagnostic}from'./dify-blocker-diagnostics.js';
+import{setTimeout as delay}from'node:timers/promises';
 
 import type {RegressionDatabaseBinding,RegressionDatabaseEvidence} from '../domain/regression-database-contract.js';
 import {supportsDepartmentDatabase} from '../domain/regression-database-contract.js';
@@ -25,16 +29,17 @@ const id = z.string().uuid();
 const assertions = new Set(['assertText','assertVisible','assertNotVisible','assertExactVisible','assertRoleVisible','assertRoleDisabled','assertValue','assertValueByPlaceholder','assertDisabled','assertFieldInvalid','assertMaxLengthOrMessage','assertNoHorizontalOverflow','assertNoFetchOrXhr']);
 type Outcome = 'passed'|'failed'|'blocked'|'error'|'not_executed';
 export type WebModule = {id:string;name:string;fileName:string;digest:string;createdAt:string;project:DocumentProject;sourceCases?:ImportedDocument['testCases'];manualSteps?:Record<string,string[]>; cachedSteps?:Record<string,{sourceDigest:string;steps:BrowserCheck['steps'];reviewKind?:DifyReviewKind}>};
-export type WebModuleResult = {caseId:string;title:string;expected:string;priority?:BrowserCheck['priority'];status:Outcome;detail:string;outOfScope?:boolean;evidence?:string|undefined;evidenceOrigin?:'document-run'|'preflight';evidenceNote?:string|undefined;proposal?:{steps:string[];preconditions:string[];questions:string[]};steps?:BrowserCheck['steps'];needsConfirmation?:boolean;blockerCode?:DifyBlockerCode;nextAction?:string;preparationReview?:string};
+export type WebModuleResult = {caseId:string;title:string;expected:string;priority?:BrowserCheck['priority'];status:Outcome;detail:string;outOfScope?:boolean;evidence?:string|undefined;evidenceOrigin?:'document-run'|'preflight'|'authorized-write';evidenceNote?:string|undefined;proposal?:{steps:string[];preconditions:string[];questions:string[]};steps?:BrowserCheck['steps'];needsConfirmation?:boolean;blockerCode?:DifyBlockerCode;nextAction?:string;preparationReview?:string};
 function moduleOutcome(results:WebModuleResult[]):Outcome{const scoped=results.filter(r=>!r.outOfScope);return !scoped.length?'not_executed':scoped.some(r=>r.status==='failed')?'failed':scoped.some(r=>r.status!=='passed')?'blocked':'passed';}
 function independentRecordScope(job:WebModuleJob):boolean {const checks=job.databaseEvidence?.checks??[];const selected=job.snapshot.cases.filter(c=>job.selectedCaseIds.includes(c.id));return !!selected.length&&selected.every(isDifyRecordIndependent)&&['connection','fixtures','relations','account-scope'].every(id=>checks.some(c=>c.id===id&&c.status==='passed'))&&checks.every(c=>c.status==='passed'||['account-list','account-detail'].includes(c.id)&&c.status==='blocked');}
 function jobOutcome(job:WebModuleJob):Outcome {const outcome=moduleOutcome(job.results);return job.databaseEvidence?.status==='failed'?'failed':job.databaseEvidence?.status==='blocked'&&outcome==='passed'&&!independentRecordScope(job)?'blocked':outcome;}
 function executionDigest(job:WebModuleJob) {return moduleDigest(job.databaseBinding?{execution:job.executionProject,databaseBinding:job.databaseBinding,databaseEvidenceDigest:job.databaseEvidenceDigest}:job.executionProject);}
 
 type Phase = 'queued'|'preflight'|'awaiting-login'|'preparing'|'dispatching'|'executing'|'reporting'|'completed'|'blocked'|'error'|'cancelled'|'interrupted';
-export type WebModuleJob = {id:string;moduleId:string;moduleName:string;moduleDigest:string;requestId:string;parentJobId?:string|undefined;createdAt:string;updatedAt:string;phase:Phase;outcome:Outcome;message:string;selectedCaseIds:string[];confirmedCaseIds:string[];snapshot:DocumentProject;runMode?:'fixed'|'assist';databaseBinding?:RegressionDatabaseBinding;databaseEvidence?:RegressionDatabaseEvidence;databaseEvidenceDigest?:string;planDigest?:string;executionProject?:DocumentProject;documentRunId?:string;executionStarted?:boolean;executionFinished?:boolean;difyRuns:Array<{phase:string;batch:number;id?:string|undefined;status:'succeeded'|'failed';inputDigest:string;caseIds:string[];tokens?:number}>;results:WebModuleResult[];events:Array<{at:string;phase:Phase;message:string}>;report?:string;errorCode?:string};
+export type WebModuleJob = {id:string;moduleId:string;moduleName:string;moduleDigest:string;requestId:string;parentJobId?:string|undefined;createdAt:string;updatedAt:string;phase:Phase;outcome:Outcome;message:string;selectedCaseIds:string[];confirmedCaseIds:string[];snapshot:DocumentProject;runMode?:'fixed'|'assist';databaseBinding?:RegressionDatabaseBinding;databaseEvidence?:RegressionDatabaseEvidence;databaseEvidenceDigest?:string;planDigest?:string;executionProject?:DocumentProject;documentRunId?:string;authorizedWriteCaseIds?:string[];executionStarted?:boolean;executionFinished?:boolean;difyRuns:Array<{phase:string;batch:number;id?:string|undefined;status:'succeeded'|'failed';inputDigest:string;caseIds:string[];tokens?:number}>;results:WebModuleResult[];events:Array<{at:string;phase:Phase;message:string}>;report?:string;errorCode?:string};
 export type WebModuleDependencies = {
   cloud: typeof callDifyWorkflow;
+  authorizedWrites?: (project:DocumentProject,jobId:string,checks:BrowserCheck[],signal:AbortSignal,progress:(message:string)=>void)=>Promise<Array<{caseId:string;status:'passed'|'failed'|'blocked';detail:string;evidence?:string;evidenceNote?:string}>>;
   database?: (project:DocumentProject,signal:AbortSignal)=>Promise<RegressionDatabaseEvidence>;
   inspect: (project:DocumentProject, job:WebModuleJob, signal:AbortSignal, onLogin:(waiting:boolean)=>void) => Promise<string>;
   author: (project:DocumentProject, item:BrowserCheck, evidence:string, proposal:string[]) => Promise<BrowserCheck['steps']>;
@@ -126,7 +131,11 @@ export class DifyWebModuleStore {
   }
   private async cloud(job:WebModuleJob,phase:string,batch:number,inputs:Record<string,string>,caseIds:string[],signal:AbortSignal,kind:'prepare'|'execution'){
     const record={phase,batch,inputDigest:moduleDigest(inputs),caseIds};
-    try{const result=await this.deps.cloud(kind,inputs,`testpilot-web-${job.id}`,signal);job.difyRuns.push({...record,id:result.workflowRunId,status:'succeeded',tokens:result.tokens});this.save('job',job);return result.output;}catch(error){job.difyRuns.push({...record,id:error instanceof DifyWorkflowError?error.workflowRunId:undefined,status:'failed'});this.save('job',job);throw error;}
+    for(let attempt=0;;attempt++){
+      try{const result=await this.deps.cloud(kind,inputs,`testpilot-web-${job.id}`,signal);job.difyRuns.push({...record,id:result.workflowRunId,status:'succeeded',...(typeof result.tokens==='number'?{tokens:result.tokens}:{})});this.save('job',job);return result.output;}catch(error){job.difyRuns.push({...record,id:error instanceof DifyWorkflowError?error.workflowRunId:undefined,status:'failed'});this.save('job',job);
+        if(phase!=='prepare'&&error instanceof DifyWorkflowError&&/^http_(502|503|504)$/.test(error.code)&&attempt<2&&!signal.aborted){this.event(job,job.phase,`Dify 当前${phase}阶段临时不可用，正在重试 ${attempt+1}/2；不重复执行已完成的网页用例。`);await delay(1000*(attempt+1),undefined,{signal});continue;}throw error;
+      }
+    }
   }
   private capture(job:WebModuleJob,run:DocumentRun){
     for(const row of job.results){const actual=run.deterministic.results.find(c=>c.id===row.caseId);if(actual){row.status=actual.status==='passed'||actual.status==='failed'?actual.status:actual.status==='blocked'?'blocked':'not_executed';row.detail=actual.detail;row.evidence=actual.evidence;row.evidenceOrigin='document-run';row.evidenceNote=(actual as typeof actual&{evidenceNote?:string}).evidenceNote??row.evidenceNote;}}
@@ -148,7 +157,7 @@ export class DifyWebModuleStore {
     job.outcome=jobOutcome(job);
     job.report=this.renderReport(job);this.event(job,'completed',job.outcome==='passed'?'本轮实际执行全部通过。':job.outcome==='failed'?'本轮发现失败，请查看证据。':'本轮存在阻塞或未执行项。');
   }
-  renderReport(job:WebModuleJob){const counts=resultCounts(job.results);return [`# ${job.moduleName} 模块测试报告`,`任务：${job.id}`,`模块版本：${job.moduleDigest}`,`目标：${job.snapshot.targetUrl}`,`范围：${job.results.length} / ${job.snapshot.cases.length} 条`,`执行模式：${job.runMode==='fixed'?'固定回归（未调用模型整理）':'AI 辅助整理'}`,`实际结果：通过 ${counts.passed}，失败 ${counts.failed}，阻塞 ${counts.blocked}，异常 ${counts.error}，未执行 ${counts.not_executed}（其中范围外 ${job.results.filter(r=>r.outOfScope).length}）`,`网页执行：${job.documentRunId??'没有启动网页执行'}`,`\n## Dify 阶段`,...job.difyRuns.map(r=>`- ${r.phase} 第 ${r.batch+1} 批：${r.status}；运行 ${r.id??'未取得运行编号'}`),...(job.databaseEvidence?[`\n## 本轮数据库补充核验（不计入 XMind 用例通过数）`,`证据指纹：${job.databaseEvidenceDigest}`,`采集时间：${job.databaseEvidence.capturedAt}`,`状态：${job.databaseEvidence.status}`,...(independentRecordScope(job)?["适用范围：本轮只读空态/输入校验不要求已有本人记录；本人列表、详情的缺项仍保留，不影响本轮用例结果。"]:[]),...job.databaseEvidence.checks.map(c=>`- ${c.title}：${c.status}；${c.detail}`)]:[]),`\n## 逐条结果`,...job.results.map(r=>`\n### ${r.title} (${r.caseId} · ${r.priority??'未记录优先级'})\n状态：${r.outOfScope?'范围外（未执行）':r.status}\n\n原始预期：${r.expected}\n\n实际观察：${r.detail}${r.blockerCode?'\n\n阻塞类别：'+r.blockerCode:''}${r.nextAction?'\n\n处理方式：'+r.nextAction:''}${r.preparationReview?'\n\n执行准备审核：'+r.preparationReview:''}${r.evidence?`\n\n页面证据：/api/dify-web-modules/jobs/${job.id}/evidence/${r.evidence}`:''}${r.evidenceNote?'\n\n截图说明：'+r.evidenceNote:''}`)].join('\n\n');}
+  renderReport(job:WebModuleJob){const counts=resultCounts(job.results);return [`# ${job.moduleName} 模块测试报告`,`任务：${job.id}`,`模块版本：${job.moduleDigest}`,`目标：${job.snapshot.targetUrl}`,`范围：${job.results.length} / ${job.snapshot.cases.length} 条`,`执行模式：${job.runMode==='fixed'?'固定回归（未调用模型整理）':'AI 辅助整理'}`,`实际结果：通过 ${counts.passed}，失败 ${counts.failed}，阻塞 ${counts.blocked}，异常 ${counts.error}，未执行 ${counts.not_executed}（其中范围外 ${job.results.filter(r=>r.outOfScope).length}）`,`网页执行：${job.documentRunId??(job.authorizedWriteCaseIds?.length?'专用授权业务提交（见逐条结果及本机写入日志）':'没有启动网页执行')}`,`\n## Dify 阶段`,...job.difyRuns.map(r=>`- ${r.phase} 第 ${r.batch+1} 批：${r.status}；运行 ${r.id??'未取得运行编号'}`),...(job.databaseEvidence?[`\n## 本轮数据库补充核验（不计入 XMind 用例通过数）`,`证据指纹：${job.databaseEvidenceDigest}`,`采集时间：${job.databaseEvidence.capturedAt}`,`状态：${job.databaseEvidence.status}`,...(independentRecordScope(job)?["适用范围：本轮只读空态/输入校验不要求已有本人记录；本人列表、详情的缺项仍保留，不影响本轮用例结果。"]:[]),...job.databaseEvidence.checks.map(c=>`- ${c.title}：${c.status}；${c.detail}`)]:[]),`\n## 逐条结果`,...job.results.map(r=>`\n### ${r.title} (${r.caseId} · ${r.priority??'未记录优先级'})\n状态：${r.outOfScope?'范围外（未执行）':r.status}\n\n原始预期：${r.expected}\n\n实际观察：${r.detail}${r.blockerCode?'\n\n阻塞类别：'+r.blockerCode:''}${r.nextAction?'\n\n处理方式：'+r.nextAction:''}${r.preparationReview?'\n\n执行准备审核：'+r.preparationReview:''}${r.evidence?`\n\n页面证据：/api/dify-web-modules/jobs/${job.id}/evidence/${r.evidence}`:''}${r.evidenceNote?'\n\n截图说明：'+r.evidenceNote:''}`)].join('\n\n');}
   private async run(job:WebModuleJob,signal:AbortSignal,reportOnly:boolean){
     try{
       if(reportOnly){await this.report(job,signal);return;}
@@ -181,12 +190,17 @@ export class DifyWebModuleStore {
       }else this.event(job,'preparing','固定回归：使用原包或已保存步骤，未调用 AI 整理；Dify 派发和汇总仍实际执行。');
       const execution=structuredClone(job.snapshot);execution.reviewStatus='approved';execution.confirmationRequired=false;
       const module=this.getModule(job.moduleId);module.cachedSteps??={};
+      const writeResults=await this.deps.authorizedWrites?.(job.snapshot,job.id,selected,signal,message=>{job.executionStarted=true;this.event(job,'executing',message);})??[];
+      const writtenIds=new Set(writeResults.map(r=>r.caseId));
+      for(const actual of writeResults){const row=job.results.find(r=>r.caseId===actual.caseId);if(!row)throw Error('授权写入返回了未选择的用例。');Object.assign(row,actual);if(actual.evidence)row.evidenceOrigin='authorized-write';row.preparationReview='用户已授权此测试环境的真实业务写入；专用执行路径限定账号窗口、原始用例、唯一标记、提交数量和落库核对，保留执行日志，不重复提交结果未知的请求。';}
+      if(writeResults.length){job.authorizedWriteCaseIds=[...writtenIds];job.executionFinished=true;this.save('job',job);}
       for(const c of execution.cases){
         if(!job.selectedCaseIds.includes(c.id)){c.selectedForRegression=false;continue;}
+        if(writtenIds.has(c.id)){c.lifecycleStatus='draft';c.selectedForRegression=false;continue;}
         signal.throwIfAborted();const row=job.results.find(r=>r.caseId===c.id)!;
-        if(/本期不做|范围外|待后续需求/u.test(`${c.title} ${c.expected}`)){row.outOfScope=true;row.status='not_executed';row.detail='原需求已标明本期范围外，本轮不执行，不计为通过或失败。';c.lifecycleStatus='disabled';c.selectedForRegression=false;continue;}
+        const excluded=excludedCaseReason(c);if(excluded){row.outOfScope=true;row.status='not_executed';row.detail=excluded;c.lifecycleStatus='disabled';c.selectedForRegression=false;continue;}
         if(job.confirmedCaseIds.includes(c.id))c.preconditionsConfirmed=true;
-        const reviewed=reviewedDifyReadOnlyPlan(c,evidence,job.snapshot.targetUrl);if(reviewed){c.steps=reviewed.steps;if(reviewed.executionData)c.testData=[...(c.testData??[]),...reviewed.executionData];row.preparationReview=reviewed.detail;if(/^原包状态：hold-account-or-effect-review/.test(c.coverageGap??''))delete c.coverageGap;}
+        const reviewed=reviewedDifyReadOnlyPlan(c,evidence,job.snapshot.targetUrl);if(reviewed){c.steps=reviewed.steps;if(reviewed.executionData)c.testData=[...(c.testData??[]),...reviewed.executionData];row.preparationReview=reviewed.detail;if(/^原包状态：hold-account-or-effect-review/.test(c.coverageGap??'')||connectedEvidenceKind(c)&&/^原包状态：/.test(c.coverageGap??''))delete c.coverageGap;}
         const cache=module.cachedSteps[c.id];if(!c.steps.length&&cache?.sourceDigest===moduleDigest(job.snapshot.cases.find(v=>v.id===c.id)))c.steps=cache.steps;
         let reason:string|undefined=cache?.reviewKind&&!reviewed?'当前页面未重新核对到已审核只读计划所需的唯一控件。':!c.steps.length&&!canAuthorReadOnlyBrowserSteps(c)?browserStepDraftBlockReason(c):undefined;
         if(c.steps.some(s=>s.action.startsWith('fill')&&isSensitiveExportField('label' in s?s.label:'placeholder' in s?s.placeholder:'')))reason='账号密码和验证码由你在测试窗口输入，不能放入自动执行步骤。';
@@ -203,10 +217,12 @@ export class DifyWebModuleStore {
         c.sideEffectRisk='none';c.lifecycleStatus='runnable';c.selectedForRegression=true;delete c.coverageGap;row.steps=c.steps;
         module.cachedSteps[c.id]={sourceDigest:moduleDigest(job.snapshot.cases.find(v=>v.id===c.id)),steps:c.steps,...(reviewed?{reviewKind:reviewed.kind}:{})};
       }
-      for(const row of job.results.filter(row=>row.status==='blocked'&&!row.evidence)){
+      const prerequisiteRows=job.results.filter(row=>row.status==='blocked'&&!row.evidence);let checkedPrerequisites=0;
+      for(const row of prerequisiteRows){
         signal.throwIfAborted();const item=job.snapshot.cases.find(item=>item.id===row.caseId)!;
         try{const shot=await this.deps.captureBlockedEvidence?.(job.snapshot,job.id,item,signal);if(shot){row.evidence=shot.evidence;row.evidenceOrigin='preflight';row.evidenceNote=shot.evidenceNote;}else row.evidenceNote='前置条件阻塞，未取得本轮可安全采集的现场截图；业务断言未执行。';}
         catch{row.evidenceNote='本轮前置阻塞截图采集失败；没有借用历史截图，业务断言未执行。';}
+        this.event(job,'preflight',`已记录 ${++checkedPrerequisites} / ${prerequisiteRows.length} 条前置阻塞及证据情况；随后执行具备条件的用例。`);
       }
       this.save('module',module);job.executionProject=execution;job.planDigest=executionDigest(job);this.save('job',job);checkModulePlan(job);
       const runnable=execution.cases.filter(c=>job.selectedCaseIds.includes(c.id)&&c.lifecycleStatus==='runnable'&&c.selectedForRegression);
@@ -217,6 +233,12 @@ export class DifyWebModuleStore {
         job.documentRunId=randomUUID();job.executionStarted=true;this.event(job,'executing',`正在测试 ${runnable.length} 条用例。`);
         const result=await this.deps.execute(execution,job.documentRunId,runnable.map(c=>c.id),stage=>{if(stage==='awaiting-login')this.event(job,'awaiting-login','测试窗口需要重新登录，请登录后继续。');else if(job.phase==='awaiting-login')this.event(job,'executing','登录已接续，继续测试。');},actual=>{const row=job.results.find(r=>r.caseId===actual.id);if(row){row.status=actual.status==='passed'||actual.status==='failed'?actual.status:actual.status==='blocked'?'blocked':'not_executed';row.detail=actual.detail;row.evidence=actual.evidence;row.evidenceOrigin='document-run';row.evidenceNote=actual.evidenceNote;job.updatedAt=now();this.save('job',job);}});this.capture(job,result);
       }else{job.executionFinished=true;this.save('job',job);}
+      for(const row of job.results){
+        if(row.status!=='blocked'||row.outOfScope)continue;
+        const source=job.snapshot.cases.find(c=>c.id===row.caseId);
+        const diagnosis=source&&departmentBlockerDiagnostic(source,job.databaseEvidence);
+        if(diagnosis)row.detail+=' 本轮数据库排查：'+diagnosis;
+      }
       signal.throwIfAborted();await this.report(job,signal);
     }catch(error){if(signal.aborted){this.event(job,'cancelled','已取消；已完成的实际结果仍保留。');return;}if(job.executionStarted)job.outcome=jobOutcome(job);job.errorCode=error instanceof DifyWorkflowError?error.code:'execution_failed';this.event(job,'error',error instanceof DifyWorkflowError?error.message:error instanceof Error?String(cloudSafe(error.message)).slice(0,500):'任务未完成，可以重试当前阶段。');}
   }

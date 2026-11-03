@@ -115,13 +115,37 @@ export async function readDepartmentDatabaseSummary() {
   });
 }
 
+/** Fixed SELECT projections for the two named OA templates and aggregate
+ * application references. No names, recipients or approval numbers leave DB. */
+export async function readDepartmentOaTemplateConfiguration():Promise<import('./dify-oa-template-configuration.js').OaTemplateConfigurationSnapshot>{
+ return withReadOnlyConnection(requirePool(),async connection=>{
+  const [templates]=await connection.query<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ template_name,template_id,del_flag FROM biz_wechat_oa_template WHERE template_name IN ('部门样书申请-营销用书','部门样书申请-产品用书') OR template_id IN ('C4enk3QyyZi7NYJXM8ShAUZ6jwTKUMdPzEWAUceGH','C4enk3UYnvWjJmLGxb4PHgGhX5h4hqgju2yoEu89z') LIMIT 21");
+  const [applications]=await connection.query<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ book_usage,template_id,COUNT(*) AS count FROM biz_dept_book_apply WHERE del_flag='0' GROUP BY book_usage,template_id LIMIT 101");
+  if(templates.length>20||applications.length>100)throw Error('OA配置核验超出有界查询范围。');
+  return{templates:templates.map(t=>({name:String(t.template_name??''),templateId:String(t.template_id??''),deleted:String(t.del_flag)!=='0'})),applications:applications.map(a=>({usage:Number(a.book_usage),templateId:a.template_id==null?null:String(a.template_id),count:Number(a.count)}))};
+ });
+}
+
 /** Identifiers originate only from the current authenticated myList response and stay in memory. */
 export async function readDepartmentApplications(applyNos:string[]) {
-  if(!applyNos.length||applyNos.length>10||new Set(applyNos).size!==applyNos.length||applyNos.some(v=>typeof v!=='string'||v.length>100||!/^[A-Za-z0-9_-]+$/.test(v)))throw Error('当前账号申请记录范围无效。');
+  if(!applyNos.length||applyNos.length>20||new Set(applyNos).size!==applyNos.length||applyNos.some(v=>typeof v!=='string'||v.length>100||!/^[A-Za-z0-9_-]+$/.test(v)))throw Error('当前账号申请记录范围无效。');
   return withReadOnlyConnection(requirePool(),async connection=>{
-    const [rows]=await connection.execute<RowDataPacket[]>(`SELECT /*+ MAX_EXECUTION_TIME(5000) */ id,apply_no,examine_status,lock_status,apply_type,book_usage,total_amount,total_weight FROM biz_dept_book_apply WHERE del_flag='0' AND apply_no IN (${applyNos.map(()=>'?').join(',')}) LIMIT 11`,applyNos);
+    const [rows]=await connection.execute<RowDataPacket[]>(`SELECT /*+ MAX_EXECUTION_TIME(5000) */ id,apply_no,examine_status,lock_status,apply_type,book_usage,total_amount,total_weight FROM biz_dept_book_apply WHERE del_flag='0' AND apply_no IN (${applyNos.map(()=>'?').join(',')}) LIMIT 21`,applyNos);
     return rows;
   });
+}
+
+/** Diagnose existing fixtures by current authenticated identity; never return
+ * raw keys, names, addresses, remarks, configuration values or event payloads. */
+export async function readDepartmentBlockerInventory(userId:string):Promise<import('../domain/regression-database-contract.js').DepartmentBlockerInventory>{
+ if(!/^\d{1,20}$/.test(userId))throw Error('身份范围无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [states]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ (a.applicant_user_id=?) AS own,a.examine_status AS status,a.lock_status,a.book_usage,COUNT(*) AS count,SUM((SELECT COUNT(*) FROM biz_dept_book_apply_goods g WHERE g.apply_id=a.id AND g.del_flag='0')>1) AS multi_line,SUM(a.order_id IS NOT NULL AND a.order_id<>'') AS order_refs FROM biz_dept_book_apply a WHERE a.del_flag='0' GROUP BY own,a.examine_status,a.lock_status,a.book_usage",[userId]);
+  const [links]=await c.query<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS applications,SUM(a.order_id IS NOT NULL AND a.order_id<>'') AS order_refs,SUM(EXISTS(SELECT 1 FROM biz_order o WHERE o.del_flag=0 AND a.order_id IS NOT NULL AND a.order_id<>'' AND (BINARY o.order_id=BINARY a.order_id OR BINARY o.out_order_id=BINARY a.order_id OR BINARY CAST(o.id AS CHAR)=BINARY a.order_id))) AS matched_orders,SUM(EXISTS(SELECT 1 FROM biz_wechat_oa_template t WHERE t.del_flag='0' AND BINARY t.template_id=BINARY a.template_id)) AS matching_templates,SUM(EXISTS(SELECT 1 FROM biz_third_party_failure_log l WHERE BINARY l.business_ref=BINARY a.apply_no OR BINARY l.business_ref=BINARY a.sp_id OR (a.order_id<>'' AND BINARY l.business_ref=BINARY a.order_id))) AS linked_failures,SUM(EXISTS(SELECT 1 FROM biz_sync_outbox o WHERE BINARY o.aggregate_key=BINARY a.apply_no OR (a.order_id<>'' AND BINARY o.aggregate_key=BINARY a.order_id))) AS linked_outbox,SUM(EXISTS(SELECT 1 FROM biz_order_logistics l WHERE a.order_id<>'' AND BINARY l.order_id=BINARY a.order_id)) AS linked_logistics,SUM(a.lock_fail_notified=1) AS lock_notice,SUM(a.auto_restock_notified=1) AS restock_notice FROM biz_dept_book_apply a WHERE a.del_flag='0'");
+  const [configuration]=await c.query<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS count FROM sys_config WHERE config_key LIKE '%dept%' OR config_key LIKE '%warehouse%' OR config_key LIKE '%wdt%' OR config_key LIKE '%template%' OR config_key LIKE '%shop%'");
+  const n=(v:unknown)=>Number(v??0),r=links[0]!;
+  return{states:states.map(v=>({own:Number(v.own)===1,status:n(v.status),lockStatus:n(v.lock_status),usage:n(v.book_usage),count:n(v.count),multiLine:n(v.multi_line),orderReferences:n(v.order_refs)})),links:{applications:n(r.applications),orderReferences:n(r.order_refs),matchedOrders:n(r.matched_orders),matchingTemplates:n(r.matching_templates),linkedFailures:n(r.linked_failures),linkedOutbox:n(r.linked_outbox),linkedLogistics:n(r.linked_logistics)},notificationFlags:{lockFailure:n(r.lock_notice),restock:n(r.restock_notice)},configurationKeys:n(configuration[0]?.count)};
+ });
 }
 
 export async function readDepartmentAccountCount(userId:string) {
@@ -130,6 +154,95 @@ export async function readDepartmentAccountCount(userId:string) {
     const [rows]=await connection.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS count FROM biz_dept_book_apply WHERE del_flag='0' AND applicant_user_id=?",[userId]);
     return Number(rows[0]!.count);
   });
+}
+
+/** Raw snapshot stays in memory and is scoped to a current-account list key. */
+export async function readDepartmentApplicationSnapshot(applyNo:string,userId:string):Promise<Record<string,unknown>|undefined>{
+ if(!/^[A-Za-z0-9_-]{1,100}$/.test(applyNo)||!/^\d{1,20}$/.test(userId))throw Error('申请或身份范围无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [rows]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ apply_no,applicant_user_id,applicant_name,dept_name,apply_type,book_usage,cost_client_id,cost_client_name,remark,receiver_name,receiver_phone,province,city,county,detail_address,sp_id,template_id,order_id,examine_status,lock_status,reject_reason FROM biz_dept_book_apply WHERE del_flag='0' AND apply_no=? AND applicant_user_id=? LIMIT 2",[applyNo,userId]);
+  if(rows.length!==1)return undefined;
+  const [labels]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ dict_label FROM sys_dict_data WHERE dict_type='dept_apply_use' AND dict_value=? AND status='0' LIMIT 2",[String(rows[0]!.book_usage)]);
+  return {...rows[0],book_usage_label:labels.length===1?labels[0]!.dict_label:undefined};
+ });
+}
+/** Reconcile a marked submission after success or a lost response. SELECT only;
+ * no blind replay and no raw personal identifiers in the returned journal. */
+export async function readMarkedDepartmentApplication(userId:string,recipient:string){
+ if(!/^\d{1,20}$/.test(userId)||!/^TP[a-f0-9]{8}\d勿发货$/.test(recipient))throw Error('测试写入核对范围无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [rows]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ apply_no,applicant_user_id,apply_type,book_usage,cost_client_id,cost_client_name,remark,receiver_name,receiver_phone,province,city,county,detail_address,examine_status,lock_status,sp_id,template_id,total_amount,total_weight FROM biz_dept_book_apply WHERE del_flag='0' AND applicant_user_id=? AND receiver_name=? LIMIT 3",[userId,recipient]);
+  return rows;
+ });
+}
+/** One existing non-owner test record; only its key leaves the readonly query. */
+export async function readNonOwnerDepartmentApplication(userId:string){
+ if(!/^\d{1,20}$/.test(userId))throw Error('身份范围无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [rows]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ apply_no FROM biz_dept_book_apply WHERE del_flag='0' AND applicant_user_id<>? AND apply_no IS NOT NULL ORDER BY id LIMIT 1",[userId]);
+  const value=rows[0]?.apply_no;return typeof value==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(value)?value:undefined;
+ });
+}
+/** Aggregate backend evidence, without exporting remarks or approval numbers. */
+export async function readDepartmentRemarkEvidence(usage:1|2){
+ if(usage!==1&&usage!==2)throw Error('用途无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [rows]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS applications,SUM(a.sp_id IS NOT NULL AND a.sp_id<>'') AS approvals,SUM(a.order_id IS NOT NULL AND a.order_id<>'') AS order_references,SUM(o.id IS NOT NULL) AS matched_orders FROM biz_dept_book_apply a LEFT JOIN biz_order o ON BINARY o.order_id=BINARY a.order_id AND o.del_flag='0' WHERE a.del_flag='0' AND a.book_usage=?",[usage]);
+  const r=rows[0]!;return{applications:Number(r.applications),approvals:Number(r.approvals??0),orderReferences:Number(r.order_references??0),matchedOrders:Number(r.matched_orders??0)};
+ });
+}
+
+/** Explicit client classification projection. No customer names are persisted. */
+export async function readDepartmentCustomerCategories(codes:string[]){
+ if(!codes.length||codes.length>100||new Set(codes).size!==codes.length||codes.some(c=>!/^[A-Za-z0-9_-]{1,60}$/.test(c)))throw Error('客户分类核对范围无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [rows]=await c.execute<RowDataPacket[]>(`SELECT /*+ MAX_EXECUTION_TIME(5000) */ agent_id,agent_type FROM biz_agent_info WHERE del_flag=0 AND agent_id IN (${codes.map(()=>'?').join(',')}) LIMIT 101`,codes);
+  return rows.map(r=>({code:String(r.agent_id),category:String(r.agent_type)}));
+ });
+}
+export async function readDepartmentAllowedCustomers(){
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const out:Array<{code:string;category:string}>=[];
+  for(const category of ['1004.00','1004.06']){const [rows]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ agent_id,agent_type FROM biz_agent_info WHERE del_flag=0 AND agent_type=? ORDER BY is_valid DESC,is_grade_reviewed DESC,id LIMIT 1",[category]);if(rows.length===1)out.push({code:String(rows[0]!.agent_id),category:String(rows[0]!.agent_type)});}
+  return out;
+ });
+}
+/** Locate actual configuration evidence without equating carrier warehouses
+ * or Douyin shops with this business's WDT deployment mappings. */
+export async function readDepartmentConfigurationInventory(){
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [keys]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ config_key FROM sys_config WHERE LOWER(config_key) REGEXP 'dept|warehouse|wdt|shop' LIMIT 101");
+  const [warehouses]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ name,sid,type,status FROM biz_carrier_warehouse WHERE del_flag='0' AND name REGEXP '长沙|天津' LIMIT 101");
+  const [shopColumns]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ TABLE_NAME,COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND (TABLE_NAME REGEXP 'dept_book|wdt|shop' AND COLUMN_NAME REGEXP 'shop|store') LIMIT 101");
+  return{keys:keys.map(r=>String(r.config_key)),warehouses:warehouses.map(r=>({name:String(r.name),sid:String(r.sid),type:String(r.type),status:String(r.status)})),shopColumns:shopColumns.map(r=>({table:String(r.TABLE_NAME),column:String(r.COLUMN_NAME)}))};
+ });
+}
+export async function readDepartmentNotificationInventory(userId:string){
+ if(!/^\d{1,20}$/.test(userId))throw Error('通知核对身份无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [apps]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(*) AS count,SUM(sp_id IS NOT NULL AND sp_id<>'') AS approvals,SUM(approver_userid IS NOT NULL AND approver_userid<>'') AS recipients,SUM(lock_status=2) AS lock_failures,SUM(examine_status=3) AS cancelled FROM biz_dept_book_apply WHERE del_flag='0' AND applicant_user_id=?",[userId]);
+  const [events]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ DISTINCT o.event_id,o.destination,o.event_type,o.status,o.payload,o.published_at,o.last_error FROM biz_sync_outbox o JOIN biz_dept_book_apply a ON (BINARY o.aggregate_key=BINARY a.apply_no OR (a.sp_id<>'' AND BINARY o.aggregate_key=BINARY a.sp_id) OR (a.order_id<>'' AND BINARY o.aggregate_key=BINARY a.order_id)) WHERE a.del_flag='0' AND a.applicant_user_id=? LIMIT 101",[userId]);
+  if(events.length>100)throw Error('Blocked: 关联外发事件超过核验上限，未截断后计通过。');
+  const [failures]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ COUNT(DISTINCT f.id) AS n FROM biz_third_party_failure_log f JOIN biz_dept_book_apply a ON (BINARY f.business_ref=BINARY a.apply_no OR (a.sp_id<>'' AND BINARY f.business_ref=BINARY a.sp_id) OR (a.order_id<>'' AND BINARY f.business_ref=BINARY a.order_id)) WHERE a.del_flag='0' AND a.applicant_user_id=?",[userId]);
+  const row=apps[0]!;return{applications:Number(row.count),approvals:Number(row.approvals??0),recipients:Number(row.recipients??0),lockFailures:Number(row.lock_failures??0),cancelled:Number(row.cancelled??0),linkedFailures:Number(failures[0]?.n??0),events:events.map(e=>{let payload:unknown=e.payload;try{if(typeof payload==='string')payload=JSON.parse(payload);}catch{payload=undefined;}return{destination:String(e.destination),type:String(e.event_type),status:String(e.status),published:!!e.published_at,errorPresent:!!e.last_error,payloadKeys:payload&&typeof payload==='object'?Object.keys(payload):[]};})};
+ });
+}
+
+/** One active counterexample per excluded category, paired with an allowed
+ * category having identical validity/review flags. The real API must return
+ * the positive control before a negative result is accepted. */
+export async function readDepartmentExcludedCustomers(){
+ const current=requirePool();return withReadOnlyConnection(current,async connection=>{
+  const found:Array<{code:string;category:string;control?:{code:string;category:string}}>=[];
+  for(const category of ['1004.01','1004.02','1004.03','1004.04','1004.05']){
+   const [rows]=await connection.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ agent_id,agent_type,is_valid,is_grade_reviewed FROM biz_agent_info WHERE del_flag=0 AND agent_type=? ORDER BY is_valid DESC,is_grade_reviewed DESC,id LIMIT 1",[category]);
+   if(rows.length!==1||typeof rows[0]!.agent_id!=='string'||rows[0]!.agent_type!==category)continue;
+   const candidate=rows[0]!;
+   const [controls]=await connection.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ agent_id,agent_type FROM biz_agent_info WHERE del_flag=0 AND agent_type='1004.00' AND is_valid=? AND is_grade_reviewed=? ORDER BY id LIMIT 1",[candidate.is_valid,candidate.is_grade_reviewed]);
+   found.push({code:candidate.agent_id,category,...(controls.length===1&&typeof controls[0]!.agent_id==='string'?{control:{code:controls[0]!.agent_id,category:String(controls[0]!.agent_type)}}:{})});
+  }
+  return found;
+ });
 }
 
 export async function readDepartmentGoods(applyNo:string) {

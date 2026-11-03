@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-27",
+    "title": "输入非数字：校验拦截，不调用接口",
+    "priority": "P2",
+    "expected": "输入非数字：校验拦截，不调用接口",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 样书明细区 › 输入物流编码（自编码/erp编码） › 调用易诚通图书信息接口校验编码 › ❌ 输入非数字：校验拦截，不调用接口",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "样书明细区",
+      "输入物流编码（自编码/erp编码）",
+      "调用易诚通图书信息接口校验编码"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 0,
+    "cachedStepCount": 5,
+    "cacheFresh": true,
+    "stepCount": 5,
+    "steps": [
+      {
+        "action": "startFetchOrXhrCapture"
+      },
+      {
+        "action": "fillByLabel",
+        "label": "自编码",
+        "value": "TP_INVALID_ALPHA"
+      },
+      {
+        "action": "blurByLabel",
+        "label": "自编码"
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "自编码"
+      },
+      {
+        "action": "assertNoFetchOrXhr",
+        "quietMs": 1000
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "f38965e0b1b5048ff4c558a87a5316207c72eec718ab7e6bf08c325d44d27a81"
+}

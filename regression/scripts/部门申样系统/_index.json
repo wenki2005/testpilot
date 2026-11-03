@@ -8,23 +8,6 @@
   },
   "modules": [
     {
-      "id": "e94394e3-827b-4775-a8d0-69b376f468c6",
-      "name": "补充只读用例（2026-11-01）",
-      "archived": false,
-      "dir": "部门申样系统/补充只读用例（2026-11-01）",
-      "version": {
-        "id": "2b1c7bba-0d48-42d9-ba05-7dc2c40a8284",
-        "version": 7,
-        "digest": "f489a26a6dcd417544948fdbc4dfbaac5df7cd230cadf2a0ad488a588f6f7cf3"
-      },
-      "counts": {
-        "cases": 4,
-        "fixed": 4,
-        "derived": 0,
-        "noSteps": 0
-      }
-    },
-    {
       "id": "a1288838-bcb7-43a2-b79c-179e54132ebb",
       "name": "PC/H5 横向适配",
       "archived": false,
@@ -64,15 +47,15 @@
       "archived": false,
       "dir": "部门申样系统/申请记录与审批详情",
       "version": {
-        "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
-        "version": 2,
-        "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
+        "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+        "version": 1,
+        "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
       },
       "counts": {
         "cases": 32,
-        "fixed": 13,
+        "fixed": 16,
         "derived": 0,
-        "noSteps": 19
+        "noSteps": 16
       }
     },
     {
@@ -81,15 +64,15 @@
       "archived": false,
       "dir": "部门申样系统/申样申请与经销商数据",
       "version": {
-        "id": "27cba321-4fa2-4c23-84d5-b0dfb23a5406",
-        "version": 5,
-        "digest": "57b9b3fda7259b9bc14837b6358251fa53511f409699001bd633fd9292810169"
+        "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+        "version": 1,
+        "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
       },
       "counts": {
-        "cases": 13,
-        "fixed": 12,
+        "cases": 76,
+        "fixed": 35,
         "derived": 0,
-        "noSteps": 1
+        "noSteps": 41
       }
     },
     {

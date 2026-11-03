@@ -62,7 +62,7 @@ async function pruneEmptyDirs(root) {
 }
 
 async function main() {
-  const registry = await collectRegistry(baseUrl, dataDir);
+  const registry = await collectRegistry(baseUrl, dataDir, {systemId:arg('system-id', undefined),activeOnly:process.argv.includes('--active-only')});
   const { files, index } = buildMirror(registry);
   await mkdir(outDir, { recursive: true });
 

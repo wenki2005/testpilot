@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "27cba321-4fa2-4c23-84d5-b0dfb23a5406",
-    "version": 5,
-    "digest": "57b9b3fda7259b9bc14837b6358251fa53511f409699001bd633fd9292810169"
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
   },
   "case": {
     "id": "xmind-35",
@@ -34,25 +34,18 @@
     "format": "BrowserStep[]",
     "status": "fixed",
     "source": "cache",
-    "storedStepCount": 4,
-    "cachedStepCount": 4,
+    "storedStepCount": 0,
+    "cachedStepCount": 2,
     "cacheFresh": true,
-    "stepCount": 4,
+    "stepCount": 2,
     "steps": [
       {
-        "action": "clickExactText",
+        "action": "assertExactVisible",
+        "text": "自编码"
+      },
+      {
+        "action": "assertExactVisible",
         "text": "继续添加样书"
-      },
-      {
-        "action": "assertVisible",
-        "text": "删除"
-      },
-      {
-        "action": "deleteSampleRow"
-      },
-      {
-        "action": "assertNotVisible",
-        "text": "删除"
       }
     ]
   },
@@ -62,5 +55,5 @@
     "detail": "",
     "nextAction": ""
   },
-  "caseDigest": "5400ecac321823e0c35a234978c1e5e2dd48aa1e4f646aeabf194b528bce37d6"
+  "caseDigest": "fbabea37adebb029d7df747339fb6952fc0c3bb603bc3205fe32ae783f9c8f0b"
 }

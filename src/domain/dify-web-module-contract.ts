@@ -6,7 +6,7 @@ export type WebModuleJobView={
   runMode?:'fixed'|'assist';
   selectedCaseIds:string[];
   databaseEvidence?:RegressionDatabaseEvidence; databaseEvidenceDigest?:string;
-  results:Array<{caseId:string;title:string;expected:string;priority?:'P0'|'P1'|'P2'|'P3';status:ModuleCaseStatus;detail:string;outOfScope?:boolean;evidence?:string|undefined;evidenceOrigin?:'document-run'|'preflight';evidenceNote?:string|undefined;needsConfirmation?:boolean;blockerCode?:string;nextAction?:string;preparationReview?:string;proposal?:{steps:string[];preconditions:string[];questions:string[]}}>;
+  results:Array<{caseId:string;title:string;expected:string;priority?:'P0'|'P1'|'P2'|'P3';status:ModuleCaseStatus;detail:string;outOfScope?:boolean;evidence?:string|undefined;evidenceOrigin?:'document-run'|'preflight'|'authorized-write';evidenceNote?:string|undefined;needsConfirmation?:boolean;blockerCode?:string;nextAction?:string;preparationReview?:string;proposal?:{steps:string[];preconditions:string[];questions:string[]}}>;
   difyRuns:Array<{phase:string;batch:number;id?:string|undefined;status:'succeeded'|'failed';caseIds:string[];inputDigest:string;tokens?:number}>;
   events:Array<{at:string;phase:string;message:string}>;
   progress?:{completed:number;total:number;currentCase?:{title:string}};

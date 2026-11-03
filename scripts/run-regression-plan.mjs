@@ -43,7 +43,7 @@ async function main() {
     if (registryModule.systemId !== plan.systemId) throw new Error(`模块不在系统内：${module.moduleName}`);
     const latest = registryModule.versions.at(-1);
     if (!latest) throw new Error(`模块没有版本：${module.moduleName}`);
-    if (latest.id !== module.versionId) throw new Error(`模块 ${module.moduleName} 已有新版本（计划 v${module.versionId.slice(0, 8)}，当前 v${latest.version}），请更新计划或固定旧版本后再跑。`);
+    if (latest.id !== module.versionId) throw new Error(`模块 ${module.moduleName} 版本不匹配（计划版本 ID ${module.versionId.slice(0, 8)}，当前 v${latest.version} / ${latest.id.slice(0, 8)}）。请先核对服务地址和数据目录，确认已导入匹配的模块配置；保持原计划，不自动改绑版本或启动测试。`);
     const pack = await getJson(`/api/system-module-regression/modules/${module.moduleId}`);
     const known = new Set((pack.cases ?? []).map((item) => item.id));
     for (const caseId of module.caseIds ?? []) {

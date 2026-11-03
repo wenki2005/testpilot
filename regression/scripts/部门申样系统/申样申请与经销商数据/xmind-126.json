@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-126",
+    "title": "每10分钟拉取一次物流最新信息",
+    "priority": "P2",
+    "expected": "每10分钟拉取一次物流最新信息",
+    "source": "部门申样书_V1.0_测试用例.xmind › 数据接口层 › 易查单物流接口 › 物流轨迹查询 › ✅ 每10分钟拉取一次物流最新信息",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "数据接口层",
+      "易查单物流接口",
+      "物流轨迹查询"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "no-steps",
+    "source": "none",
+    "storedStepCount": 0,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 0,
+    "steps": []
+  },
+  "readiness": {
+    "hasFixedSteps": false,
+    "coverageGap": "原包状态：hold-account-or-effect-review；需先确认账号、环境或副作用条件。",
+    "detail": "此条验证服务端审批、库存、出库或物流集成；当前仅有前端和数据库只读访问，尚无对应事件、接口契约及服务端执行证据。",
+    "nextAction": "补齐该集成的测试入口、契约和事件记录；涉及创建、锁单或真实通知时需明确授权，不能仅凭页面文字通过。"
+  },
+  "caseDigest": "01405f8b6b62a977097acd40ceb6574a59526b519fce310122b7232aa6e5e85e"
+}

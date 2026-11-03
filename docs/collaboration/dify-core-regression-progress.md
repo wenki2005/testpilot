@@ -307,3 +307,190 @@
 - 新增2条补充只读用例并通过：`local-record-visible`（申请记录显示编号/待审批）和 `local-record-nomatch`（搜索不存在编号显示暂无申请记录）。原 `xmind-91` 空态因已有记录不再成立，已从计划移除。
 - `xmind-94` PC/H5 两端空态对照因同一条记录阻塞；不是目标缺陷。要恢复需清掉测试记录或用另一无记录账号。
 - v6 计划 21 条：18 通过、0 失败、3 阻塞（92、38b、94）；补充模块4条全部通过。
+
+## 2026-11-02 夜间接续：隔离旧电脑状态，修复申请筛选同名定位
+
+- 已读取原演示目录规则、会议差距、最新验收及 GitHub 最新交接。创建者 `main` 已到 `918a08f`，包含新电脑的 v6 计划和另行创建记录的历史；这些资料不构成本夜再次写业务或清理记录的授权。本夜不创建/审批/取消/删除业务，不写目标库，不推送或合并。
+- 原目录 `D:\TestPilot-Demo-0.2.0-Windows\TestPilot-Demo-0.2.0-Windows` 的 4 个 PDF 修改及 2 个未跟踪文件完整保留。继续开发在其 `.local/public-release` 隔离源码目录，先将干净主分支快进到 `918a08f`，再建本地分支 `codex/dify-readonly-filters-20261102`；没有覆盖新电脑成果。
+- 4319 仍是原演示目录实例，5 个旧模块、无活动批次；本机最新仍为 10-31 的 12 条申样批次。新电脑交接目录 `D:\TestPilot-Dify测试系统\testpilot` 和对应 v6 私人数据不在此机。`run-regression-plan --dry-run` 实际拒绝：v6 计划申样版本 `27cba321…`，本机仍 v1/`85835ba9…`。没有重绑计划、重建同名假模块或以旧批次充当 v6。
+- Dify 局部修复 `dify-list-scenarios.ts`：用途/状态文字亦出现在记录卡片中，不能再对全页 `getByText` 猜测点击。现在只在已知目标 origin、申请列表 hash、PC/H5 对应用途/状态筛选栏中的唯一 `li` 定位。记录卡片同名文字不参与；筛选栏/选项重复或结构缺失仍阻塞。不增加共享 BrowserStep、不修改共享执行器、网络策略、账号或全局界面。
+- 工具定向验证 **2 项测试通过**，其中实际 Playwright 浏览器覆盖 11 次结果/PNG 核验：PC/H5 均有同名记录文字而正确筛选；零记录和仅一类记录仍保留数据阻塞；不相关记录点击次数为 0；重复/缺失筛选栏不猜测；错误结果集合仍失败。测试只用隔离页面及合成响应，不计为真实部门申样通过。
+- `scripts/run-regression-plan.mjs` 只修正版本错误提示：实际可能是本机旧配置，不应一律说“已有新版本”。现在明确显示计划/当前版本并要求核对服务与数据目录，仍拒绝发起批次。前后端类型检查和前端构建通过，保留已有大 chunk 提示；没有重复跑全库或调用外部 Dify。
+- 保存本地补丁和验收说明到聊天 `outputs/Dify筛选定位接续-2026-11-02.*`；补丁以 `918a08f` 为基线，包含上述源码、定向测试和本段记录。尚未加载到 4319，未打断账号窗口或修改旧实例数据。
+- **未验收**：89/90 在新电脑 v6 账号下的真实 Dify—浏览器—数据库—报告同轮复验。需要在拥有对应模块版本/账号的运行目录加载补丁后定向执行；本机缺该私人状态，不能直接运行计划。即使定位修复，1 条营销/待审批记录仍不足以证明全部用途/状态，空分类不能冒充正向覆盖。92 字段、38b 契约、订单状态/分页数据和通知渠道仍按各自缺项保留；94 当前验证器仍仅实现两端零记录状态，不改判通过。本夜不更新其他电脑已记录的 18/0/3 结果。
+
+## 2026-11-02 白天：本机状态复核、94 有记录跨端分支、删除动作影响说明
+
+本机确认为旧电脑：新电脑工作目录 `D:\TestPilot-Dify测试系统\testpilot` 不存在，v6 私人数据未随包。源码仍用旧演示目录下的隔离 checkout `D:\TestPilot-Demo-0.2.0-Windows\TestPilot-Demo-0.2.0-Windows\.local\public-release`；本机**没有 git 可执行文件**，分支/提交以 `.git\refs`、`.git\logs\HEAD` 和文件内容核对：HEAD 与 main 均为 `918a08f`，当前分支 `codex/dify-readonly-filters-20261102`，89/90 定位补丁已在该工作树（`dify-list-scenarios.ts` 的 `applicationFilter` 限定筛选栏唯一 `li`），4 个修改未提交。未推送、未合并、未提交。
+
+- 运行实例：4319（PID 45916，`node --env-file-if-exists=.env dist/demo/server.js`，旧演示目录）可访问，11 个模块全部为旧模块/受控样例（8 个原始模块 + 3 个 Markdown 样例），**没有 v6 的申样 v5、补充只读、订单/PC-H5 新版本**；MySQL 只读浏览器已连（只读状态，未查询任何记录）；无 v6 批次。旧 12/22 条结果仍属历史基线，不冒充 v6。
+- [x] 阶段 2（工具侧）：`node --test tests/dify-list-scenarios.test.mjs` **2 项通过**，其中真实 Chromium 覆盖 PC/H5 筛选栏、同名记录卡片零点击、歧义/缺失筛选栏阻塞、单类别数据阻塞、错误结果集合失败、11 次 PNG 校验。日志 `.local/dify-core-baseline/2026-11-02-list-scenarios.log`。**真实 89/90 同轮复验仍未验收**：本机无 v6 模块版本与账号窗口，未用旧批次顶替。
+- [x] 阶段 3（代码 + 工具测试）：`dify-device-scenarios.ts` 的 94 跨端核验补“有记录”分支，零记录分支保留为独立状态：
+  - 有记录时逐端读取本人申请/订单列表，要求本条接口成功、结构完整；每条 `applyNo` / `orderNo` 必须在本端页面可见（接口与页面不一致即失败）。
+  - 两端对照同一账号（userId 一致）的列表总数、第一页编号集合、每条审批状态与用书类型字段；订单第一页编号集合与“部分订单编号关键词”命中集合；任一不一致判失败（`断言失败`），拿不到成功查询才判阻塞，不把不一致降级为阻塞。
+  - 零记录仍按原空态断言通过，但明确写“仅覆盖当前零记录状态，不宣称有记录详情/分页已验收”；不删除任何原断言。
+  - 原设备/页面恢复沿用 finally；只改 Dify 局部适配器，不改共享执行器、步骤协议、账号模型或全局 UI；模块版本/计划无需重绑（94 的执行计划在运行时由 `reviewDifyDevice` 生成，缓存只存步骤不存该分支）。
+- [x] 验证：`tsc -p tsconfig.json` 退出 0；`node --test tests/dify-device-scenarios.test.mjs` **4 项通过**（新增 1 项覆盖：两端一致通过、编号集合不一致失败、总数/空态不一致失败、搜索命中集合不一致失败、个人信息不落证据）。日志 `.local/dify-core-baseline/2026-11-02-device-scenarios.log`。工具测试数 4 与业务通过数分开，**不代表真实 Dify 业务通过**。
+- [x] 阶段 5（只出说明未改共享行为）：新增 `docs/collaboration/Dify删除样书动作-共享影响与回退-2026-11-02.md`，列出 `document-test-workflow.ts` 5 处、3 个 `executeDocumentRun` 调用方、导出 `run.mjs` 同源拷贝、7 项风险、最小收紧方案与回退方式，等用户判断后再动共享执行器。
+- 阶段 1 阻塞：v6 模块版本/缓存/历史证据不在本机，无法用 `dify-machine-transfer` 导出导入；不复制单个 `records.sqlite`，不重建同名假模块，不重绑计划。
+- 阶段 4 阻塞：`202611010002` 的列表—详情—接口—只读数据库同轮链需要 Dify 批次 + 账号窗口 + 可定位的只读查询；本机数据库工具只有表清单/分页读取，没有按申请编号的只读查询，且不能拉全表代替，未执行。
+- 阶段 6 缺项不变：92 字段、38b 旺店通契约、29/BUG-003 数量上限、10/42/45/49 文案口径、93 分页与订单多状态数据、通知渠道、多账号并行。
+- 结论：本机可做的 Dify 局部代码与工具验证已完成（89/90 定位已复盘，94 有记录分支已实现并测试）；**真实 Dify—浏览器—账号—截图—数据库—报告同轮验收仍全部未完成**，需回到持有 v6 数据的电脑或提供匹配的私人数据目录。未推送、未合并、未写目标库、未创建/审批/删除业务。
+
+## 2026-11-02 工具流主控：本机工具契约与最小闭环
+
+按用户确认的“Dify 固定工作流主控 + 本机执行”目标，先做工具层最小闭环，不改共享执行器、不改账号/调度/网络策略。
+
+- [x] 新增 `src/adapters/dify-tool-gateway.ts`：`preflight / start_case / get_case_result / verify_database / finish_batch` 五个工具，Bearer 令牌鉴权（未配置即 503，不静默开放）、requestId 幂等、每分钟 60 次上限、有界等待（≤15s、250ms 轮询、不阻塞事件循环）、逐次审计（用途/耗时/状态/`modelCalls:0`/`modelUsage:"unknown"`）。
+- [x] `src/adapters/dify-web-modules.ts` 增加 `orchestrator:'dify-tools'`：工具启动的任务强制固定模式，跳过 Dify prepare/dispatch/report 三个模型回调，报告在本机生成；`dify` 原路径保持不变。
+- [x] `src/demo/server.ts` 挂载 `/api/dify-tools/*` 与 `/api/dify-tools/audit`；令牌只从 `TESTPILOT_DIFY_TOOL_TOKEN` 读取，`.env.example` 已登记。
+- [x] 新增 `integrations/dify/tool-contract.md`（接口契约、限额、连接方案与未实现项），`web-module-protocol.md` 增加指引。原三阶段协议保留，不覆盖。
+- [x] `tests/dify-tool-gateway.test.mjs` 7 项通过：令牌、预检可执行/阻塞与版本漂移拒绝、越界用例拒绝、幂等冲突、重复启动拒绝、有界等待与不重复执行、`not_required` 数据库语义、批次完整性、审计 `modelCalls=0`。
+- [x] 本机真实闭环（受控样例模块 `311187ce…`，非部门申样）：独立 4320 实例 + `artifacts/demo-toolrun` 副本，连续两轮
+  - 第一轮 task `6f4f7fb2-76a3-445f-9536-784b899fb030`，第二轮 `c888d720-dbb2-4f1f-9ab9-7d90b9272cd4`；
+  - 均 `passed 1 / failed 0 / blocked 0`，PNG 21,429 字节 HTTP 200，报告 901 字节；两轮约 7.2 秒/轮；
+  - `verify_database` 返回 `not_required`（该用例原预期不要求数据库，未凭空增加）；
+  - 审计累计 `modelCalls=0`，`modelUsage=unknown`；两轮均未调用整理/汇总模型节点。
+  - 证据：`D:\TestPilot-Dify-AI-handoff\evidence\tool-run\{round1.json,round2.json,report-round1.md,report-round2.md,sample-heading-<taskId>.png,ui-4320.png}`；验证实例已停止，4319 未动。
+- [x] 回归：`tsc -p tsconfig.json` 退出 0；`tests/dify-web-modules.test.mjs` 25 项仍全通过（日志 `.local/dify-core-baseline/2026-11-02-web-modules-after-tools.log`）。
+- 未验收：Dify 云端真实调用本机工具（本机只监听回环、无公网入口，未擅自暴露）；三个按需 AI 场景（草稿/辅助定位/失败分析）本轮未接入；部门申样 3～5 条真实只读用例两轮未执行（缺 v6 模块版本与账号窗口）。
+- 复跑方式：`TESTPILOT_DIFY_TOOL_TOKEN=<≥16位> PORT=4319 TESTPILOT_DATA_DIR=artifacts\demo node dist/demo/server.js`，其余见 `integrations/dify/tool-contract.md`。4319 现仍是旧构建，替换前需先停旧实例并确认账号窗口可重新登录。
+
+## 2026-11-02 第三轮：按需 AI 入口、联调准备与推荐
+
+- [x] 新增 `src/adapters/dify-ai-assist.ts`：草稿 / 辅助定位 / 失败分析三个按需入口（`POST /api/dify-ai-assist/{draft|relocate|diagnose}`），复用已有 `model-settings` 配置；固定回归不经过该模块。
+  - 配置校验：无 `TESTPILOT_API_KEY`/`OPENAI_API_KEY` 时返回 503 `missing_configuration` 并列出所需变量，不假装成功；`GET /api/dify-ai-assist/config` 只返回是否可用、模型与地址，不回显密钥。
+  - 限制：输入 ≤12,000 字符、输出 ≤900 tokens、超时 45s、重试最多 1 次、定位候选 ≤5、诊断每类 ≤30 条；超限直接拒绝，不静默截断。
+  - 安全：仅发送脱敏证据（`redactSensitiveExportData` + Bearer/`sk-`/cookie/token 正则清洗）；错误分类 401/403、429、5xx、超时、非法 JSON 分别处理；失败只记审计，不改写用例结果与预期。
+  - 证据复用：同一证据（task+model+脱敏输入）哈希命中缓存，返回 `cached:true` 并标注来源，不重复计费。
+  - 审计：`GET /api/dify-ai-assist/audit` 记录用途、耗时、模型、token 用量（缺失为 null）、失败码；`modelCalls` 只计成功调用。
+- [x] `tests/dify-ai-assist.test.mjs` 6 项通过：缺配置、结构化输出与 token 记录、缓存复用、凭据清洗、非法输出拒绝、瞬时失败重试、超限拒绝、候选上限。
+- [x] 联调准备：新增 `GET /api/dify-tools/ready`（令牌保护，返回入口/限额/超时/暴露范围）与 `scripts/verify/dify-tool-contract.mjs`（两轮 `preflight→start_case→get_case_result→verify_database→finish_batch→audit`，失败非 0 退出）。
+- [x] 本机实例（4320，副本数据目录）实测：无令牌 401；ready 200；AI 配置 `available=false`；`diagnose` 实际 503 `missing_configuration` 且审计记录 `errorCode`；契约脚本两轮通过，任务 `c7042642-4c3b-4ae5-902c-50ff927a8e35`、`8b6d2bb8-58c8-4c06-9419-df0567fd4601`，计数均 `passed 1`，`modelCalls=0`。
+- **本轮观察到的工具缺陷（未修）**：上述两轮契约脚本返回 `evidenceUrl:null`，`document-tests/runs/<id>/screenshots` 为空；而 01:33 的两轮同为该用例却有 21,429 字节 PNG。截图落盘不稳定，需在真实联调前定位；因此这两轮不作为“证据齐全”验收。
+- 连接推荐：Cloudflare Tunnel 仅暴露 `/api/dify-tools/*`（本机无自托管 Dify、无已装隧道、无授权网关；云端密钥与已发布应用均在用）。安装与暴露属新增外部条件，已把方案/范围/费用/关闭方式写入 `tool-contract.md` 第 5 节，等用户明确同意后执行。
+- 业务验收：仍缺 v6 模块版本与已登录账号窗口；4319 未停止、未替换。89/90/92/38b/94 均未因本轮改动而变成通过。
+
+## 2026-11-02 第四轮：真实公网入口与真实 AI 草稿调用
+
+- [x] 公网入口：`winget` 安装 cloudflared 成功，但其边缘发现被本机 DNS 拒绝（`dnsquery: DNS operation refused`），临时 `trycloudflare` 隧道无法建立（公网 530）。改用系统 SSH 的 `localhost.run` 反向隧道成功：`https://2c802c6acaadf4.lhr.life` → 本机 `4330`（新增 `scripts/dify-tool-proxy.mjs`，只放行 `/api/dify-tools/*`）→ `4321` 独立验证实例。实测无令牌 401、`GET /` 404。
+- [x] 经公网两轮契约：`preflight → start_case → get_case_result → verify_database → finish_batch → audit` 全通过，task `9a665cba-7d6e-47a4-925a-bc6666401b1f`、`097281f6-4b18-4a31-a54a-094d119e9b07`，约 10.2s / 6.6s，`modelCalls=0`。网络可达性不再是阻塞项。
+- [x] 真实 AI 草稿：`dify-ai-assist` 增加 Dify 整理工作流通道（无本地模型 key 时复用已发布 prepare 应用）。经 HTTP 端点实际调用成功：workflow run `1d398907-f06d-4989-ae45-b66ad6a6319f`，**524 tokens**，2.7s，返回 1 条自然语言步骤草稿 + 1 个澄清问题；审计记录 `model=dify-prepare-workflow`、`modelCalls=1`。草稿明确标注需规则校验/试跑后保存版本，不直接执行。
+- 未实现真实调用：辅助定位、失败分析仍需本地模型配置（`TESTPILOT_API_KEY`/`OPENAI_API_KEY` + `BASE_URL` + `MODEL`）；Dify 侧没有对应应用，未伪造。
+- 仍未验收：Dify 云端真正发起工具调用——需要把 HTTP 节点配到已发布工作流（当前只有应用 API key，无控制台会话，服务 API 不能创建/编辑应用）；部门申样真实用例仍需 v6 模块版本与账号窗口。
+- 测试：`tests/dify-ai-assist.test.mjs` 增至 **7 项通过**（含 Dify 通道映射与缓存）；工具契约 7 项、模块流程 25 项保持通过。证据：`D:\TestPilot-Dify-AI-handoff\evidence\{public-tunnel-contract.json,ai-assist-audit.json,2026-11-02-fourth-round.json}`。
+
+## 2026-11-02 第五轮：按复核意见修复工具契约与页面入口
+
+按《Dify工具流进展核对与接续要求》逐项修复，未改共享执行器、账号、调度、网络策略。
+
+- [x] P0 状态查询缓存：`get_case_result` 不再缓存，同一 requestId 每次都读最新任务状态；启动幂等只保留在 `start_case`。新增测试「同一查询编号、任务由 running 变 finished」通过。
+- [x] P0 批次冻结：`preflight` 冻结 `batchId + moduleId + moduleDigest + systemId + accountId + 全部 caseIds`（含阻塞项）；改范围 409 `batch_scope_conflict`。`start_case` 必须先有冻结批次，范围外 409 `out_of_scope`，预检阻塞 409 `case_blocked`。
+- [x] P0 汇总范围：`finish_batch` 按冻结清单统计，传小 caseIds 409 `scope_mismatch`；预检阻塞记 `blocked`、未启动记 `not_executed`，不再允许“只报已执行子集”。
+- [x] P0 数据库证据语义：`verify_database` 区分 `not_required` / `missing_evidence`（原预期涉及数据库或接口字段但本轮未采集）/ `collection_blocked` / `collection_failed` / `completed`；缺证据不再判“不需要”。
+- [x] 调用统计：AI 审计记录 `attempts / responses / accepted / channel / upstreamRunId / usage`；上游返回的 runId 与 usage 在解析前保存，解析失败也保留；`dify-workflow-client` 不再把缺失 tokens 记为 0；`modelNodeCalls` 明确为 unknown（工作流请求数 ≠ 模型节点数）。
+- [x] 验收脚本：指定 `--case-id` 不可执行直接失败、不改测；要求终态 `finished` 且 `passed` 才算通过（`--allow-nonpass` 可保留非通过终态）；按冻结范围执行全部用例。
+- [x] 受控样例实测（4321，冻结 5 条）：`passed 4 / failed 1 / blocked 0 / not_executed 0`，失败项 `sample-failure-probe` 保留并带本轮截图；`verify_database=not_required`。证据 `evidence/fixed-contract-run.json`。
+- [x] 页面入口：`dify-module-workbench.tsx` 与主工作台 `system-module-workbench.tsx` 的用例详情新增「AI 分析」「辅助定位」，显示四段结构与用量/未知；缺配置时显示 503 原因，不改原结果。前端类型检查与 `vite build` 通过，页面加载无控制台错误（截图 `evidence/ui-main-4321.png`）。
+- 未完成：Dify 控制台无会话，无法导入/发布工作流 DSL、也无法让云端真正调用本机工具；`prepare` 之外的定位/诊断仍缺模型配置（未用假响应）；v6 模块与账号窗口仍缺，部门申样 0 条真实执行。
+- 测试：工具 8/8、AI 7/7、模块流程 25/25，构建与前端类型检查均通过（本轮重跑，日志 `.local/dify-core-baseline/2026-11-02-fifth-*.log`）。
+
+## 2026-11-02 第六轮：账号执行绑定、工具流 DSL 与静态校验
+
+- [x] 账号绑定：`preflight` 现在解析并冻结账号所属系统（`accountId → systemId`）；`start_case` 通过系统/账号目录解析 `profileId + targetUrl` 传入执行器，校验账号存在、归属系统一致、目标地址一致；真实系统未绑定账号直接 409 `account_required`，不再落到默认未登录窗口；本机回环样例模块允许无账号且不伪造 profile。
+- [x] 定向测试 `tests/dify-tool-account-binding.test.mjs` **7 项通过**：无账号拒绝、账号不存在、跨系统账号、正确窗口复用（同一 profile 传入执行器）、目标地址不一致、回环样例无账号、阻塞项计入冻结范围。
+- [x] 交付可导入 DSL：`integrations/dify/module-tool-execution.yml`（15 节点/13 边：start → 代码生成幂等键 → preflight → 解析/分支 → 串行 iteration（start_case → 代码生成每轮新 requestId → get_case_result 15s 有界 → 分支：running/终态）→ 合并预检阻塞与未执行 → finish_batch → end）。固定链无 llm 节点。
+- [x] 新增静态校验 `scripts/verify/dify-workflow-static.mjs`：检查变量、节点/边引用、工具覆盖、迭代串行、轮询 requestId 轮次生成、Bearer 与环境变量入口；当前 **problems=[]**（exit 0）。
+- 未完成（本轮未交付，不冒充）：AI 证据读取（jobId/caseId/attempt → 截图/错误/网络/DB 摘要与脱敏）、草稿“校验→试跑→保存版本”与定位“独立验证→固化”页面闭环、按钮点击级验证（副本数据目录没有系统/批次，主工作台打不开带结果的详情；legacy 面板下拉未取到模块）、定位/诊断专用 Dify 辅助工作流 DSL。
+- 现有证据：`tests/dify-tool-account-binding.test.mjs`、`integrations/dify/module-tool-execution.yml`、`scripts/verify/dify-workflow-static.mjs`；Dify 控制台仍无会话，DSL 未导入发布。
+
+## 2026-11-02 第七轮：真实目录交互验证与页面打开
+
+- 用 4319 的只读 SQLite 备份（`VACUUM INTO`）建立独立数据目录 `artifacts\demo-ui`，在 **4322** 启动新构建实例；4319 未停未改。备份得到 2 个系统、51 轮批次、11 个模块、120 个任务。
+- 按钮点击级验证（Playwright，真实批次 10/31 5 模块 22 条）：
+  - 选择系统 → 选择批次 → 查看结果 → 详情，`.sm-evidence` 正常出现，「AI 分析」「辅助定位」两个按钮存在；
+  - 点击 AI 分析，在未配置模型时页面显示 503 原文（需要 TESTPILOT_API_KEY / BASE_URL / MODEL），未伪造结果；
+  - 切换另一条用例后上一次分析被清空（新增 `useEffect(()=>setAssist(null),[detailId])`）；
+  - 操作前后用例状态行完全一致，页面无 console error；
+  - 截图 `evidence/ui-click-final.png`。
+- 已在本机默认浏览器打开 `http://127.0.0.1:4322/?page=dify-regression` 供查看；4322 为新构建 + 真实目录副本，4319 保持原样。
+- 仍未完成：AI 证据读取（jobId/caseId/attempt）、草稿与定位的版本固化页面闭环、定位/诊断专用 Dify 辅助工作流；Dify 控制台仍无会话，DSL 未导入发布。
+
+## 2026-11-02 第八轮：Dify 控制台实操（导入/发布/密钥）与运行失败
+
+- 在用户已登录的 Edge（CDP 9222）中完成：DSL 导入 → 应用创建 → 发布 → 创建 API Key（保存于 `.local/dify-app-key.txt`，未入库）。
+- 完整工具流 DSL（含迭代/分支）导入后**编辑器渲染报错**，不可用；据此先用与 Dify 0.7 兼容的最小结构（start → code → http-request → code → end）建立应用 `49d8d8d4-e4f7-43fa-8329-56bc34b2b222`「TestPilot 工具流-最小预检」，页面可正常渲染并已发布。
+- 通过控制台 API 设置工作流环境变量 `TESTPILOT_TOOL_BASE` / `TESTPILOT_TOOL_TOKEN`（POST `/console/api/apps/<id>/workflows/draft/environment-variables`，PUT/PATCH 为 405）。
+- 调用 `POST https://api.dify.ai/v1/workflows/run`（最小工作流，受控样例模块）返回 **HTTP 500、无 workflow_run_id**；Dify 日志页为空，说明 run 未建立。已排除本机链路：同一时刻公网 `/api/dify-tools/ready` 为 200，4321/4330 正常。
+- 隧道仍不稳定：localhost.run 会话多次被服务端断开（502），每次需重建并更新 Dify 环境变量；这是运营风险，不是代码问题。
+- 未完成：真实 Dify 工具调用（run 未建立）、完整迭代工作流、部门申样 3 条真实用例。
+
+## 2026-11-02 第九轮：数字节点 ID、inputs 传参与页面按钮闭环
+
+- 复核确认：控制台创建的工作流节点 ID 为 13 位数字（`1793160000001`），带连字符的 UUID 不会被 Dify 模板解析。改用数字 ID 后，HTTP 节点 body/URL/header 均可正确插值。
+- 新工作流 `403c57bc-0d6d-4f2a-891c-a1f79a7bb57b`「TestPilot 工具流-主控v6」：全部参数（含 base_url 与 token）作为 **API inputs** 传入，不再修改环境变量、不再每次重新发布。
+- 同工作流连续两次不同 inputs 验证：`v6-run1`（sample-heading）与 `v6-run2`（sample-field）均 succeeded，工具审计中批次/用例参数互不串批。
+- 页面接入：`system-module-workbench` 新增「Dify 主控运行」按钮，服务端 `/api/dify-tool-run/start` 按用例逐条调用 v6 工作流并汇总；点击实测返回 runId `ec3c9951-aee6-4935-a421-630bb81c4b61`（xmind-92，not_executed：缺登录态，未计通过）。
+- 受控样例经页面/接口链路同轮通过：batch `dify-ui-mvytgt1l-sample-heading`，runId `622dc47e-2e3f-4cbd-9a94-e3c6d8b1b768`，task `5e701de7-cf3e-498f-89d3-ab6c6aaafff3`，计数 passed 1。
+- 已修正 Dify 兼容问题：`params` 必须为字符串；`authorization: bearer` 节点配置会 500，改用 `no-auth` + Authorization 头；HTTP 节点不解析 node 变量（UUID）导致之前只能靠 env 传参。
+- 待修：页面汇总未展示 `not_executed`；真实部门申样需要账号窗口扫码登录，目录当前为 v1 模块（76 条），v6 需迁移。
+
+## 2026-11-02 第十轮：v6 镜像恢复与真实两轮验收
+
+- 读取本机路径清单（v6路径与接续提示词），确认计划 v6、两个镜像目录、运行库路径。
+- 镜像核对：申样镜像 `_module.json` version 27cba321…/v5/13 条（12 固定、38b 无步骤），caseDigest 与逐条脚本齐全；补充只读镜像 2b1c7bba…/v7/4 条，均有步骤。
+- 运行库核对：`demo-toolrun` 的 records.sqlite 无上述两个版本（只有 11 个旧模块），系统目录亦无。
+- 依据镜像重建（**非原版本**，保留来源与差异）：
+  - 申样：新模块 `8faf36be-1c31-48b8-a482-7aba80aa7eb4`，13 条、37 步；digest `605fd9f3…` ≠ 原 `57b9b3fd…`；catalog 模块 `95f99c88-6564-4345-af33-527bbb08b624`。
+  - 补充只读：新模块 `ec72a1af-fe36-4351-a16e-aca08c2b63cf`，4 条、13 步；digest `2516a8c6…` ≠ 原 `f489a26a…`；catalog 模块 `4503a428-5ff0-42c1-b9d5-438fa2b5ddb6`。
+  - 未手改原 131 条、历史批次或 catalog 版本；原 versionId 未被伪造复用。
+- 账号：系统 `436847ad…` 连接状态 connected（profile `edd7bf33…`）；数据库只读连接 blocked（不影响本轮不依赖数据库的用例）。
+- 真实两轮（每轮 3 条，经 `/api/dify-tool-run/start` → 已发布 Dify 主控 → 本机工具）：
+  - 第 1 轮 batch `dify-final-1-mvyuh3g9`：xmind-22 run `9615d0b4…` task `5a22c55d…`；xmind-33 run `d2b79107…` task `4f44bc24…`；xmind-40 run `ade9ee6d…` task `89d91958…`；全部 passed 1/0/0，均有截图。
+  - 第 2 轮 batch `dify-final-2-mvyuhw35`：xmind-22 run `6792f463…` task `f90d3794…`；xmind-33 run `9e72d11b…` task `75950c71…`；xmind-40 run `73d2f469…` task `d86c7360…`；全部 passed 1/0/0，均有截图。
+  - 未拼接旧结果；模型调用 0（固定主控无模型节点）。
+- 其余真实用例状态：xmind-25 两轮均 blocked（缺冻结图书基线）；xmind-43 首轮 passed、二轮 blocked（无法定位「收件人」）；xmind-17/18/37/38a 预检阻塞（断言不完整）；38b 无固定步骤；92 缺字段。
+- 页面入口：已运行「Dify 主控运行」并通过（早前 xmind-92 实测 run `ec3c9951…`）；本轮最后一次页面点击自动化在等待时挂起被终止，未以该次作为验收依据。
+- 证据：`evidence/v6-final-two-rounds.json`、`evidence/dify-page-tool-run.json`。
+
+## 2026-11-02 Codex 接手：页面异步主控、最小集合扩为五条并完成两轮
+
+用户授权接手 DeepSeek 的本机成果。先核对 AGENTS、工作树、台账、4321 与实际数据目录，六个交接任务及其 PNG 均可读取。所有既有修改已保全到私人目录 `D:/TestPilot-Dify-AI-handoff/backups/codex-takeover-2026-11-02T06-11-36-654Z`（44 个文件及 tracked patch），没有提交或推送。
+
+### 实际修改
+
+- 新增 Dify 专用 `dify-tool-runner.ts`、`dify-tool-workflow-runner.ts` 与 `dify-tool-run-contract.ts`。启动立即返回 202 与本地运行 ID，后台串行调用已发布 v6 工作流；GET 查询、刷新和报告下载不重发执行。运行范围/原预期/版本及逐条 Dify runId、本机任务、证据保存在 `demo-toolrun/dify-tool-runs/index.json`。重启将未完成任务记为中断，不重放；同启动 requestId 幂等、不同输入冲突拒绝。
+- 仅替换 server 中 `/api/dify-tool-run/*` 的胶水。新增 `status?id=<运行ID>`、按系统列主控历史、`report?id=...`；保留旧 `status?batchId=...` 只读查询。旧单模块启动参数仍可接收，但返回改为异步 202；调用方必须查 run，不再等待一个 HTTP 请求完成整轮。原网页回归、旧系统模块批次与共享执行器未修改。
+- 主工作台修复“多模块仅跑第一个”和“全部范围没有选中用例”的问题；按已勾选全部模块/各自范围启动。新增即时进度、五种结果计数、逐条原预期/实际结果/截图/任务编号/报告、主控历史与 URL 运行 ID。刷新继续查看同轮，不再次执行。默认不再同时加载无关旧批次；旧历史仍可手动查看。
+- 新结果表沿用现有 CSS，单独修复旧表格首列复选框宽度导致标题竖排的继承问题；没有全局界面改版。
+- `dify-readonly-scenarios.ts` 新增 source-bound `recipient-length` 审核：只针对原 XMind“填写收件人 / >20字：限制输入”，本轮唯一 placeholder 定位，保留“收货信息/收件人”可见、25 字输入与前 20 字回显断言；缺失/重复控件不猜测。仅运行/缓存计划适配，原用例、镜像、预期不变，没有修改共享字段解析。
+- 找回 `artifacts/demo/dify-web-modules/book-fixtures.json`，通过既有校验后复制到 `demo-toolrun` 原先不存在的位置；保留 2026-10-31T09:12:17.404Z 采集时间、来源、克重单位及两种图书，不从本轮接口反推预期、不刷新旧基线时间。没有执行目标数据库写入或声称本轮重新查询了数据库。
+- 临时隧道实测旧地址 502，复用既有 4330 受限代理建立本任务 SSH 隧道，采用专用 known_hosts 与 keepalive，PID 存于 `.local/dify-tools/codex-tunnel-process.json`。只更新 `demo-toolrun/dify-tool-base.json`；Dify 通过 inputs 接收新入口，不修改环境变量、不重新发布。4321 使用原 `demo-toolrun` 加载新构建，4319、4322 与其他 SSH 未动。
+
+### 工具自身验证（不计入业务通过）
+
+- 服务端 TypeScript、前端 TypeScript、Vite 构建通过；保留已有 >500k chunk 提示，未改构建配置。
+- `node --test tests/dify-tool-runner.test.mjs tests/dify-tool-gateway.test.mjs tests/dify-tool-account-binding.test.mjs`：20 项通过（新 runner 5 项，覆盖异步返回、全部模块/全部范围、刷新不重放、幂等冲突、串行占用、版本漂移、错误/阻塞保留、中断恢复及错误不泄露凭据）。
+- `node --test tests/dify-readonly-scenarios.test.mjs tests/dify-book-scenarios.test.mjs tests/dify-web-modules.test.mjs`：35 项通过，含新增收件人源约束、重复控件拒绝、原预期不变检查及已有真实 Chromium 只读/图书校验。合计 55 项工具检查，不称为 55 条部门申样用例通过。
+- agent-browser 专用会话点击当前页面“Dify 主控运行”，验证开始后即时显示队列、运行中进度、终态；刷新同 run ID 不新增执行。检查浏览器 console/errors 无输出。
+
+### 真实业务结果：五条最小集合，两轮分别保存
+
+在恢复模块 `8faf36be-1c31-48b8-a482-7aba80aa7eb4`（仍为镜像重建新版本，不冒充原 v6）执行；原 core 保留 22/33/40，新增 starter 为 22/25/33/40/43，不改原始 131 条及旧版本。
+
+| 轮次 | 本地主控运行 ID | 范围 | 结果 | 耗时 |
+| --- | --- | --- | --- | --- |
+| 1，页面点击 | `3f2a3115-c573-48cf-b0e2-63db89aeaf98` | 22、25、33、40、43 | 5 通过 / 0 失败 / 0 阻塞 / 0 异常 / 0 未执行 | 72 秒 |
+| 2，页面再次点击 | `52de95d7-1bda-482c-b331-6dfbf79b2a0e` | 同一五条、同一版本与账号 | 5 / 0 / 0 / 0 / 0 | 77 秒 |
+
+每条有独立 Dify workflow runId、工具批次、实际本机 task、报告与有效 PNG；十张截图逐一检查签名/字节/哈希，报告含本条任务 ID，工具审计按本条 batch 关联，原预期与仓库镜像一致。两轮 Dify 返回 total_tokens 均为 0，不重复整理，没有使用模型辅助，也没有将失败/阻塞改判。
+
+证据：`D:/TestPilot-Dify-AI-handoff/evidence/codex-five-cases-two-rounds.json`、`codex-five-cases-round1-report.md`、`codex-five-cases-round2-report.md`、`codex-five-cases-final.png`。此前还对 25/43 各作两轮定向复验（`codex-takeover-directed-two-rounds.json`），没有拼入上述两轮结果。
+
+### 当前入口与未验收范围
+
+- 最终页面：`http://127.0.0.1:4321/?page=dify-regression&system=436847ad-f144-425f-b303-1ca9b22e0b52&scope=starter&toolRun=52de95d7-1bda-482c-b331-6dfbf79b2a0e`。选择“申样申请与经销商数据（镜像恢复）”、最小回归，点“Dify 主控运行”复跑。原“开始回归”仍是旧执行入口，未作全局替换。
+- 4321 源码是 `.local/public-release`，数据为原目录 `artifacts/demo-toolrun`；PID 信息 `.local/dify-tools/codex-4321-process.json`。账号窗口再次通过现有 connect 只读检查为 connected，数据库只读状态仍 blocked。已登录会话沿用，未要求再次扫码。
+- 本轮只完整验收申样五条；其他模块本轮未运行，不借旧结果计通过。申样恢复版本还有八条不在 starter，不宣称 13 条或 21/131 条全部跑通。
+- 17/18 的实际选择断言、37/38a 的完整选项集合断言、38b 契约、92 账号字段、本人订单/详情/分页数据及原数量缺陷继续保留。只读数据库连接未恢复，25 使用既有有效基线加本轮接口与页面对照，不代表已完成实时数据库链。
+- 临时 localhost.run 仍有会话断开/地址变化风险；本次已恢复但不是长期固定网关。没有升级/购买服务、变更全局网络、提交业务、写目标数据库、发通知或推送合并。

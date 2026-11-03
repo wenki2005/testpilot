@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-47",
+    "title": "未选全三级：提交校验标红",
+    "priority": "P2",
+    "expected": "未选全三级：提交校验标红",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 收件信息 › 选择所在地区 › 省/市/区三级联动 › ❌ 未选全三级：提交校验标红",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "收件信息",
+      "选择所在地区",
+      "省/市/区三级联动"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "fixed",
+    "source": "cache",
+    "storedStepCount": 2,
+    "cachedStepCount": 2,
+    "cacheFresh": true,
+    "stepCount": 2,
+    "steps": [
+      {
+        "action": "blurByLabel",
+        "label": "请选择区"
+      },
+      {
+        "action": "assertFieldInvalid",
+        "label": "请选择区"
+      }
+    ]
+  },
+  "readiness": {
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
+  },
+  "caseDigest": "87ea3751715944e3bf4c3f7f95c97064a2802400d6eaf6f02918ff9c18100d18"
+}

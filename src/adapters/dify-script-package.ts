@@ -32,7 +32,7 @@ export async function difyScriptPackage(jobs:WebModuleJob[]):Promise<Buffer> {
     files[prefix+'cases.md']=strToU8(formatDifyMarkdown(job.moduleName,cases));
     files[prefix+'manifest.json']=strToU8(JSON.stringify({jobId:job.id,moduleId:job.moduleId,moduleDigest:job.moduleDigest,planDigest:job.planDigest,selectedCaseIds:job.selectedCaseIds,originalResults:job.results.map(r=>({caseId:r.caseId,status:r.status,outOfScope:r.outOfScope})),readOnly:true,difyCalledByExportedRunner:false},null,2));
     if(cases.some(c=>c.expected==='必填未完成时提交按钮置灰不可点击'))files[prefix+'DIFY-CHECKS.md']=strToU8('必填未完成时提交按钮置灰不可点击：本机 Dify 额外验证渲染后的灰色背景。当前独立脚本不包含此样式检查，因此该条保留原预期并以无完整步骤/blocked 导出，不仅凭禁用状态宣称通过。请在 Dify 工作台运行此条。\n');
-    if(cases.some(needsDifyReadback))files[prefix+'DIFY-READBACK.md']=strToU8('本目录包含需要 Dify 本机查询回读或提示颜色补充核验的用例。独立脚本不包含这些补充检查，相应条目保留原始预期并留空步骤，独立执行须报告 blocked。请在 Dify 工作台执行完整核验。\n');
+    if(cases.some(needsDifyReadback))files[prefix+'DIFY-READBACK.md']=strToU8('本目录包含需要 TestPilot 本机查询回读、提示颜色或完整表单有效性转换核验的用例。独立脚本不包含这些补充检查，相应条目保留原始预期并留空步骤，独立执行须报告 blocked。请在 TestPilot 固定回归工作台执行完整核验。\n');
   }
   return Buffer.from(zipSync(files));
 }

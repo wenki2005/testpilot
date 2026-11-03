@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "generated": true,
+  "note": "自动生成，请勿手改。修改用例/步骤后，在 TestPilot 运行状态下执行 npm run scripts:export 重新生成。",
+  "system": {
+    "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
+    "name": "部门申样系统"
+  },
+  "module": {
+    "id": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+    "name": "申样申请与经销商数据",
+    "archived": false
+  },
+  "version": {
+    "id": "85835ba9-5e6f-425e-8238-d0dce2a7bff9",
+    "version": 1,
+    "digest": "bfa6e200710d60d24619de5fc57cb5ae214ba7e419f913f1a85968a51b702ed4"
+  },
+  "case": {
+    "id": "xmind-50",
+    "title": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录",
+    "priority": "P0",
+    "expected": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录",
+    "source": "部门申样书_V1.0_测试用例.xmind › 员工端-样书申请表单页 › 提交申请 › 点击「提交申请」按钮 › 校验全部必填项与格式 › ✅ 全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录 P0",
+    "modulePath": [
+      "部门申样书_V1.0_测试用例.xmind",
+      "员工端-样书申请表单页",
+      "提交申请",
+      "点击「提交申请」按钮",
+      "校验全部必填项与格式"
+    ]
+  },
+  "script": {
+    "format": "BrowserStep[]",
+    "status": "no-steps",
+    "source": "none",
+    "storedStepCount": 0,
+    "cachedStepCount": 0,
+    "cacheFresh": false,
+    "stepCount": 0,
+    "steps": []
+  },
+  "readiness": {
+    "hasFixedSteps": false,
+    "coverageGap": "原始预期要求提交或创建业务记录；当前 Dify 只读执行未验证该结果，不能用输入回显代替。",
+    "detail": "原始预期包含真实提交、创建记录或落库，超出本轮只读范围；不能用输入回显代替提交成功。",
+    "nextAction": "保留原预期，待明确可写沙箱、操作授权和清理方式后验证。"
+  },
+  "caseDigest": "d1dc17ed83ad587b25641fb775216fee61d96adf1dd7a042e3f313420264d662"
+}

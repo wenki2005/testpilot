@@ -12,9 +12,9 @@
     "archived": false
   },
   "version": {
-    "id": "b65b7052-2308-4804-92b6-e4635daa8efb",
-    "version": 2,
-    "digest": "69e6b2c2c9526194b854f6ad997d9115a5373045e6e78671a14b8c1a8ec40a66"
+    "id": "f0a757e4-52cf-4955-b810-91429ab5e710",
+    "version": 1,
+    "digest": "1cbaa663a74dc9b5f6192cdce7dab2b3b95a8917241a1f931e9e64c4edcef8f8"
   },
   "case": {
     "id": "xmind-78",
@@ -31,19 +31,28 @@
   },
   "script": {
     "format": "BrowserStep[]",
-    "status": "no-steps",
-    "source": "none",
+    "status": "fixed",
+    "source": "cache",
     "storedStepCount": 0,
-    "cachedStepCount": 0,
-    "cacheFresh": false,
-    "stepCount": 0,
-    "steps": []
+    "cachedStepCount": 2,
+    "cacheFresh": true,
+    "stepCount": 2,
+    "steps": [
+      {
+        "action": "blurByLabel",
+        "label": "收件人"
+      },
+      {
+        "action": "assertExactVisible",
+        "text": "收货信息"
+      }
+    ]
   },
   "readiness": {
-    "hasFixedSteps": false,
-    "coverageGap": "尚无固定步骤",
-    "detail": "此条需要本人可见且状态明确的申请/订单记录；当前空态或成功连接数据库不能证明详情、审批、筛选及分页正确。",
-    "nextAction": "按原预期准备本人可见的已有记录和对应状态；仍从同轮网页、接口、数据库对照，不借用他人的申请、不自动造单。"
+    "hasFixedSteps": true,
+    "coverageGap": "",
+    "detail": "",
+    "nextAction": ""
   },
-  "caseDigest": "7e1748dae1d65f20e78dc5daf1d41c93fc42f603e5c46a56eb7928402de6f28e"
+  "caseDigest": "f806766930acb2742aad14844d1ba5a46bd6bfba6051926d05af9997cf5f243e"
 }
