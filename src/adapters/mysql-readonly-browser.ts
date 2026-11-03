@@ -1,6 +1,7 @@
 import { createPool, type Pool, type PoolConnection, type RowDataPacket } from "mysql2/promise";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import type { DatabaseEvidenceRow } from '../domain/document-database-evidence.js';
 
 const DATABASE_HOST = "47.95.211.86";
 const DATABASE_PORT = 12010;
@@ -30,21 +31,25 @@ export interface MysqlRowsPage {
 
 let pool: Pool | undefined;
 let connectedAccount: string | undefined;
+export type MysqlTlsMode = "verify-certificate" | "encrypted-unverified";
+let connectedTlsMode: MysqlTlsMode | undefined;
 
 export function mysqlBrowserConfig(): { host: string; port: number; database: string } {
   return { host: DATABASE_HOST, port: DATABASE_PORT, database: DATABASE_NAME };
 }
 
-export function mysqlBrowserStatus(): { connected: boolean; host: string; port: number; database: string; account?: string } {
-  return { ...mysqlBrowserConfig(), connected: !!pool, ...(connectedAccount ? { account: connectedAccount } : {}) };
+export function mysqlBrowserStatus(): { connected: boolean; host: string; port: number; database: string; account?: string; tlsMode?: MysqlTlsMode; encrypted: boolean; certificateVerified: boolean } {
+  return { ...mysqlBrowserConfig(), connected: !!pool, encrypted: !!pool, certificateVerified: !!pool && connectedTlsMode === "verify-certificate", ...(connectedAccount ? { account: connectedAccount } : {}), ...(connectedTlsMode ? { tlsMode: connectedTlsMode } : {}) };
 }
 
-export async function connectMysqlBrowser(input: { user: unknown; password: unknown }): Promise<ReturnType<typeof mysqlBrowserStatus>> {
+export async function connectMysqlBrowser(input: { user: unknown; password: unknown; tlsMode?: unknown }): Promise<ReturnType<typeof mysqlBrowserStatus>> {
   if (typeof input.user !== "string" || !/^[A-Za-z0-9_.@-]{1,64}$/u.test(input.user)) throw new Error("MySQL 用户名格式无效。");
   if (typeof input.password !== "string" || input.password.length < 1 || input.password.length > 512 || input.password.includes("\u0000")) throw new Error("MySQL 密码无效。");
+  const tlsMode = input.tlsMode ?? "verify-certificate";
+  if (tlsMode !== "verify-certificate" && tlsMode !== "encrypted-unverified") throw new Error("MySQL TLS 模式无效；仅支持证书校验或加密兼容模式。");
 
   let ca: Buffer | undefined;
-  if (process.env.TESTPILOT_MYSQL_CA_FILE) {
+  if (tlsMode === "verify-certificate" && process.env.TESTPILOT_MYSQL_CA_FILE) {
     try { ca = await readFile(path.resolve(process.env.TESTPILOT_MYSQL_CA_FILE)); }
     catch { throw new Error("指定的 MySQL CA 证书文件无法读取。"); }
   }
@@ -61,7 +66,9 @@ export async function connectMysqlBrowser(input: { user: unknown; password: unkn
     connectTimeout: 8_000,
     enableKeepAlive: true,
     multipleStatements: false,
-    ssl: { ...(ca ? { ca } : {}), rejectUnauthorized: true },
+    // Explicit compatibility mode applies only to this fixed test database pool.
+    // TLS remains required; never retry a strict connection with weaker settings.
+    ssl: { ...(ca ? { ca } : {}), rejectUnauthorized: tlsMode === "verify-certificate" },
     supportBigNumbers: true,
     bigNumberStrings: true,
     dateStrings: true,
@@ -72,6 +79,8 @@ export async function connectMysqlBrowser(input: { user: unknown; password: unkn
     let grants: string[];
     let account: string;
     try {
+      const [tlsRows] = await connection.query<RowDataPacket[]>("SHOW SESSION STATUS LIKE 'Ssl_cipher'");
+      if (!tlsRows[0]?.Value) throw new Error("MySQL TLS 加密未建立；拒绝连接。");
       const [grantRows] = await connection.query<RowDataPacket[]>("SHOW GRANTS FOR CURRENT_USER()");
       grants = grantRows.map(row => String(Object.values(row)[0] ?? ""));
       const [identityRows] = await connection.query<RowDataPacket[]>("SELECT CURRENT_USER() AS account, DATABASE() AS databaseName");
@@ -84,6 +93,7 @@ export async function connectMysqlBrowser(input: { user: unknown; password: unkn
     const previous = pool;
     pool = candidate;
     connectedAccount = account;
+    connectedTlsMode = tlsMode;
     if (previous) void previous.end().catch(() => undefined);
     return mysqlBrowserStatus();
   } catch (error) {
@@ -102,6 +112,7 @@ export async function disconnectMysqlBrowser(): Promise<void> {
   const current = pool;
   pool = undefined;
   connectedAccount = undefined;
+  connectedTlsMode = undefined;
   if (current) await current.end();
 }
 
@@ -251,6 +262,26 @@ export async function readDepartmentGoods(applyNo:string) {
     const [rows]=await connection.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(5000) */ g.product_id,g.qty,g.price,g.subtotal,g.unit_weight FROM biz_dept_book_apply_goods g JOIN biz_dept_book_apply a ON a.id=g.apply_id WHERE a.del_flag='0' AND g.del_flag='0' AND a.apply_no=? LIMIT 101",[applyNo]);
     if(rows.length>100)throw Error('明细超过本轮只读核验上限。');
     return rows;
+  });
+}
+
+/** Fixed SELECT contracts for the already-established department test records.
+ * Neither model nor HTTP callers can supply SQL, table names or credentials. */
+export async function readDepartmentAgentDatabaseRows(): Promise<Array<{ key: string; rows: DatabaseEvidenceRow[] }>> {
+  return withReadOnlyConnection(requirePool(), async connection => {
+    await connection.query('SET SESSION MAX_EXECUTION_TIME=5000');
+    const queries = [
+      { key: 'applications', sql: 'SELECT apply_no,apply_type,book_usage,total_amount,total_weight,examine_status,lock_status,order_id,del_flag,create_time FROM biz_dept_book_apply WHERE apply_no IN (?,?) ORDER BY apply_no LIMIT 2', values: ['202611020158','202611030001'] },
+      { key: 'goods', sql: 'SELECT a.apply_no,g.product_id,g.qty,g.price,g.subtotal,g.unit_weight,g.total_weight,g.del_flag FROM biz_dept_book_apply_goods g JOIN biz_dept_book_apply a ON a.id=g.apply_id WHERE a.apply_no IN (?,?) AND g.del_flag=\'0\' ORDER BY a.apply_no,g.id LIMIT 20', values: ['202611020158','202611030001'] },
+      { key: 'customers', sql: 'SELECT agent_id,agent_type,is_valid,is_b2b,del_flag FROM biz_agent_info WHERE agent_id=? LIMIT 1', values: ['129249'] },
+      { key: 'books', sql: 'SELECT product_id,book_name,pubname,hprice,weight,stock_amount,is_valid FROM biz_book_info WHERE product_id IN (?,?) ORDER BY product_id LIMIT 4', values: ['2022600046','2022600047'] },
+    ];
+    const result: Array<{ key: string; rows: DatabaseEvidenceRow[] }> = [];
+    for (const query of queries) {
+      const [rows] = await connection.execute<RowDataPacket[]>(query.sql, query.values);
+      result.push({ key: query.key, rows: rows.map(row => Object.fromEntries(Object.entries(row).map(([key, value]) => [key, toDisplayValue(value)]))) });
+    }
+    return result;
   });
 }
 

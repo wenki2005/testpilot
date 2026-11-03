@@ -25,7 +25,7 @@ export function difyBlocker(check:BrowserCheck,reason:string):{blockerCode:DifyB
   if(source.includes('员工端-申请表单明细展示页')&&/实时调易诚通商品接口|商品接口查询失败/.test(e))return{blockerCode:'assertion-incomplete',detail:'该用例需要商品实时查询或正确链路的失败降级断言。已有本人记录、数据库和成功详情响应可供对照，但现有步骤尚未绑定上游实时调用或对应失败响应，不能统一归因于没有本人数据。',nextAction:'补明细商品字段对照，并定位上游调用/失败注入点；不能以无关bookCheck请求或页面标题代替完整预期。'};
   if(source.includes('管理端后台（经销商系统服务端）')||/本期PC后台/u.test(e))return {blockerCode:'identity-evidence',detail:'此条验证经销商管理后台，而当前绑定目标是员工申样 H5；缺少该后台入口、指定角色及对应数据证据。',nextAction:'绑定实际管理后台和有授权的角色会话，准备迁移或订单基线；不能用 H5 页面替代后台验收。'};
   if(source.includes('系统配置依赖'))return {blockerCode:'fixture-required',detail:'此条需要 OA 模板、仓库或店铺配置的权威基线；当前 H5 与测试库连接不能证明部署配置正确。',nextAction:'提供可读的测试环境配置或由配置负责人确认具体 ID，再进行逐项对照；不猜测正确值。'};
-  if(source.includes('数据接口层')||source.includes('企微消息通知'))return {blockerCode:'fixture-required',detail:source.includes('企微消息通知')?'已支持授权提交；本条仍缺与申请关联的通知对象、准确文案和真实投递证据，不能以提交成功或Dify执行成功替代。':'已支持测试环境真实提交及落库核对；本条仍需对应审批回传、库存、出库或物流事件的接口契约和执行证据。',nextAction:'继续使用已创建的测试记录定位后续业务入口、事件与回执；只有字段/状态值不代表相应服务端流程实际执行。'};
+  if(source.includes('数据接口层')||source.includes('企微消息通知'))return {blockerCode:'fixture-required',detail:source.includes('企微消息通知')?'已支持授权提交；本条仍缺与申请关联的通知对象、准确文案和真实投递证据，不能以提交成功或Dify执行成功替代。':'已支持测试环境真实提交及落库核对；本条仍需对应审批回传、库存、出库或物流事件的服务端接口契约和执行证据。',nextAction:'继续使用已创建的测试记录定位后续业务入口、事件与回执；只有字段/状态值不代表相应服务端流程实际执行。'};
   if(/当前企微登录人|当前登录人|认证信息正确|企微架构|直属上级|管理员|其他角色|非本公司员工|被代申请人/u.test(e))return {blockerCode:'identity-evidence',detail:'缺少指定身份与页面业务字段的完整对照证据；窗口已登录不等于身份字段已验证。',nextAction:'明确本轮账号/角色及应显示的字段，补姓名、部门或权限的直接对照；不只检查控件可见。'};
   if(/员工端-(?:用书审批详情页|申请表单明细展示页|历史申请记录页|订单列表页|订单详情页)/u.test(source))return {blockerCode:'fixture-required',detail:'此条需要本人可见且状态明确的申请/订单记录；当前空态或成功连接数据库不能证明详情、审批、筛选及分页正确。',nextAction:'按原预期准备本人可见的已有记录和对应状态；仍从同轮网页、接口、数据库对照，不借用他人的申请、不自动造单。'};
   if(source.includes('提交时实时调接口'))return {blockerCode:'assertion-incomplete',detail:'已有真实提交及客户字段落库证据；来源还要求提交时重新拉取最新客户数据。尚未取得该阶段的上游调用或可控数据变化对照，不能用提交前搜索成功替代。',nextAction:'为同一提交关联客户查询链路或独立数据变化基线；数据库最终值一致只能证明内容，不能单独证明非缓存取数过程。'};
@@ -42,6 +42,7 @@ export function difyBlocker(check:BrowserCheck,reason:string):{blockerCode:DifyB
 
 /** A narrow, source-bound review. No click or submission; every run rechecks live controls. */
 export function reviewedDifyReadOnlyPlan(check:BrowserCheck,evidence:string,targetUrl?:string):{kind:DifyReviewKind;steps:BrowserCheck['steps'];detail:string;executionData?:string[]}|undefined {
+  check={...check,source:check.source??''};
   const connected=reviewConnectedEvidence(check,evidence,targetUrl);if(connected)return connected;
   const validation=reviewClientValidation(check,evidence,targetUrl);if(validation)return validation;
   const applicant=reviewApplicantIdentity(check,evidence,targetUrl);if(applicant)return applicant;

@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { DemoCheck } from "./contracts.js";
+import type { DemoCheck } from "../domain/demo-contracts.js";
 
 export const defaultRequirements = `订单 API 业务规则：商品 sku-1（经典咖啡）单价 120 元，sku-2（旅行杯）单价 80 元；订单小计为商品单价乘数量之和。discountPercent 默认 0，必须是 0 到 100 之间的有限数，折后总额按分四舍五入。数量必须是正整数。无登录凭证访问订单导出必须返回 401；有效凭证为 Authorization: Bearer demo-export-token。健康检查应返回 ok=true。`;
 

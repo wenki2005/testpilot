@@ -1,9 +1,9 @@
+import { strToU8,zipSync } from "fflate";
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir,readFile,writeFile } from "node:fs/promises";
 import path from "node:path";
-import { strToU8, zipSync } from "fflate";
-import type { ApiDesignAssessmentCheck, CaseResult, EvidenceItem, RunRecord, RunStatus } from "../domain/types.js";
-import type { ApiOpenApiScenarioCoverage, ApiTestCase, ApiTestSuite } from "../storage/api-suite-loader.js";
+import type { ApiDesignAssessmentCheck,CaseResult,EvidenceItem,RunRecord,RunStatus } from "../domain/types.js";
+import type { ApiOpenApiScenarioCoverage,ApiTestCase,ApiTestSuite } from "../storage/api-suite-loader.js";
 import { caseMatchesOperationRoute } from "../storage/openapi-boundary.js";
 
 const maxBodyBytes = 1_000_000;
@@ -222,7 +222,7 @@ async function executeApiCase(item: ApiTestCase, base: URL, allowMutations: bool
   } finally { clearTimeout(timeout); signal?.removeEventListener("abort", cancel); }
 }
 
-function result(item: ApiTestCase, status: CaseResult["status"], started: number, expected: number, actual: number | null, error?: string, evidence: EvidenceItem[] = []): CaseResult {
+function result(item: ApiTestCase, status: CaseResult["status"], started: number, _expected: number, actual: number | null, error?: string, evidence: EvidenceItem[] = []): CaseResult {
   const expectedDescription = JSON.stringify(scrub({ status: item.expect.status, headers: item.expect.headers, json: item.expect.json, maxDurationMs: item.expect.maxDurationMs }));
   const actualDescription = actual === null ? "No HTTP response" : `HTTP ${actual}`;
   const designTrace = {

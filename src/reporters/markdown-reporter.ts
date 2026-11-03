@@ -1,5 +1,5 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { mkdir,writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import type { RunRecord } from "../domain/types.js";
 
 export async function saveRun(record: RunRecord, outputRoot: string): Promise<string> {

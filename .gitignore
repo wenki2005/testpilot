@@ -18,6 +18,7 @@ coverage/
 
 # Run state, evidence, browser sessions and database exports
 artifacts/
+!src/application/artifacts/
 runtime-data/
 test-results/
 playwright-report/

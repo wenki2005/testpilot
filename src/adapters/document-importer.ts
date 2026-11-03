@@ -2,13 +2,8 @@ import path from "node:path";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { unzipSync } from "fflate";
 import { confidenceFromExpectation, inferCaseCategory, type CaseCategory, type CaseConfidence } from "./document-test-types.js";
-
-export interface ImportedDocument {
-  format: "xmind" | "pdf" | "markdown" | "text";
-  text: string;
-  nodeCount?: number;
-  testCases?: Array<{ id?: string; title: string; source: string; modulePath?: string[]; expected: string; steps?: unknown[]; preconditions?: string[]; testData?: string[]; status?: string; priority?: "P0" | "P1" | "P2" | "P3"; requirementRefs?: string[]; category?: CaseCategory; confidence?: CaseConfidence; coverageAreas?: CaseCategory[] }>;
-}
+import type { ImportedDocument } from "../domain/document-test-contracts.js";
+export type { ImportedDocument } from "../domain/document-test-contracts.js";
 
 const MAX_ARCHIVE_ENTRIES = 2_000;
 const MAX_SOURCE_TEXT = 100_000;
@@ -21,7 +16,7 @@ export async function extractDocument(fileName: string, bytes: Uint8Array): Prom
   else if (ext === ".csv") result = extractCaseCsv(bytes);
   else if (ext === ".md" || ext === ".markdown") result = { format: "markdown", text: stripMarkdownFrontMatter(decodeText(bytes)) };
   else if (ext === ".txt") result = { format: "text", text: decodeText(bytes) };
-  else throw new Error("支持的格式为测试用例 CSV 包、PDF、XMind、Markdown 和 TXT。");
+  else throw new Error("支持的文档格式为测试用例 CSV、PDF、XMind、Markdown 和 TXT。");
   const text = result.text.replace(/\u0000/g, "").trim();
   if (!text) throw new Error("没有从文档中提取到可读文字。");
   if (text.length > MAX_SOURCE_TEXT) throw new Error(`提取文本超过 ${MAX_SOURCE_TEXT} 字符上限，请拆分文档后重试。`);

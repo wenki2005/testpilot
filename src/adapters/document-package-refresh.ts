@@ -17,6 +17,8 @@ type PackageProject = {
 };
 
 type PackageRun = {
+  databaseEvidence?: import('../domain/document-database-evidence.js').DocumentDatabaseEvidence;
+  readOnlyBusinessFacts?: Array<{kind:string;observedAt:string;requestKey:string;availableFields:string[];fields:Record<string,string|number>}>;
   id: string;
   projectId: string;
   siteVersionSnapshot?: { id: string; label: string; environment: string; targetUrl: string; changeNotes: string; createdAt: string };
@@ -250,7 +252,7 @@ export function refreshDocumentPackage(project: PackageProject, run: PackageRun,
       },
     } : {}),
     id: run.id, projectId: run.projectId, startedAt: run.startedAt, completedAt: run.completedAt,
-    recovery: run.recovery, stepGeneration: run.stepGeneration, overall: run.overall,
+    recovery: run.recovery, stepGeneration: run.stepGeneration, databaseEvidence: run.databaseEvidence, overall: run.overall,
     finalReady: run.finalReady, deterministic: run.deterministic, ai: run.ai,
     comparisons: run.comparisons, analysis: run.analysis, caseScope: run.caseScope,
   };
@@ -338,6 +340,13 @@ export function refreshDocumentPackage(project: PackageProject, run: PackageRun,
     sources: [{ kind: "previous-package", digest: previousPackageSha256 }],
   };
 
+  if(run.readOnlyBusinessFacts?.length)artifacts["read-only-business-facts.json"]={
+    bytes:strToU8(JSON.stringify(run.readOnlyBusinessFacts,null,2)),mediaType:"application/json",artifactType:"business-read-evidence",sources:[{kind:"run",id:run.id,field:"readOnlyBusinessFacts"}]
+  };
+  if (run.databaseEvidence) artifacts['database-evidence.json'] = {
+    bytes: strToU8(JSON.stringify(run.databaseEvidence, null, 2)), mediaType: 'application/json', artifactType: 'database-read-evidence',
+    sources: [{ kind: 'run', id: run.id, field: 'databaseEvidence', digest: run.databaseEvidence.sha256 }],
+  };
   for (const artifact of Object.values(artifacts)) {
     let content = new TextDecoder().decode(artifact.bytes);
     if (artifact.mediaType.startsWith("application/json")) {

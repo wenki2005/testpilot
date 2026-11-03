@@ -75,7 +75,7 @@ export function reviewDepartmentReadOnly(check:BrowserCheck,evidence:string,targ
   steps=[{action:'assertExactVisible' as const,text:page.bookCodeLabel!},{action:'assertExactVisible' as const,text:'继续添加样书'}];
  }else if(kind==='region-selection'){
   const indexes=page.regionSearchIndexes;if(indexes?.length!==3||new Set(indexes).size!==3||indexes.some(i=>!Number.isInteger(i)||i<0||i>9))return;
-  steps=['湖南省','长沙市','芙蓉区'].flatMap((value,i)=>[{action:'selectByRoleIndex' as const,role:'combobox' as const,index:indexes[i]!,value},{action:'assertExactVisible' as const,text:value}]);
+  steps=['湖南省','长沙市','芙蓉区'].flatMap((value,i)=>[{action:'selectByRoleIndex' as const,role:'combobox' as const,index:indexes[i]!,value},{action:'assertSelectedByRoleIndex' as const,role:'combobox' as const,index:indexes[i]!,value}]);
  }else if(kind==='book-nonnumeric'){
   if(!['自编码','物流编码'].includes(page.bookCodeLabel??''))return;
   const label=page.bookCodeLabel!;steps=[{action:'startFetchOrXhrCapture'},{action:'fillByLabel',label,value:'TP_INVALID_ALPHA'},{action:'blurByLabel',label},{action:'assertFieldInvalid',label},{action:'assertNoFetchOrXhr',quietMs:1000}];

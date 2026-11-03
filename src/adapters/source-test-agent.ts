@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { cp, mkdir, readFile, readdir, lstat, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, readdir, lstat, writeFile, rename } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
 import { Type } from 'typebox';
@@ -12,12 +12,12 @@ import { rgPath } from '@vscode/ripgrep';
 import { appendFile } from 'node:fs/promises';
 import { prepareProfile } from './project-profile-adapter.js';
 import { redactSensitiveExportData, redactSensitiveExportText } from './document-sensitive-data.js';
+import type { SourceTestAssessment, SourceTestMode, SourceTestRun } from '../domain/source-test.js';
 
 const finding = z.object({ caseId: z.string(), status: z.enum(['observed', 'failed', 'blocked']), expected: z.string(), actual: z.string(), evidence: z.string() }).strict();
 const assessment = z.object({ summary: z.string(), findings: z.array(finding), blockers: z.array(z.string()), proposedTests: z.array(z.object({ id: z.string(), title: z.string(), bin: z.string(), args: z.array(z.string()) }).strict()) }).strict();
-export type SourceTestAssessment = z.infer<typeof assessment>;
-export type SourceTestRequest = { sourceRoot: string; goal: string; mode: 'plan' | 'generate' | 'diagnose'; outputRoot: string; candidateFiles?: string[]; timeoutMs?: number; signal?: AbortSignal; onProgress?: (event: { type: string; itemType?: string; exitCode?: number }) => void };
-export type SourceTestRun = { id: string; goal:string; candidateFiles:string[]; status: 'candidate' | 'blocked'; executionState: 'running' | 'completed'; mode: SourceTestRequest['mode']; startedAt: string; completedAt: string; reportPath: string; workspacePath: string; assessment?: SourceTestAssessment; error?: string; changedFiles: string[]; protectedChanges: string[]; toolCalls: number; modelRequests: number; usage: {input: number; output: number}; runtimeStatus: 'not-run' | 'passed' | 'failed' | 'blocked'; executions: Array<{id:string; files:string[]; status:string; durationMs:number; counts:Record<string,number>; evidenceId:string}>; commandCount: number; successfulCommands: number; candidateDigest?: string; limitations: string[] };
+export type { SourceTestAssessment, SourceTestRun } from '../domain/source-test.js';
+export type SourceTestRequest = { sourceRoot: string; goal: string; mode: SourceTestMode; outputRoot: string; candidateFiles?: string[]; timeoutMs?: number; signal?: AbortSignal; onProgress?: (event: { type: string; itemType?: string; exitCode?: number }) => void };
 
 /** Source inspection and candidate generation using TestPilot own model and tools. */
 export async function runSourceTestAgent(request: SourceTestRequest, driver: SourceAgentDriver = runSourceAgentLoop): Promise<SourceTestRun> {
@@ -36,7 +36,7 @@ export async function runSourceTestAgent(request: SourceTestRequest, driver: Sou
   const workspacePath = path.join(folder, 'workspace');
   const startedAt = new Date().toISOString();
   const reportPath = path.join(folder, 'report.md');
-  const run: SourceTestRun = { id, goal:redactSensitiveExportText(request.goal), candidateFiles:[...(request.candidateFiles??[])], status: 'blocked', executionState: 'running', mode: request.mode, startedAt, completedAt: startedAt, reportPath, workspacePath, changedFiles: [], protectedChanges: [], toolCalls: 0, modelRequests: 0, usage: {input:0,output:0}, runtimeStatus:'not-run', executions:[], commandCount: 0, successfulCommands: 0, limitations: ['Agent completion is a test candidate, not a verified regression pass.', 'Source is copied without node_modules, environment files or symlinks; dependency availability must be established.', 'Generated Node tests run in a disposable source copy with a clean environment. This is not an OS sandbox; use trusted isolated test projects.', 'Generated code and tests require review and a separate deterministic run before adoption.'] };
+  const run: SourceTestRun = { id, goal:redactSensitiveExportText(request.goal), candidateFiles:[...(request.candidateFiles??[])], status: 'blocked', executionState: 'running', mode: request.mode, startedAt, completedAt: startedAt, reportPath, workspacePath, changedFiles: [], protectedChanges: [], toolCalls: 0, modelRequests: 0, usage: {input:0,output:0}, runtimeStatus:'not-run', executions:[], evidenceIds:[], commandCount: 0, successfulCommands: 0, limitations: ['Agent completion is a test candidate, not a verified regression pass.', 'Source is copied without node_modules, environment files or symlinks; dependency availability must be established.', 'Generated Node tests run in a disposable source copy with a clean environment. This is not an OS sandbox; use trusted isolated test projects.', 'Generated code and tests require review and a separate deterministic run before adoption.'] };
   const checkpoint = () => writeFile(path.join(folder, 'run.json'), JSON.stringify(redactSensitiveExportData(run), null, 2));
   await checkpoint();
   const controller = new AbortController();
@@ -44,12 +44,12 @@ export async function runSourceTestAgent(request: SourceTestRequest, driver: Sou
   request.signal?.addEventListener('abort', abort, { once: true });
   if (request.signal?.aborted) abort();
   const timer = setTimeout(() => controller.abort(new Error('Test-agent time budget exceeded')), timeoutMs);
+  const evidence = new Map<string, string>();
   try {
     if (controller.signal.aborted) throw Error('Test-agent cancelled before execution');
     const before = await snapshot(prepared.projectRoot);
     let calls = 0, observedBytes = 0, submitted = false;
     const tools: AgentTool[] = [];
-    const evidence = new Map<string, string>();
     const sourceFiles = [...before.keys()].sort();
     const newTests = new Set<string>();
     // Only caller-designated files from a previous agent candidate may be
@@ -184,7 +184,20 @@ export async function runSourceTestAgent(request: SourceTestRequest, driver: Sou
     if (run.protectedChanges.length) throw Error(`Agent changed protected source or existing files: ${run.protectedChanges.join(', ')}`);
     const written = run.changedFiles.filter(name => after.has(name));
     if (request.mode === 'generate' && !written.length) throw Error('No new test files were produced; generation remains blocked');
-    run.candidateDigest = createHash('sha256').update(JSON.stringify(written.map(name => [name, after.get(name)]))).digest('hex');
+    const candidateFiles = [...new Set(run.candidateFiles)].sort();
+    const candidateFileDigests: Record<string, string> = {};
+    for (const name of candidateFiles) {
+      if (!/^(tests|specs|e2e)\/.*\.(?:[cm]?js)$/.test(name) || !executedHashes.has(name)) throw Error(`Candidate file lacks a current execution: ${name}`);
+      const content = await readFile(localPath(name));
+      const fileDigest = createHash('sha256').update(content).digest('hex');
+      if (fileDigest !== executedHashes.get(name)) throw Error(`Candidate file changed after execution: ${name} (${fileDigest.slice(0,8)} != ${(executedHashes.get(name) ?? 'missing').slice(0,8)})`);
+      const latestStatus = latestExecutionStates.get(name);
+      if (!latestStatus || !['passed', 'failed'].includes(latestStatus)) throw Error(`Candidate file has no interpretable execution: ${name}`);
+      candidateFileDigests[name] = fileDigest;
+    }
+    run.candidateFileDigests = candidateFileDigests;
+    run.candidateFilesDigest = createHash('sha256').update(JSON.stringify(candidateFileDigests)).digest('hex');
+    run.candidateDigest = run.candidateFilesDigest;
     run.status = 'candidate';
   } catch (error) {
     run.error = redactSensitiveExportText(error instanceof Error ? error.message : String(error));
@@ -201,11 +214,42 @@ export async function runSourceTestAgent(request: SourceTestRequest, driver: Sou
   }
   run.completedAt = new Date().toISOString();
   run.executionState = 'completed';
+  run.evidenceIds = [...evidence.keys()].sort();
   const safeRun = redactSensitiveExportData(run) as SourceTestRun;
   await writeFile(path.join(folder, 'run.json'), JSON.stringify(safeRun, null, 2));
   await writeFile(reportPath, `# TestPilot 源码测试分析与候选\n\n状态：${safeRun.status}\n\n${safeRun.assessment?.summary ?? safeRun.error ?? '未得到可判定结果'}\n\n运行判定：${run.runtimeStatus}；工具调用：${run.toolCalls}；模型请求：${run.modelRequests}；模型报告输入/输出 token：${run.usage.input}/${run.usage.output}。\n\n命令完成数：${run.commandCount}；退出码为零：${run.successfulCommands}。命令退出成功不等于业务验收通过。\n\n候选工作区：${workspacePath}\n\n${safeRun.limitations.map(x => '- ' + x).join('\n')}\n\n\`run.json\` 保留发现、阻塞、文件变更与候选摘要。\n`);
-  if (safeRun.status === 'candidate' && safeRun.assessment?.proposedTests.length) {
-    await writeFile(path.join(folder, 'suite.candidate.json'), JSON.stringify({ version:1, name:'TestPilot generated regression candidate — review required', cases:safeRun.assessment.proposedTests.map(item => ({id:item.id,title:item.title,command:{bin:item.bin,args:item.args,cleanEnvironment:true,timeoutMs:120000}})) }, null, 2));
+  if (safeRun.status === 'candidate' && Object.keys(safeRun.candidateFileDigests ?? {}).length) {
+    // Keep proposed regression assets attached to the evidence that produced
+    // them. A generated suite is always pending review, even when its tests ran.
+    const suitePath = path.join(folder, 'suite.candidate.json');
+    const suiteTemporaryPath = suitePath + '.tmp';
+    await writeFile(suiteTemporaryPath, JSON.stringify({
+      version: 1,
+      name: 'TestPilot generated regression candidate — review required',
+      assetStatus: 'candidate',
+      reviewStatus: 'pending-review',
+      provenance: {
+        runId: safeRun.id,
+        goal: safeRun.goal,
+        candidateDigest: safeRun.candidateDigest,
+        runtimeConclusion: safeRun.runtimeStatus,
+        executions: safeRun.executions.map(execution => ({ id: execution.id, status: execution.status, evidenceId: execution.evidenceId })),
+        evidenceIds: [...evidence.keys()].sort(),
+        findings: (safeRun.assessment?.findings ?? []).map(finding => {
+          const evidenceRefs = [...finding.evidence.matchAll(/\b(?:tool-\d+|execution-\d+)\b/g)]
+            .map(match => match[0]).filter((id, index, ids) => ids.indexOf(id) === index && evidence.has(id));
+          return {
+            caseId: finding.caseId,
+            status: finding.status,
+            evidenceDescription: finding.evidence,
+            evidenceRefs,
+            evidenceLinkStatus: evidenceRefs.length ? 'linked' : 'unlinked-pending-review',
+          };
+        }),
+      },
+      cases: Object.entries(safeRun.candidateFileDigests ?? {}).map(([file, fileDigest], index) => ({ id:`source-${index + 1}`,title:`Node regression: ${file}`,file,fileDigest,command:{bin:'node',args:['--test',file],cleanEnvironment:true,timeoutMs:120000} })),
+    }, null, 2));
+    await rename(suiteTemporaryPath, suitePath);
   }
   return safeRun;
 }

@@ -11,13 +11,8 @@ export type ImpactCase = {
   steps?: Array<Record<string, unknown>>;
 };
 
-export type DocumentImpactSuggestion = {
-  caseId: string;
-  title: string;
-  score: number;
-  matchedTerms: string[];
-  evidence: string[];
-};
+import type { DocumentImpactSuggestion } from "../domain/document-test-contracts.js";
+export type { DocumentImpactSuggestion } from "../domain/document-test-contracts.js";
 
 export type DocumentImpactScan = {
   suggestions: DocumentImpactSuggestion[];

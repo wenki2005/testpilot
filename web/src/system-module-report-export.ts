@@ -1,6 +1,6 @@
 import { zipSync, strToU8 } from 'fflate';
 import type { BatchView } from '../../src/domain/system-module-contract';
-import type { BrowserCheck } from '../../src/adapters/document-test-workflow';
+import type { BrowserCheck } from '../../src/domain/document-test-model';
 import originalTemplate from './department-sample-report-template.json';
 
 export type ReportFormat = 'xlsx' | 'xmind';

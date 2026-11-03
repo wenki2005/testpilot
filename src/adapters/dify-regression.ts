@@ -1,3 +1,5 @@
+import type { RegressionSourceItem, RegressionBaseline, RegressionVersion, RegressionRun } from '../domain/dify-regression-contracts.js';
+export type { RegressionSourceItem, RegressionBaseline, RegressionVersion, RegressionRun } from '../domain/dify-regression-contracts.js';
 import { createHash, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import path from "node:path";
@@ -12,14 +14,10 @@ const itemSchema = z.object({
   preconditions_proposed: z.array(text).max(50).default([]), steps_proposed: z.array(text).max(50).default([]),
   needs_confirmation: z.array(text).max(50).default([]),
 });
-export type RegressionSourceItem = z.infer<typeof itemSchema>;
 const baselineSchema = z.object({ name: text.max(250), baseline_sha256: z.string().regex(/^[a-f0-9]{64}$/), cases: z.array(itemSchema).min(1).max(1000) });
-export type RegressionBaseline = z.infer<typeof baselineSchema> & { id: string; createdAt: string };
-export type RegressionVersion = { id: string; taskId: string; baselineId: string; createdAt: string; cases: Array<RegressionSourceItem & { expected_result: string; review_status: "draft"; execution_status: "not_executed"; actual_result: null }>; digest: string };
 type Task = { id: string; baselineId: string; sourceIds: string[]; createdAt: string; status: "running" | "completed" | "error"; execution_status: "not_executed"; error?: string; versionId?: string; difyRunId?: string };
 type Review = { id: string; versionId: string; decision: "approved" | "rejected"; reviewer: string; notes: string; createdAt: string };
 type Result = { caseId: string; title: string; status: "not_executed" | "passed" | "failed" | "blocked"; actual: string; evidence: string };
-export type RegressionRun = { id: string; versionId: string; versionDigest: string; reviewId: string | null; createdAt: string; systemVersion: string; databaseLabel: string; tester: string; results: Result[] };
 const now = () => new Date().toISOString();
 const digest = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
 

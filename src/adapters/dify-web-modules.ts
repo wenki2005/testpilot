@@ -99,6 +99,14 @@ export class DifyWebModuleStore {
     if(document.testCases.some(c=>(c.preconditions?.length??0)>10||c.preconditions?.some(v=>v.length>500)))throw new Error('每条用例最多支持 10 个前置条件，每项最多 500 字；请拆分，原文不会被截断。');
     const ids=new Set<string>();for(const c of document.testCases){if(!c.id||!/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,79}$/.test(c.id)||ids.has(c.id))throw new Error('case_id 必须唯一，且为 1–80 位字母、数字、点、冒号、下划线或连字符。');ids.add(c.id);if(!c.title.trim()||!c.expected.trim())throw new Error('每条用例都需要标题和明确的原始预期。');}
     const project=makeDocumentProject({name:data.name||data.fileName.replace(/\.(?:csv|md|markdown)$/i,''),fileName:data.fileName,document,targetUrl,caseMode:'existing'});
+    project.cases = validateCases(project.cases.map((item,index)=>{
+      const source=document.testCases![index]!;
+      const steps=source.steps??[];
+      const held=/^(?:hold|blocked|needs?[-_])/i.test(source.status??'');
+      const runnable=!held&&steps.some(step=>typeof step==='object'&&step!==null&&String((step as {action?:unknown}).action).startsWith('assert'));
+      const preconditions=source.preconditions??[];
+      return {...item,id:source.id!,steps,preconditions,preconditionsConfirmed:preconditions.length===0,testData:source.testData??[],lifecycleStatus:runnable?'runnable':'draft',selectedForRegression:runnable,...(held?{coverageGap:'原包状态：'+source.status+'；需先确认账号、环境或副作用条件。'}:{})};
+    }));
     project.confirmationRequired=false;
     await this.deps.saveProject(project);
     const value:WebModule={id:randomUUID(),name:project.name,fileName:data.fileName,digest,createdAt:now(),project,sourceCases:structuredClone(document.testCases),...(parsed?{manualSteps:parsed.manualSteps}:{})};return this.save('module',value);

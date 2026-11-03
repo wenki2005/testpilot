@@ -14,7 +14,7 @@
     "build:web": "vite build web",
     "demo": "node --env-file-if-exists=.env --import tsx src/demo/server.ts",
     "package:demo": "node scripts/package-demo.mjs",
-    "demo:start": "node --env-file-if-exists=.env dist/demo/server.js",
+    "demo:start": "node dist/demo/server.js",
     "mcp": "node --import tsx src/mcp/server.ts",
     "mcp:start": "node dist/mcp/server.js",
     "dev:web": "vite web --host 127.0.0.1",
@@ -33,7 +33,10 @@
     "plan:run": "node scripts/run-regression-plan.mjs",
     "test:browser": "playwright test",
     "test:playwright": "node dist/cli.js run-playwright",
-    "agent:source": "node dist/cli.js test-agent"
+    "agent:source": "node dist/cli.js test-agent",
+    "check:architecture": "node scripts/check-architecture.mjs",
+    "check:core-register": "node scripts/check-department-core-register.mjs",
+    "test:agent:local": "node scripts/run-agent-local-tests.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

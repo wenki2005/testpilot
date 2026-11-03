@@ -7,7 +7,7 @@ import {needsDifyReadback} from './dify-readonly-scenarios.js';
 
 /** Narrow Dify export compatibility fix; the shared runner source is unchanged. */
 export function difyPortableRunner(source:string):string {
-  const allowed=['assertText','assertVisible','assertNotVisible','assertExactVisible','assertRoleVisible','assertValue','assertValueByPlaceholder','assertDisabled','assertRoleDisabled','assertFieldInvalid','assertMaxLengthOrMessage','assertNoHorizontalOverflow','assertNoFetchOrXhr','assertCurrentUrlUnchanged'];
+  const allowed=['assertControlEnabled','assertSelectedByRoleIndex','assertText','assertVisible','assertNotVisible','assertExactVisible','assertRoleVisible','assertValue','assertValueByPlaceholder','assertDisabled','assertRoleDisabled','assertFieldInvalid','assertMaxLengthOrMessage','assertNoHorizontalOverflow','assertNoFetchOrXhr','assertCurrentUrlUnchanged'];
   const match=source.match(/c\.steps\.some\(s=>(\[[^\]\n]+\])\.includes\(s\.action\)\)/);
   let existing:unknown;try{existing=JSON.parse(match?.[1]?.replaceAll("'",'"')??'null');}catch{}
   if(!match||!Array.isArray(existing)||!existing.length||existing.some(value=>!allowed.includes(value)))throw Error('固定脚本的断言协议发生变化，导出前需要重新核验。');

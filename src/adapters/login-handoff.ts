@@ -54,7 +54,7 @@ export function browserRequestAllowed(method: string, requestUrl: string, contex
   const passiveAssetTypes = ["stylesheet", "script", "image", "font", "media"];
   const loginPath = /(?:login|signin|sign-in|auth|sso|oauth|token|captcha|session|passport)/i;
   const apiReadPath = /(?:^|\/)(?:get(?:[A-Z_][A-Za-z0-9_-]*)?|query(?:[A-Z_][A-Za-z0-9_-]*)?|list(?:[A-Z_][A-Za-z0-9_-]*)?|search(?:[A-Z_][A-Za-z0-9_-]*)?|detail(?:[A-Z_][A-Za-z0-9_-]*)?|fetch(?:[A-Z_][A-Za-z0-9_-]*)?|read(?:[A-Z_][A-Za-z0-9_-]*)?)$/u;
-  const knownReadRoute = /\/system\/(?:dict(?:\/|$)|area\/tree(?:\/|$))/iu;
+  const knownReadRoute = /\/system\/(?:dict(?:\/|$)|area\/tree(?:\/|$))|\/dept\/book\/apply\/(?:clientSearch|bookCheck|myList|progress\/[A-Za-z0-9_-]+|detail\/[A-Za-z0-9_-]+)$/u;
   const mutationPath = /(?:^|[\/_-])(?:autosave|delete|remove|update|save|submit|create|write|send|pay|lock|cancel|reset)(?:$|[\/_-])/iu;
 
   // Third-party hosts are only trusted for passive HTTPS assets. In particular,
@@ -131,7 +131,11 @@ export function browserRequestAllowed(method: string, requestUrl: string, contex
 export async function waitForUserLogin(projectId: string, runId: string, targetUrl: string, browser: Browser, page: Page, onLoginWait?: (waiting: boolean) => Promise<void>): Promise<void> {
   await onLoginWait?.(true);
   const targetOrigin = new URL(targetUrl).origin;
-  const authOrigins = [...new Set([page.url(), ...page.frames().map(frame => frame.url())].flatMap(value => {
+  // A denied iframe has a chrome-error frame URL; retain its declared source
+  // so the human handoff can retry that exact authentication origin.
+  let iframeSources: string[] = [];
+  try { iframeSources = await page.locator('iframe').evaluateAll(elements => elements.map(element => (element as HTMLIFrameElement).src)); } catch { /* No accessible iframe metadata. */ }
+  const authOrigins = [...new Set([page.url(), ...page.frames().map(frame => frame.url()), ...iframeSources].flatMap(value => {
     try {
       const url = new URL(value);
       return url.protocol === "https:" && url.origin !== targetOrigin && /(?:login|signin|sign-in|auth|sso|oauth|token|captcha|session|passport)/i.test(`${url.hostname}${url.pathname}`) ? [url.origin] : [];
@@ -142,6 +146,15 @@ export async function waitForUserLogin(projectId: string, runId: string, targetU
     message: "测试遇到登录页。请在已置顶的测试浏览器窗口中自行完成登录，再回到 TestPilot 点“我已登录，继续测试”。TestPilot 不会读取或保存你的账号密码。",
   };
   handoffs.set(projectId, state);
+  // Retry only declared authentication frames after the scoped policy is live.
+  if (iframeSources.length) {
+    try { await page.locator('iframe').evaluateAll((elements, origins) => {
+      for (const element of elements) {
+        const frame = element as HTMLIFrameElement;
+        try { if (origins.includes(new URL(frame.src).origin)) frame.src = frame.src; } catch { /* Invalid frame URL. */ }
+      }
+    }, authOrigins); } catch { /* User may refresh the login page instead. */ }
+  }
   await bringBrowserToFront(browser, page);
   const deadline = Date.now() + 10 * 60_000;
   while (Date.now() < deadline) {
@@ -171,17 +184,9 @@ export async function requestLoginContinue(projectId: string): Promise<LoginHand
 
 export function clearLoginHandoff(projectId: string): void { handoffs.delete(projectId); }
 
-export function isAuthenticationRoute(value: string): boolean {
-  try {
-    const url=new URL(value);
-    const route=url.pathname+(url.hash.split('?')[0]??'');
-    return /(?:\/|#)(?:login|signin|sign-in|auth|sso)(?:[/?#]|$)/i.test(route)
-      && !/(?:\/|#)(?:callback|redirect|token)(?:\/|$)/i.test(route);
-  } catch { return false; }
-}
-
 export async function isLoginPage(page: Page): Promise<boolean> {
   if (page.isClosed()) return false;
+  const loginUrl = /(?:\/|#)(?:login|signin|sign-in|auth|sso)(?:[/?#]|$)/i;
   // Do not treat a logged-in page that merely mentions the WeCom brand or a
   // generic "请登录" hint as an authentication screen. Such false positives
   // used to surface the QR handoff again while the shared session was valid.
@@ -193,7 +198,9 @@ export async function isLoginPage(page: Page): Promise<boolean> {
     const frames = page.frames();
     for (const frame of frames) {
       const url = frame.url();
-      if (isAuthenticationRoute(url)) return true;
+      let route = url;
+      try { const parsed = new URL(url); route = parsed.pathname + parsed.hash.split('?')[0]; } catch { /* Non-URL frame. */ }
+      if (!/(?:callback|redirect|token)/i.test(route) && loginUrl.test(route)) return true;
       if (await frame.locator('input[type="password"], input[autocomplete="current-password"], input[autocomplete="one-time-code"]').count().catch(() => 0)) return true;
       const text = await frame.locator("body").innerText().catch(() => "");
       if (loginText.test(text)) return true;
@@ -212,7 +219,6 @@ export function allowBrowserRequest(method: string, requestUrl: string, projectI
     resourceType: context?.resourceType ?? "document",
     ...(context?.isNavigationRequest !== undefined ? { isNavigationRequest: context.isNavigationRequest } : {}),
     ...(context?.isMainFrameNavigation !== undefined ? { isMainFrameNavigation: context.isMainFrameNavigation } : {}),
-    ...(context?.authenticationPage !== undefined ? { authenticationPage: context.authenticationPage } : {}),
     loginHandoffActive: handoff?.status === "waiting_for_user",
     authOrigins: handoff?.authOrigins ?? [],
   });
@@ -239,4 +245,13 @@ public class TestPilotWindow {
 }
 '@; [TestPilotWindow]::EnumWindows({ param($h,$l) $owner=0; [void][TestPilotWindow]::GetWindowThreadProcessId($h,[ref]$owner); if ($owner -eq $pidTarget -and [TestPilotWindow]::IsWindowVisible($h)) { [void][TestPilotWindow]::ShowWindow($h,9); [void][TestPilotWindow]::SetForegroundWindow($h); [void][TestPilotWindow]::SetWindowPos($h,[IntPtr](-1),0,0,0,0,0x0001 -bor 0x0002 -bor 0x0040); return $false }; return $true },[IntPtr]::Zero) | Out-Null`;
   await execFileAsync("powershell.exe", ["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", script], { timeout: 5000, windowsHide: true }).catch(() => undefined);
+}
+
+export function isAuthenticationRoute(value: string): boolean {
+  try {
+    const url=new URL(value);
+    const route=url.pathname+(url.hash.split('?')[0]??'');
+    return /(?:\/|#)(?:login|signin|sign-in|auth|sso)(?:[/?#]|$)/i.test(route)
+      && !/(?:\/|#)(?:callback|redirect|token)(?:\/|$)/i.test(route);
+  } catch { return false; }
 }

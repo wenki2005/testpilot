@@ -13,7 +13,16 @@ export async function captureDifyPng(page:Page,existing?:CDPSession):Promise<Buf
     const png=Buffer.from(shot.data,'base64');
     if(png.subarray(0,8).toString('hex')!=='89504e470d0a1a0a')throw Error('Invalid current PNG');
     return png;
-   }catch{if(!fromSurface)throw Error('Current Dify page screenshot unavailable.');}
+   }catch(error){if(!fromSurface){
+    if(error instanceof Error&&error.message==='Dify screenshot timeout')throw Error('Current Dify page screenshot unavailable.');
+    // Some headless Chromium builds cannot capture a non-surface view. The
+    // final bounded attempt still captures this live page and viewport.
+    try{
+     const png=await bounded(page.screenshot({type:'png',timeout:1800,animations:'disabled'}),2000);
+     if(png.subarray(0,8).toString('hex')!=='89504e470d0a1a0a')throw Error('Invalid current PNG');
+     return png;
+    }catch{throw Error('Current Dify page screenshot unavailable.');}
+   }}
   }
   throw Error('Current Dify page screenshot unavailable.');
  }finally{if(!existing)await bounded(client.detach(),1000).catch(()=>{});}

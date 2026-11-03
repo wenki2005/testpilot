@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './dify-regression.css';
-import type { RegressionBaseline, RegressionVersion, RegressionRun } from '../../src/adapters/dify-regression';
+import type { RegressionBaseline, RegressionVersion, RegressionRun } from '../../src/domain/dify-regression-contracts';
 
 type State = { baselines: RegressionBaseline[]; versions: RegressionVersion[]; tasks: Array<{ id: string; createdAt: string; status: string; error?: string; difyRunId?: string; versionId?: string }>; reviews: Array<{ id: string; versionId: string; decision: string; reviewer: string; notes: string }>; runs: RegressionRun[]; configured: boolean; workflowUrl: string };
 const names: Record<string, string> = { running: '正在整理', completed: '整理完成 · 待审核', error: '整理失败', approved: '已批准', rejected: '已退回', draft: '待审核', not_executed: '未执行', passed: '通过', failed: '失败', blocked: '阻塞' };
