@@ -7,7 +7,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { resolveModelSettings, validateBrowserCdpEndpoint } from "./model-settings.js";
 
 const cdpBrowsers = new WeakSet<Browser>();
-type PersistentSession = Awaited<ReturnType<typeof createPersistentTestPage>> & { endpoint: string };
+type PersistentSession = Awaited<ReturnType<typeof createPersistentTestPage>> & { endpoint: string; browserChoice?: 'chromium' | 'edge' };
 type ManagedPageSession = { browser: Browser; context: BrowserContext; page: Page; close: () => Promise<void>; keepBrowserAlive?: true };
 const persistentSessions = new Map<string, Promise<PersistentSession>>();
 
@@ -102,10 +102,41 @@ export async function resetPersistentCaseBaseline(page: Page, targetUrl: string,
   if (scrollY > 1) throw new Error(`无法重置用例滚动基线；预期 scrollY=0，实际为 ${scrollY}。`);
 }
 
-async function createPersistentTestPage(userDataDir: string, projectId: string, isolated = false) {
+export function resolvePersistentBrowserMode(browser: 'chromium' | 'edge' | undefined, platform = process.platform, cdpEndpoint = resolveModelSettings().browserCdpEndpoint): 'chromium' | 'edge-cdp' | 'managed-edge' | 'edge-channel' {
+  if (browser === 'chromium') {
+    if (cdpEndpoint) throw new Error('项目选择了 Chromium，但当前配置的是 Edge CDP；请清空外部 CDP 地址以使用项目隔离的 Chromium。');
+    return 'chromium';
+  }
+  if (cdpEndpoint) return 'edge-cdp';
+  return platform === 'win32' ? 'managed-edge' : browser === 'edge' ? 'edge-channel' : 'chromium';
+}
+
+export function resolvePersistentProfileDirectory(userDataDir: string, browser?: 'chromium' | 'edge'): string {
+  return browser ? path.join(path.resolve(userDataDir), `browser-${browser}`) : path.resolve(userDataDir);
+}
+
+export function resolveExistingPersistentSessionKey(userDataDir: string, browser: 'chromium' | 'edge' | undefined, knownKeys: Iterable<string>): string | undefined {
+  const base = path.resolve(userDataDir);
+  const exact = resolvePersistentProfileDirectory(base, browser);
+  const keys = [...knownKeys];
+  if (browser) return keys.includes(exact) ? exact : undefined;
+  if (keys.includes(base)) return base;
+  const matches = keys.filter(key => path.dirname(key) === base && ['browser-chromium', 'browser-edge'].includes(path.basename(key)));
+  return matches.length === 1 ? matches[0] : undefined;
+}
+
+export function resolvePersistentLaunchChannels(browser: 'chromium' | 'edge' | undefined, platform = process.platform, configuredChannel = process.env.TESTPILOT_BROWSER_CHANNEL?.trim() || undefined): { primary?: string; fallbackToChromium: boolean } {
+  if (browser === 'chromium') return { fallbackToChromium: false };
+  if (browser === 'edge') return { primary: 'msedge', fallbackToChromium: false };
+  if (configuredChannel) return { primary: configuredChannel, fallbackToChromium: false };
+  return { ...(platform === 'win32' ? { primary: 'msedge' } : {}), fallbackToChromium: platform === 'win32' };
+}
+
+async function createPersistentTestPage(userDataDir: string, projectId: string, browserChoice?: 'chromium' | 'edge') {
   await mkdir(path.resolve(userDataDir), { recursive: true });
   const headless = process.env.TESTPILOT_BROWSER_HEADLESS === "1";
-  if (!isolated && resolveModelSettings().browserCdpEndpoint) {
+  const browserMode = resolvePersistentBrowserMode(browserChoice);
+  if (browserMode === 'edge-cdp') {
     const browser = await launchTestBrowser({ headless });
     const context = browser.contexts()[0];
     if (!context) { await browser.close().catch(() => undefined); throw new Error("Edge CDP 浏览器上下文已断开。"); }
@@ -124,7 +155,7 @@ async function createPersistentTestPage(userDataDir: string, projectId: string, 
   // service lifetime. A loopback-only CDP endpoint lets a restarted service
   // reclaim the same tab and sessionStorage instead of closing Edge and
   // forcing another login. User-configured CDP remains the preferred path.
-  if (process.platform === "win32") {
+  if (browserMode === 'managed-edge') {
     const saved = await readSavedSession(projectSessionFile(userDataDir, projectId), projectId);
     if (saved?.cdpEndpoint) {
       try {
@@ -137,18 +168,18 @@ async function createPersistentTestPage(userDataDir: string, projectId: string, 
     if (managed) return managed;
   }
 
-  const configuredChannel = process.env.TESTPILOT_BROWSER_CHANNEL?.trim() || undefined;
+  const { primary, fallbackToChromium } = resolvePersistentLaunchChannels(browserChoice);
   const launch = (channel?: string) => chromium.launchPersistentContext(path.resolve(userDataDir), { headless, ...(channel ? { channel } : {}) });
   let context;
   try {
-    context = await launch(configuredChannel ?? (process.platform === "win32" ? "msedge" : undefined));
+    context = await launch(primary);
   } catch (error) {
-    if (configuredChannel || process.platform !== "win32" || !/executable|browser|launch/i.test(error instanceof Error ? error.message : String(error))) throw error;
+    if (!fallbackToChromium || !/executable|browser|launch/i.test(error instanceof Error ? error.message : String(error))) throw error;
     context = await launch();
   }
   const browser = context.browser();
   if (!browser) { await context.close().catch(() => undefined); throw new Error("持久化测试浏览器没有提供可用的浏览器会话。"); }
-  const page = await context.newPage();
+  const page = context.pages().find(item => !item.isClosed()) ?? await context.newPage();
   return { browser, context, page, close: () => context.close() };
 }
 
@@ -157,29 +188,59 @@ async function createPersistentTestPage(userDataDir: string, projectId: string, 
  * Reusing the same page preserves sessionStorage based login state and avoids
  * repeatedly opening and closing Edge between runs.
  */
-export async function launchPersistentTestPage(userDataDir: string, options: { isolated?: boolean } = {}) {
-  const key = path.resolve(userDataDir);
-  const configuredEndpoint = options.isolated ? 'isolated-profile' : resolveModelSettings().browserCdpEndpoint ?? "";
+export async function launchPersistentTestPage(userDataDir: string, options: { browser?: 'chromium' | 'edge' } = {}) {
+  const key = resolvePersistentProfileDirectory(userDataDir, options.browser);
+  const configuredEndpoint = resolveModelSettings().browserCdpEndpoint ?? "";
+  if (resolvePersistentBrowserMode(options.browser, process.platform, configuredEndpoint) === 'edge-cdp' && key.split(path.sep).some(part => /^profile-[0-9a-f]{64}$/u.test(part))) {
+    throw new Error('独立账号档案不能复用全局 CDP 浏览器上下文。请清空外部 CDP 配置，使用各档案的独立浏览器；默认会话仍可连接外部 Edge。');
+  }
   const current = persistentSessions.get(key);
   if (current) {
     const session = await current.catch(() => undefined);
-    if (session && !session.page.isClosed() && session.endpoint === configuredEndpoint) return session;
+    if (session && !session.page.isClosed() && session.endpoint === configuredEndpoint && session.browserChoice === options.browser) return session;
     if (session) await session.close().catch(() => undefined);
     persistentSessions.delete(key);
   }
 
-  const projectId = path.basename(key);
-  const creating: Promise<PersistentSession> = createPersistentTestPage(key, projectId, options.isolated).then(session => ({ ...session, endpoint: configuredEndpoint }));
+  const projectId = path.basename(path.resolve(userDataDir));
+  const creating: Promise<PersistentSession> = createPersistentTestPage(key, projectId, options.browser).then(session => ({ ...session, endpoint: configuredEndpoint, ...(options.browser ? { browserChoice: options.browser } : {}) }));
   persistentSessions.set(key, creating);
   try { return await creating; }
   catch (error) { if (persistentSessions.get(key) === creating) persistentSessions.delete(key); throw error; }
 }
 
+/** Promote a clean same-context page and refresh Edge/CDP target identity. */
+export async function promotePersistentTestPage(userDataDir: string, page: Page, options: { browser?: 'chromium' | 'edge' } = {}): Promise<void> {
+  const key = resolvePersistentProfileDirectory(userDataDir, options.browser);
+  const session = await persistentSessions.get(key)?.catch(() => undefined);
+  if (!session || session.page.isClosed() || page.isClosed() || page.context() !== session.context) {
+    throw new Error("无法提升探索页面：项目持久浏览器会话或同一浏览器上下文已失效。");
+  }
+  const previousPage = session.page;
+  const mode = resolvePersistentBrowserMode(session.browserChoice, process.platform, session.endpoint);
+  if (mode === 'edge-cdp' || mode === 'managed-edge') {
+    const targetId = await pageTargetId(session.context, page);
+    const projectId = path.basename(path.resolve(userDataDir));
+    await saveTargetId(projectSessionFile(userDataDir, projectId), projectId, targetId);
+  }
+  session.page = page;
+  if (previousPage !== page && !previousPage.isClosed()) {
+    // Persist the new Edge target and update the live session reference first;
+    // then retire the old managed tab without running beforeunload handlers.
+    // Abort its network requests while closing so unload code cannot issue HTTP
+    // writes after the read-only exploration lease has ended.
+    const closingGuard = async (route: import("playwright").Route) => { await route.abort("blockedbyclient").catch(() => undefined); };
+    await previousPage.route("**/*", closingGuard).catch(() => undefined);
+    await previousPage.close({ runBeforeUnload: false }).catch(() => undefined);
+  }
+}
+
 /** Disconnect TestPilot from the project's browser page without closing the
  * browser process. Managed Edge keeps the tab (and its in-memory login state)
  * alive, while the next run will reconnect to the saved target. */
-export async function disconnectPersistentTestPage(userDataDir: string): Promise<void> {
-  const key = path.resolve(userDataDir);
+export async function disconnectPersistentTestPage(userDataDir: string, options: { browser?: 'chromium' | 'edge' } = {}): Promise<void> {
+  const key = resolveExistingPersistentSessionKey(userDataDir, options.browser, persistentSessions.keys());
+  if (!key) return;
   const pending = persistentSessions.get(key);
   if (!pending) return;
   if (persistentSessions.get(key) === pending) persistentSessions.delete(key);
@@ -188,19 +249,19 @@ export async function disconnectPersistentTestPage(userDataDir: string): Promise
 }
 
 /** Look up a live managed page without launching, closing, or replacing a browser session. */
-export async function getExistingPersistentTestPage(userDataDir: string, options: { isolated?: boolean } = {}) {
-  const key = path.resolve(userDataDir);
+export async function getExistingPersistentTestPage(userDataDir: string, options: { browser?: 'chromium' | 'edge' } = {}) {
+  const key = resolveExistingPersistentSessionKey(userDataDir, options.browser, persistentSessions.keys()) ?? resolvePersistentProfileDirectory(userDataDir, options.browser);
   let current = persistentSessions.get(key);
   if (!current) {
     const projectId = path.basename(key);
-    const configured = options.isolated ? undefined : resolveModelSettings().browserCdpEndpoint;
+    const configured = resolveModelSettings().browserCdpEndpoint;
     const saved = await readSavedSession(projectSessionFile(key, projectId), projectId);
     const endpoint = configured ?? saved?.cdpEndpoint;
     if (!endpoint || !saved?.targetId) return undefined;
     const connecting: Promise<PersistentSession> = connectManagedEdge(key, projectId, endpoint, saved.targetId, saved.pid, false)
       .then(session => {
         if (!session) throw new Error("The saved project tab is no longer available.");
-        return { ...session, endpoint: options.isolated ? 'isolated-profile' : configured ?? "" } as PersistentSession;
+        return { ...session, endpoint: configured ?? "" } as PersistentSession;
       });
     persistentSessions.set(key, connecting);
     try { await connecting; }
@@ -209,12 +270,13 @@ export async function getExistingPersistentTestPage(userDataDir: string, options
   }
   if (!current) return undefined;
   const session = await current.catch(() => undefined);
-  if (!session || session.page.isClosed() || session.endpoint !== (options.isolated ? 'isolated-profile' : resolveModelSettings().browserCdpEndpoint ?? "")) return undefined;
+  if (!session || session.page.isClosed() || session.endpoint !== (resolveModelSettings().browserCdpEndpoint ?? "")) return undefined;
   return session;
 }
 
 function projectSessionFile(userDataDir: string, projectId: string): string {
-  return path.resolve(userDataDir, "..", "..", "browser-sessions", `${projectId}.json`);
+  const directory = path.basename(userDataDir).startsWith('browser-') ? path.dirname(userDataDir) : userDataDir;
+  return path.resolve(directory, "..", "..", "browser-sessions", `${projectId}.json`);
 }
 
 type SavedProjectSession = { version: 1 | 2; projectId: string; targetId: string; cdpEndpoint?: string; pid?: number };

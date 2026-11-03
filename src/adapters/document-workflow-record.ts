@@ -3,6 +3,10 @@ import { open, lstat, mkdir, readFile, readdir, rename, rm } from "node:fs/promi
 import path from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
+import { DOCUMENT_WORKFLOW_STAGES, DOCUMENT_WORKFLOW_SPECIALISTS, type DocumentWorkflowStageId, type DocumentWorkflowSpecialist } from "../domain/document-workflow.js";
+
+export { DOCUMENT_WORKFLOW_STAGES, DOCUMENT_WORKFLOW_SPECIALISTS } from "../domain/document-workflow.js";
+export type { DocumentWorkflowStageId, DocumentWorkflowSpecialist } from "../domain/document-workflow.js";
 
 /**
  * Durable state for the fixed document QA specialist pipeline.
@@ -13,33 +17,6 @@ import { z } from "zod";
 export const DOCUMENT_WORKFLOW_SCHEMA_VERSION = 1 as const;
 export const DOCUMENT_WORKFLOW_STORE_DIRECTORY = "document-workflows" as const;
 
-export const DOCUMENT_WORKFLOW_STAGES = [
-  "generate-cases",
-  "review-cases",
-  "author-steps",
-  "human-approval",
-  "deterministic-execution",
-  "computer-use-execution",
-  "analyze-results",
-  "generate-report",
-  "package-artifacts",
-] as const;
-
-export type DocumentWorkflowStageId = typeof DOCUMENT_WORKFLOW_STAGES[number];
-
-export const DOCUMENT_WORKFLOW_SPECIALISTS = [
-  "case-generator",
-  "case-reviewer",
-  "step-author",
-  "human-review-gate",
-  "deterministic-executor",
-  "computer-use-observer",
-  "result-analyst",
-  "report-writer",
-  "report-packager",
-] as const;
-
-export type DocumentWorkflowSpecialist = typeof DOCUMENT_WORKFLOW_SPECIALISTS[number];
 export type DocumentWorkflowApprovalPolicy = "automatic" | "confirm-before-execution" | "confirm-each-stage";
 export type DocumentWorkflowStatus = "running" | "waiting" | "failed" | "completed" | "cancelled";
 export type DocumentWorkflowStageStatus = "running" | "waiting" | "failed" | "completed" | "cancelled";

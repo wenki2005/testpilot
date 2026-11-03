@@ -123,16 +123,18 @@ function totalSize(dir, files) {
   return files.reduce((sum, f) => sum + statSync(path.join(dir, f)).size, 0);
 }
 
-function assemblePackage(dir) {
+function assemblePackage(dir, releaseName) {
   const copy = (rel) => {
     const target=path.join(dir,rel);mkdirSync(path.dirname(target),{recursive:true});
     cpSync(path.join(repoRoot,rel),target,{recursive:true,filter:file=>!lstatSync(file).isSymbolicLink()});
   };
   for(const file of ['package.json','package-lock.json','tsconfig.json','README.md','PRODUCT.md','src','web/src','web/index.html','web/tsconfig.json','web/vite.config.ts','packaging/windows'])copy(file);
-  for(const file of ['clean.mjs','clean-test-artifacts.mjs','package-demo.mjs','run-tests.mjs','test-browser-processes.mjs'])copy('scripts/'+file);
+  for(const file of ['clean.mjs','check-architecture.mjs','package-demo.mjs','run-tests.mjs','test-browser-processes.mjs'])copy('scripts/'+file);
   for(const rel of ['examples/api-suite.sample.json','examples/sample-suite.json','examples/migrations','examples/source-test-fixture','examples/profiles/quantity-sample.json','examples/web-regression-sample'])copy(rel);
-  for(const name of ['source-test-agent.test.mjs','source-agent-evidence.test.mjs','source-agent-model-protocol.test.mjs','command-process-tree.test.mjs','playwright-test-adapter.test.mjs','test-runner-ownership.test.mjs'])copy('tests/'+name);
-  copy('tests/browser/text-evidence.spec.ts');copy('playwright.config.ts');
+  for(const name of ['source-test-agent.test.mjs','source-test-job-service.test.mjs','source-test-candidate-adoption.integration.test.mjs','source-test-candidate-registry.integration.test.mjs','source-test-candidate-review-ssr.test.mjs','source-agent-evidence.test.mjs','source-agent-model-protocol.test.mjs','command-process-tree.test.mjs','playwright-test-adapter.test.mjs','test-runner-ownership.test.mjs','managed-edge-handoff.integration.test.mjs','document-case-exploration-adoption.integration.test.mjs','document-case-step-authoring-provenance.test.mjs','document-case-exploration-review-ssr.test.mjs','document-project-update-service.test.mjs','autonomous-regression-plans-ssr.test.mjs','document-autonomous-plan-execution-service.test.mjs','document-autonomous-execution-http.integration.test.mjs'])copy('tests/'+name);
+  copy('tests/browser/document-autonomous-regression-ui.spec.ts');copy('tests/browser/text-evidence.spec.ts');copy('playwright.config.ts');
+  for(const name of ['document-page-evidence.test.mjs','document-case-navigation.test.mjs','document-website-map.test.mjs','document-website-map-http-store.test.mjs','document-case-auto-preparation.test.mjs','document-agent-database.test.mjs','computer-use-regression-repairs.test.mjs','computer-use-evidence.test.mjs','document-package-refresh.test.mjs','mysql-routes.test.mjs'])copy('tests/'+name);
+  copy('docs/architecture/A01-网站自主探索与导航-2026-11-03.md');
   for(const file of ['启动演示.cmd','start-demo.ps1'])cpSync(path.join(repoRoot,'packaging/windows',file),path.join(dir,file));
   for(const file of ['快速开始-中文.md','版本更新-0.3.0.md'])cpSync(path.join(repoRoot,'packaging/windows',file),path.join(dir,file));
   console.log('stage: public README');
@@ -142,11 +144,13 @@ function assemblePackage(dir) {
   execFileSync(process.execPath,[path.join(repoRoot,'node_modules/typescript/bin/tsc'),'-p',path.join(repoRoot,'tsconfig.json'),'--outDir',path.join(dir,'dist')],{cwd:repoRoot,stdio:'inherit',windowsHide:true});
   execFileSync(process.execPath,[path.join(repoRoot,'node_modules/vite/bin/vite.js'),'build','web','--outDir',path.join(dir,'web/dist'),'--emptyOutDir'],{cwd:repoRoot,stdio:'inherit',windowsHide:true});
   const version=JSON.parse(readFileSync(path.join(repoRoot,'package.json'),'utf8')).version;
-  writeFileSync(path.join(dir,'RELEASE.json'),JSON.stringify({name:'TestPilot',version,builtAt:new Date().toISOString(),platform:'Windows',node:process.version,source:'Fresh TypeScript and Vite builds',codexRequired:false,firstRunRequiresNetwork:true},null,2));
+  writeFileSync(path.join(dir,'RELEASE.json'),JSON.stringify({name:'TestPilot',version,releaseName,builtAt:new Date().toISOString(),platform:'Windows',node:process.version,source:'Fresh TypeScript and Vite builds',codexRequired:false,firstRunRequiresNetwork:true},null,2));
 }
 
 function assertCleanContents(dir) {
-  const forbidden=listFiles(dir).filter(f=>/(^|\/)(?:node_modules|runtime-data|artifacts|output|test-artifacts|\.git|browser-profiles)(\/|$)/i.test(f)||/(^|\/)\.env(?:\..*)?$/.test(f)&&f!=='.env.example'||/model-settings\.json$/i.test(f));
+  // Only reject private/generated directories at the package root. Source modules
+  // can legitimately use names such as `src/application/artifacts`.
+  const forbidden=listFiles(dir).filter(f=>/^(?:node_modules|runtime-data|artifacts|output|test-artifacts|\.git|browser-profiles)(?:\/|$)/i.test(f)||/(^|\/)\.env(?:\..*)?$/.test(f)&&f!=='.env.example'||/model-settings\.json$/i.test(f));
   if(forbidden.length)throw Error('Private or generated files in distribution: '+forbidden.join(', '));
   const settings=path.join(repoRoot,'artifacts/demo/model-settings.json');
   const secrets=[];
@@ -165,7 +169,7 @@ function main() {
   mkdirSync(path.dirname(dir),{recursive:true});mkdirSync(path.dirname(zip),{recursive:true});
   const stage=mkdtempSync(path.join(path.dirname(dir),'.testpilot-package-'));
   try {
-    assemblePackage(stage);assertLauncherEncoding(stage);assertCleanContents(stage);
+    assemblePackage(stage,path.basename(dir));assertLauncherEncoding(stage);assertCleanContents(stage);
     writeManifest(stage,listFiles(stage));
     renameSync(stage,dir);
     const entries=buildZip(dir,zip,listFiles(dir));

@@ -1,11 +1,14 @@
 import { type Browser, type Page } from "playwright";
+import { executeReadonlyNavigationCheck } from './browser/document-readonly-actions.js';
 import { createTestPage, launchTestBrowser, navigatePersistentPage, resetPersistentCaseBaseline } from "./browser-runtime.js";
-import type { BrowserCheck } from "./document-test-workflow.js";
-import { completeChat, type ChatMessage } from "./compatible-chat.js";
+import type { BrowserCheck } from "../domain/document-test-model.js";
+import { completeChat, type ChatMessage } from "./ai/compatible-chat.js";
 import { resolveModelSettings } from "./model-settings.js";
 import { allowBrowserRequest, isLoginPage, waitForUserLogin } from "./login-handoff.js";
 import { missingDirectAssertion } from "./document-case-quality.js";
 import { classifyComputerUseEvidence } from "./computer-use-evidence.js";
+import { parseComputerUseToolArguments } from './computer-use-tool-arguments.js';
+import { resolveDocumentField, isDocumentFieldInvalid } from './browser/document-form-controls.js';
 import { midsceneVisualAssertionConfiguration, midsceneVisualAssertionPreflight, runMidsceneVisualAssertion } from "./midscene-visual-assertion.js";
 import { resolveDocumentCaseEntryUrl } from "./document-case-entry.js";
 
@@ -242,7 +245,7 @@ async function perform(page: Page, action: any): Promise<void> {
   }
 }
 
-async function verifyExactAssertions(page: Page, check: BrowserCheck): Promise<{ failures: string[]; unverified: string[] }> {
+export async function verifyExactAssertions(page: Page, check: BrowserCheck): Promise<{ failures: string[]; unverified: string[] }> {
   const failures: string[] = [];
   const unverified: string[] = [];
   const verifyVisibleText = async (text: string, label: string) => {
@@ -258,43 +261,15 @@ async function verifyExactAssertions(page: Page, check: BrowserCheck): Promise<{
       failures.push(`${label}：${text}`);
     }
   };
-  const resolveField = async (label: string, rowIndex = 0) => {
-    const accessible = page.getByLabel(label, { exact: false });
-    if (await accessible.count()) {
-      if (rowIndex >= await accessible.count()) throw new Error(`字段只有 ${await accessible.count()} 个匹配：${label}`);
-      return accessible.nth(rowIndex);
-    }
-    const selector = 'input:not([type="hidden"]):not([type="submit"]):not([type="button"]),textarea,select';
-    const matches = await page.locator(selector).evaluateAll((elements: Element[], wanted: string) => {
-      const normalize = (value: string) => value.replace(/\s+/g, "").replace(/[：:＊*]/g, "").toLocaleLowerCase();
-      const needle = normalize(wanted);
-      return elements.flatMap((element, index) => {
-        if (!element.getClientRects().length) return [];
-        const control = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-        const explicit = [control.getAttribute("aria-label"), control.getAttribute("placeholder"), ...(control.labels ? Array.from(control.labels).map(item => item.innerText || item.textContent || "") : [])]
-          .filter(Boolean).map(value => normalize(value!));
-        if (explicit.some(value => value.includes(needle))) return [{ index, score: 0 }];
-        let parent: Element | null = element;
-        for (let depth = 0; depth < 8 && parent; depth++, parent = parent.parentElement) {
-          const text = normalize(parent instanceof HTMLElement ? parent.innerText : parent.textContent ?? "");
-          if (!text.includes(needle)) continue;
-          const controls = parent.querySelectorAll(selector).length + (parent.matches(selector) ? 1 : 0);
-          // Prefer the nearest single-control field wrapper. If a form layout
-          // groups several controls, keep the nearest textual candidate so we
-          // can distinguish a real mismatch from a locator limitation.
-          return [{ index, score: depth + (controls === 1 ? 0 : 20) }];
-        }
-        return [];
-      }).sort((a, b) => a.score - b.score);
-    }, label);
-    if (!matches.length) throw new Error(`无法定位字段：${label}`);
-    const bestScore = matches[0]!.score;
-    const bestMatches = matches.filter(match => match.score === bestScore);
-    if (rowIndex >= bestMatches.length) throw new Error(`字段只有 ${bestMatches.length} 个同级匹配：${label}`);
-    if (bestMatches.length > 1 && rowIndex === 0) throw new Error(`字段存在 ${bestMatches.length} 个同级候选：${label}`);
-    return page.locator(selector).nth(bestMatches[rowIndex]!.index);
-  };
+  const resolveField = (label: string, rowIndex = 0) => resolveDocumentField(page, label, rowIndex);
   for (const step of check.steps ?? []) {
+    // Verification must not replay navigation already performed by the visual agent.
+    if(step.action==='goBack') continue;
+    if(step.action==='assertControlEnabled') {
+      try { await executeReadonlyNavigationCheck(page,step); }
+      catch(error) { const message=error instanceof Error?error.message:String(error); if(message.startsWith('断言失败')) failures.push(message); else unverified.push(message); }
+      continue;
+    }
     if (step.action === "assertNoFetchOrXhr") {
       unverified.push("Computer Use 视觉通道不能从截图证明没有发出 fetch/XHR；该断言由确定性网络监听器验证。");
       continue;
@@ -313,7 +288,7 @@ async function verifyExactAssertions(page: Page, check: BrowserCheck): Promise<{
       } catch { unverified.push(`无法通过 DOM 定位器复核字段值：${step.label}`); }
     } else if (step.action === "assertValueByPlaceholder") {
       try {
-        let field = page.getByPlaceholder(step.placeholder, { exact: true });
+        let field = page.getByPlaceholder(step.placeholder, { exact: true }).filter({ visible: true });
         const placeholderCount = await field.count();
         if (placeholderCount !== 1) {
           if (placeholderCount > 1) throw new Error("placeholder is ambiguous");
@@ -333,15 +308,7 @@ async function verifyExactAssertions(page: Page, check: BrowserCheck): Promise<{
       try {
         const field = await resolveField(step.label, step.rowIndex);
         await field.waitFor({ state: "visible", timeout: 1500 });
-        const invalid = await field.evaluate((element: Element) => {
-          const control = element as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-          if (control.getAttribute("aria-invalid") === "true" || ("validity" in control && !control.validity.valid)) return true;
-          if (/(?:invalid|error|danger)/i.test(typeof control.className === "string" ? control.className : "")) return true;
-          return ["borderTopColor", "borderRightColor", "borderBottomColor", "borderLeftColor"].some(key => {
-            const rgb = getComputedStyle(control)[key as "borderTopColor"].match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
-            return Boolean(rgb && Number(rgb[1]) > 150 && Number(rgb[2]) < 130 && Number(rgb[3]) < 130);
-          });
-        });
+        const invalid = await field.evaluate(isDocumentFieldInvalid);
         if (!invalid) failures.push(`字段未呈现无效/红色状态：${step.label}`);
       } catch { unverified.push(`无法通过 DOM 定位器复核字段无效状态：${step.label}`); }
     } else if (step.action === "assertRoleVisible") {
@@ -362,7 +329,7 @@ async function verifyExactAssertions(page: Page, check: BrowserCheck): Promise<{
   return { failures, unverified };
 }
 
-async function runVisualCase(browser: Browser, page: Page, url: string, check: BrowserCheck, model: string, signal: AbortSignal, projectId: string, runId: string, onLoginWait?: (waiting: boolean) => Promise<void>, observationOnly = false): Promise<VisualCaseResult> {
+async function runVisualCase(browser: Browser, page: Page, url: string, check: BrowserCheck, model: string, signal: AbortSignal, projectId: string, runId: string, onLoginWait?: (waiting: boolean) => Promise<void>, observationOnly = false, reuseBaseline = false): Promise<VisualCaseResult> {
   const started = Date.now();
   page.setDefaultTimeout(5000);
   await page.setViewportSize(SCREEN).catch(() => undefined);
@@ -392,7 +359,7 @@ async function runVisualCase(browser: Browser, page: Page, url: string, check: B
       // Keep the page loaded for both lanes and every case. Hash-based SPAs
       // can return to the case's starting route without dropping in-memory
       // auth state or reopening the QR login flow.
-      await navigatePersistentPage(page, url, 30_000);
+      if (!reuseBaseline) await navigatePersistentPage(page, url, 30_000);
     } catch (error) {
       return { id: check.id, title: check.title, status: "blocked", detail: `本用例导航失败：${error instanceof Error ? error.message : String(error)}；共享会话保留，后续用例会重新建立基线。`, durationMs: Date.now() - started, actions: 0 };
     }
@@ -400,6 +367,7 @@ async function runVisualCase(browser: Browser, page: Page, url: string, check: B
     const baselineUrl = page.url();
     if (await isLoginPage(page)) await waitForUserLogin(projectId, runId, url, browser, page, onLoginWait);
     let pageDiagnostic = await inspectSharedPageReadiness(page);
+    if (pageDiagnostic && reuseBaseline) return {id:check.id,title:check.title,status:"blocked",detail:`共享前置页面不可用：${pageDiagnostic}；不重载后假装保留前置状态。`,durationMs:Date.now()-started,actions:0};
     if (pageDiagnostic) {
       // A transient blank CDN response must not circuit-break the entire visual
       // lane. Retry the same tab once; keep this case blocked if the page stays
@@ -440,7 +408,7 @@ async function runVisualCase(browser: Browser, page: Page, url: string, check: B
     let plainReplyRetries = 0;
     let malformedToolJsonRetries = 0;
     for (let step = 0; step < MAX_RESPONSE_STEPS; step++) {
-      const message = await completeChat(messages, { tools, maxTokens: 1600, model, signal, timeoutMs: ACTION_TIMEOUT_MS });
+      const message = await completeChat(messages, { tools, maxTokens: 2400, thinking: { type: 'disabled' }, model, signal, timeoutMs: ACTION_TIMEOUT_MS });
       messages.push({ ...message, role: "assistant" });
       const calls = Array.isArray(message.tool_calls) ? message.tool_calls : [];
       if (calls.length !== 1 || calls[0]?.function?.name !== "computer_step") {
@@ -460,7 +428,7 @@ async function runVisualCase(browser: Browser, page: Page, url: string, check: B
         throw new Error(responseText ? `视觉 Agent 未返回单个受限工具动作：${responseText.slice(0, 450)}` : "视觉 Agent 未返回受限工具动作；检查中转模型是否支持图片输入和函数调用。");
       }
       let action: any;
-      try { action = JSON.parse(calls[0].function.arguments); } catch {
+      try { action = parseComputerUseToolArguments(calls[0].function.arguments); } catch {
         if (malformedToolJsonRetries < 1) {
           malformedToolJsonRetries++;
           messages.push({ role: "tool", tool_call_id: calls[0].id, content: "工具参数不是合法 JSON，因此没有执行任何浏览器动作，页面状态未改变。" });
@@ -540,6 +508,7 @@ async function runVisualCase(browser: Browser, page: Page, url: string, check: B
           : `${recorded.evidence}${expectsNoNavigation && observedUrlUnchanged ? `；Playwright 已确认当前 URL 未变化：${baselineUrl}` : ""}${check.coverageGap ? `；只确认了可见子项，完整用例仍未验证：${check.coverageGap}` : ""}`;
     const detailedEvidence = midsceneDetail && !evidenceDetail.includes(midsceneDetail) ? `${evidenceDetail}；${midsceneDetail}` : evidenceDetail;
     const classification = classifyComputerUseEvidence({
+      expectsEmptyState: /无订单|无符合条件记录|空状态|empty[- ]state/iu.test(check.title + ' ' + check.expected),
       recordedStatus: observationOnly ? "inconclusive" : recorded.status as "passed" | "failed" | "inconclusive",
       recordedEvidence: detailedEvidence,
       assertionFailures: assertionVerification.failures,
@@ -668,9 +637,11 @@ export async function runComputerUseLane(url: string, cases: BrowserCheck[], pro
       return { status: "blocked", summary: `共享页面预检失败；${results.length} 条用例全部阻塞，未调用逐用例视觉模型。另有 ${outOfScopeResults.length} 条 N/A。`, provider: available.model, diagnostics: [pageDiagnostic], results: [...outOfScopeResults, ...results] };
     }
     const results: VisualCaseResult[] = [];
-    const record = async (result: VisualCaseResult) => { results.push(result); await onCaseResult?.(result); };
+    const establishedCases = new Set<string>();
+    const record = async (result: VisualCaseResult) => { if(result.status === "passed") establishedCases.add(result.id); else establishedCases.clear(); results.push(result); await onCaseResult?.(result); };
     for (let caseIndex = 0; caseIndex < inScopeCases.length; caseIndex++) {
       const item = inScopeCases[caseIndex]!;
+      if(item.authorizedWriteOperationId || item.writeResultOperationId){await onCaseStart?.(item);await record({id:item.id,title:item.title,status:'blocked',detail:'单次提交及其运行输出由确定性授权通道核验；视觉通道不得重放或借用历史编号。',durationMs:0,actions:0});continue;}
       if (externalSignal?.aborted) {
         for (const pending of inScopeCases.slice(caseIndex)) {
           await onCaseStart?.(pending);
@@ -725,7 +696,10 @@ export async function runComputerUseLane(url: string, cases: BrowserCheck[], pro
       if (runController.signal.aborted) { await record({ id: item.id, title: item.title, status: "blocked", detail: "Computer Use lane exceeded its 60 minute run budget; resume the run in smaller batches.", durationMs: 0, actions: 0 }); continue; }
       try {
         const caseUrl = resolveDocumentCaseEntryUrl(url, item.entryPath);
-        try { await resetPersistentCaseBaseline(page, caseUrl, 30_000, SCREEN); }
+        const dependencies=item.dependsOnCaseIds ?? [];
+        if(dependencies.some(id=>!establishedCases.has(id))){await record({id:item.id,title:item.title,status:"blocked",detail:"共享前置未通过或页面状态已失效；不在错误基线上执行视觉检查。",durationMs:0,actions:0});continue;}
+        if(!dependencies.length) establishedCases.clear();
+        try { if(!dependencies.length) await resetPersistentCaseBaseline(page, caseUrl, 30_000, SCREEN); }
         catch (error) {
           await record({ id: item.id, title: item.title, status: "blocked", detail: `无法建立 Computer Use 用例基线：${error instanceof Error ? error.message : String(error)}`, durationMs: 0, actions: 0 });
           continue;
@@ -734,7 +708,7 @@ export async function runComputerUseLane(url: string, cases: BrowserCheck[], pro
           await record({ id: item.id, title: item.title, status: "blocked", detail: "页面重载后出现登录页；为避免重复扫码，本用例已阻塞。请确认原登录会话能在同一浏览器上下文中跨页面重载保持，再重跑。", durationMs: 0, actions: 0 });
           continue;
         }
-        const rawResult = await runVisualCase(browser ?? page.context().browser()!, page, caseUrl, item, available.model, runController.signal, projectId, runId, onLoginWait, observationOnly);
+        const rawResult = await runVisualCase(browser ?? page.context().browser()!, page, caseUrl, item, available.model, runController.signal, projectId, runId, onLoginWait, observationOnly, dependencies.length > 0);
         const result = externalSignal?.aborted ? { ...rawResult, status: "cancelled" as const, detail: "运行在此 Computer Use 用例期间被手动停止；当前结果未判定，可定向重跑。" } : rawResult;
         if (result.detail.startsWith(GLOBAL_PAGE_DIAGNOSTIC_PREFIX)) {
           const diagnostic = result.detail.slice(GLOBAL_PAGE_DIAGNOSTIC_PREFIX.length);

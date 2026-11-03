@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 
-type ConnectionStatus = { connected: boolean; host: string; port: number; database: string; account?: string };
+type TlsMode = 'verify-certificate' | 'encrypted-unverified';
+type ConnectionStatus = { connected: boolean; host: string; port: number; database: string; account?: string; tlsMode?: TlsMode; encrypted?: boolean; certificateVerified?: boolean };
 type Table = { name: string };
 type Column = { name: string; dataType: string; columnType: string; nullable: boolean; primaryKey: boolean; autoIncrement: boolean; sensitive: boolean; displayable: boolean };
 type RowsPage = { table: string; columns: Column[]; rows: Array<Record<string, string | number | null>>; offset: number; limit: number; hasMore: boolean };
@@ -20,6 +21,7 @@ export default function MysqlExplorerPage() {
   const [tables, setTables] = useState<Table[]>([]);
   const [username, setUsername] = useState('fengqi');
   const [password, setPassword] = useState('');
+  const [tlsMode, setTlsMode] = useState<TlsMode>('verify-certificate');
   const [filter, setFilter] = useState('');
   const [selectedTable, setSelectedTable] = useState('');
   const [columns, setColumns] = useState<Column[]>([]);
@@ -54,7 +56,7 @@ export default function MysqlExplorerPage() {
   const connect = async (event: FormEvent) => {
     event.preventDefault(); setBusy(true); setError(''); setMessage('');
     try {
-      const current = await api<ConnectionStatus>('/api/mysql/connect', { method: 'POST', body: JSON.stringify({ user: username, password }) });
+      const current = await api<ConnectionStatus>('/api/mysql/connect', { method: 'POST', body: JSON.stringify({ user: username, password, tlsMode }) });
       setConnection(current); setPassword(''); setSelectedTable(''); setColumns([]); setData(null);
       await refreshTables(); setMessage('连接成功。该会话只保存在 TestPilot 内存中。');
     } catch (cause) { setError((cause as Error).message); }
@@ -92,12 +94,15 @@ export default function MysqlExplorerPage() {
     <header className="secondary-heading"><div><span className="section-kicker">READ ONLY DATABASE BROWSER</span><h1>MySQL 数据库</h1><p>连接部门申样测试库，查看表结构和分页数据，辅助整理测试数据与回归用例。</p></div>
       {connection?.connected && <button className="button-secondary" disabled={busy} onClick={() => void disconnect()}>断开连接</button>}
     </header>
-    <div className="mysql-safety-banner"><span className="mysql-safety-icon">↗</span><div><strong>加密只读连接</strong><p>TestPilot 仅接受 supply 库的 SELECT 专用账号，并要求校验 TLS 证书；每次数据查询使用只读事务。敏感字段默认遮蔽，密码不会写入配置或浏览器本地存储。</p></div></div>
+    <div className="mysql-safety-banner"><span className="mysql-safety-icon">↗</span><div><strong>加密只读连接</strong><p>仅连接固定的 supply 测试库，要求 SELECT 专用账号和 TLS 加密；默认校验证书。每次数据查询使用只读事务，敏感字段默认遮蔽，密码仅保存在服务内存中。</p></div></div>
+    {connection?.connected && connection.tlsMode === 'encrypted-unverified' && <div className="mysql-notice" role="status">当前使用加密兼容模式：TLS 已加密，但未验证服务器证书身份。</div>}
     {error && <div className="mysql-notice mysql-notice-error" role="alert">{error}</div>}
     {message && <div className="mysql-notice mysql-notice-success" role="status">{message}</div>}
     {!connection?.connected ? <form className="mysql-connect-card" onSubmit={event => void connect(event)}>
       <div className="mysql-card-heading"><div><h2>连接测试数据库</h2><p>连接地址与库名已固定为测试环境；输入数据库账号完成连接。</p></div><span className="mysql-disconnected"><i/>未连接</span></div>
       <div className="mysql-connection-fields"><label><span>主机</span><input value={connection?.host ?? '47.95.211.86'} readOnly /></label><label><span>端口</span><input value={connection?.port ?? 12010} readOnly /></label><label><span>数据库</span><input value={connection?.database ?? 'supply'} readOnly /></label><label><span>用户名</span><input value={username} onChange={event => setUsername(event.target.value)} autoComplete="username" required /></label><label className="mysql-password-field"><span>密码 <small>仅用于此次内存连接</small></span><input type="password" value={password} onChange={event => setPassword(event.target.value)} autoComplete="current-password" required /></label></div>
+      <label><span>连接方式</span><select aria-label="数据库连接方式" value={tlsMode} onChange={event => setTlsMode(event.target.value as TlsMode)} disabled={busy}><option value="verify-certificate">TLS 加密并校验证书（默认）</option><option value="encrypted-unverified">TLS 加密兼容模式（不验证服务器证书）</option></select></label>
+      {tlsMode === 'encrypted-unverified' && <p>用于当前测试库的兼容连接。数据传输已加密，但不验证服务器身份；不会自动切换为明文连接。</p>}
       <div className="mysql-connect-footer"><span>服务端会验证账号仅有 supply 库读取权限。</span><button className="button-primary" type="submit" disabled={busy || !password}>{busy ? '连接中…' : '连接数据库'}</button></div>
     </form> : <>
       <div className="mysql-connected-card"><div className="mysql-connected-status"><i/><div><strong>已连接 · {connection.database}</strong><span>{connection.host}:{connection.port} · {connection.account ?? username}</span></div></div><div className="mysql-connected-meta"><strong>{tables.length}</strong><span>张数据表</span></div><button className="text-button" disabled={busy} onClick={() => { void refreshTables().catch(cause => setError((cause as Error).message)); }}>刷新表清单</button></div>

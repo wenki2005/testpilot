@@ -4,6 +4,30 @@ import { createHash } from 'node:crypto';
 import { strToU8, unzipSync, zipSync } from 'fflate';
 import { refreshDocumentPackage } from '../dist/adapters/document-package-refresh.js';
 
+test('package refresh preserves the original database snapshot rather than replacing it with current data', () => {
+  const databaseEvidence = { id: 'database-at-run-time', capturedAt: '2026-11-03T06:00:00Z', sha256: 'a'.repeat(64), queries: [{ key: 'applications', rows: [{ apply_no: '202611030001', total_amount: '43.00' }] }] };
+  const item = { id: 'totals', steps: [{ action: 'assertText', text: '43.00' }] };
+  const project = { id: 'p', name: 'fixture', fileName: 'fixture', targetUrl: 'https://example.test', cases: [item] };
+  const run = { id: 'r', projectId: 'p', report: 'fixture', deterministic: { results: [] }, ai: { results: [] }, comparisons: [], caseScope: { selectedCaseIds: ['totals'], excludedCaseIds: [], totalCases: 1 }, databaseEvidence };
+  const archive = unzipSync(refreshDocumentPackage(project, run, zipSync({ 'run.mjs': strToU8('/* fixture */') })));
+  assert.deepEqual(JSON.parse(Buffer.from(archive['database-evidence.json']).toString()), databaseEvidence);
+  assert.deepEqual(JSON.parse(Buffer.from(archive['run.json']).toString()).databaseEvidence, databaseEvidence);
+  const manifest = JSON.parse(Buffer.from(archive['artifacts.json']).toString()).artifacts.find(a => a.path === 'database-evidence.json');
+  assert.equal(manifest.sha256, createHash('sha256').update(archive['database-evidence.json']).digest('hex'));
+  assert.equal(manifest.sources[0].digest, databaseEvidence.sha256);
+});
+
+test('package refresh retains run-bound business facts with a verifiable manifest entry',()=>{
+ const facts=[{kind:'book',observedAt:'2026-11-03T00:00:00Z',requestKey:'2022600046',availableFields:['weight'],fields:{weight:'92.000'}}];
+ const item={id:'book',steps:[{action:'assertVisible',text:'Book'}]};
+ const project={id:'p',name:'fixture',fileName:'fixture',targetUrl:'https://example.test',cases:[item]};
+ const run={id:'r',projectId:'p',report:'fixture',deterministic:{results:[]},ai:{results:[]},comparisons:[],caseScope:{selectedCaseIds:['book'],excludedCaseIds:[],totalCases:1},readOnlyBusinessFacts:facts};
+ const archive=unzipSync(refreshDocumentPackage(project,run,zipSync({'run.mjs':strToU8('/* local fixture */')})));
+ assert.deepEqual(JSON.parse(Buffer.from(archive['read-only-business-facts.json']).toString()),facts);
+ const manifest=JSON.parse(Buffer.from(archive['artifacts.json']).toString()).artifacts.find(a=>a.path==='read-only-business-facts.json');
+ assert.equal(manifest.sha256,createHash('sha256').update(archive['read-only-business-facts.json']).digest('hex'));
+});
+
 test('package refresh replaces stale cases from the saved project and preserves authoritative run evidence with explicit scope', () => {
   const previous = zipSync({
     'run.mjs': strToU8('/* runner implementation */'),

@@ -21,10 +21,11 @@ async function run(bin, args) {
   });
 }
 let code = await run(process.execPath, ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.json']);
+if (code === 0) code = await run(process.execPath, ['scripts/check-architecture.mjs']);
 if (code === 0) code = await run(process.execPath, ['node_modules/vite/bin/vite.js', 'build', 'web']);
 if (code === 0) {
   console.log(`Running ${files.length} test files serially; owned evidence: ${ownedRoot}`);
-  code = await run(process.execPath, ['--test', '--test-concurrency=1', ...files]);
+  code = await run(process.execPath, ['--import', 'tsx', '--test', '--test-concurrency=1', ...files]);
 }
 if (code === 0) code = await run(process.execPath, ['node_modules/playwright/cli.js', 'test']);
 const summary = { ...owner, completedAt: new Date().toISOString(), exitCode: code, files: files.length, retained: code !== 0 || process.argv.includes('--keep') };

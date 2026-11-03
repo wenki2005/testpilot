@@ -4,7 +4,6 @@ import path from "node:path";
 import { calculateOpenApiCoverage, parseApiSuite, type ApiOpenApiOperationFact, type ApiTestSuite } from "../storage/api-suite-loader.js";
 import { runApiSuite } from "./api-test-adapter.js";
 import { listApiFindingUpdates, recordApiFindings, type ApiFinding, type ApiFindingStore } from "./api-finding-tracker.js";
-import { conflictingReadOnlyExpectations } from "./api-expectation-review.js";
 
 export type ApiSuiteCandidate = {
   id: string;
@@ -138,11 +137,6 @@ export async function diagnoseApiFinding(suiteId: string, findingId: string): Pr
     : [];
   const evidence = { runId: finding.lastRunId, ...(typeof rawRun?.status === "string" ? { runStatus: rawRun.status } : {}), ...(finding.caseId ? { caseId: finding.caseId } : {}), ...(typeof result?.status === "string" ? { caseStatus: result.status } : {}), observedStatuses, suiteDigest: finding.suiteDigest };
   if (finding.state === "resolved") return { findingId, state: finding.state, source: "deterministic-evidence", classification: "resolved", summary: "此问题已由后续运行证据标记为解决。", evidence, recommendation: { action: "none", summary: "无需重测；如问题再次出现，新运行会重新打开该问题。", canRun: false } };
-  const conflictingExpectations = finding.caseId ? conflictingReadOnlyExpectations(candidate.suite, finding.caseId) : [];
-  if (conflictingExpectations.length) {
-    const details = conflictingExpectations.map(item => `${item.caseId} 预期 ${item.expectedStatus}`).join("；");
-    return { findingId, state: finding.state, source: "deterministic-evidence", classification: "manual-review", summary: `同一只读请求的已审核用例存在互相冲突的 HTTP 状态预期：${details}。现有运行失败可能来自套件预期冲突，不能据此判断产品缺陷。`, evidence, recommendation: { action: "human-review", summary: "请先确认这些用例的业务身份、测试数据与状态码约定，再修订并重新审核套件；不会改写原运行记录，也不能仅凭该失败建议自动重测。", canRun: false } };
-  }
   if (finding.kind === "design-gap") return { findingId, state: finding.state, source: "deterministic-evidence", classification: "suite-design-gap", summary: "契约中存在适用的设计目标，但当前没有关联的测试用例，因此没有执行结果可供判断。", evidence, recommendation: { action: "author-or-review-case", summary: "补充或修订该目标的测试用例并重新审核套件；此问题没有可直接重测的 case。", canRun: false } };
   if (finding.kind === "manual-review") return { findingId, state: finding.state, source: "deterministic-evidence", classification: "manual-review", summary: "当前自动边界分析无法验证此约束，现有证据不足以判定为产品缺陷。", evidence, recommendation: { action: "human-review", summary: "由测试人员检查契约约束与样例数据；确认如何测试后再修订套件。", canRun: false } };
   const approvedVersion = `Approved API suite: ${candidate.id} (SHA-256 ${candidate.digest})`;

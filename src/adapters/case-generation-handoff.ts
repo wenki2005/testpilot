@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { z } from "zod";
 import type { CaseGenerationResult, GeneratedTestCase } from "./case-generation-agent.js";
 import { caseCategories, inferCaseCategory } from "./document-test-types.js";
-import type { BrowserCheck, DocumentProject } from "./document-test-workflow.js";
+import type { BrowserCheck, DocumentProject } from "../domain/document-test-model.js";
 
 const priorities = ["P0", "P1", "P2", "P3"] as const;
 const confidenceLevels = ["high", "medium", "low"] as const;
@@ -12,16 +12,6 @@ const identifier = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/u);
 const longText = z.string().max(100_000);
 const textList = (maxItems: number, maxLength = 100_000) => z.array(z.string().max(maxLength)).max(maxItems);
 const uniqueItems = <T extends string>(values: T[]) => new Set(values).size === values.length;
-
-const requirementSchema = z.object({
-  id: identifier,
-  text: z.string().min(1).max(1_000),
-  source: z.string().min(1).max(2_000),
-  priority: z.enum(priorities),
-  confidence: z.enum(confidenceLevels),
-  scopeStatus: z.enum(requirementScopes),
-  scopeRationale: z.string().max(2_000),
-}).strict();
 
 const generatedCaseSchema = z.object({
   id: identifier,
@@ -39,6 +29,16 @@ const generatedCaseSchema = z.object({
   expectedResult: z.string().min(1).max(100_000),
   confidence: z.enum(confidenceLevels),
   clarificationNeeded: textList(100),
+}).strict();
+
+const requirementSchema = z.object({
+  id: identifier,
+  text: z.string().min(1).max(1_000),
+  source: z.string().min(1).max(2_000),
+  priority: z.enum(priorities),
+  confidence: z.enum(confidenceLevels),
+  scopeStatus: z.enum(requirementScopes),
+  scopeRationale: z.string().max(2_000),
 }).strict();
 
 const coverageRowSchema = z.object({
@@ -75,6 +75,7 @@ const semanticReviewCaseSchema = z.object({
 const nonNegativeInteger = z.number().int().min(0);
 const score = z.number().finite().min(0).max(100);
 const generationSchema = z.object({
+  provenance: z.object({ status: z.enum(["captured", "missing"]), requirementsTextSha256: z.string().regex(/^[0-9a-f]{64}$/u).optional(), websiteTextSha256: z.string().regex(/^[0-9a-f]{64}$/u).optional(), websiteSource: z.enum(["provided-text", "public-read", "missing"]), websiteReference: z.string().max(2048).optional(), uploadedFiles: z.array(z.object({ fileName: z.string().max(255), role: z.string().max(40), bytesSha256: z.string().regex(/^[0-9a-f]{64}$/u), extractedTextSha256: z.string().regex(/^[0-9a-f]{64}$/u) }).strict()).max(5), researchSources: z.array(z.object({ url: z.string().max(2048), snippetSha256: z.string().regex(/^[0-9a-f]{64}$/u) }).strict()).max(5) }).strict().optional(),
   requirements: z.array(requirementSchema).max(100),
   cases: z.array(generatedCaseSchema).max(280),
   coverageMatrix: z.array(coverageRowSchema).max(100),
@@ -110,28 +111,7 @@ const generationSchema = z.object({
   }).strict()).max(100),
 }).strict();
 
-const caseGenerationTraceSchema = z.object({
-  sourceCaseId: identifier,
-  sourceRefs: textList(100),
-  actions: textList(100),
-  scenarioType: z.enum(scenarioTypes),
-  clarificationNeeded: textList(100),
-  original: generatedCaseSchema,
-}).strict();
-
-/** Validate the case-level provenance copied into an executable project. */
-export function validateCaseGenerationTrace(value: unknown): HandoffCase["caseGenerationTrace"] {
-  const parsed = caseGenerationTraceSchema.safeParse(value);
-  if (!parsed.success) {
-    const details = parsed.error.issues.slice(0, 4).map(issue => `${issue.path.join(".") || "trace"}：${issue.message}`);
-    throw new Error(`用例生成追溯记录无效：${details.join("；") || "字段不符合 schema"}。`);
-  }
-  const trace = parsed.data;
-  if (trace.sourceCaseId !== trace.original.id || trace.scenarioType !== trace.original.scenarioType || JSON.stringify(trace.sourceRefs) !== JSON.stringify(trace.original.sourceRefs) || JSON.stringify(trace.actions) !== JSON.stringify(trace.original.actions) || JSON.stringify(trace.clarificationNeeded) !== JSON.stringify(trace.original.clarificationNeeded)) {
-    throw new Error("用例生成追溯字段与原始生成用例不一致。未保存不一致来源。");
-  }
-  return trace as HandoffCase["caseGenerationTrace"];
-}
+export { validateCaseGenerationTrace } from "../domain/document-case-generation-trace.js";
 
 type HandoffCase = BrowserCheck & {
   /** Full case-design fields survive project load/save and remain separate from executable BrowserStep DSL. */
@@ -203,7 +183,9 @@ export function createExecutionDraftFromCaseGeneration(input: {
       category: validCategory,
       confidence: item.confidence,
       coverageAreas: [validCategory],
-      selectedForRegression: allLinkedInScope,
+      // Generated candidates always enter the project as unselected drafts; scope coverage is metadata, not approval.
+      lifecycleStatus: "draft",
+      selectedForRegression: false,
       preconditions: unresolved,
       preconditionsConfirmed: unresolved.length === 0,
       testData: item.testData,
@@ -251,6 +233,7 @@ export function createExecutionDraftFromCaseGeneration(input: {
       version: 1,
       generatedAt: now,
       digest: generationDigest,
+      provenance: generation.provenance ?? { status: "missing", websiteSource: "missing", uploadedFiles: [], researchSources: [] },
       requirements: generation.requirements.map(item => ({ id: item.id, text: item.text, source: item.source, priority: item.priority, confidence: item.confidence, scopeStatus: item.scopeStatus, scopeRationale: item.scopeRationale })),
       qualitySummary: generation.quality as unknown as Record<string, unknown>,
       warnings: [...generation.warnings],

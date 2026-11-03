@@ -13,6 +13,7 @@ export type ComputerUseEvidenceInput = {
   coverageGap?: string;
   /** Set only when an observed target control/record directly contradicts the expected result. */
   positiveContradiction?: boolean;
+  expectsEmptyState?: boolean;
 };
 
 export type ComputerUseEvidenceClassification = {
@@ -28,8 +29,14 @@ const explicitVisualConfirmationPattern = /(?:截图(?:可见|显示|确认|中)
 export function classifyComputerUseEvidence(input: ComputerUseEvidenceInput): ComputerUseEvidenceClassification {
   const failures = input.assertionFailures ?? [];
   const missingOnly = failures.length > 0 && failures.every(failure => missingEvidencePattern.test(failure));
-  const evidenceText = `${input.recordedEvidence}\n${input.coverageGap ?? ""}`;
+  // No business mutation is a safety observation, never a missing-record claim.
+  const evidenceText = `${input.recordedEvidence}\n${input.coverageGap ?? ""}`.replace(/\bno\s+(?:applications?|orders?|notifications?|messages?)\s+(?:was|were|has been|have been)?\s*(?:submitted|created|sent|saved|modified|cancelled|withdrawn)\b/giu, 'No business mutation occurred');
   const positiveFailure = failures.some(failure => positiveMismatchPattern.test(failure)) || positiveMismatchPattern.test(evidenceText);
+  const confirmedExpectedEmptyState = input.expectsEmptyState === true && input.recordedStatus === 'passed'
+    && failures.length === 0 && !(input.unverifiedAssertions?.length) && !input.coverageGap && !positiveFailure
+    && /空状态|暂无.{0,16}(?:订单|记录|申请)|empty[- ]state/iu.test(evidenceText)
+    && !/无法|未能|缺少|not observable|cannot|unable|could not|missing|fixture.{0,20}(?:unavailable|not found|不存在|缺失)/iu.test(evidenceText);
+  if (confirmedExpectedEmptyState) return { status: 'passed', detail: input.recordedEvidence };
   // An empty state can itself be the expected, directly observable outcome
   // (for example, “no orders: show the empty state”). Treat it as a missing
   // fixture only when the evidence explicitly says the required fixture is

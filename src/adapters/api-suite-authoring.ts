@@ -1,4 +1,4 @@
-import { completeChat } from "./compatible-chat.js";
+import { completeChat } from "./ai/compatible-chat.js";
 import { calculateOpenApiCoverage, parseApiSuite, type ApiTestSuite } from "../storage/api-suite-loader.js";
 import { modelConfiguration } from "../demo/runtime.js";
 import { openApiOperationFacts, summarizeOpenApiSpecification, type OpenApiSummary } from "./openapi-summary.js";

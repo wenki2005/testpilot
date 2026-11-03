@@ -1,6 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+test('an expected empty-state screenshot does not become a missing-fixture block merely because English says no records', async () => {
+  const { classifyComputerUseEvidence } = await import('../src/adapters/computer-use-evidence.ts');
+  const input = { recordedStatus: 'passed', expectsEmptyState: true, recordedEvidence: 'Clicked sidebar 订单物流. Content shows an empty-state illustration and exact text 暂无订单物流记录; no records listed.' };
+  assert.equal(classifyComputerUseEvidence(input).status, 'passed');
+  assert.equal(classifyComputerUseEvidence({ ...input, expectsEmptyState: false }).status, 'blocked');
+  assert.equal(classifyComputerUseEvidence({ ...input, coverageGap: '尚未验证权限' }).status, 'blocked');
+  assert.equal(classifyComputerUseEvidence({ ...input, assertionFailures: ['文本未出现：暂无订单物流记录'] }).status, 'blocked');
+  assert.equal(classifyComputerUseEvidence({ ...input, recordedEvidence: 'Empty-state visible but cannot verify the required record fixture.' }).status, 'blocked');
+});
+
 test('case-154 and case-155 missing order fixtures are blocked, never product failures', async () => {
   const { classifyComputerUseEvidence } = await import('../src/adapters/computer-use-evidence.ts');
   const cases = [

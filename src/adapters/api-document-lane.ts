@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
 import type { ApiTestSuite } from "../storage/api-suite-loader.js";
 import type { RunRecord } from "../domain/types.js";
+import type { DocumentApiLane, DocumentApiMapping, DocumentApiResult } from "../domain/document-test-contracts.js";
+export type { DocumentApiLane, DocumentApiMapping, DocumentApiResult } from "../domain/document-test-contracts.js";
 
 export type ReviewedApiCandidate = {
   id: string;
@@ -10,24 +12,6 @@ export type ReviewedApiCandidate = {
 };
 
 export type DocumentApiCase = { id: string; title: string; requirementRefs?: string[]; selectedForRegression?: boolean };
-export type DocumentApiMapping = { documentCaseId: string; apiCaseIds: string[] };
-export type DocumentApiResult = {
-  id: string;
-  title: string;
-  status: "passed" | "failed" | "blocked" | "cancelled" | "not-run";
-  detail: string;
-  apiCaseResults: Array<{ caseId: string; status: "passed" | "failed" | "blocked" | "error"; detail?: string }>;
-};
-
-export type DocumentApiLane = {
-  status: "passed" | "failed" | "blocked" | "cancelled";
-  summary: string;
-  results: DocumentApiResult[];
-  provider: string;
-  scope?: string[];
-  limitations?: string[];
-};
-
 /** Run only document cases explicitly routed to API contract, using the existing approved API runner. */
 export async function executeDocumentApiLane(input: {
   candidate: ReviewedApiCandidate | undefined;

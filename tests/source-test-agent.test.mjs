@@ -34,7 +34,13 @@ test('own bounded tools preserve a runnable candidate; independent execution ret
     await call('run_tests',{files:['tests/boundary.test.mjs']});
     await call('submit_assessment',answer);
   }));
-  assert.equal(run.status,'candidate');assert.match(run.candidateDigest,/^[a-f0-9]{64}$/);
+  assert.equal(run.status,'candidate',run.error);assert.match(run.candidateDigest,/^[a-f0-9]{64}$/);
+  const suite=JSON.parse(await readFile(path.join(path.dirname(run.reportPath),'suite.candidate.json'),'utf8'));
+  assert.equal(suite.assetStatus,'candidate');
+  assert.equal(suite.reviewStatus,'pending-review');
+  assert.deepEqual(suite.provenance,{runId:run.id,goal:run.goal,candidateDigest:run.candidateDigest,runtimeConclusion:'failed',executions:[{id:'execution-1',status:'failed',evidenceId:'tool-4'}],evidenceIds:['execution-1','tool-1','tool-2','tool-3','tool-4','tool-5'],findings:[{caseId:'QTY-001',status:'observed',evidenceDescription:'app.mjs',evidenceRefs:[],evidenceLinkStatus:'unlinked-pending-review'}]});
+  assert.equal(suite.cases[0].id,'source-1');
+  assert.deepEqual(suite.cases[0].command.args,['--test','tests/boundary.test.mjs']);
   const command={id:'QTY-001',title:'Boundary',command:{bin:process.execPath,args:['--test','tests/boundary.test.mjs'],cleanEnvironment:true,timeoutMs:10000}};
   assert.equal((await executeCommand(command,run.workspacePath)).status,'failed');
   const candidateBefore=await readFile(path.join(run.workspacePath,'tests/boundary.test.mjs'),'utf8');
@@ -129,6 +135,25 @@ test('static findings cannot be upgraded to confirmed failure without runtime ev
     await call('submit_assessment',{...answer,findings:[{...answer.findings[0],status:'failed'}]});
   }));
   assert.equal(run.status,'blocked');assert.match(run.error,/runtime failure evidence/);
+});
+
+test('persisted evidence IDs include successful tool calls but exclude failed tool calls',async t=>{
+  const f=await fixture(t);
+  const run=await runSourceTestAgent(f,driver(async call=>{
+    await assert.rejects(call('read_file',{path:'missing.js'}));
+    await call('list_files',{});
+    await call('write_test',{path:'tests/evidence.test.mjs',content:testCode});
+    await call('run_tests',{files:['tests/evidence.test.mjs']});
+    await call('submit_assessment',{summary:'Evidence IDs are based on successful tool results.',findings:[],blockers:[],proposedTests:[]});
+  }));
+  assert.equal(run.status,'candidate',run.error);
+  assert.ok(run.evidenceIds.includes('tool-2'));
+  assert.ok(run.evidenceIds.includes('tool-3'));
+  assert.ok(run.evidenceIds.includes('execution-1'));
+  assert.ok(!run.evidenceIds.includes('tool-1'));
+  const suite=JSON.parse(await readFile(path.join(path.dirname(run.reportPath),'suite.candidate.json'),'utf8'));
+  assert.ok(suite.provenance.evidenceIds.includes('tool-2'));
+  assert.ok(!suite.provenance.evidenceIds.includes('tool-1'));
 });
 
 test('candidate-only repair keeps before/after evidence, requires rerun and resumes the owned workspace',async t=>{

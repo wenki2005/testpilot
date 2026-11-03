@@ -1,20 +1,20 @@
 import SourceTestsPage from './source-tests-page';
+import { ProjectScriptOriginLabel, SourceProvenanceReview } from './project-script-origin-label';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { DemoAssertion, DemoCheck, DemoConfig, DemoMode, DemoRun } from '../../src/demo/contracts';
+import type { DemoAssertion, DemoCheck, DemoConfig, DemoMode, DemoRun } from '../../src/domain/demo-contracts';
 import DocumentTestsPage from './document-tests-page';
 import ApiTestsPage from './api-tests-page';
 import ApiSuitesPage from './api-suites-page';
 import SqliteMigrationPage from './sqlite-migration-page';
 import MysqlExplorerPage from './mysql-explorer-page';
 import SettingsPage from './settings-page';
-import RegressionWorkbenchPage from './regression-workbench-page';
 import CaseGeneratorPage, { type GenerationResult } from './case-generator-page';
+import { resolveWorkbenchPage, type WorkbenchPage as Page } from './workbench-routing';
 
-type Page = 'workbench' | 'history' | 'run-detail' | 'regressions' | 'architecture' | 'project-tests' | 'document-tests' | 'case-generator' | 'api-suites' | 'sqlite-migrations' | 'mysql-browser' | 'source-tests' | 'settings' | 'dify-regression' | 'module-regression';
 type Notice = { kind: 'error' | 'success' | 'info'; text: string } | null;
 type ProjectProfile = { id: string; name: string; suiteName: string };
 type ProjectRun = { id: string; profileId: string; profileName: string; suiteName: string; scriptId?: string; scriptVersion?: number; status: 'queued' | 'running' | 'passed' | 'failed' | 'blocked' | 'cancelled' | 'error'; startedAt: string; completedAt?: string; durationMs: number; summary: string; results: Array<{ caseId: string; title: string; status: string; actualExitCode: number | null; evidence: Array<{ kind: string; content: string }> }>; artifactFiles: string[] };
-type ProjectScript = { id: string; profileId: string; profileName: string; suiteName: string; version: number; status: 'candidate' | 'approved' | 'rejected'; origin: string; createdAt: string; reviewedAt?: string; reviewDecision?: 'approve' | 'reject'; reviewerNotes?: string; digest: string; requirement?: string; generationSummary?: string; previousApprovedVersion?: number; diff: string[]; files: Array<{ path: string; content: string }>; cases: Array<{ id: string; title: string; bin: string; args: string[]; cwd?: string; timeoutMs?: number; expectedExitCode: number }> };
+type ProjectScript = { id: string; profileId: string; profileName: string; suiteName: string; version: number; status: 'candidate' | 'approved' | 'rejected'; origin: string; createdAt: string; reviewedAt?: string; reviewDecision?: 'approve' | 'reject'; reviewerNotes?: string; digest: string; requirement?: string; generationSummary?: string; sourceProvenance?: {runId:string;candidateDigest:string;runtimeConclusion:string;assessmentSummary?:string;blockers?:string[];executions:Array<{id:string;status:string;files:string[];counts:Record<string,number>;durationMs:number;evidenceId:string}>;evidenceIds:string[];findings:Array<{caseId:string;status:string;evidenceDescription:string;evidenceRefs:string[];evidenceLinkStatus:'linked'|'unlinked-pending-review'}>}; previousApprovedVersion?: number; diff: string[]; files: Array<{ path: string; content: string }>; cases: Array<{ id: string; title: string; bin: string; args: string[]; cwd?: string; timeoutMs?: number; expectedExitCode: number }> };
 type PreparationTask = { id: string; status: 'running' | 'completed' | 'needs-review' | 'failed'; stage: string; events: Array<{ stage: string; status: string; message: string; at: string }>; projectId?: string; error?: string };
 type TaskFileRole = 'auto' | 'requirements' | 'coverage-reference' | 'held-out-benchmark';
 const taskFileKey = (file: File) => `${file.name}-${file.size}-${file.lastModified}`;
@@ -74,11 +74,7 @@ export default function App() {
   const [projectBusy, setProjectBusy] = useState(false);
   const [scriptRequirements, setScriptRequirements] = useState<Record<string, string>>({});
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [page, setPage] = useState<Page>(() => {
-    const requestedPage = new URLSearchParams(window.location.search).get('page');
-    if (requestedPage === 'module-regression' || requestedPage === 'dify-regression') return requestedPage;
-    return window.location.hash.startsWith('#doc-') ? 'document-tests' : 'workbench';
-  });
+  const [page, setPage] = useState<Page>(() => resolveWorkbenchPage(window.location));
   const requestedDocumentProjectId = new URLSearchParams(window.location.search).get('documentProject') ?? '';
   const requestedDocumentRunId = new URLSearchParams(window.location.search).get('documentRun') ?? '';
   const [notice, setNotice] = useState<Notice>(null);
@@ -119,7 +115,7 @@ export default function App() {
     return () => window.clearInterval(timer);
   }, [refresh]);
 
-  useEffect(() => { if (requestedDocumentProjectId) setPage('document-tests'); }, [requestedDocumentProjectId]);
+  useEffect(() => { if (requestedDocumentProjectId && !new URLSearchParams(window.location.search).get('page')) setPage('document-tests'); }, [requestedDocumentProjectId]);
 
   useEffect(() => {
     if (!selectedRun || !['queued', 'running'].includes(selectedRun.status)) return;
@@ -212,15 +208,16 @@ export default function App() {
   const navigate = (destination: Page) => {
     setPage(destination);
     setNotice(null);
-    if (destination !== 'document-tests' && window.location.hash.startsWith('#doc-')) {
-      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
-    }
+    const location = new URL(window.location.href);
+    location.searchParams.set('page', destination);
+    if (destination !== 'document-tests' && location.hash.startsWith('#doc-')) location.hash = '';
+    window.history.replaceState(null, '', `${location.pathname}${location.search}${location.hash}`);
   };
   const transferGeneratedCases = async (generation: GenerationResult, generatedTargetUrl: string) => {
-    const draft = await api<{ projectId: string; caseCount: number; selectedForReview: number }>('/api/case-generator/execute-draft', { method: 'POST', body: JSON.stringify({ generation, targetUrl: generatedTargetUrl }) });
+    const draft = await api<{ projectId: string; caseCount: number }>('/api/case-generator/execute-draft', { method: 'POST', body: JSON.stringify({ generation, targetUrl: generatedTargetUrl }) });
     setActiveDocumentProjectId(draft.projectId);
     setPage('document-tests');
-    setNotice({ kind: 'info', text: `已将 ${draft.caseCount} 条 AI 用例移交为待审核测试项目；${draft.selectedForReview} 条关联到已确认的本期需求。用例尚未执行，先审核范围和前置条件。` });
+    setNotice({ kind: 'info', text: `已将 ${draft.caseCount} 条 AI 用例移交为待审核测试项目。生成候选仍是未选择的草稿，尚未审核、执行或生成步骤；请先确认需求范围、前置条件和执行步骤。` });
   };
 
   const createTask = async () => {
@@ -275,14 +272,13 @@ export default function App() {
     setTargetKind('website'); setCaseMode('both'); setRequireConfirmation(false); setNotice(null);
   };
 
-  return <div className={`app-shell agent-shell ${page==='dify-regression'||page==='module-regression'?'sm-shell':''}`}>
+  return <div className="app-shell agent-shell">
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>QUALITY WORKBENCH</span></div></div>
+      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>AI 测试工作台</span></div></div>
       <div className="nav-section-label">测试空间</div>
       <nav aria-label="主导航" className="main-nav">
         <NavItem active={page === 'workbench'} icon="plus" label="新建测试" onClick={() => navigate('workbench')} />
         <NavItem active={page === 'document-tests'} icon="list" label="网页回归" onClick={() => { navigate('document-tests'); setMoreOpen(false); }} />
-        <NavItem active={page === 'dify-regression' || page === 'module-regression'} icon="nodes" label="Dify 回归工作台" onClick={() => { navigate('dify-regression'); setMoreOpen(false); }} />
         <NavItem active={page === 'regressions'} icon="check" label="回归用例" count={checks.length || undefined} onClick={() => { navigate('regressions'); setMoreOpen(false); }} />
         <NavItem active={page === 'history' || page === 'run-detail'} icon="clock" label="运行记录" count={runs.length || undefined} onClick={() => { navigate('history'); setMoreOpen(false); }} />
         <NavItem active={moreOpen || ['architecture','project-tests','case-generator','api-suites','sqlite-migrations','mysql-browser','source-tests','settings'].includes(page)} icon="layers" label="工具" onClick={() => setMoreOpen((open) => !open)} />
@@ -297,19 +293,20 @@ export default function App() {
         <NavItem active={page === 'architecture'} icon="nodes" label="系统说明" onClick={() => { navigate('architecture'); setMoreOpen(false); }} />
         <NavItem active={page === 'settings'} icon="settings" label="设置" onClick={() => { navigate('settings'); setMoreOpen(false); }} />
       </div>}
-      <div className="sidebar-bottom">
+      <div className="sidebar-bottom"><div className="workspace-guide"><Icon name="compass" size={18}/><div><strong>从需求到回归</strong><p>准备资料、运行测试、追踪证据。</p></div></div>
         <div className="target-switch"><div className="target-heading"><span className="status-dot"/><strong>样本服务</strong></div><div className="target-name">订单 API <span className="target-tag">本地</span></div><p>预置故障 / 修复用于对照验证</p><div className="segmented" role="group" aria-label="样本状态"><button className={!config?.fixedTarget ? 'selected' : ''} onClick={() => setFixed(false)} disabled={!config || !!activeRun}>预置故障</button><button className={config?.fixedTarget ? 'selected' : ''} onClick={() => setFixed(true)} disabled={!config || !!activeRun}>已修复</button></div></div>
         <div className="scope-caption"><span>本轮范围</span><p>本地 API 与 CLI<br/>Web / 移动端待适配</p></div>
         <div className="user-chip"><div className="avatar">T</div><div><strong>本地演示环境</strong><span>{config?.framework ?? 'Pi'} · TestPilot</span></div><span className="online-dot" aria-label="连接状态"/></div>
       </div>
     </aside>
 
-    <main className="workspace">
+    <main className="workspace" id="workspace-main">
       <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/><strong>{pageTitle(page)}</strong></div><div className="topbar-meta">{page === 'workbench' && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}<span className="environment-pill"><span className="status-dot"/>{config?.modelAvailable ? `模型已连接 · ${config.modelLabel}` : '本地测试 Agent'}</span><span className="divider"/><button className="top-settings" onClick={() => navigate('settings')} aria-label="打开设置"><Icon name="settings" size={16}/></button></div></header>
       {notice && <div className={`notice notice-${notice.kind}`} role="status"><span>{notice.text}</span><button aria-label="关闭提示" onClick={() => setNotice(null)}>×</button></div>}
       {page === 'workbench' && <div className={`agent-home ${activeDocumentProjectId || activeApiSuiteId ? 'agent-home-active' : ''}`}>
         {!activeDocumentProjectId && !activeApiSuiteId ? <section className="agent-conversation">
-          <div className="agent-welcome"><h1>把网址和资料交给我</h1><p>我会整理测试用例、自动生成可复用步骤，再用脚本和 AI 分别测试并对比结果。</p></div>
+          <div className="agent-welcome"><h1>开始一次新的测试</h1><p>提供测试目标与需求资料，让 Agent 整理范围、准备测试并保留证据。</p></div>
+          <div className="test-start-layout"><div className="test-start-main">
           <div className={`agent-composer ${draggingFiles ? 'is-dragging' : ''}`} onDragOver={(event) => { event.preventDefault(); setDraggingFiles(true); }} onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDraggingFiles(false); }} onDrop={(event) => { event.preventDefault(); setDraggingFiles(false); const allowed = Array.from(event.dataTransfer.files).filter(file => /\.(pdf|xmind|md|markdown|txt)$/i.test(file.name)); if (allowed.length) setTaskFiles(current => [...current, ...allowed].slice(0, 5)); }}>
             <div className="target-type-switch" role="tablist" aria-label="测试目标类型">
               <button className={targetKind === 'website' ? 'selected' : ''} role="tab" aria-selected={targetKind === 'website'} onClick={() => setTargetKind('website')}><Icon name="link" size={16}/>网站网址</button>
@@ -318,16 +315,17 @@ export default function App() {
             </div>
             {targetKind !== 'project' ? <><label className="agent-target-field"><span>{targetKind === 'api' ? 'API Base URL' : '测试网址'}</span><input type="url" value={targetUrl} onChange={(event) => setTargetUrl(event.target.value)} placeholder={targetKind === 'api' ? 'https://api.example.com/v1/' : 'https://example.com'} /></label>{targetKind === 'api' && <><label className="agent-prompt-label" htmlFor="api-specification">OpenAPI 契约 <span>可选，粘贴 JSON/YAML</span></label><textarea id="api-specification" className="api-spec-input" value={apiSpecification} onChange={(event) => setApiSpecification(event.target.value)} placeholder="粘贴 OpenAPI 文档；也可附加需求 PDF、XMind、Markdown 或 TXT。" rows={4} /><label className="api-network-option"><input type="checkbox" checked={allowExternalApi} onChange={(event) => setAllowExternalApi(event.target.checked)} /><span>允许向这个外网 API 地址发送测试请求</span></label><p className="target-mode-note">默认只自动运行只读 GET/HEAD/OPTIONS 用例；写操作、角色矩阵和并发需要检查与审核。</p></>}</> : <><label className="agent-target-field"><span>已登记项目</span><select value={selectedProfileId} onChange={(event) => setSelectedProfileId(event.target.value)}><option value="">选择一个本地项目…</option>{profiles.map((profile) => <option key={profile.id} value={profile.id}>{profile.name} · {profile.suiteName}</option>)}</select></label><p className="target-mode-note">本地项目会生成待审核的脚本候选；网页回归可以手动运行确定性用例，也可按需选择 AI 辅助对照。</p></>}
             <label className="agent-prompt-label" htmlFor="agent-prompt">你希望重点检查什么？ <span>可选</span></label>
-            <textarea id="agent-prompt" value={taskPrompt} onChange={(event) => setTaskPrompt(event.target.value)} placeholder="例如：重点检查申请、审批和历史记录流程。也可以留空，让 Agent 自主探索。" rows={3} />
+            <textarea id="agent-prompt" value={taskPrompt} onChange={(event) => setTaskPrompt(event.target.value)} placeholder="例如：重点检查申请、审批和历史记录流程。也可以留空，由系统根据现有资料和页面线索整理候选。" rows={3} />
             {taskFiles.map((file, index) => <div className="attached-file" key={`${file.name}-${index}`}><Icon name="file" size={15}/><span>{file.name}</span><small>{(file.size / 1024).toFixed(0)} KB</small>{targetKind === 'website' && <select aria-label={`${file.name} 的资料角色`} value={taskFileRoles[taskFileKey(file)] ?? 'auto'} onChange={event => setTaskFileRoles(current => ({ ...current, [taskFileKey(file)]: event.target.value as TaskFileRole }))}>{Object.entries(taskFileRoleLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>}<button onClick={() => setTaskFiles(current => current.filter((_, i) => i !== index))} aria-label={`移除 ${file.name}`}>×</button></div>)}
             {targetKind !== 'api' && <details className="composer-advanced"><summary>高级选项</summary><div className="composer-options"><label>测试用例<select value={caseMode} onChange={event => setCaseMode(event.target.value as typeof caseMode)}><option value="both">资料用例 + AI 补充</option><option value="existing">只使用资料用例</option><option value="ai">只生成 AI 用例</option></select></label></div></details>}
             <div className="composer-footer"><div className="composer-tools"><label className="attach-button"><Icon name="paperclip" size={17}/><span>{taskFiles.length ? '添加更多资料' : '添加资料'}</span><input type="file" multiple accept=".pdf,.xmind,.md,.markdown,.txt" onChange={(event) => { const allowed = Array.from(event.target.files ?? []).filter(file => /\.(pdf|xmind|md|markdown|txt)$/i.test(file.name)); setTaskFiles(current => [...current, ...allowed].slice(0, 5)); event.target.value = ''; }} /></label><span className="composer-hint">可拖入或添加 PDF、XMind、Markdown、TXT · 最多 5 个文件</span></div><div className="composer-actions"><label className="review-policy"><input type="checkbox" checked={requireConfirmation} onChange={(event) => setRequireConfirmation(event.target.checked)} /><span>开始前先确认</span></label><button className="button-primary agent-submit" onClick={createTask} disabled={preparingTask || booting || (targetKind === 'project' ? !selectedProfileId : !targetUrl.trim())}><Icon name="arrowUp" size={16}/>{preparingTask ? '正在准备…' : '开始测试'}</button></div></div>
           </div>
           {preparingTask && <div className="agent-planning-live" role="status"><strong>正在准备测试</strong><ol><li>读取你提供的资料</li><li>搜索公开测试案例</li><li>整理用例并生成可复用步骤</li></ol></div>}
-          <p className="agent-promise"><span className="promise-dot"/>测试资料准备好后，由你复核并手动启动常规回归；需要登录时会暂停并提示你。</p>
+          <p className="agent-promise"><span className="promise-dot"/>候选生成后，请核对范围和预期再启动回归。登录由你完成；未确认的业务规则和副作用风险会保持阻断。</p>
+          </div><aside className="test-start-guide" aria-label="测试入门指引"><h2>一次测试，如何推进</h2><ol><li><strong>提供目标与资料</strong><p>填写隔离环境地址，可附上需求或已有用例。</p></li><li><strong>整理范围与预期</strong><p>Agent 分析资料和页面，缺失的业务依据会明确标注。</p></li><li><strong>执行并查看证据</strong><p>跟踪步骤、截图与结果，失败后可继续调查。</p></li><li><strong>留作下一次回归</strong><p>保存用例和脚本，后续根据变更评估回归范围。</p></li></ol><div className="test-start-return"><strong>继续已有项目？</strong><p>查看项目用例、模块和历史运行。</p><button className="button-secondary" onClick={() => navigate('document-tests')}>打开网页回归<Icon name="arrow" size={15}/></button></div></aside></div>
         </section> : <section className="agent-session-panel">
           <header className="session-heading"><div><h1>{activeApiSuiteId ? 'API 测试会话' : '测试会话'}</h1><p>{targetKind === 'project' ? '本地项目测试' : targetUrl}{taskFiles.length > 0 ? ` · ${taskFiles.length} 个资料文件` : ''}</p></div><span className={`session-review-mode ${requireConfirmation ? 'confirm' : ''}`}>{requireConfirmation ? '运行前确认' : '自动运行'}</span></header>
-          <div className="agent-thread"><div className="agent-message agent-message-user"><strong>测试请求</strong>{targetKind !== 'project' && <span>{targetUrl}</span>}{taskPrompt && <p>{taskPrompt}</p>}{taskFiles.map((file, index) => <small key={`${file.name}-${index}`}>资料：{file.name}</small>)}</div><div className="agent-message agent-message-assistant"><strong>TestPilot Agent</strong><span>资料读取与公开案例搜索已完成。我已自动整理测试用例并生成脚本步骤，接下来会运行确定性脚本和 AI 视觉测试，再逐项对比。</span></div></div>
+          <div className="agent-thread"><div className="agent-message agent-message-user"><strong>测试请求</strong>{targetKind !== 'project' && <span>{targetUrl}</span>}{taskPrompt && <p>{taskPrompt}</p>}{taskFiles.map((file, index) => <small key={`${file.name}-${index}`}>资料：{file.name}</small>)}</div><div className="agent-message agent-message-assistant"><strong>TestPilot Agent</strong><span>资料读取与案例检索已完成，测试候选和步骤草稿已整理到下方。请核对来源、预期与审核状态；未确认的业务规则和有副作用的操作会暂停。</span></div></div>
           {activeApiSuiteId ? <ApiTestsPage key={activeApiSuiteId} suiteId={activeApiSuiteId} autoRun={activeApiAutoRun} allowNetwork={allowExternalApi} /> : <DocumentTestsPage key={activeDocumentProjectId} modelAvailable={config?.modelAvailable ?? false} computerUseAvailable={config?.computerUseAvailable ?? false} computerUseReason={config?.computerUseReason ?? 'Computer Use 配置状态不可用。'} computerUseModel={config?.computerUseModel ?? ''} initialProjectId={activeDocumentProjectId} embedded />}
         </section>}
         {(runs.length > 0 || projectRuns.length > 0) && <button className="recent-run-link" onClick={() => navigate('history')}><Icon name="clock" size={15}/>查看最近运行 <span>{runs.length + projectRuns.length}</span><Icon name="chevron" size={14}/></button>}
@@ -338,21 +336,20 @@ export default function App() {
       {page === 'architecture' && <ArchitecturePage config={config} />}
       {page === 'project-tests' && <ProjectProfilesPage profiles={profiles} scripts={projectScripts} runs={projectRuns} busy={projectBusy} modelAvailable={config?.modelAvailable ?? false} requirements={scriptRequirements} setRequirement={(id, value) => setScriptRequirements((current) => ({ ...current, [id]: value }))} createCandidate={createScriptCandidate} generateCandidate={generateScriptCandidate} review={reviewProjectScript} runApproved={runApprovedScript} cancel={cancelProjectRun} />}
       {page === 'document-tests' && <DocumentTestsPage modelAvailable={config?.modelAvailable ?? false} computerUseAvailable={config?.computerUseAvailable ?? false} computerUseReason={config?.computerUseReason ?? 'Computer Use 配置状态不可用。'} computerUseModel={config?.computerUseModel ?? ''} initialProjectId={activeDocumentProjectId || requestedDocumentProjectId || undefined} initialRunId={requestedDocumentRunId || undefined} />}
-      {(page === 'module-regression' || page === 'dify-regression') && <RegressionWorkbenchPage />}
       {page === 'case-generator' && <CaseGeneratorPage modelAvailable={config?.modelAvailable ?? false} onTransfer={transferGeneratedCases} />}
       {page === 'api-suites' && <ApiSuitesPage openSuite={id => { setActiveApiSuiteId(id); setActiveApiAutoRun(false); setTargetKind('api'); setPage('workbench'); setNotice(null); }} />}
       {page === 'sqlite-migrations' && <SqliteMigrationPage />}
       {page === 'mysql-browser' && <MysqlExplorerPage />}
-      {page === 'source-tests' && <SourceTestsPage />}
+      {page === 'source-tests' && <SourceTestsPage onOpenScriptReview={() => setPage('project-tests')} />}
       {page === 'settings' && <SettingsPage onSaved={refresh} />}
     </main>
   </div>;
 }
 
 function NavItem({ active, icon, label, count, onClick }: { active: boolean; icon: string; label: string; count?: number; onClick: () => void }) {
-  return <button className={`nav-item ${active ? 'active' : ''}`} onClick={onClick} aria-current={active ? 'page' : undefined}><Icon name={icon}/><span>{label}</span>{count !== undefined && <small>{count}</small>}</button>;
+  return <button className={`nav-item ${active ? 'active' : ''}`} onClick={onClick} aria-label={label} aria-current={active ? 'page' : undefined}><Icon name={icon}/><span>{label}</span>{count !== undefined && <small>{count}</small>}</button>;
 }
-function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', 'source-tests': '代码测试 Agent', 'dify-regression': 'Dify 回归工作台', 'module-regression': 'Dify 回归工作台', settings: '设置' })[page]; }
+function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', 'source-tests': '代码测试 Agent', settings: '设置' })[page]; }
 function RunResults({ run, onSave, savedIds }: { run: DemoRun; onSave: (assertion: DemoAssertion) => void; savedIds: Set<string> }) {
   const [assertionFilter, setAssertionFilter] = useState<'all' | 'failed' | 'passed'>('all');
   const passed = run.assertions.filter((a) => a.status === 'passed').length;
@@ -412,7 +409,7 @@ function ProjectProfilesPage({ profiles, scripts, runs, busy, modelAvailable, re
   const scriptStatus: Record<ProjectScript['status'], string> = { candidate: '待人工审核', approved: '已批准', rejected: '已拒绝' };
   const [reviewNotes, setReviewNotes] = useState<Record<string, string>>({});
   return <div className="secondary-page project-tests-page">
-    <div className="page-heading"><div><div className="eyebrow">持久化脚本生命周期</div><h1>本地项目测试</h1><p>从本机登记的测试套件建立候选快照，经人工审核并批准为不可变版本，再由确定性 runner 重跑。当前候选来自人工维护的 profile 配置，不是 AI 生成。</p></div></div>
+    <div className="page-heading"><div><div className="eyebrow">持久化脚本生命周期</div><h1>本地项目测试</h1><p>候选可来自注册 profile 快照、AI 需求生成或源码测试 Agent。所有来源均需人工审核并批准后，才可由确定性 runner 重跑。</p></div></div>
     <section className="profile-list" aria-label="已登记项目测试">
       {profiles.map((profile) => <article className="profile-card" key={profile.id}>
         <div className="profile-card-copy"><span className="profile-kicker">登记配置 · {profile.id}</span><h2>{profile.name}</h2><p>{profile.suiteName}</p><small>从本地 profile 捕获现有命令；执行复用现有 Playwright 用例与回环服务，目标源码保持不变。</small>
@@ -424,8 +421,9 @@ function ProjectProfilesPage({ profiles, scripts, runs, busy, modelAvailable, re
     </section>
     <div className="section-title project-run-title"><div><h2>脚本版本与审核</h2><p>每次候选捕获都会保存完整命令快照和 SHA-256 摘要；批准后的版本不能直接改写。</p></div><span className="page-count">{scripts.length} 个版本</span></div>
     {scripts.length ? <div className="project-run-list">{scripts.map((script) => <article className="project-run-card" key={script.id}>
-      <header className="project-run-head"><div><span className="profile-kicker">{script.profileId} · {script.createdAt ? dateText(script.createdAt) : '—'}</span><h3>{script.suiteName} · v{script.version}</h3><p>来源：{script.origin === 'ai-requirement-candidate' ? 'AI 需求候选（受限 Playwright DSL）' : '人工维护的注册 profile 快照'} · SHA-256 <code>{script.digest.slice(0, 16)}…</code></p></div><span className={`table-status status-${script.status === 'approved' ? 'passed' : script.status === 'rejected' ? 'failed' : 'running'}`}>{scriptStatus[script.status]}</span></header>
+      <header className="project-run-head"><div><span className="profile-kicker">{script.profileId} · {script.createdAt ? dateText(script.createdAt) : '—'}</span><h3>{script.suiteName} · v{script.version}</h3><p>来源：<ProjectScriptOriginLabel origin={script.origin}/> · SHA-256 <code>{script.digest.slice(0, 16)}…</code></p></div><span className={`table-status status-${script.status === 'approved' ? 'passed' : script.status === 'rejected' ? 'failed' : 'running'}`}>{scriptStatus[script.status]}</span></header>
       {script.requirement && <div className="script-diff"><strong>输入需求</strong><p>{script.requirement}</p><small>{script.generationSummary}</small></div>}
+      {script.sourceProvenance && <SourceProvenanceReview provenance={script.sourceProvenance}/>}
       <div className="script-diff"><strong>{script.previousApprovedVersion ? `与批准版本 v${script.previousApprovedVersion} 的差异` : '候选差异'}</strong><ul>{script.diff.map((line, index) => <li key={index}>{line}</li>)}</ul></div>
       <div className="script-command-list">{script.cases.map((item) => <div className="script-command" key={item.id}><strong>{item.title}</strong><code>{item.bin} {item.args.join(' ')}</code><small>预期退出码 {item.expectedExitCode} · 超时 {item.timeoutMs ?? 120000} ms</small></div>)}</div>
       <details className="project-stdout script-sources"><summary>已版本化测试源文件（{script.files.length}）</summary>{script.files.map((file) => <details key={file.path}><summary><code>{file.path}</code></summary><pre>{file.content}</pre></details>)}</details>
@@ -454,3 +452,4 @@ function RegressionPage({ checks, busy, rerun }: { checks: DemoCheck[]; busy: bo
 function ArchitecturePage({ config }: { config: DemoConfig | null }) {
   return <div className="secondary-page architecture-page"><div className="page-heading"><div><div className="eyebrow">运行边界</div><h1>架构说明</h1><p>TestPilot 使用受限工具循环检查本地样本服务，也支持需求文档驱动的 Playwright 浏览器检查。</p></div><span className="mode-pill"><Icon name="nodes" size={15}/>{config?.framework ?? 'Pi'} Agent</span></div><div className="architecture-flow"><div className="arch-node"><span className="arch-node-icon"><Icon name="list"/></span><strong>测试入口</strong><small>固定用例 / 需求 / 探索 / 文档</small></div><span className="flow-arrow"><Icon name="arrow"/></span><div className="arch-node emphasized"><span className="arch-node-icon"><Icon name="nodes"/></span><strong>受限 Agent 循环</strong><small>{config?.framework ?? 'Pi'} · 动作预算控制</small></div><span className="flow-arrow"><Icon name="arrow"/></span><div className="arch-node"><span className="arch-node-icon"><Icon name="box"/></span><strong>样本 API / 浏览器应用</strong><small>受限 API 与只读风险边界</small></div><span className="flow-arrow"><Icon name="arrow"/></span><div className="arch-node"><span className="arch-node-icon"><Icon name="check"/></span><strong>断言与报告</strong><small>事件 / 证据 / 回归 / ZIP</small></div></div><div className="architecture-columns"><section className="architecture-card"><h2>执行模式</h2><div className="arch-mode"><span className="arch-mode-dot unavailable"/><div><strong>固定断言 runner</strong><p>“已有用例”和保存回归逐条执行既定断言，不调用模型，也不使用 Agent 自主判断。</p></div></div><div className="arch-mode"><span className="arch-mode-dot offline"/><div><strong>离线演示</strong><p>样本 API 需求测试与自主探索由脚本决策驱动受限工具循环；文档用例由无模型 Playwright runner 执行。</p></div></div><div className="arch-mode"><span className={`arch-mode-dot ${config?.modelAvailable ? 'online' : 'unavailable'}`}/><div><strong>真实模型</strong><p>{config?.modelAvailable ? `${config.modelLabel} 已配置。模型生成计划并通过受限样本工具检查，也可经 Pi Agent 生成文档独立检查。` : '当前尚未配置可用模型；AI 文档验证会被标记为阻塞，固定用例仍可运行。'}</p></div></div></section><section className="architecture-card"><h2>安全与证据</h2><ul className="architecture-bullets"><li>项目测试仅通过注册配置运行，不提供任意 shell。</li><li>文档测试使用新建浏览器上下文，并禁止提交表单和风险按钮。</li><li>每条浏览器用例都需先编辑并通过人工审核，修改后需重新审核。</li><li>固定用例不调用模型；独立 AI lane 将需求文本发送至配置的模型提供方。</li></ul></section></div><div className="scope-note"><strong>当前浏览器 DSL 边界</strong><p>支持按可访问标签填写与选择、点击经审核的安全非提交控件，以及检查文本、可见性、字段值和禁用状态。此版本不做截图视觉比较、任意 CSS/XPath 定位、文件上传、复杂多页工作流或提交后的服务端状态检查。</p></div></div>;
 }
+
