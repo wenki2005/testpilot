@@ -1,4 +1,5 @@
 import { createDifyRegressionRoutes } from "../interfaces/http/dify-regression-routes.js";
+import { integratedWorkspaceConfig } from '../bootstrap/workspace-config.js';
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { json, fail, bodyJson, documentBody } from "../interfaces/http/http-utils.js";
 import { createHash, randomUUID } from "node:crypto";
@@ -99,12 +100,21 @@ import { renderDemoRunReport } from "../reporters/demo-run-report.js";
 
 const host = "127.0.0.1";
 const port = Number(process.env.PORT ?? 4317);
+const workspaces = integratedWorkspaceConfig();
 const { documentWebsiteMapService, documentAutomaticRecoveryService, documentRunRecoveryReadinessService, documentRunInvestigationService, documentRunImageAnalysisService, documentStepRevisionProposalService, documentAutonomousPlanExecutionService, documentAutonomousPlanService, documentSessionOpenService, documentParallelRunService, documentSessionProfileService, documentCaseMarkdownService, documentRunArtifacts, documentRunHistoryService, documentStepProbeAdapter, documentProjectRunUsecaseService, documentCaseStepAuthoringService, generateMissingBrowserSteps, documentProjectSessionService, documentCaseSelectionService, documentImpactReviewService, documentSiteVersionService, documentProjectUpdateService, documentProjectReviewService, documentProjectWorkflowPreparationService, documentPageEvidence } = createDocumentApplicationServices();
 const sourceDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(sourceDir, "../..");
 const artifactsDir = path.resolve(process.env.TESTPILOT_DATA_DIR ?? path.join(projectRoot, "artifacts", "demo"));
 const runsDir = path.join(artifactsDir, "runs");
-const handleDifyRegressionRoutes = createDifyRegressionRoutes({artifactsDir,host,port});
+const handleDifyRegressionRoutes = workspaces?.current === 'web-regression'
+  ? async (_req: IncomingMessage, res: ServerResponse, url: URL): Promise<boolean> => {
+    const owned = ['/api/system-module-regression', '/api/dify-web-modules', '/api/module-regression', '/api/dify-regression']
+      .some(prefix => url.pathname === prefix || url.pathname.startsWith(prefix + '/'));
+    if (!owned) return false;
+    fail(res, 409, '此入口属于 Dify 数据区，请从侧栏进入 Dify 回归工作台。');
+    return true;
+  }
+  : createDifyRegressionRoutes({artifactsDir,host,port});
 const authorizedBrowserWrites = createAuthorizedBrowserWrite(path.join(artifactsDir, 'authorized-browser-writes'));
 const regressionsFile = path.join(artifactsDir, "regressions.json");
 const distDir = path.join(projectRoot, "web", "dist");
@@ -203,6 +213,7 @@ function config(): DemoConfig {
   const computer = computerUseConfiguration();
   return {
     framework: "Pi Agent Core 1.2",
+    ...(workspaces ? { workspaces } : {}),
     modelAvailable: model.available,
     modelLabel: model.label,
     computerUseAvailable: computer.available,

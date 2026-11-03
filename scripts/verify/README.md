@@ -1,5 +1,8 @@
 # 一次性验收/审计脚本
 
+- `inventory-workspace-sources.mjs <候选数据目录...>`：只读列出本机候选数据目录的项目摘要；用于确定迁入来源，不读取密钥、Cookie 或业务输入。
+- `verify-workspace-migration.mjs --workspace <模块>`：只读核对迁入文件和来源、目标的 SQLite 表内容；不执行业务用例，不连接目标测试库。
+
 新的一次性验收、审计、修复脚本放这里，不再放 `scripts/` 根目录。
 
 规则：

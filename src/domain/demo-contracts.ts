@@ -70,6 +70,7 @@ export interface DemoRun {
   fixedTarget: boolean;
 }
 export interface DemoConfig {
+  workspaces?: { current: 'dify' | 'web-regression'; difyUrl: string; webUrl: string; dataStatus: 'migrated' | 'awaiting-source' };
   framework: string;
   modelAvailable: boolean;
   modelLabel: string;

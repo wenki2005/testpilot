@@ -207,6 +207,15 @@ export default function App() {
     } catch (error) { setNotice({ kind: 'error', text: `报告下载失败：${(error as Error).message}` }); }
   };
   const navigate = (destination: Page) => {
+    const workspaces = config?.workspaces;
+    const owner = destination === 'document-tests' || destination === 'workbench' ? 'web-regression'
+      : destination === 'dify-regression' || destination === 'module-regression' ? 'dify' : undefined;
+    if (owner && workspaces && owner !== workspaces.current) {
+      const target = new URL(owner === 'dify' ? workspaces.difyUrl : workspaces.webUrl);
+      target.searchParams.set('page', destination);
+      window.location.assign(target.href);
+      return;
+    }
     setPage(destination);
     setNotice(null);
     const location = new URL(window.location.href);
@@ -222,6 +231,7 @@ export default function App() {
   };
 
   const createTask = async () => {
+    if (config?.workspaces?.current === 'dify') { navigate('workbench'); return; }
     setPreparingTask(true); setNotice(null);
     try {
       setActiveDocumentProjectId('');
@@ -275,8 +285,9 @@ export default function App() {
 
   return <div className={`app-shell agent-shell ${page==='dify-regression'||page==='module-regression'?'sm-shell':''}`}>
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>AI 测试工作台</span></div></div>
+      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>{config?.workspaces ? (config.workspaces.current === 'dify' ? 'Dify · 独立数据区' : '网页回归 · 独立数据区') : 'AI 测试工作台'}</span></div></div>
       <div className="nav-section-label">测试空间</div>
+      {config?.workspaces?.current === 'web-regression' && config.workspaces.dataStatus === 'awaiting-source' && <p className="nav-section-label" role="status">网页回归原数据暂未迁入，当前为空白独立空间。</p>}
       <nav aria-label="主导航" className="main-nav">
         <NavItem active={page === 'workbench'} icon="plus" label="新建测试" onClick={() => navigate('workbench')} />
         <NavItem active={page === 'dify-regression' || page === 'module-regression'} icon="nodes" label="Dify 回归工作台" onClick={() => { navigate('dify-regression'); setMoreOpen(false); }} />

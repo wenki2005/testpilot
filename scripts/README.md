@@ -12,6 +12,18 @@
 
 ## 长期入口
 
+集成版统一入口见根目录 [脚本索引](../脚本索引.md)。双方的本机数据和最新业务脚本索引分别存放，不共用目录。
+
+| 集成工具 | 用途 |
+| --- | --- |
+| `start-integrated-workspaces.mjs` | 启动 Dify 4323 和网页回归 4324，分别使用独立数据与执行进程；不会停止原4321 |
+| `stop-integrated-workspaces.mjs [--workspace <模块>]` | 先核对代码、进程启动时间和端口归属；有活动用例时拒绝停止，不停止原4321 |
+| `migrate-workspace-data.mjs --workspace <dify或web-regression> --source <数据目录>` | 只读复制来源，SQLite在线备份，只允许迁入不存在的目标目录 |
+| `export-workspace-scripts.mjs [--workspace <模块>]` | 不执行用例，生成各自按项目/模块/用例编号可查的脚本索引 |
+| `connect-workspace-database.mjs --workspace <模块>` | 使用本数据区的 Windows 受保护凭据，恢复独立测试库连接，不打印密码，不改系统执行策略 |
+| `verify/inventory-workspace-sources.mjs <候选目录...>` | 只读列出候选数据目录中的项目摘要，不读凭据 |
+| `verify/verify-workspace-migration.mjs --workspace <模块>` | 对照迁入指纹、来源和目标的SQLite表内容，不执行业务用例或访问被测数据库 |
+
 | 脚本 | 用途 |
 | --- | --- |
 | `clean.mjs` | 构建前清理 `dist` |

@@ -26,7 +26,7 @@ import {supportsDepartmentDatabase} from '../domain/regression-database-contract
 export const moduleDigest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const now = () => new Date().toISOString();
 const id = z.string().uuid();
-const assertions = new Set(['assertText','assertVisible','assertNotVisible','assertExactVisible','assertRoleVisible','assertRoleDisabled','assertValue','assertValueByPlaceholder','assertDisabled','assertFieldInvalid','assertMaxLengthOrMessage','assertNoHorizontalOverflow','assertNoFetchOrXhr']);
+const assertions = new Set(['assertText','assertVisible','assertNotVisible','assertExactVisible','assertRoleVisible','assertRoleDisabled','assertValue','assertValueByPlaceholder','assertSelectedByRoleIndex','assertDisabled','assertFieldInvalid','assertMaxLengthOrMessage','assertNoHorizontalOverflow','assertNoFetchOrXhr']);
 type Outcome = 'passed'|'failed'|'blocked'|'error'|'not_executed';
 export type WebModule = {id:string;name:string;fileName:string;digest:string;createdAt:string;project:DocumentProject;sourceCases?:ImportedDocument['testCases'];manualSteps?:Record<string,string[]>; cachedSteps?:Record<string,{sourceDigest:string;steps:BrowserCheck['steps'];reviewKind?:DifyReviewKind}>};
 export type WebModuleResult = {caseId:string;title:string;expected:string;priority?:BrowserCheck['priority'];status:Outcome;detail:string;outOfScope?:boolean;evidence?:string|undefined;evidenceOrigin?:'document-run'|'preflight'|'authorized-write';evidenceNote?:string|undefined;proposal?:{steps:string[];preconditions:string[];questions:string[]};steps?:BrowserCheck['steps'];needsConfirmation?:boolean;blockerCode?:DifyBlockerCode;nextAction?:string;preparationReview?:string};
