@@ -1,4 +1,5 @@
 import { zipSync, strToU8 } from 'fflate';
+import type { CoreRun } from '../../src/domain/department-core-chains';
 import type { BatchView } from '../../src/domain/system-module-contract';
 import type { BrowserCheck } from '../../src/domain/document-test-model';
 import originalTemplate from './department-sample-report-template.json';
@@ -8,12 +9,12 @@ type Status = 'passed' | 'failed' | 'blocked' | 'error' | 'not_executed' | 'outs
 type Counts = Record<Status, number>;
 type ReportImage = { name: string; bytes: Uint8Array; width: number; height: number };
 type ReportRow = {
-  moduleId: string; moduleName: string; version: number; caseId: string; priority: string;
+  moduleId: string; moduleName: string; version: number; versionLabel?: string; caseId: string; priority: string;
   title: string; source: string; sourcePath: string[]; preconditions: string[]; steps: string[];
   expected: string; inScope: boolean; status: Status; actual: string; blocker: string;
   nextAction: string; evidence: string; evidenceNote: string; image?: ReportImage; imageIssue?: string;
 };
-type ReportData = { batch: BatchView; exportedAt: string; rows: ReportRow[]; counts: Counts };
+type ReportData = { kind?: 'chains'; batch: BatchView; exportedAt: string; rows: ReportRow[]; counts: Counts };
 type CasePack = { cases: BrowserCheck[] };
 const apiRoot = '/api/system-module-regression';
 const statusLabels: Record<Status, string> = {
@@ -47,6 +48,7 @@ function countRows(rows: ReportRow[]): Counts {
 }
 const time = (value: string) => new Date(value).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
 const scopeLabel = (batch: BatchView) => ({ starter: '日常用例', all: '全部用例', custom: '自选用例', core: '历史核心用例' }[batch.scope ?? 'all']);
+const reportScope = (data: ReportData) => data.kind === 'chains' ? '核心用例（链路）' : scopeLabel(data.batch);
 const phaseLabel = (batch: BatchView) => ({ queued: '等待开始', running: '运行中快照（结果尚未完整）', completed: '本轮结束', cancelled: '已取消', interrupted: '未完成' }[batch.phase]);
 
 async function request(path: string, text = false): Promise<any> {
@@ -132,7 +134,7 @@ async function loadReport(batchId: string): Promise<ReportData> {
         expected: item.expected, inScope, status,
         actual: !inScope ? '未纳入本轮执行范围。' : result?.detail || '本批次尚无该用例的执行结果。',
         blocker: result?.blockerCode ?? '', nextAction: result?.nextAction ?? '',
-        evidence: result?.evidence && job ? new URL(`/api/dify-web-modules/jobs/${encodeURIComponent(job.id)}/evidence/${encodeURIComponent(result.evidence)}`, location.origin).href : '',
+        evidence: result?.evidence && job ? new URL(`${location.pathname.startsWith('/dify/') ? '/dify' : ''}/api/dify-web-modules/jobs/${encodeURIComponent(job.id)}/evidence/${encodeURIComponent(result.evidence)}`, location.origin).href : '',
         evidenceNote: [result?.evidenceNote, result?.evidenceOrigin === 'preflight' ? '运行准备截图，不代表该用例已实际执行。' : ''].filter(Boolean).join('\n'),
       });
     }
@@ -148,7 +150,7 @@ async function embedScreenshots(rows: ReportRow[]): Promise<void> {
   let cursor = 0; let totalBytes = 0;
   async function readImage(url: string, name: string): Promise<ReportImage> {
     const target = new URL(url);
-    if (target.origin !== location.origin || !/^\/api\/dify-web-modules\/jobs\/[^/]+\/evidence\/[^/]+$/.test(target.pathname)) throw new Error('证据地址不属于当前批次的截图接口。');
+    if (target.origin !== location.origin || !/^\/(?:dify\/)?api\/(?:dify-web-modules\/jobs\/[^/]+|system-module-regression\/core-chains\/runs\/[^/]+)\/evidence\/[^/]+$/.test(target.pathname)) throw new Error('证据地址不属于当前批次的截图接口。');
     const response = await fetch(target.href, { cache: 'no-store', signal: AbortSignal.timeout(30_000), redirect: 'error' });
     if (!response.ok) throw new Error(`截图读取失败（HTTP ${response.status}），请恢复证据后重新下载。`);
     if (Number(response.headers.get('content-length')) > 8 * 1024 * 1024) throw new Error('截图超过8MB，未能嵌入；可通过原始截图链接查看。');
@@ -178,11 +180,11 @@ function metadata(data: ReportData): Array<[string, string | number]> {
   const { batch, rows } = data;
   return [
     ['系统', batch.systemName], ['批次编号', batch.id], ['测试账号', batch.accountName ?? '历史默认账号'],
-    ['环境', batch.environment], ['被测地址', batch.targetUrl], ['执行范围', scopeLabel(batch)],
+    ['环境', batch.environment], ['被测地址', batch.targetUrl], ['执行范围', reportScope(data)],
     ['批次状态', phaseLabel(batch)], ['运行开始时间（北京时间）', time(batch.createdAt)],
     ['导出时间（北京时间）', time(data.exportedAt)], ['本轮选择用例数', rows.filter(row => row.inScope).length],
-    ['模块版本全部用例数', rows.length], ['未纳入本轮用例数', rows.filter(row => !row.inScope).length],
-    ['统计口径', '统计仅包含本轮选择的用例；明细保留这些模块的全部版本用例，未纳入本轮的标为未执行，不计入本轮汇总。'],
+    [data.kind === 'chains' ? '链路步骤总数' : '模块版本全部用例数', rows.length], ['未纳入本轮用例数', rows.filter(row => !row.inScope).length],
+    ['统计口径', data.kind === 'chains' ? '仅统计所选核心批次的链路步骤，原131条用例为关联来源，不合并计算通过数。提交及人工审批复用已有凭证，本轮逐项读回核验。' : '统计仅包含本轮选择的用例；明细保留这些模块的全部版本用例，未纳入本轮的标为未执行，不计入本轮汇总。'],
     ['截图说明', '失败、阻塞及异常用例的已有截图嵌入文件，可离线查看；缺失或读取失败逐条注明。前置现场截图不代表业务步骤已执行。'],
     ['截图收录', `需附图 ${rows.filter(needsScreenshot).length} 条；已嵌入 ${rows.filter(row => needsScreenshot(row) && row.image).length} 条；缺失或读取失败 ${rows.filter(row => needsScreenshot(row) && !row.image).length} 条。`],
   ];
@@ -193,7 +195,7 @@ type ReportField = { key: string; label: string; value: string; link?: string };
 function caseFields(row: ReportRow): ReportField[] {
   return [
     { key: 'module', label: '模块', value: row.moduleName },
-    { key: 'version', label: '模块版本', value: `v${row.version}` },
+    { key: 'version', label: row.versionLabel ? '链路快照' : '模块版本', value: row.versionLabel ?? `v${row.version}` },
     { key: 'id', label: '用例编号', value: row.caseId },
     { key: 'priority', label: '优先级', value: row.priority || '原用例未标注' },
     { key: 'title', label: '用例标题', value: row.title },
@@ -214,7 +216,7 @@ function caseFields(row: ReportRow): ReportField[] {
 function moduleSummaries(data: ReportData) {
   return data.batch.entries.map(entry => {
     const rows = data.rows.filter(row => row.moduleId === entry.moduleId);
-    return { name: entry.moduleName, version: `v${entry.version}`, selected: rows.filter(row => row.inScope).length, counts: countRows(rows) };
+    return { name: entry.moduleName, version: data.kind === 'chains' ? data.batch.entries.find(e => e.moduleId === entry.moduleId)!.digest : `v${entry.version}`, selected: rows.filter(row => row.inScope).length, counts: countRows(rows) };
   });
 }
 
@@ -381,7 +383,7 @@ function xmind(data: ReportData): Uint8Array {
       topic(`本轮用例：${entry.selected}`), ...statuses.map(status => topic(`${statusLabels[status]}：${entry.counts[status]}`)),
     ]))),
   ]));
-  sheet.title = `${data.batch.systemName} · ${scopeLabel(data.batch)} · ${time(data.batch.createdAt)}`;
+  sheet.title = `${data.batch.systemName} · ${reportScope(data)} · ${time(data.batch.createdAt)}`;
   const files: Record<string, Uint8Array> = {};
   const entries: Record<string, object> = { 'content.json': {}, 'metadata.json': {} };
   for (const row of data.rows) if (row.image) {
@@ -398,13 +400,42 @@ function xmind(data: ReportData): Uint8Array {
 
 export async function downloadRegressionReport(batchId: string, format: ReportFormat): Promise<void> {
   const data = await loadReport(batchId);
+  saveReport(data, format);
+}
+
+function saveReport(data: ReportData, format: ReportFormat): void {
   const bytes = format === 'xlsx' ? excel(data) : xmind(data);
   const mime = format === 'xlsx' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.xmind.workbook';
   const url = URL.createObjectURL(new Blob([new Uint8Array(bytes)], { type: mime }));
   const link = document.createElement('a');
   link.href = url;
-  const name = `${data.batch.systemName}-详细报告含截图-${scopeLabel(data.batch)}-${data.batch.createdAt.slice(0, 10)}-${data.batch.id.slice(0, 8)}`.replace(/[<>:"/\\|?*\u0000-\u001F]/g, '_');
+  const name = `${data.batch.systemName}-详细报告含截图-${reportScope(data)}-${data.batch.createdAt.slice(0, 10)}-${data.batch.id.slice(0, 8)}`.replace(/[<>:"/\\|?*\u0000-\u001F]/g, '_');
   link.download = `${name}.${format}`;
   document.body.append(link); link.click(); link.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
+/** Export the selected immutable journey snapshot using the same report formats. */
+export async function downloadCoreRegressionReport(value: CoreRun, format: ReportFormat): Promise<void> {
+  const run = structuredClone(value);
+  const rows: ReportRow[] = run.chains.flatMap(chain => chain.steps.map(step => ({
+    moduleId: chain.id, moduleName: chain.title, version: 0, versionLabel: run.definitionDigest,
+    caseId: step.id, priority: '', title: step.title,
+    source: step.sources.map(source => source.caseId + ' · ' + source.title + ' · ' + source.versionId).join('\n'),
+    sourcePath: ['核心用例', chain.title, step.title], preconditions: [], steps: [step.title],
+    expected: step.expected, inScope: true, status: step.status, actual: step.detail,
+    blocker: '', nextAction: '',
+    evidence: step.evidence ? new URL((location.pathname.startsWith('/dify/') ? '/dify' : '') + '/api/system-module-regression/core-chains/runs/' + encodeURIComponent(run.id) + '/evidence/' + encodeURIComponent(step.evidence), location.origin).href : '',
+    evidenceNote: [step.evidenceKind === 'historical-submission' ? '历史提交凭证＋本轮读回。' : '', step.references?.length ? '关联申请：' + step.references.join('、') : '', ...step.sources.map(source => source.caseId + ' 原始预期：' + source.expected)].filter(Boolean).join('\n'),
+  })));
+  const counts = countRows(rows);
+  const batch: BatchView = {
+    id: run.id, requestId: run.requestId, systemId: run.systemId, systemName: run.systemName,
+    environment: run.environment, targetUrl: run.targetUrl, profileId: run.profileId, accountName: '账号 ' + run.profileId,
+    createdAt: run.createdAt, updatedAt: run.updatedAt, phase: run.phase === 'awaiting-login' ? 'running' : run.phase,
+    entries: run.chains.map(chain => ({ moduleId: chain.id, moduleName: chain.title, versionId: run.definitionDigest, version: 0, digest: run.definitionDigest, caseCount: chain.steps.length })),
+    scope: 'core', runMode: 'fixed', message: run.message, jobs: [], counts,
+  };
+  await embedScreenshots(rows);
+  saveReport({ kind: 'chains', batch, rows, counts, exportedAt: new Date().toISOString() }, format);
 }

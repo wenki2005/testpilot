@@ -37,7 +37,7 @@ test('real browser exercises filters and shortcuts: zero records block, complete
   for(const mode of ['ambiguous','unknown']){filterMode=mode;const result={status:'passed',detail:'base'};await verifyDifyListResult(page,usage,result,target,save);assert.equal(result.status,'blocked');assert.match(result.detail,/筛选栏未唯一定位/);}
   filterMode='pc';const completeRows=rows;rows=[rows[0]];const partial={status:'passed',detail:'base'};await verifyDifyListResult(page,usage,partial,target,save);assert.equal(partial.status,'blocked');assert.match(partial.detail,/营销用书.*1条/);assert.match(partial.detail,/产品用书.*0条/);assert.match(partial.detail,/缺少.*本人记录/);rows=completeRows;
   wrong=true;const bad={status:'passed',detail:'base'};await verifyDifyListResult(page,usage,bad,target,save);assert.equal(bad.status,'failed');assert.match(bad.detail,/不属于/);wrong=false;rows=[];
-  const entry={status:'passed',detail:'base'};await verifyDifyListResult(page,shortcuts,entry,target,save);assert.equal(entry.status,'blocked',entry.detail);assert.match(entry.detail,/每页20条/);assert.match(entry.detail,/没有足够/);assert.equal(await page.evaluate(()=>navigator.userAgent.includes(' Mobile')),false);
+  const entry={status:'passed',detail:'base'};await verifyDifyListResult(page,shortcuts,entry,target,save);assert.equal(entry.status,'blocked',entry.detail);assert.match(entry.detail,/每页20条/);assert.match(entry.detail,/尚无第21条/);assert.equal(await page.evaluate(()=>navigator.userAgent.includes(' Mobile')),false);
   assert.equal(images,13);assert.equal(recordClicks,0,'duplicate record captions must never be clicked');assert.ok(calls.every(method=>method==='GET'));
  }finally{await browser.close();}
 });

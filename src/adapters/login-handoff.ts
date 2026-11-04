@@ -93,7 +93,10 @@ export function browserRequestAllowed(method: string, requestUrl: string, contex
     // these documented test API reads, including their CORS preflight.
     const departmentRead = targetOrigin === 'https://cdn.yibentushu.com' && request.origin === 'https://testapi.yibentushu.com'
       && (/^\/supply-api\/dept\/book\/apply\/(?:myList|clientSearch|bookCheck|(?:detail|progress)\/[A-Za-z0-9_-]+)\/?$/.test(request.pathname)
-        || /^\/supply-api\/h5\/dept\/book\/order\/(?:myList|statusCount)\/?$/.test(request.pathname));
+        || /^\/supply-api\/h5\/dept\/book\/order\/(?:myList|statusCount|detail\/[A-Za-z0-9_-]+)\/?$/.test(request.pathname));
+    const welfareQuery=targetOrigin==='https://cdn.yibentushu.com' && request.origin==='https://testapi.yibentushu.com' && request.pathname==='/supply-api/dept/book/manage/welfareBookOrder';
+    if(welfareQuery && /^(?:POST|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)) return true;
+    if(targetOrigin==='https://cdn.yibentushu.com' && request.origin==='https://testapi.yibentushu.com' && request.pathname==='/supply-api/v3/api-docs' && /^(?:GET|HEAD|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)) return true;
     if(departmentRead && /^(?:GET|HEAD|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)) return true;
     const apiRequest = /^(?:GET|HEAD|POST|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)
       && sameRegistrableSite && !mutationPath.test(request.pathname) && (apiReadPath.test(request.pathname) || knownReadRoute.test(request.pathname));

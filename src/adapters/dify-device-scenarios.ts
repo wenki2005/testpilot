@@ -65,9 +65,9 @@ export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result
  };
  const setDevice=async(mobile:boolean)=>{await client.send('Network.setUserAgentOverride',{userAgent:mobile?original.ua.replace(/ Mobile/g,'')+' Mobile':original.ua.replace(/ Mobile/g,'')});await page.setViewportSize(mobile?{width:390,height:844}:{width:1280,height:800});};
  const load=async(route:string)=>{await page.goto('about:blank');const url=new URL(targetUrl);url.hash=route;await page.goto(url.href,{waitUntil:'domcontentloaded',timeout:15000});if(await isLoginPage(page))throw Error('Blocked: 切换布局后登录未保持，未读取其他账号或绕过认证。');};
- const response=async(suffix:string,act:()=>Promise<void>,query?:string)=>{
+ const response=async(suffix:string,act:()=>Promise<void>,query?:string,predicate?:(u:URL)=>boolean)=>{
   const requests=new Set<import('playwright').Request>();
-  const onRequest=(request:import('playwright').Request)=>{if(endpoint(request.url(),suffix)&&request.method()==='GET')requests.add(request);};
+  const onRequest=(request:import('playwright').Request)=>{if(endpoint(request.url(),suffix)&&request.method()==='GET'&&(!predicate||predicate(new URL(request.url()))))requests.add(request);};
   page.on('request',onRequest);
   const pending=page.waitForResponse(r=>requests.has(r.request())&&(query===undefined||new URL(r.url()).searchParams.get('keyword')===query),{timeout:10000}).then(async r=>({url:new URL(r.url()),ok:r.status()===200,body:await r.json()})).catch(()=>undefined);
   try{await act();return await pending;}finally{page.off('request',onRequest);}
@@ -102,20 +102,34 @@ export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result
    const list=await response('dept/book/apply/myList',()=>load('/apply'));
    if(!list?.ok||list.body?.code!==200||!Array.isArray(list.body.rows)||!Number.isFinite(number(list.body.total)))throw Error('Blocked: '+label+' 未取得本轮成功的本人申请列表查询，无法对照两端内容。');
    const applyRows=asRows(list.body.rows),applyTotal=number(list.body.total);let apply:ApplySnapshot;
+   if(applyRows.length)try{await page.waitForFunction(keys=>keys.every(key=>document.body.innerText.includes(key)),applyRows.map(r=>String(r.applyNo??'')),{timeout:5000});}catch{throw Error('断言失败：'+label+'申请列表接口成功，但本页编号未完整显示。');}
+   if(applyTotal>applyRows.length){
+    if(applyTotal>100)throw Error('Blocked: 跨端本人申请超过本轮100条核验上限。');
+    let pageNum=Number(list.url.searchParams.get('pageNum')??'1');
+    while(applyRows.length<applyTotal){
+     let act:()=>Promise<void>;
+     if(mobile)act=()=>page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight));
+     else{const next=page.getByRole('button',{name:'下一页',exact:true}).filter({visible:true});if(await next.count()!==1||!await next.isEnabled())throw Error('Blocked: PC列表未找到唯一的下一页操作，不能比较不同页长的第一页全集。');act=()=>next.click();}
+     const next=await response('dept/book/apply/myList',act,undefined,u=>u.searchParams.get('pageNum')===String(pageNum+1));
+     if(!next?.ok||next.body?.code!==200||number(next.body.total)!==applyTotal||!Array.isArray(next.body.rows)||!next.body.rows.length)throw Error('Blocked: 跨端分页未取得总数稳定的成功响应。');
+     const more=asRows(next.body.rows);if(more.some(r=>applyRows.some(v=>v.applyNo===r.applyNo)))throw Error('断言失败：跨端本人申请分页存在重复编号。');
+     try{await page.waitForFunction(keys=>keys.every(key=>document.body.innerText.includes(key)),more.map(r=>String(r.applyNo??'')),{timeout:5000});}catch{throw Error('断言失败：分页接口返回的申请编号未在页面展示。');}applyRows.push(...more);pageNum++;if(pageNum>10)throw Error('Blocked: 跨端分页超过限定页数。');
+    }
+    if(applyRows.length!==applyTotal)throw Error('Blocked: 跨端分页汇总数量不一致。');stages.push(label+'：已实际翻页读取全部'+applyRows.length+'条本人申请');
+   }
    if(applyTotal===0&&applyRows.length===0){
     if(!await isVisible(page,'暂无申请记录'))throw Error('断言失败：'+label+' 本人列表的成功零条查询未展示空态。');
     apply={total:0,rows:[],empty:true};
    }else{
     if(!applyRows.length)throw Error('Blocked: '+label+' 本人申请列表总数非零但当前页没有记录行，未猜测分页。');
     const keys=applyRows.map(row=>String(row.applyNo??''));if(keys.some(key=>!key))throw Error('Blocked: '+label+' 本人申请列表存在缺少申请编号的记录，无法逐条对照。');
-    const text=await page.locator('body').innerText();for(const key of keys)if(!text.includes(key))throw Error('断言失败：'+label+' 申请列表页面没有展示本条返回的申请编号，接口与页面不一致。');
     apply={total:applyTotal,rows:applyRows.map(row=>({applyNo:String(row.applyNo??''),examineStatus:row.examineStatus,bookUsage:row.bookUsage})),empty:false};
-    stages.push(label+'：本人申请记录 '+applyTotal+' 条，第一页 '+keys.length+' 个申请编号在页面可见');
+    stages.push(label+'：本人申请记录 '+applyTotal+' 条，本轮 '+keys.length+' 个申请编号与实际页面逐页核对');
    }
    await overflow(label+'申请列表');
    const orders=await response('h5/dept/book/order/myList',()=>load('/logistics'));
    if(!orders?.ok||orders.body?.code!==200||!Array.isArray(orders.body.rows)||!Number.isFinite(number(orders.body.total)))throw Error('Blocked: '+label+' 未取得本轮成功的本人订单查询，无法对照两端内容。');
-   const orderRows=asRows(orders.body.rows),orderTotal=number(orders.body.total);const orderNos=orderRows.map(row=>String(row.orderNo??''));const search=page.getByPlaceholder('搜索订单号/书籍',{exact:true});let order:OrderSnapshot;
+   const orderRows=asRows(orders.body.rows),orderTotal=number(orders.body.total);const orderNos=orderRows.map(row=>String(row.orderId??''));const search=page.getByPlaceholder('搜索订单号/书籍',{exact:true});let order:OrderSnapshot;
    if(orderTotal===0&&orderRows.length===0){
     if(!await isVisible(page,mobile?'暂无订单记录':'暂无订单物流记录'))throw Error('断言失败：'+label+' 订单成功零条查询未展示空态。');
     const query='TP_CROSS_DEVICE_NO_MATCH';
@@ -131,7 +145,7 @@ export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result
     const query=orderNos[0]!.slice(0,-2);
     const searched=await response('h5/dept/book/order/myList',async()=>{await search.fill(query);await search.press('Enter');await search.blur();},query);
     if(!searched?.ok||searched.body?.code!==200||!Array.isArray(searched.body.rows))throw Error('Blocked: '+label+' 未取得本人订单编号上的关键词搜索结果。');
-    const matched=asRows(searched.body.rows).map(row=>String(row.orderNo??''));
+    const matched=asRows(searched.body.rows).map(row=>String(row.orderId??''));
     if(!matched.includes(orderNos[0]!))throw Error('断言失败：'+label+' 部分订单编号搜索没有返回原订单。');
     order={total:orderTotal,orderNos,empty:false,keyword:{query,matched}};
     stages.push(label+'：本人订单记录 '+orderTotal+' 条，第一页 '+orderNos.length+' 个订单编号在页面可见，部分编号搜索命中原订单');
@@ -145,7 +159,7 @@ export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result
   if(pc.orders.empty!==h5.orders.empty||pc.orders.total!==h5.orders.total)throw Error('断言失败：同一账号 PC/H5 本人订单列表总数或空态不一致（PC '+pc.orders.total+' 条 / H5 '+h5.orders.total+' 条）。');
   if(!pc.apply.empty){
    const pcRows=pc.apply.rows.slice().sort((a,b)=>a.applyNo.localeCompare(b.applyNo)),h5Rows=h5.apply.rows.slice().sort((a,b)=>a.applyNo.localeCompare(b.applyNo));
-   if(JSON.stringify(pcRows.map(row=>row.applyNo))!==JSON.stringify(h5Rows.map(row=>row.applyNo)))throw Error('断言失败：同一账号 PC/H5 申请列表第一页的申请编号集合不一致。');
+   if(JSON.stringify(pcRows.map(row=>row.applyNo))!==JSON.stringify(h5Rows.map(row=>row.applyNo)))throw Error('断言失败：同一账号 PC/H5 申请列表逐页读取后的申请编号集合不一致。');
    for(let index=0;index<pcRows.length;index++)if(String(pcRows[index]!.examineStatus)!==String(h5Rows[index]!.examineStatus)||String(pcRows[index]!.bookUsage)!==String(h5Rows[index]!.bookUsage))throw Error('断言失败：同一申请在 PC/H5 的审批状态或用书类型字段不一致。');
   }
   if(!pc.orders.empty){
@@ -153,7 +167,7 @@ export async function verifyDifyDeviceResult(page:Page,check:BrowserCheck,result
    if(JSON.stringify(pc.orders.keyword?.matched.slice().sort())!==JSON.stringify(h5.orders.keyword?.matched.slice().sort()))throw Error('断言失败：同一订单编号部分关键词在 PC/H5 命中的结果集合不一致。');
   }
   if(pc.apply.empty&&pc.orders.empty)result.detail='本轮 PC 1280×800 与 H5 390×844 使用同一账号和应用入口；'+stages.join('；')+'。仅覆盖当前零记录状态，不宣称有记录详情/分页已验收。';
-  else result.detail='本轮 PC 1280×800 与 H5 390×844 使用同一账号和应用入口；'+stages.join('；')+'。两端本人记录总数、第一页编号集合、状态与用书类型字段、订单编号集合及部分编号搜索命中一致；仅覆盖第一页，不宣称详情与全部分页已验收。';
+  else result.detail='本轮 PC 1280×800 与 H5 390×844 使用同一账号和应用入口；'+stages.join('；')+'。两端本人申请在限定100条内实际逐页读取、编号集合及状态/用途一致；订单核验当前页及部分编号搜索，不宣称订单详情与全部分页已验收。';
   await capture();
  }catch(error){const detail=error instanceof Error?error.message:String(error);result.status=detail.startsWith('断言失败：')?'failed':'blocked';result.detail=detail.replace(/^Blocked: /,'')+(stages.length?' 已完成：'+stages.join('；'):'');await capture(kind==='profile-display').catch(()=>{delete result.evidence;});}
  finally{

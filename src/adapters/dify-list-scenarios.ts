@@ -70,15 +70,27 @@ export async function verifyDifyListResult(page:Page,check:BrowserCheck,result:R
     if(response.url.searchParams.get('pageSize')!=='20'||response.url.searchParams.get('pageNum')!=='1')throw Error('断言失败：'+label+'默认分页参数不是每页20条、第一页。');
     if(['bookUsage','examineStatus','orderStatus','keyword'].some(key=>!!response.url.searchParams.get(key)))throw Error('断言失败：'+label+'入口没有默认展示全部。');
     stages.push(label+'：实际入口、成功新查询、默认全部、每页20条已核对');
-    if(response.total<=20){result.status='blocked';continue;}
+    if(response.total<=20){if(response.rows.length!==response.total)throw Error('Blocked: '+label+'当前不足一页但返回数量不等于总数。');stages.push(label+'：本轮'+response.total+'条有记录/空态已核对，尚无第21条验证其第二页');result.status='blocked';continue;}
     const next=await read(suffix!,()=>page.evaluate(()=>window.scrollTo(0,document.documentElement.scrollHeight)).then(()=>{}),u=>u.searchParams.get('pageNum')==='2');
+    if(next.total!==response.total||!next.rows.length||next.rows.some(v=>response.rows.some(r=>(r.applyNo??r.orderId)===(v.applyNo??v.orderId))))throw Error('断言失败：'+label+'第二页总数变化、为空或编号重复。');
     if(next.url.searchParams.get('pageSize')!=='20'||next.rows.length>20)throw Error('断言失败：'+label+'第二页未遵守20条分页。');
-    stages.push(label+'：第二页加载已实际触发');
+    await page.waitForFunction(keys=>keys.every(key=>document.body.innerText.includes(key)),next.rows.map(v=>String(v.applyNo??v.orderId)),{timeout:5000});stages.push(label+'：'+response.rows.length+'条第一页与'+next.rows.length+'条第二页均已实际加载、编号可见且不重复');
    }
-   result.detail=stages.join('；')+(result.status==='blocked'?'；当前账号没有足够的本人记录，无法验证20条后的翻页和有记录列表；保留原始完整预期为阻塞。':'；两条入口与分页链均完成。');
+   result.detail=stages.join('；')+(result.status==='blocked'?'；各入口已验证的页数见上；仅未取得第二页的列表仍缺分页样本，不能把已有申请27条及订单有记录误记成空态或全部缺样本。':'；两条入口与分页链均完成。');
   }else{
    const suffix=kind==='order-matching-search'?orders:application;
-   const baseline=await read(suffix,()=>load(kind==='order-matching-search'?'/logistics':'/apply'));
+   let baseline=await read(suffix,()=>load(kind==='order-matching-search'?'/logistics':'/apply'));
+   if(kind!=='order-matching-search'&&baseline.total>baseline.rows.length){
+    if(baseline.total>100)throw Error('Blocked: 本人列表超过本轮100条核验上限，未用不完整第一页代替完整筛选基线。');
+    const collected=[...baseline.rows];let pageNum=Number(baseline.url.searchParams.get('pageNum')??'1');
+    while(collected.length<baseline.total){
+     const next=page.getByRole('button',{name:'下一页',exact:true}).filter({visible:true});if(await next.count()!==1||!await next.isEnabled())throw Error('Blocked: 本人列表尚未完整，未找到唯一可用的真实下一页操作。');
+     const value=await read(application,()=>next.click(),u=>u.searchParams.get('pageNum')===String(pageNum+1));
+     if(value.total!==baseline.total||!value.rows.length||value.rows.some(r=>collected.some(v=>v.applyNo===r.applyNo)))throw Error('Blocked: 分页期间本人总数变化、记录重复或后页为空，未使用不稳定基线。');
+     collected.push(...value.rows);pageNum++;if(pageNum>10)throw Error('Blocked: 本人分页超过限定页数。');
+    }
+    if(collected.length!==baseline.total)throw Error('Blocked: 本人分页记录数与总数不一致。');baseline={...baseline,rows:collected};
+   }
    if(kind==='order-matching-search'){
     if(!baseline.rows.length){result.status='blocked';result.detail='本轮同账号订单查询成功但为0条；缺少可匹配的本人订单，未使用他人订单或把无匹配空态当成模糊命中通过。';}
     else{
@@ -94,10 +106,21 @@ export async function verifyDifyListResult(page:Page,check:BrowserCheck,result:R
     const options=usage?['营销用书','产品用书']:['待审批','已通过','已驳回'];let datasetComplete=baseline.total===baseline.rows.length&&baseline.rows.length>0;const used=new Set<string>();
     for(const label of options){
      const control=await applicationFilter(page,usage,label);
-     const response=await read(application,()=>control.click({timeout:5000}),u=>u.searchParams.has(key)&&u.searchParams.get(key)!=='');
+     let response=await read(application,()=>control.click({timeout:5000}),u=>u.searchParams.has(key)&&u.searchParams.get(key)!=='');
      const value=response.url.searchParams.get(key)!;if(used.has(value))throw Error('断言失败：不同筛选项发送了相同筛选值。');used.add(value);
      if(response.rows.some(row=>String(row[key])!==value))throw Error('断言失败：'+label+'筛选返回了不属于该项的记录。');
      if(!await control.evaluate(el=>el.classList.contains('active')))throw Error('断言失败：'+label+'筛选后未标记当前选项。');
+     if(response.total>response.rows.length){
+      if(response.total>100)throw Error('Blocked: 筛选集合超过本轮100条核验范围。');
+      const collected=[...response.rows];let pageNum=Number(response.url.searchParams.get('pageNum')??'1');
+      while(collected.length<response.total){
+       const next=page.getByRole('button',{name:'下一页',exact:true}).filter({visible:true});if(await next.count()!==1||!await next.isEnabled())throw Error('Blocked: 筛选后下一页不可用，未用第一页替代完整结果。');
+       const value=await read(application,()=>next.click(),u=>u.searchParams.get(key)===response.url.searchParams.get(key)&&u.searchParams.get('pageNum')===String(pageNum+1));
+       if(value.total!==response.total||!value.rows.length||value.rows.some(row=>String(row[key])!==response.url.searchParams.get(key)||collected.some(old=>old.applyNo===row.applyNo)))throw Error('Blocked: 筛选分页总数变化、重复记录或状态不一致。');
+       collected.push(...value.rows);pageNum++;if(pageNum>10||collected.length>response.total)throw Error('Blocked: 筛选分页越界。');
+      }
+      response={...response,rows:collected};
+     }
      stages.push(label+'：已实际点击、对应查询成功、选中态正确（'+response.total+'条）');
      const expected=baseline.rows.filter(row=>String(row[key])===value);
      if(!expected.length||response.total!==expected.length||response.rows.length!==expected.length)datasetComplete=false;

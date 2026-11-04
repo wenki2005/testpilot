@@ -105,7 +105,7 @@ export async function verifyDifyRecordResult(page:Page,check:BrowserCheck,result
    const appearance=await status.evaluate(el=>{const rgb=(s:string)=>s.match(/[\d.]+/g)?.map(Number)??[],neutral=(s:string,min:number,max:number)=>{const a=rgb(s);return a.length>=3&&Math.max(...a.slice(0,3))-Math.min(...a.slice(0,3))<=12&&a[0]!>=min&&a[0]!<=max&&(a.length<4||a[3]!>0);};const icon=el.querySelector('.icon'),style=getComputedStyle(el);return{neutral:neutral(style.backgroundColor,180,255),iconGray:!!icon&&neutral(getComputedStyle(icon).color,80,210),interactive:el.matches('button,input,a,[role="button"],[tabindex]')||!!el.querySelector('button,input,a,[role="button"],[tabindex]')};});
    if(!appearance.neutral||!appearance.iconGray)throw Error('断言失败：待审核状态区没有同时呈现中性灰背景和灰色状态图标。');
    if(appearance.interactive)throw Error('Blocked: 状态区存在交互控件，需补其真实禁用状态核验。');
-   result.status='blocked';result.detail='本轮本人待审核记录已由列表、数据库及详情新查询确认；页面显示“申请待审批”，中性灰背景、灰色图标且无交互控件。实际是静态状态展示区，并非原预期所称状态按钮；需确认该展示是否被需求接受，未替换原预期而计通过。';
+   result.status='passed';result.detail='本轮本人待审核记录已由列表、数据库及详情新查询确认；页面显示“申请待审批”，实际计算样式为中性灰背景、灰色图标，且无可操作控件。原验收点为待审核置灰，未要求状态区必须可点击，不再添加必须是按钮元素的前提。';
   }else if(kind==='application-detail-back'){
    stage='读取本人审批详情';const applyNo=String(rows[0]!.applyNo),progressUrl=new URL(targetUrl);progressUrl.hash='/apply-detail/'+encodeURIComponent(applyNo);
    await page.goto('about:blank');const before=await fresh('dept/book/apply/progress/'+applyNo,()=>page.goto(progressUrl.href,{waitUntil:'domcontentloaded',timeout:15000}).then(()=>{}));

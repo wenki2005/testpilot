@@ -7,6 +7,8 @@ const configDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   root: configDir,
+  // Keep lazy chunks in the page's /dify/ or /web/ workspace behind the gateway.
+  base: './',
   plugins: [react()],
   server: {
     host: '127.0.0.1',

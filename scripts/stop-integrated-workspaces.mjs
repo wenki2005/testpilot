@@ -38,3 +38,17 @@ for (const workspace of selected) {
     await unlink(workspace.processFile);
     console.log('Stopped owned ' + workspace.owner + ' server on ' + workspace.port);
 }
+
+if (!owner) {
+    let entry;
+    try { entry = JSON.parse(await readFile(new URL('../runtime-data/entry-process.json', import.meta.url), 'utf8')); } catch {}
+    if (entry) {
+        if (!Number.isSafeInteger(entry.pid) || entry.pid < 1 || entry.port !== 4325 || entry.service !== 'testpilot-unified-entry') throw Error('Entry metadata mismatch; entry was not stopped.');
+        const health = await (await fetch('http://127.0.0.1:4325/__entry/health', { signal: AbortSignal.timeout(5000) })).json();
+        if (health.service !== entry.service) throw Error('Entry identity mismatch; entry was not stopped.');
+        const script = `$p=Get-CimInstance Win32_Process -Filter ${quote('ProcessId=' + entry.pid)};if(-not $p -or $p.Name -ne 'node.exe' -or $p.CommandLine.IndexOf(${quote(entry.code)},[StringComparison]::OrdinalIgnoreCase) -lt 0){throw 'Entry code identity mismatch'};$gap=[Math]::Abs(($p.CreationDate.ToUniversalTime()-([DateTimeOffset]${quote(entry.startedAt)}).UtcDateTime).TotalSeconds);if($gap -gt 10){throw 'Entry start time mismatch'};$ports=@(Get-NetTCPConnection -LocalPort 4325 -State Listen -ErrorAction Stop);if(-not $ports.Count -or @($ports|Where-Object {$_.OwningProcess -ne ${entry.pid}}).Count){throw 'Entry port owner mismatch'};Stop-Process -Id ${entry.pid} -ErrorAction Stop`;
+        execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-WindowStyle', 'Hidden', '-Command', script], { windowsHide: true, stdio: 'pipe' });
+        await unlink(new URL('../runtime-data/entry-process.json', import.meta.url));
+        console.log('Stopped unified entry on 4325');
+    }
+}

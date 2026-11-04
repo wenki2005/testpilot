@@ -11,6 +11,7 @@ import MysqlExplorerPage from './mysql-explorer-page';
 import SettingsPage from './settings-page';
 import CaseGeneratorPage, { type GenerationResult } from './case-generator-page';
 import { resolveWorkbenchPage, type WorkbenchPage as Page } from './workbench-routing';
+import {useSidebarProjects,selectSidebarProject} from './sidebar-project-context';
 
 type Notice = { kind: 'error' | 'success' | 'info'; text: string } | null;
 type ProjectProfile = { id: string; name: string; suiteName: string };
@@ -57,6 +58,9 @@ function Icon({ name, size = 18 }: { name: string; size?: number }) {
     arrowUp: <><path d="M12 19V5M6 11l6-6 6 6"/></>,
     box: <><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4.5 7.8 7.5 4.3 7.5-4.3M12 12v8.5"/></>,
     database: <><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></>,
+    folder: <path d="M3 7V5h7l2 2h9v13H3Z"/>,
+    play: <><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m9 7 8 5-8 5Z"/></>,
+    help: <><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 0 1 6 0c0 2-3 2-3 5M12 17h.01"/></>,
   };
   return <svg {...common}>{paths[name] ?? paths.box}</svg>;
 }
@@ -98,6 +102,8 @@ export default function App() {
   const [apiSpecification, setApiSpecification] = useState('');
   const [allowExternalApi, setAllowExternalApi] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const sidebarProjects=useSidebarProjects();
+  const executionPage=page==='dify-regression'||page==='module-regression';
 
   const selectedRun = useMemo(() => runs.find((r) => r.id === selectedId) ?? null, [runs, selectedId]);
   const activeRun = runs.find((r) => r.status === 'queued' || r.status === 'running');
@@ -208,8 +214,7 @@ export default function App() {
   };
   const navigate = (destination: Page) => {
     const workspaces = config?.workspaces;
-    const owner = destination === 'document-tests' || destination === 'workbench' ? 'web-regression'
-      : destination === 'dify-regression' || destination === 'module-regression' ? 'dify' : undefined;
+    const owner = destination === 'dify-regression' || destination === 'module-regression' ? 'dify' : 'web-regression';
     if (owner && workspaces && owner !== workspaces.current) {
       const target = new URL(owner === 'dify' ? workspaces.difyUrl : workspaces.webUrl);
       target.searchParams.set('page', destination);
@@ -283,30 +288,32 @@ export default function App() {
     setTargetKind('website'); setCaseMode('both'); setRequireConfirmation(false); setNotice(null);
   };
 
-  return <div className={`app-shell agent-shell ${page==='dify-regression'||page==='module-regression'?'sm-shell':''}`}>
+  return <div className={`app-shell agent-shell approved-sidebar-shell ${executionPage?'sm-shell':''}`}>
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>{config?.workspaces ? (config.workspaces.current === 'dify' ? 'Dify · 独立数据区' : '网页回归 · 独立数据区') : 'AI 测试工作台'}</span></div></div>
-      <div className="nav-section-label">测试空间</div>
-      {config?.workspaces?.current === 'web-regression' && config.workspaces.dataStatus === 'awaiting-source' && <p className="nav-section-label" role="status">网页回归原数据暂未迁入，当前为空白独立空间。</p>}
+      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>QUALITY WORKBENCH</span></div></div>
+      <div className="sidebar-project"><label htmlFor="sidebar-project">当前测试项目</label><select id="sidebar-project" aria-label="当前测试项目" value={executionPage?sidebarProjects?.systemId??'':''} disabled={!executionPage||!sidebarProjects?.systems.length||sidebarProjects.disabled} onChange={e=>selectSidebarProject(e.target.value)}>{executionPage&&sidebarProjects?.systems.length?sidebarProjects.systems.map(s=><option key={s.id} value={s.id}>{s.name}</option>):<option value="">{executionPage?'正在读取项目…':'本地工作区'}</option>}</select><p>项目独立维护用例与运行记录</p></div>
       <nav aria-label="主导航" className="main-nav">
-        <NavItem active={page === 'workbench'} icon="plus" label="新建测试" onClick={() => navigate('workbench')} />
-        <NavItem active={page === 'dify-regression' || page === 'module-regression'} icon="nodes" label="Dify 回归工作台" onClick={() => { navigate('dify-regression'); setMoreOpen(false); }} />
-        <NavItem active={page === 'document-tests'} icon="list" label="网页回归" onClick={() => { navigate('document-tests'); setMoreOpen(false); }} />
-        <NavItem active={page === 'regressions'} icon="check" label="回归用例" count={checks.length || undefined} onClick={() => { navigate('regressions'); setMoreOpen(false); }} />
-        <NavItem active={page === 'history' || page === 'run-detail'} icon="clock" label="运行记录" count={runs.length || undefined} onClick={() => { navigate('history'); setMoreOpen(false); }} />
-        <NavItem active={moreOpen || ['architecture','project-tests','case-generator','api-suites','sqlite-migrations','mysql-browser','source-tests','settings'].includes(page)} icon="layers" label="工具" onClick={() => setMoreOpen((open) => !open)} />
+        <NavItem active={page === 'workbench'} icon="folder" label="项目概览" onClick={() => {navigate('workbench');setMoreOpen(false);}} />
+        <NavItem active={page === 'regressions'} icon="list" label="用例与脚本" count={checks.length || undefined} onClick={() => { navigate('regressions'); setMoreOpen(false); }} />
+        <NavItem active={executionPage} icon="play" label="执行测试" onClick={() => { navigate('dify-regression'); setMoreOpen(false); }} />
+        <NavItem active={page === 'history' || page === 'run-detail'} icon="file" label="运行报告" onClick={() => { navigate('history'); setMoreOpen(false); }} />
       </nav>
-      {moreOpen && <div className="nav-more-menu" aria-label="测试工具">
+      <div className="sidebar-footer">
+        <NavItem active={page === 'settings'} icon="settings" label="设置" onClick={() => {navigate('settings');setMoreOpen(false);}} />
+        <NavItem active={page === 'architecture'} icon="help" label="使用说明" onClick={() => {navigate('architecture');setMoreOpen(false);}} />
+        <button className={`nav-item sidebar-more-toggle${moreOpen?' active':''}`} aria-expanded={moreOpen} aria-controls="sidebar-tools" onClick={()=>setMoreOpen(value=>!value)}><Icon name="layers"/><span>更多工具</span><Icon name="chevron" size={14}/></button>
+      {moreOpen && <div className="nav-more-menu" id="sidebar-tools" aria-label="测试工具">
+        <NavItem active={page === 'document-tests'} icon="list" label="网页回归" onClick={() => { navigate('document-tests'); setMoreOpen(false); }} />
         <NavItem active={page === 'project-tests'} icon="box" label="本地项目与脚本" onClick={() => { navigate('project-tests'); setMoreOpen(false); }} />
         <NavItem active={page === 'source-tests'} icon="nodes" label="代码测试 Agent" onClick={() => { navigate('source-tests'); setMoreOpen(false); }} />
         <NavItem active={page === 'case-generator'} icon="plus" label="生成测试用例" onClick={() => { navigate('case-generator'); setMoreOpen(false); }} />
         <NavItem active={page === 'api-suites'} icon="nodes" label="API 测试套件" onClick={() => { navigate('api-suites'); setMoreOpen(false); }} />
         <NavItem active={page === 'sqlite-migrations'} icon="database" label="数据库迁移测试" onClick={() => { navigate('sqlite-migrations'); setMoreOpen(false); }} />
         <NavItem active={page === 'mysql-browser'} icon="database" label="MySQL 数据查看" onClick={() => { navigate('mysql-browser'); setMoreOpen(false); }} />
-        <NavItem active={page === 'architecture'} icon="nodes" label="系统说明" onClick={() => { navigate('architecture'); setMoreOpen(false); }} />
-        <NavItem active={page === 'settings'} icon="settings" label="设置" onClick={() => { navigate('settings'); setMoreOpen(false); }} />
       </div>}
-      <div className="sidebar-bottom"><div className="workspace-guide"><Icon name="compass" size={18}/><div><strong>从需求到回归</strong><p>准备资料、运行测试、追踪证据。</p></div></div>
+        <div className="sidebar-local"><span aria-hidden="true"/>本地运行 · 数据存于本机</div>
+      </div>
+      <div className="sidebar-bottom">
         <div className="target-switch"><div className="target-heading"><span className="status-dot"/><strong>样本服务</strong></div><div className="target-name">订单 API <span className="target-tag">本地</span></div><p>预置故障 / 修复用于对照验证</p><div className="segmented" role="group" aria-label="样本状态"><button className={!config?.fixedTarget ? 'selected' : ''} onClick={() => setFixed(false)} disabled={!config || !!activeRun}>预置故障</button><button className={config?.fixedTarget ? 'selected' : ''} onClick={() => setFixed(true)} disabled={!config || !!activeRun}>已修复</button></div></div>
         <div className="scope-caption"><span>本轮范围</span><p>本地 API 与 CLI<br/>Web / 移动端待适配</p></div>
         <div className="user-chip"><div className="avatar">T</div><div><strong>本地演示环境</strong><span>{config?.framework ?? 'Pi'} · TestPilot</span></div><span className="online-dot" aria-label="连接状态"/></div>
@@ -314,6 +321,7 @@ export default function App() {
     </aside>
 
     <main className="workspace" id="workspace-main">
+      {config?.workspaces?.current === 'web-regression' && config.workspaces.dataStatus === 'awaiting-source' && <p className="integration-source-status" role="status">原网页回归项目与运行记录尚未迁入。</p>}
       <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/><strong>{pageTitle(page)}</strong></div><div className="topbar-meta">{page === 'workbench' && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}<span className="environment-pill"><span className="status-dot"/>{config?.modelAvailable ? `模型已连接 · ${config.modelLabel}` : '本地测试 Agent'}</span><span className="divider"/><button className="top-settings" onClick={() => navigate('settings')} aria-label="打开设置"><Icon name="settings" size={16}/></button></div></header>
       {notice && <div className={`notice notice-${notice.kind}`} role="status"><span>{notice.text}</span><button aria-label="关闭提示" onClick={() => setNotice(null)}>×</button></div>}
       {page === 'workbench' && <div className={`agent-home ${activeDocumentProjectId || activeApiSuiteId ? 'agent-home-active' : ''}`}>
@@ -363,7 +371,7 @@ export default function App() {
 function NavItem({ active, icon, label, count, onClick }: { active: boolean; icon: string; label: string; count?: number; onClick: () => void }) {
   return <button className={`nav-item ${active ? 'active' : ''}`} onClick={onClick} aria-label={label} aria-current={active ? 'page' : undefined}><Icon name={icon}/><span>{label}</span>{count !== undefined && <small>{count}</small>}</button>;
 }
-function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', 'source-tests': '代码测试 Agent', 'dify-regression': 'Dify 回归工作台', 'module-regression': 'Dify 回归工作台', settings: '设置' })[page]; }
+function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', 'source-tests': '代码测试 Agent', 'dify-regression': '执行测试', 'module-regression': '执行测试', settings: '设置' })[page]; }
 function RunResults({ run, onSave, savedIds }: { run: DemoRun; onSave: (assertion: DemoAssertion) => void; savedIds: Set<string> }) {
   const [assertionFilter, setAssertionFilter] = useState<'all' | 'failed' | 'passed'>('all');
   const passed = run.assertions.filter((a) => a.status === 'passed').length;

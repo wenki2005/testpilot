@@ -96,13 +96,13 @@ if(route==='/home'){
  const body=applyRows.length?'<ul>'+applyRows.map(row=>'<li>'+row.applyNo+' '+row.text+'</li>').join('')+'</ul>':'暂无申请记录';
  document.write('<main>'+body+'</main>');fetch(api+'dept/book/apply/myList');
 }else if(route==='/logistics'){
- const body=orderRows.length?'<ul>'+orderRows.map(row=>'<li>'+row.orderNo+'</li>').join('')+'</ul>':(mobile?'暂无订单记录':'暂无订单物流记录');
+ const body=orderRows.length?'<ul>'+orderRows.map(row=>'<li>'+row.orderId+'</li>').join('')+'</ul>':(mobile?'暂无订单记录':'暂无订单物流记录');
  document.write('<main>'+body+'<input placeholder="搜索订单号/书籍"></main>');
  fetch(api+'h5/dept/book/order/myList');document.querySelector('input').onkeydown=e=>{if(e.key==='Enter')fetch(api+'h5/dept/book/order/myList?keyword='+encodeURIComponent(e.target.value))};
 }
 </script>`;}
 
-const consistent={pc:{apply:[{applyNo:'202611010001',examineStatus:0,bookUsage:1,text:'待审批'},{applyNo:'202611010002',examineStatus:1,bookUsage:2,text:'已通过'}],orders:[{orderNo:'OD20261101001'}],matched:['OD20261101001']},h5:null};
+const consistent={pc:{apply:[{applyNo:'202611010001',examineStatus:0,bookUsage:1,text:'待审批'},{applyNo:'202611010002',examineStatus:1,bookUsage:2,text:'已通过'}],orders:[{orderId:'OD20261101001'}],matched:['OD20261101001']},h5:null};
 consistent.h5={apply:consistent.pc.apply.map(row=>({...row})),orders:consistent.pc.orders.map(row=>({...row})),matched:consistent.pc.matched.slice()};
 
 test('cross-device verifier compares real records on both ends; inconsistent lists fail and the original expectation stays',async()=>{
@@ -115,14 +115,14 @@ test('cross-device verifier compares real records on both ends; inconsistent lis
    const side=mobile?current.h5:current.pc,headers={'access-control-allow-origin':'*'};
    if(url.pathname.endsWith('/getInfo'))return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({code:200,user:{userId:'same-account',nickName:'PRIVATE_NAME'}})});
    if(url.pathname.endsWith('/apply/myList'))return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({code:200,total:side.apply.length,rows:side.apply})});
-   if(url.pathname.endsWith('/order/myList')){const keyword=url.searchParams.get('keyword'),rows=keyword?side.matched.map(no=>({orderNo:no})):side.orders;return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({code:200,total:rows.length,rows})});}
+   if(url.pathname.endsWith('/order/myList')){const keyword=url.searchParams.get('keyword'),rows=keyword?side.matched.map(no=>({orderId:no})):side.orders;return route.fulfill({contentType:'application/json',headers,body:JSON.stringify({code:200,total:rows.length,rows})});}
   }
   return route.abort();
  });
  const save=async image=>{assert.equal(image.subarray(1,4).toString(),'PNG');return 'current-case.png';};
  try{
   const passed={status:'passed',detail:'base'};await verifyDifyDeviceResult(page,layout,passed,target,save);
-  assert.equal(passed.status,'passed',passed.detail);assert.match(passed.detail,/本人申请记录 2 条/);assert.match(passed.detail,/本人订单记录 1 条/);assert.match(passed.detail,/仅覆盖第一页/);assert.equal(passed.evidence,'current-case.png');
+  assert.equal(passed.status,'passed',passed.detail);assert.match(passed.detail,/本人申请记录 2 条/);assert.match(passed.detail,/本人订单记录 1 条/);assert.match(passed.detail,/订单核验当前页/);assert.equal(passed.evidence,'current-case.png');
   current={pc:consistent.pc,h5:{apply:[{applyNo:'202611010003',examineStatus:0,bookUsage:1,text:'待审批'},{applyNo:'202611010004',examineStatus:1,bookUsage:2,text:'已通过'}],orders:consistent.h5.orders,matched:consistent.h5.matched}};
   const different={status:'passed',detail:'base'};await verifyDifyDeviceResult(page,layout,different,target,save);assert.equal(different.status,'failed');assert.match(different.detail,/申请编号集合不一致/);
   current={pc:consistent.pc,h5:{apply:[],orders:[],matched:[]}};

@@ -6,7 +6,7 @@ import {verifyDifyListResult} from './dify-list-scenarios.js';
 import {verifyDifyRecordResult,difyRecordKind} from './dify-record-scenarios.js';
 import{verifyConnectedEvidence}from'./dify-connected-scenarios.js';
 import{connectedEvidenceKind}from'./dify-connected-contract.js';
-import{readDepartmentCreationReceipts}from'./dify-creation-receipts.js';
+import{readDepartmentCreationReceipts,readDepartmentCreationBaselines}from'./dify-creation-receipts.js';
 import {verifyInvalidBook,prepareInvalidBook} from './dify-invalid-book-scenarios.js';
 import {verifyExcludedCustomer} from './dify-excluded-customer-scenarios.js';
 import {prepareClientValidation,verifyClientValidation} from './dify-client-validation-scenarios.js';
@@ -119,8 +119,8 @@ export function webModuleDependencies(dataRoot:string):WebModuleDependencies {
         // A completed case can leave extra unsaved rows on the same URL.
         // Inspect a fresh document, retaining the current isolated login.
         await session.page.goto('about:blank');await navigatePersistentPage(session.page,project.targetUrl);
-        await waitForDepartmentFormBaseline(session.page,project.targetUrl);
         if(await isLoginPage(session.page))await waitForUserLogin(project.id,job.id,project.targetUrl,session.browser,session.page,async waiting=>onLogin(waiting));
+        await waitForDepartmentFormBaseline(session.page,project.targetUrl);
         signal.throwIfAborted();
         if(new URL(session.page.url()).origin!==new URL(project.targetUrl).origin)throw new Error('测试窗口没有进入目标网站，请完成登录后重试。');
         const customerFixtures=await loadDifyCustomerFixtures(dataRoot);
@@ -156,7 +156,7 @@ export function webModuleDependencies(dataRoot:string):WebModuleDependencies {
         if(source&&session)await verifyDifyDeviceResult(session.page,source,result,project.targetUrl,saveEvidence);
         if(source&&session)await verifyDifyListResult(session.page,source,result,project.targetUrl,saveEvidence);
         if(source&&session)await verifyDifyRecordResult(session.page,source,result,project.targetUrl,saveEvidence);
-        if(source&&session)await verifyConnectedEvidence(session.page,source,result,project.targetUrl,saveEvidence,undefined,()=>readDepartmentCreationReceipts(dataRoot,project.id));
+        if(source&&session)await verifyConnectedEvidence(session.page,source,result,project.targetUrl,saveEvidence,undefined,()=>readDepartmentCreationReceipts(dataRoot,project.id),()=>readDepartmentCreationBaselines(dataRoot,project.id));
         if(source&&(needsDifyReadback(source)||fieldValidityKind(source))&&!session&&result.status==='passed'){result.status='blocked';result.detail='缺少本轮页面与查询补充核验，不能只按子步骤判断通过。';}
         if(result.status==='passed'&&source?.expected==='必填未完成时提交按钮置灰不可点击'){
           if(session)await verifyDifyRequiredButtonAppearance(session.page,result,source.expected);else{result.status='blocked';result.detail='必填与禁用子检查完成，但缺少当前页面的置灰样式证据。';delete result.evidence;}

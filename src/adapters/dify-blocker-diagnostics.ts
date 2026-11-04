@@ -7,6 +7,7 @@ export function departmentBlockerDiagnostic(check:Pick<BrowserCheck,'source'|'ex
  const own=v.states.filter(s=>s.own),total=(key:'count'|'multiLine'|'orderReferences',rows=v.states)=>rows.reduce((n,s)=>n+s[key],0);
  const states=own.map(s=>`审批状态${s.status}/锁定状态${s.lockStatus}/用途${s.usage}：${s.count}条`).join('；')||'本人申请0条';
  const s=check.source??'',e=check.expected,l=v.links;
+ if(s.includes('管理端后台（经销商系统服务端）')&&s.includes('员工福利订单'))return;
  if(s.includes('员工端-用书审批详情页')&&/审核通过：|审核驳回：|全部审批状态/.test(e))return `已查biz_dept_book_apply.examine_status、lock_status、book_usage，当前认证账号${total('count',own)}条申请（${states}）；全库${total('count')}条。其他账号的状态样本不能代替本人页面验收。`;
  if(s.includes('员工端-申请表单明细展示页')&&e==='多行样书明细逐行展示小计，总计=∑小计、预估总重=∑(数量×单本重量)')return `已按biz_dept_book_apply_goods.apply_id关联申请，当前认证账号多行申请${total('multiLine',own)}条，全库多行申请${total('multiLine')}条；数量qty、定价price、小计subtotal、单本重量unit_weight字段存在。缺的是当前账号可访问的多行样本，不是缺表或缺字段。`;
  if(s.includes('员工端-申请表单明细展示页')&&/实时调易诚通商品接口|商品接口查询失败/.test(e))return `本人申请${total('count',own)}条，详情接口和明细表均可读取；本地有product_id、qty、price、unit_weight，但存储快照不能证明易诚通实时调用。biz_third_party_failure_log.business_ref按申请号/审批号/订单引用关联${l.linkedFailures}条；当前缺相应上游调用跟踪或可控失败契约，未用整个详情接口失败冒充商品接口失败。`;

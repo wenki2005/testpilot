@@ -23,6 +23,7 @@
 | `connect-workspace-database.mjs --workspace <模块>` | 使用本数据区的 Windows 受保护凭据，恢复独立测试库连接，不打印密码，不改系统执行策略 |
 | `verify/inventory-workspace-sources.mjs <候选目录...>` | 只读列出候选数据目录中的项目摘要，不读凭据 |
 | `verify/verify-workspace-migration.mjs --workspace <模块>` | 对照迁入指纹、来源和目标的SQLite表内容，不执行业务用例或访问被测数据库 |
+| `verify/append-dify-terminal-results.mjs --source <目录> [--apply]` | 预览或追加缺失的已结束Dify批次/任务/截图；先备份、禁止覆盖历史，不重跑业务，不操作网页回归数据区 |
 
 | 脚本 | 用途 |
 | --- | --- |
@@ -79,6 +80,8 @@
 | `sync-xmind-browser-steps.mjs` | 同步 XMind 浏览器步骤 |
 
 ## 新增脚本放哪
+
+统一入口：`start-integrated-workspaces.mjs` 启动隔离后台与 4325 入口；`serve-integrated-entry.mjs` 按页面 URL 转发请求；`stop-integrated-workspaces.mjs` 核对身份和活动任务后停止自有实例。原4321/4322不受影响。启动新后台时，如有该数据区的私有数据库凭据，会恢复自身数据库连接，不执行用例。
 
 - 构建/启动/打包/导入导出 → `scripts/`
 - 一次性验收、审计、修复 → `scripts/verify/`（见该目录 README）

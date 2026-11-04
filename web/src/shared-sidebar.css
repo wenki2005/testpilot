@@ -1,0 +1,185 @@
+/* Sidebar rules copied from the Dify owner; A01 content keeps its own styles. */
+.integration-source-status { margin: 0; padding: 10px 28px; color: #566680; background: #edf4ff; border-bottom: 1px solid #dfe9f8; font-size: 13px; }
+.app-shell.agent-shell { grid-template-columns: 248px minmax(0, 1fr); }
+.app-shell.agent-shell .sidebar { --ink:#252a43; --muted:#77809a; --line:#e4eaf2; --blue:#675be8; --rail:#171a2b; font-family:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif; }
+.app-shell.agent-shell .sidebar { height: 100vh; position: sticky; top: 0; display: flex; flex-direction: column; padding: 22px 14px 15px; background: #fff; border-right: 1px solid var(--line); z-index: 5; }
+.app-shell.agent-shell .sidebar .brand { display: flex; align-items: center; gap: 11px; padding: 0 9px 27px; }
+.app-shell.agent-shell .sidebar .brand-mark { width: 35px; height: 35px; border-radius: 10px; display: grid; place-items: center; color: #fff; background: #245bd6; }
+.app-shell.agent-shell .sidebar .brand strong { display: block; font-size: 15px; letter-spacing: -.25px; }
+.app-shell.agent-shell .sidebar .brand span { display: block; margin-top: 2px; font-size: 8px; font-weight: 700; color: #93a0b1; letter-spacing: 1.2px; }
+.app-shell.agent-shell .sidebar .nav-section-label { padding: 0 11px 9px; color: #a1adbc; font-size: 10px; font-weight: 650; letter-spacing: .3px; }
+.app-shell.agent-shell .sidebar .main-nav { display: grid; gap: 4px; }
+.app-shell.agent-shell .sidebar .nav-item { height: 39px; border: 0; border-radius: 7px; background: transparent; color: #617188; display: flex; align-items: center; gap: 11px; padding: 0 10px; text-align: left; cursor: pointer; font-size: 12.5px; transition: background .15s ease, color .15s ease; }
+.app-shell.agent-shell .sidebar .nav-item:hover { background: #f5f7fa; color: var(--ink); }
+.app-shell.agent-shell .sidebar .nav-item.active { color: var(--blue); background: #edf3ff; font-weight: 650; }
+.app-shell.agent-shell .sidebar .nav-item small { margin-left: auto; font-size: 10px; min-width: 18px; text-align: center; color: #8795a8; }
+.app-shell.agent-shell .sidebar-bottom { margin-top: auto; }
+.app-shell.agent-shell .sidebar .target-switch { padding: 13px 12px 12px; margin: 0 2px 16px; border: 1px solid #e5ebf3; border-radius: 9px; background: #fbfcfe; }
+.app-shell.agent-shell .sidebar .target-heading { display: flex; align-items: center; gap: 7px; font-size: 11px; }
+.app-shell.agent-shell .sidebar .status-dot, .app-shell.agent-shell .sidebar .online-dot { width: 7px; height: 7px; display: inline-block; border-radius: 50%; background: #168163; }
+.app-shell.agent-shell .sidebar .target-name { margin-top: 12px; font-size: 12px; font-weight: 650; }
+.app-shell.agent-shell .sidebar .target-tag { margin-left: 5px; color: #738197; background: #f0f3f7; border-radius: 4px; padding: 2px 5px; font-size: 9px; font-weight: 500; }
+.app-shell.agent-shell .sidebar .target-switch p { margin: 5px 0 10px; font-size: 10px; color: #8491a3; line-height: 1.5; }
+.app-shell.agent-shell .sidebar .segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; background: #eef1f5; border-radius: 6px; }
+.app-shell.agent-shell .sidebar .segmented button { min-height: 25px; border: 0; border-radius: 4px; color: #738197; font-size: 10px; cursor: pointer; background: transparent; }
+.app-shell.agent-shell .sidebar .segmented button.selected { background: #fff; color: var(--ink); font-weight: 650; box-shadow: 0 1px 2px #172a4510; }
+.app-shell.agent-shell .sidebar .scope-caption { padding: 0 12px 16px; }
+.app-shell.agent-shell .sidebar .scope-caption span { display: block; font-size: 10px; color: #9aa6b5; margin-bottom: 5px; }
+.app-shell.agent-shell .sidebar .scope-caption p { margin: 0; color: #66758a; line-height: 1.7; font-size: 10px; }
+.app-shell.agent-shell .sidebar .user-chip { display: flex; align-items: center; gap: 9px; border-top: 1px solid #edf0f4; padding: 13px 7px 0; }
+.app-shell.agent-shell .sidebar .avatar { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 8px; background: #dce8fb; color: #315b9f; font-size: 12px; font-weight: 700; }
+.app-shell.agent-shell .sidebar .user-chip strong { display: block; font-size: 10px; font-weight: 650; }
+.app-shell.agent-shell .sidebar .user-chip span:not(.online-dot) { display: block; margin-top: 3px; font-size: 9px; color: #8a97a8; }
+.app-shell.agent-shell .sidebar .user-chip .online-dot { margin-left: auto; width: 6px; height: 6px; }
+.app-shell.agent-shell .sidebar .environment-pill .status-dot { width: 6px; height: 6px; }
+@media (max-width: 900px) {.app-shell.agent-shell .sidebar { padding: 17px 8px 12px; align-items: center; }.app-shell.agent-shell .sidebar .brand { padding: 0 0 24px; }.app-shell.agent-shell .sidebar .brand > div:not(.brand-mark), .app-shell.agent-shell .sidebar .nav-section-label, .app-shell.agent-shell .sidebar .nav-item > span, .app-shell.agent-shell .sidebar .nav-item small, .app-shell.agent-shell .sidebar-bottom { display: none; }.app-shell.agent-shell .sidebar .main-nav { width: 100%; }.app-shell.agent-shell .sidebar .nav-item { justify-content: center; padding: 0; } }
+@media (max-width: 620px) {.app-shell.agent-shell .sidebar { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: 54px; padding: 5px 8px; border-right: 0; border-top: 1px solid var(--line); }.app-shell.agent-shell .sidebar .brand { display: none; }.app-shell.agent-shell .sidebar .main-nav { display: grid; grid-template-columns: repeat(4,1fr); }.app-shell.agent-shell .sidebar .nav-item { height: 42px; } }
+@media(max-width:620px) { .app-shell.agent-shell .sidebar .main-nav { grid-template-columns: repeat(5,minmax(0,1fr)); } .app-shell.agent-shell .sidebar .nav-item { gap: 2px; font-size: 7px; } .app-shell.agent-shell .sidebar .nav-item svg { width: 15px; height: 15px; } }
+@media(max-width:620px) { .app-shell.agent-shell .sidebar .main-nav { grid-template-columns: repeat(7,minmax(0,1fr)); } }
+
+/* Conversational task entry */
+.app-shell.agent-shell .sidebar { background: #fbfcfe; }
+.app-shell.agent-shell .sidebar-bottom { display: none; }
+.app-shell.agent-shell .sidebar .main-nav { gap: 5px; }
+.app-shell.agent-shell .sidebar .nav-item { min-height: 41px; }
+.app-shell.agent-shell .sidebar .nav-more-menu { display: grid; gap: 3px; margin: 6px 0 0 8px; padding: 7px 0 0 9px; border-left: 1px solid #dfe6f0; }
+.app-shell.agent-shell .sidebar .nav-more-menu .nav-item { height: 35px; min-height: 35px; font-size: 11px; }
+/* Focus the TestPilot workbench on one conversational task flow. */
+.app-shell.agent-shell .sidebar { background: #f7f8fa; }
+.app-shell.agent-shell .sidebar .brand { padding-bottom: 22px; }
+.app-shell.agent-shell .sidebar .nav-item { min-height: 39px; }
+
+/* TestPilot control-room refresh */
+.app-shell.agent-shell .sidebar, .app-shell.agent-shell .sidebar {
+  color: #d5d9eb;
+  background: var(--rail);
+  border-right: 1px solid #252941;
+  box-shadow: 6px 0 24px rgba(18, 20, 39, .06);
+}
+.app-shell.agent-shell .sidebar .brand { padding: 8px 10px 30px; }
+.app-shell.agent-shell .sidebar .brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  color: white;
+  background: #6d62ef;
+  box-shadow: 0 5px 14px rgba(81, 69, 210, .28);
+}
+.app-shell.agent-shell .sidebar .brand strong { color: #f3f4ff; font-size: 16px; letter-spacing: -.3px; }
+.app-shell.agent-shell .sidebar .brand span { color: #838ba8; font-size: 8px; letter-spacing: 1.4px; }
+.app-shell.agent-shell .sidebar .nav-section-label {
+  padding: 0 12px 10px;
+  color: #838aa6;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+.app-shell.agent-shell .sidebar .main-nav { gap: 5px; }
+.app-shell.agent-shell .sidebar .nav-item {
+  position: relative;
+  min-height: 42px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: #aeb4cb;
+  font-size: 12px;
+  font-weight: 520;
+  transition: color .16s ease, background .16s ease, transform .16s ease;
+}
+.app-shell.agent-shell .sidebar .nav-item svg { color: #8991ad; }
+.app-shell.agent-shell .sidebar .nav-item:hover { color: #f1f2fc; background: #20243a; }
+.app-shell.agent-shell .sidebar .nav-item:hover svg { color: #c5c8f5; }
+.app-shell.agent-shell .sidebar .nav-item:active { transform: translateY(1px); }
+.app-shell.agent-shell .sidebar .nav-item.active {
+  color: #fff;
+  background: #292d49;
+  font-weight: 650;
+}
+.app-shell.agent-shell .sidebar .nav-item.active svg { color: #a89fff; }
+.app-shell.agent-shell .sidebar .nav-item.active::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  bottom: 9px;
+  left: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #968bff;
+}
+.app-shell.agent-shell .sidebar .nav-item small {
+  min-width: 20px;
+  padding: 2px 5px;
+  border-radius: 20px;
+  color: #c0c5dc;
+  background: #343953;
+}
+.app-shell.agent-shell .sidebar .nav-more-menu {
+  gap: 3px;
+  margin: 9px 0 0 9px;
+  padding: 8px 0 2px 10px;
+  border-left-color: #383d58;
+}
+.app-shell.agent-shell .sidebar .nav-more-menu .nav-item {
+  min-height: 36px;
+  border-radius: 7px;
+  color: #9da5c0;
+  font-size: 11px;
+}
+.app-shell.agent-shell .sidebar .nav-more-menu .nav-item.active { color: white; background: #292d49; }
+.app-shell.agent-shell .sidebar-bottom { margin-top: auto; }
+.app-shell.agent-shell .sidebar .target-switch {
+  padding: 12px;
+  border-color: #303550;
+  border-radius: 10px;
+  color: #d9dced;
+  background: #1d2135;
+}
+.app-shell.agent-shell .sidebar .target-heading { color: #dfe2f1; }
+.app-shell.agent-shell .sidebar .target-switch .status-dot, .app-shell.agent-shell .sidebar .online-dot { background: #52c6a4; }
+.app-shell.agent-shell .sidebar .target-name { color: #e5e7f5; }
+.app-shell.agent-shell .sidebar .target-tag { color: #aeb5cc; background: #2d324b; }
+.app-shell.agent-shell .sidebar .target-switch p { color: #9098b3; }
+.app-shell.agent-shell .sidebar .segmented { background: #141728; }
+.app-shell.agent-shell .sidebar .segmented button { color: #929ab6; }
+.app-shell.agent-shell .sidebar .segmented button.selected {
+  color: #f5f5ff;
+  background: #393d61;
+  box-shadow: inset 0 0 0 1px #51567b;
+}
+.app-shell.agent-shell .sidebar .scope-caption span { color: #777f9b; }
+.app-shell.agent-shell .sidebar .scope-caption p { color: #abb1c6; }
+.app-shell.agent-shell .sidebar .user-chip { border-color: #2b3049; }
+.app-shell.agent-shell .sidebar .avatar { color: #dcd8ff; background: #39345f; }
+.app-shell.agent-shell .sidebar .user-chip strong { color: #dfe2f0; }
+.app-shell.agent-shell .sidebar .user-chip span:not(.online-dot) { color: #858da8; }
+@media (max-width: 1100px) {
+  .app-shell.agent-shell .sidebar { padding-left: 12px; padding-right: 12px; }
+}
+
+/* Legibility and copy-density pass */
+.app-shell.agent-shell .sidebar .nav-item { font-size: 15px; }
+.app-shell.agent-shell .sidebar .brand span { font-size: 16px; }
+.app-shell.agent-shell .sidebar .nav-section-label { font-size: 11px; }
+.app-shell.agent-shell .sidebar .main-nav { gap: 5px; }
+.app-shell.agent-shell .sidebar .nav-item { height: 42px; min-height: 42px; gap: 10px; padding-inline: 10px; font-size: 15px; }
+.app-shell.agent-shell .sidebar .nav-item > span { font-size: 15px; line-height: 1.4; }
+.app-shell.agent-shell .sidebar .nav-item svg { width: 17px; height: 17px; flex: 0 0 17px; }
+.app-shell.agent-shell .sidebar .nav-item small {
+  display: grid;
+  min-width: 20px;
+  min-height: 20px;
+  place-items: center;
+  padding: 0 3px;
+  border-radius: 999px;
+  color: #e4e6f2;
+  background: #323751;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Use the owner's current light sidebar on every A01 page as well. */
+.app-shell.agent-shell{grid-template-columns:214px minmax(0,1fr);background:#fff}.app-shell.agent-shell .sidebar{background:#edf4ff;border-right:1px solid #dfe9f8}.app-shell.agent-shell .sidebar .brand strong{color:#145cde;font-size:23px}.app-shell.agent-shell .sidebar .brand span,.app-shell.agent-shell .sidebar .nav-section-label,.app-shell.agent-shell .sidebar .sidebar-bottom{display:none}.app-shell.agent-shell .sidebar .brand-mark{background:#1964f7;box-shadow:none;border-radius:7px}.app-shell.agent-shell .sidebar .brand{padding:10px 9px 34px}.app-shell.agent-shell .sidebar .nav-item{color:#566680;min-height:48px;font-size:15px}.app-shell.agent-shell .sidebar .nav-item svg{color:#647a9e}.app-shell.agent-shell .sidebar .nav-item.active{background:#dbe9ff;color:#1964f7;box-shadow:none}.app-shell.agent-shell .sidebar .nav-item.active svg{color:#1964f7}.app-shell.agent-shell .sidebar .nav-item:hover{color:#1964f7;background:#e1ecfd}.app-shell.agent-shell .sidebar .nav-item.active:before{display:none}
+@media(max-width:900px){.app-shell.agent-shell{grid-template-columns:66px minmax(0,1fr)}}@media(max-width:620px){.app-shell.agent-shell{display:block}.app-shell.agent-shell .sidebar .main-nav{grid-template-columns:repeat(6,1fr)}.app-shell.agent-shell .sidebar .nav-item{min-height:42px}}
+
+/* Approved workbench layout. All selectors stay inside this page and its dialogs. */

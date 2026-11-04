@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import{mkdtemp,mkdir,writeFile,rm}from'node:fs/promises';import{tmpdir}from'node:os';import{join}from'node:path';import{chromium}from'playwright';
-import{departmentWriteKind,validDepartmentWriteAuthorization,submitMarkedDepartmentForm}from'../dist/adapters/dify-department-write.js';
+import{departmentWriteKind,validDepartmentWriteAuthorization,submitMarkedDepartmentForm,departmentWriteRunBlocker}from'../dist/adapters/dify-department-write.js';
 const target='https://cdn.yibentushu.com/test-sample-apply/index.html#/home',project={id:'p1',targetUrl:target};
 const c={id:'xmind-50',expected:'全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录',source:'员工端-样书申请表单页 › 点击「提交申请」按钮'};
 test('write authorization binds exact environment, profile, original source, expiry, allowed cases and finite budget',()=>{
@@ -7,6 +7,18 @@ test('write authorization binds exact environment, profile, original source, exp
  assert.equal(departmentWriteKind(c),'complete-submit');assert.equal(validDepartmentWriteAuthorization(a,project,[c]),true);
  for(const v of[{...a,profileId:'other'},{...a,targetUrl:'https://example.com/'},{...a,authorizedBy:'model'},{...a,expiresAt:'2000-01-01'},{...a,maxSubmissions:21},{...a,caseIds:[]}])assert.equal(validDepartmentWriteAuthorization(v,project,[c]),false);
  assert.equal(validDepartmentWriteAuthorization(a,project,[{...c,source:'其他业务'}]),false);
+});
+test('repeatable authorization bounds one run and does not exhaust after earlier successful business runs',()=>{
+ const a={schema:2,authorizedBy:'user',profileId:'p1',targetUrl:target,expiresAt:new Date(Date.now()+60000).toISOString(),maxSubmissionsPerRun:2,caseIds:['xmind-50']};
+ const journals=[{profileId:'p1',attempts:Array.from({length:8},()=>({phase:'passed'}))}];
+ assert.equal(validDepartmentWriteAuthorization(a,project,[c]),true);
+ assert.equal(departmentWriteRunBlocker(a,2,journals,'p1'),undefined);
+ assert.equal(departmentWriteRunBlocker(a,2,[...journals,{profileId:'p1',attempts:[{phase:'passed'},{phase:'passed'}]}],'p1'),undefined);
+ assert.match(departmentWriteRunBlocker(a,3,journals,'p1'),/单轮上限/);
+ for(const phase of['unknown','reserved'])assert.match(departmentWriteRunBlocker(a,2,[...journals,{profileId:'p1',attempts:[{phase}]}],'p1'),/未核实/);
+ assert.equal(departmentWriteRunBlocker(a,2,[...journals,{profileId:'other',attempts:[{phase:'unknown'}]}],'p1'),undefined);
+ assert.match(departmentWriteRunBlocker({...a,schema:1,maxSubmissions:8},2,journals,'p1'),/累计/);
+ for(const changed of[{...a,profileId:'other'},{...a,caseIds:[]},{...a,maxSubmissionsPerRun:0},{...a,maxSubmissionsPerRun:21},{...a,schema:3}])assert.equal(validDepartmentWriteAuthorization(changed,project,[c]),false);
 });
 test('actual isolated fixture POST is unique, reserved before send, checked against DB and auto navigation; mismatches fail', {timeout:60000},async t=>{
  const root=await mkdtemp(join(tmpdir(),'tp-authorized-write-'));t.after(()=>rm(root,{recursive:true,force:true}));await mkdir(join(root,'dify-web-modules'));

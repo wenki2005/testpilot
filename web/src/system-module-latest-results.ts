@@ -2,7 +2,7 @@ import type { BatchView, TestedSystem } from '../../src/domain/system-module-con
 import type { WebModuleJobView } from '../../src/domain/dify-web-module-contract';
 
 type CaseResult=WebModuleJobView['results'][number];
-type LatestResult={result:CaseResult;startedAt:number};
+type LatestResult={result:CaseResult;startedAt:number;batchId:string;jobId:string};
 export type LatestModuleResults=Map<string,Map<string,LatestResult>>;
 
 /** Keep results within the current account/environment and immutable module
@@ -20,7 +20,7 @@ export function latestModuleResults(batches:BatchView[],system?:TestedSystem):La
       for(const result of job.results){
         if(result.status==='not_executed'&&!result.outOfScope)continue;
         const previous=results.get(result.caseId);
-        if(!previous||startedAt>=previous.startedAt)results.set(result.caseId,{result,startedAt});
+        if(!previous||startedAt>=previous.startedAt)results.set(result.caseId,{result,startedAt,batchId:batch.id,jobId:job.id});
       }
       index.set(key,results);
     }

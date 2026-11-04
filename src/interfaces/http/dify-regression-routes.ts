@@ -1,3 +1,4 @@
+import {difyScriptArchiveName} from '../../domain/dify-script-layout.js';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import {createHash,randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
@@ -7,6 +8,7 @@ import { ModuleRegressionStore } from "../../adapters/module-regression.js";
 import { DifyWebModuleStore } from "../../adapters/dify-web-modules.js";
 import { difyModuleEvidencePath } from "../../adapters/dify-module-evidence-path.js";
 import { SystemModuleRegression } from "../../adapters/system-module-regression.js";
+import {DepartmentCoreChainStore}from'../../adapters/department-core-chain-store.js';
 import { webModuleDependencies } from "../../adapters/dify-web-browser.js";
 import {getDocumentProject,getDocumentRunProgress} from '../../adapters/document-run-executor.js';
 import {json,fail,bodyJson,documentBody} from './http-utils.js';
@@ -17,6 +19,7 @@ const difyRegression = new DifyRegressionStore(path.join(artifactsDir, "dify-reg
 const moduleRegression = new ModuleRegressionStore(artifactsDir);
 const difyWebModules = new DifyWebModuleStore(artifactsDir, webModuleDependencies(artifactsDir));
 const systemModules = new SystemModuleRegression(artifactsDir, difyWebModules, webModuleDependencies(artifactsDir));
+const coreChains=new DepartmentCoreChainStore(artifactsDir,systemModules,webModuleDependencies(artifactsDir));
 // Many open workbench tabs poll the same multi-megabyte history. Serialize it
 // once per second so status polling does not starve browser protocol messages.
 let systemModuleStateCache:{expires:number;body:string}|undefined;
@@ -28,12 +31,18 @@ let systemModuleStateCache:{expires:number;body:string}|undefined;
     if(req.method==='POST'){systemModuleStateCache=undefined;res.once('finish',()=>{systemModuleStateCache=undefined;});}
     try {
       const root='/api/system-module-regression';const route=url.pathname.slice(root.length);
+      if(route==='/core-chains'&&req.method==='GET'){json(res,200,coreChains.state(url.searchParams.get('systemId')??''));return;}
+      if(route==='/core-chains/runs'&&req.method==='POST'){json(res,202,coreChains.start(await bodyJson(req)));return;}
+      const core=route.match(/^\/core-chains\/runs\/([0-9a-f-]{36})(?:\/(cancel|continue|evidence)(?:\/([0-9a-f]{64}\.png))?)?$/i);
+      if(core){const id=core[1]!;if(req.method==='GET'&&core[2]==='evidence'&&core[3]){const bytes=await coreChains.evidence(id,core[3]);res.writeHead(200,{'content-type':'image/png','cache-control':'no-store'});res.end(bytes);return;}if(req.method==='GET'&&!core[2]){json(res,200,coreChains.get(id));return;}if(req.method==='POST'&&core[2]==='cancel'){json(res,200,await coreChains.cancel(id));return;}if(req.method==='POST'&&core[2]==='continue'){json(res,200,await coreChains.continue(id));return;}fail(res,404,'核心链路操作不存在。');return;}
+      if(req.method==='POST'&&route==='/batches'){const data=await bodyJson(req);if(coreChains.activeForSystem(String(data.systemId)))throw Error('核心链路正在使用该系统窗口，请结束后再运行模块。');json(res,202,systemModules.start(data));return;}
+      if(req.method==='POST'&&/^\/(systems|modules|batches)\//.test(route)){const key=route.split('/')[2];if(key){let id:string|undefined;try{id=route.startsWith('/systems/')?key:route.startsWith('/modules/')?systemModules.getModule(key).systemId:systemModules.getBatch(key).systemId;}catch{}if(id&&coreChains.activeForSystem(id))throw Error('核心链路正在运行，请先结束后再修改系统或执行其他回归。');}}
       if(req.method==='GET'&&route==='/template.md'){res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename=module-template.md'});res.end('# 模块名称\n\n## case-1 | 用例标题\n\n- 优先级：P1\n- 来源：原始需求或用例编号\n\n### 前置条件\n- 请填写需要的账号或业务记录条件\n\n### 操作步骤\n1. 打开模块入口\n2. 请填写实际操作\n\n### 预期结果\n请填写原始预期，不能使用实际执行结果替代\n');return;}
       if(req.method==='GET'&&route===''){if(!systemModuleStateCache||systemModuleStateCache.expires<=Date.now())systemModuleStateCache={expires:Date.now()+1000,body:JSON.stringify(systemModules.state())};res.writeHead(200,{'content-type':'application/json; charset=utf-8','cache-control':'no-store'});res.end(systemModuleStateCache.body);return;}
       if(req.method==='POST'&&route==='/systems'){json(res,200,systemModules.saveSystem(await bodyJson(req)));return;}
       if(req.method==='POST'&&route==='/modules/import'){json(res,200,await systemModules.importModule(await documentBody(req)));return;}
       if(req.method==='POST'&&route==='/modules/attach'){json(res,200,systemModules.attachLegacy(await bodyJson(req)));return;}
-      if(req.method==='POST'&&route==='/batches'){json(res,202,systemModules.start(await bodyJson(req)));return;}
+      if(req.method==='POST'&&route==='/scripts/export'){const output=await systemModules.selectionScripts(await bodyJson(req));res.writeHead(200,{'content-type':'application/zip','cache-control':'no-store','content-disposition':`attachment; filename="Dify_current_scripts.zip"; filename*=UTF-8''${encodeURIComponent(output.fileName)}`});res.end(output.bytes);return;}
       const system=route.match(/^\/systems\/([0-9a-f-]{36})\/(selection|connect|continue|disconnect|accounts|account-selection)$/i);
       if(req.method==='POST'&&system){const key=system[1]!;const action=system[2];const data=await bodyJson(req);if(action==='accounts')json(res,200,systemModules.addAccount(key,data));else if(action==='account-selection')json(res,200,systemModules.selectAccount(key,data.accountId));else if(action==='selection')json(res,200,systemModules.saveSelection(key,data.moduleIds));else if(action==='connect')json(res,202,systemModules.connect(key));else if(action==='continue')json(res,200,await systemModules.continueConnection(key));else json(res,200,await systemModules.cancelConnection(key));return;}
       const module=route.match(/^\/modules\/([0-9a-f-]{36})(?:\/(archive|core|markdown))?$/i);
@@ -41,7 +50,7 @@ let systemModuleStateCache:{expires:number;body:string}|undefined;
       const confirmation=route.match(/^\/batches\/([0-9a-f-]{36})\/confirm-case$/i);
       if(req.method==='POST'&&confirmation){json(res,202,systemModules.confirmCase(confirmation[1]!,await bodyJson(req)));return;}
       const batch=route.match(/^\/batches\/([0-9a-f-]{36})(?:\/(cancel|continue|retest|report|scripts|retry-report|retry-notification))?$/i);
-      if(batch){const key=batch[1]!;const action=batch[2];if(req.method==='GET'&&action==='scripts'){const bytes=await systemModules.scripts(key);res.writeHead(200,{'content-type':'application/zip','content-disposition':'attachment; filename=dify-fixed-scripts.zip'});res.end(bytes);return;}if(req.method==='GET'&&!action){json(res,200,systemModules.getBatch(key));return;}if(req.method==='GET'&&action==='report'){const report=systemModules.report(key).replaceAll('/api/dify-web-modules/',`http://${host}:${port}/api/dify-web-modules/`);res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename="system-regression-report.md"'});res.end(report);return;}if(req.method==='POST'){if(action==='retry-notification')json(res,200,await systemModules.retryNotification(key));else if(action==='retry-report')json(res,202,systemModules.retryReports(key));else if(action==='cancel')json(res,200,await systemModules.cancel(key));else if(action==='continue')json(res,200,await systemModules.continueBatch(key));else if(action==='retest')json(res,202,systemModules.retest(key,await bodyJson(req)));else {fail(res,404,'接口不存在。');}return;}}
+      if(batch){const key=batch[1]!;const action=batch[2];if(req.method==='GET'&&action==='scripts'){const bytes=await systemModules.scripts(key);const fileName=difyScriptArchiveName(systemModules.getBatch(key));res.writeHead(200,{'content-type':'application/zip','content-disposition':`attachment; filename="Dify_fixed_scripts_${key.slice(0,8)}.zip"; filename*=UTF-8''${encodeURIComponent(fileName)}`});res.end(bytes);return;}if(req.method==='GET'&&!action){json(res,200,systemModules.getBatch(key));return;}if(req.method==='GET'&&action==='report'){const report=systemModules.report(key).replaceAll('/api/dify-web-modules/',`http://${host}:${port}/api/dify-web-modules/`);res.writeHead(200,{'content-type':'text/markdown; charset=utf-8','content-disposition':'attachment; filename="system-regression-report.md"'});res.end(report);return;}if(req.method==='POST'){if(action==='retry-notification')json(res,200,await systemModules.retryNotification(key));else if(action==='retry-report')json(res,202,systemModules.retryReports(key));else if(action==='cancel')json(res,200,await systemModules.cancel(key));else if(action==='continue')json(res,200,await systemModules.continueBatch(key));else if(action==='retest')json(res,202,systemModules.retest(key,await bodyJson(req)));else {fail(res,404,'接口不存在。');}return;}}
       fail(res,404,'接口不存在。');return;
     }catch(error){fail(res,422,error instanceof Error?error.message:'系统模块操作失败。');return;}
   }

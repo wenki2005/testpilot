@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Start the same integrated code with separate data, credentials, browser
 // profiles and processes. Does not restart existing instances or the old 4321.
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import { once } from 'node:events';
 import { mkdirSync, existsSync, readFileSync, writeFileSync, openSync, closeSync } from 'node:fs';
@@ -54,5 +54,33 @@ for (const workspace of selected) {
     }
     if (!ready)
         throw Error(workspace.owner + ' did not become ready. See its server.log.');
+    if (existsSync(path.join(workspace.privateDir, 'mysql-connection.xml'))) {
+        const connection = spawnSync(process.execPath, [path.join(repoRoot, 'scripts', 'connect-workspace-database.mjs'), '--workspace', workspace.owner], { cwd: repoRoot, windowsHide: true, encoding: 'utf8', timeout: 35000 });
+        console.log(connection.status === 0 ? workspace.owner + ': database connection restored.' : workspace.owner + ': reconnect the database in its panel.');
+    }
     console.log(workspace.owner + ': ' + url + ' | data: ' + workspace.root);
+}
+
+// The public entry owns no business data. Both backends remain independent.
+const entryUrl = 'http://127.0.0.1:4325';
+let entry;
+try { entry = await (await fetch(entryUrl + '/__entry/health', { signal: AbortSignal.timeout(1500) })).json(); } catch {}
+if (entry?.service === 'testpilot-unified-entry') {
+    console.log('Unified entry already running: ' + entryUrl);
+} else {
+    const reservation = createServer();
+    reservation.listen(4325, '127.0.0.1');
+    await once(reservation, 'listening');
+    await new Promise(resolve => reservation.close(resolve));
+    const log = openSync(path.join(repoRoot, 'runtime-data', 'entry.log'), 'a');
+    const child = spawn(process.execPath, [path.join(repoRoot, 'scripts', 'serve-integrated-entry.mjs')], { cwd: repoRoot, windowsHide: true, detached: true, stdio: ['ignore', log, log] });
+    child.unref(); closeSync(log);
+    let ready = false;
+    for (let n = 0; n < 40; n++) {
+        try { ready = (await (await fetch(entryUrl + '/__entry/health', { signal: AbortSignal.timeout(1000) })).json()).service === 'testpilot-unified-entry'; } catch {}
+        if (ready) break;
+        await new Promise(resolve => setTimeout(resolve, 250));
+    }
+    if (!ready) throw Error('Unified entry did not become ready. See runtime-data/entry.log.');
+    console.log('Unified entry: ' + entryUrl);
 }

@@ -161,14 +161,19 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
           const allowedOrigin = new URL(caseUrl).origin;
           let blockAllRequestsForValidation = false;
           await page.route("**/*", async route => {
-            const request = route.request();
-            if (blockAllRequestsForValidation) { await route.abort("blockedbyclient"); return; }
-            if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null, authenticationPage:isAuthenticationRoute(page.url()) })) { await route.abort("blockedbyclient"); return; }
-            if (request.isNavigationRequest() && request.frame().parentFrame() === null) {
-              try { const requested = new URL(request.url()); if (requested.origin !== allowedOrigin && !/(?:login|signin|sso|auth|accounts|passport)/i.test(`${requested.hostname}${requested.pathname}`)) { await route.abort("blockedbyclient"); return; } }
-              catch { await route.abort("blockedbyclient"); return; }
-            }
-            await route.continue();
+            // 每条用例开始时的 unrouteAll() 会摘掉旧处理器，仍在飞行的请求再调用
+            // route.* 会抛 "Assertion error"；未捕获的 rejection 会直接结束整个服务
+            // 进程并打断正在跑的批次，因此这里必须整体兜住。
+            try {
+              const request = route.request();
+              if (blockAllRequestsForValidation) { await route.abort("blockedbyclient"); return; }
+              if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null, authenticationPage:isAuthenticationRoute(page.url()) })) { await route.abort("blockedbyclient"); return; }
+              if (request.isNavigationRequest() && request.frame().parentFrame() === null) {
+                try { const requested = new URL(request.url()); if (requested.origin !== allowedOrigin && !/(?:login|signin|sso|auth|accounts|passport)/i.test(`${requested.hostname}${requested.pathname}`)) { await route.abort("blockedbyclient"); return; } }
+                catch { await route.abort("blockedbyclient"); return; }
+              }
+              await route.continue();
+            } catch { /* 路由已被摘除或页面已关闭，忽略即可，不升级为进程级崩溃 */ }
           });
           // Independent cases keep the established reload baseline. An explicit
           // dependency chain shares the same page so its visible state survives.

@@ -8,7 +8,8 @@ import type { DocumentProject } from './document-test-workflow.js';
 import type { TestedSystem, FixedModule, BatchEntry, RegressionBatch, BatchView, AccountView, SystemModuleState } from '../domain/system-module-contract.js';
 
 import {supportsDepartmentDatabase} from '../domain/regression-database-contract.js';
-import {difyScriptPackage} from './dify-script-package.js';
+import {difyScriptPackage,difySelectionScriptPackage,type DifyScriptModuleInput} from './dify-script-package.js';
+import {difyScriptName} from '../domain/dify-script-layout.js';
 import {mysqlBrowserStatus} from './mysql-readonly-browser.js';
 import {assertDifyExportSafe} from './dify-export-policy.js';
 import {difyBlocker} from './dify-case-readiness.js';
@@ -183,7 +184,36 @@ export class SystemModuleRegression {
     if(!batch.notification?.items.some(i=>i.status==='failed'||i.status==='pending'))throw Error('没有明确失败的通知可重试；接收结果不明的消息请先核对测试群。');
     const controller=new AbortController();this.active.set(key,controller);try{await this.notify(batch);return this.getBatch(key);}finally{this.active.delete(key);}
   }
-  async scripts(key:string){const b=this.getBatch(key);if(['queued','running'].includes(b.phase))throw Error('请等待本轮结束后导出固定脚本。');return difyScriptPackage(b.entries.flatMap(e=>e.jobId?[this.store.getJob(e.jobId)]:[]));}
+  async scripts(key:string){const b=this.getBatch(key);if(['queued','running'].includes(b.phase))throw Error('请等待本轮结束后导出固定脚本。');return difyScriptPackage(b.entries.flatMap(e=>e.jobId?[this.store.getJob(e.jobId)]:[]),{batchId:b.id,systemId:b.systemId,systemName:b.systemName,createdAt:b.createdAt,modules:b.entries});}
+  async selectionScripts(input:unknown){
+    const data=z.object({systemId:uuid,moduleIds:z.array(uuid).min(1).max(100),scope:z.enum(['all','starter','custom']),versionSelections:z.record(z.string(),uuid),caseSelections:z.record(z.string(),z.array(z.string()).min(1).max(200)).optional()}).parse(input);
+    if(new Set(data.moduleIds).size!==data.moduleIds.length)throw Error('模块不能重复。');
+    const system=this.getSystem(data.systemId);const profileId=system.activeAccountId??system.profileId;
+    const history=this.list<RegressionBatch>('batch').filter(b=>b.systemId===system.id&&b.profileId===profileId&&b.targetUrl===system.targetUrl&&b.environment===system.environment)
+      .flatMap(batch=>batch.entries.flatMap(entry=>entry.jobId?[{batch,entry,job:this.store.getJob(entry.jobId)}]:[]));
+    const donors=history.flatMap(item=>item.job.documentRunId&&item.job.executionFinished?[item.job.documentRunId]:[]);
+    if(!donors.length)throw Error('当前系统尚无可复用的独立执行器，请先导出用例 Markdown；本操作不会为了导出而启动测试。');
+    const modules:DifyScriptModuleInput[]=[];const entries:BatchEntry[]=[];
+    for(const key of data.moduleIds){
+      const module=this.getModule(key);const version=module.versions.at(-1)!;
+      if(module.systemId!==system.id||module.archived)throw Error('选择包含其他系统或已归档模块。');
+      if(data.versionSelections[key]!==version.id)throw Error('模块版本已变化，请刷新后重新下载。');
+      const stored=this.store.getModule(version.id);const project=structuredClone(stored.project);project.targetUrl=system.targetUrl;
+      const ids=data.scope==='all'?project.cases.map(c=>c.id):data.scope==='starter'?(module.starterVersionId===version.id?module.starterCaseIds:undefined):data.caseSelections?.[key];
+      if(!ids?.length||new Set(ids).size!==ids.length||ids.some(id=>!project.cases.some(c=>c.id===id)))throw Error('所选模块的用例范围未设置、已过期或包含未知用例。');
+      const newest=new Map<string,{job:WebModuleJob;batchId:string;time:number;result:WebModuleJob['results'][number]}>();
+      for(const item of history){if(item.entry.moduleId!==key||item.entry.versionId!==version.id)continue;const time=Date.parse(item.job.createdAt)||Date.parse(item.batch.createdAt)||0;for(const result of item.job.results){if(result.status==='not_executed'&&!result.outOfScope)continue;const old=newest.get(result.caseId);if(!old||time>=old.time)newest.set(result.caseId,{job:item.job,batchId:item.batch.id,time,result});}}
+      for(const c of project.cases){const record=newest.get(c.id);const executed=(record?.job.executionProject??record?.job.snapshot)?.cases.find(row=>row.id===c.id);const cache=stored.cachedSteps?.[c.id];if(executed)c.steps=structuredClone(executed.steps);else if(cache?.sourceDigest===moduleDigest(c))c.steps=structuredClone(cache.steps);}
+      const results=project.cases.filter(c=>ids.includes(c.id)).map(c=>structuredClone(newest.get(c.id)?.result??{caseId:c.id,title:c.title,expected:c.expected,priority:c.priority,status:'not_executed' as const,detail:'当前账号、环境和模块版本下尚无执行结果。'}));
+      const resultSources=ids.flatMap(caseId=>{const record=newest.get(caseId);return record?[{caseId,batchId:record.batchId,jobId:record.job.id,createdAt:record.job.createdAt}]:[];});
+      modules.push({moduleId:version.id,moduleName:module.name,moduleDigest:version.digest,snapshot:project,selectedCaseIds:ids,results,resultSources});
+      entries.push({moduleId:key,moduleName:module.name,versionId:version.id,version:version.version,digest:version.digest,caseCount:ids.length,selectedCaseIds:ids});
+    }
+    const createdAt=now();const count=entries.reduce((sum,entry)=>sum+entry.caseCount,0);const scopeName={all:'全部用例',starter:'日常用例',custom:'自选用例'}[data.scope];
+    const stamp=new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).format(new Date(createdAt)).replace(/[-: ]/g,'');
+    const fileName=`Dify_${difyScriptName(system.name,24)}_${scopeName}_${entries.length}模块${count}条_导出${stamp}.zip`;
+    return {fileName,bytes:await difySelectionScriptPackage(modules,donors,{systemId:system.id,systemName:system.name,createdAt,selectionScope:data.scope,modules:entries})};
+  }
   report(key:string){const b=this.getBatch(key);const report=[`# ${b.systemName} 模块回归报告`,`批次：${b.id}`,`环境：${b.environment}`,`账号：${b.accountName??'历史默认账号'}`,`目标：${b.targetUrl}`,`时间：${b.createdAt}`,`批次状态：${b.phase}`,`异常通知：${b.notification?.status??'未启用'}（独立于用例结果）`,...(b.notification?.items.map(i=>`- ${i.type==='summary'?'异常摘要':'失败截图'}：${i.status}${i.detail?'；'+i.detail:''}`)??[]),`通过 ${b.counts.passed}；失败 ${b.counts.failed}；阻塞 ${b.counts.blocked}；异常 ${b.counts.error}；未执行 ${b.counts.not_executed}；范围外 ${b.counts.outside}`,...b.entries.map(e=>`\n## ${e.moduleName} · v${e.version}\n版本指纹：${e.digest}\n${e.jobId?this.store.renderReport(this.store.getJob(e.jobId)):'本模块未启动，不计为通过。'}`)].join('\n\n');assertDifyExportSafe(report);return report;}
   close(){if(this.closed)return;for(const [key,c] of this.active){c.abort();const b=this.get<RegressionBatch>('batch',key);if(!['queued','running'].includes(b.phase))continue;b.phase='interrupted';b.updatedAt=now();b.message='服务已停止，记录已保存，不会自动重放。';this.save('batch',b);}for(const c of this.connections.values())c.abort();this.closed=true;this.db.close();}
 }

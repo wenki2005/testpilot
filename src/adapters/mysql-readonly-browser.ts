@@ -429,3 +429,27 @@ async function withReadOnlyConnection<T>(currentPool: Pool, operation: (connecti
     }
   }
 }
+
+export async function readDepartmentAdminAccessEvidence(userId:string,applyNos:string[]){
+ if(!/^\d{1,20}$/.test(userId)||applyNos.length>2||applyNos.some(v=>!/^[A-Za-z0-9_-]{1,100}$/.test(v)))throw Error('后台核验输入无效。');
+ return withReadOnlyConnection(requirePool(),async connection=>{
+  const [roles]=await connection.execute<RowDataPacket[]>('SELECT r.role_key FROM sys_user_role ur JOIN sys_role r ON r.role_id=ur.role_id WHERE ur.user_id=? AND r.status=\'0\'',[userId]);
+  const [grants]=await connection.execute<RowDataPacket[]>("SELECT COUNT(*) AS n FROM sys_user_role ur JOIN sys_role_menu rm ON rm.role_id=ur.role_id JOIN sys_menu m ON m.menu_id=rm.menu_id WHERE ur.user_id=? AND m.status='0' AND m.menu_name IN ('内部订单管理','员工福利订单','部门用书订单')",[userId]);
+  const [allowed]=await connection.execute<RowDataPacket[]>("SELECT COUNT(DISTINCT r.role_key) AS n FROM sys_role r JOIN sys_role_menu rm ON rm.role_id=r.role_id JOIN sys_menu m ON m.menu_id=rm.menu_id WHERE r.role_key IN ('Manager','bookOrderAdminInner') AND r.status='0' AND m.status='0' AND m.menu_name='内部订单管理'");
+  const applications:Array<{applyNo:string;orderId:string;spId:string}>=[];
+  for(const key of applyNos){const [rows]=await connection.execute<RowDataPacket[]>('SELECT apply_no,order_id,sp_id FROM biz_dept_book_apply WHERE del_flag=\'0\' AND apply_no=? LIMIT 2',[key]);if(rows.length===1)applications.push({applyNo:String(rows[0]!.apply_no),orderId:String(rows[0]!.order_id),spId:String(rows[0]!.sp_id)});}
+  return {roles:roles.map(r=>String(r.role_key)),currentInternalMenus:Number(grants[0]?.n),authorizedRoleMenuGrants:Number(allowed[0]?.n),applications};
+ });
+}
+
+export async function readDepartmentAdminFilterEvidence(applyNos:string[],customerCodes:string[]){
+ if(!applyNos.length||applyNos.length>100||customerCodes.length>100||applyNos.some(v=>!/^[A-Za-z0-9_-]{1,100}$/.test(v))||customerCodes.some(v=>!/^[A-Za-z0-9_-]{1,60}$/.test(v)))throw Error('后台筛选数据库范围无效。');
+ return withReadOnlyConnection(requirePool(),async c=>{
+  const [apps]=await c.execute<RowDataPacket[]>('SELECT /*+ MAX_EXECUTION_TIME(3000) */ apply_no,order_id,book_usage,cost_client_id,cost_client_name,examine_status,lock_status,sp_id,total_amount FROM biz_dept_book_apply WHERE del_flag=\'0\' AND apply_no IN ('+applyNos.map(()=>'?').join(',')+') ORDER BY apply_no LIMIT 101',applyNos);
+  const [customers]=customerCodes.length?await c.execute<RowDataPacket[]>('SELECT /*+ MAX_EXECUTION_TIME(3000) */ agent_id,agent_name,agent_type FROM biz_agent_info WHERE del_flag=\'0\' AND agent_id IN ('+customerCodes.map(()=>'?').join(',')+') ORDER BY agent_id LIMIT 101',customerCodes):[[] as RowDataPacket[]];
+  if(apps.length>100||customers.length>100)throw Error('后台筛选独立基线超过上限。');
+  const [dictionary]=await c.execute<RowDataPacket[]>("SELECT /*+ MAX_EXECUTION_TIME(2000) */ dict_type,dict_value,dict_label FROM sys_dict_data WHERE status='0' AND (dict_type REGEXP 'dept.*(delivery|ship)|(delivery|ship).*dept' OR dict_label REGEXP '快递仓|物流仓') ORDER BY dict_type,dict_sort LIMIT 101");if(dictionary.length>100)throw Error('发货字典超过核验上限。');
+  return{applications:apps.map(a=>({applyNo:String(a.apply_no),orderId:String(a.order_id),usage:Number(a.book_usage),customerId:String(a.cost_client_id),customerName:String(a.cost_client_name),examineStatus:Number(a.examine_status),lockStatus:Number(a.lock_status),approvalId:String(a.sp_id),amount:Number(a.total_amount)})),customers:customers.map(a=>({code:String(a.agent_id),name:String(a.agent_name),category:String(a.agent_type)})),deliveryDictionary:dictionary.map(d=>({type:String(d.dict_type),value:String(d.dict_value),label:String(d.dict_label)}))};
+ });
+}
+

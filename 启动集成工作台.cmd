@@ -10,4 +10,4 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-start "" "http://127.0.0.1:4323/?page=dify-regression"
+start "" "http://127.0.0.1:4325/dify/?page=dify-regression"

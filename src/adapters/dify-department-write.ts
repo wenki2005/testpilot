@@ -12,7 +12,8 @@ import {captureDifyPng} from './dify-evidence.js';
 
 type Row=Record<string,any>;
 export type DepartmentWriteResult={caseId:string;status:'passed'|'failed'|'blocked';detail:string;evidence?:string;evidenceNote?:string};
-type Authorization={schema:1;profileId:string;targetUrl:string;authorizedBy:'user';expiresAt:string;maxSubmissions:number;caseIds:string[]};
+type AuthorizationBase={profileId:string;targetUrl:string;authorizedBy:'user';expiresAt:string;caseIds:string[]};
+type Authorization=AuthorizationBase&({schema:1;maxSubmissions:number}|{schema:2;maxSubmissionsPerRun:number});
 type Attempt={recipient:string;remarkLength:number;phase:'reserved'|'passed'|'failed'|'unknown';applyNo?:string;detail?:string;at:string};
 type Journal={schema:1;jobId:string;profileId:string;startedAt:string;attempts:Attempt[];results?:DepartmentWriteResult[]};
 const known=(u:string)=>{try{const v=new URL(u);return v.origin==='https://cdn.yibentushu.com'&&v.pathname==='/test-sample-apply/index.html';}catch{return false;}};
@@ -21,7 +22,17 @@ export function departmentWriteKind(c:Pick<BrowserCheck,'expected'|'source'>){
  if(c.expected==='全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录'&&c.source.includes('员工端-样书申请表单页')&&c.source.includes('点击「提交申请」按钮'))return 'complete-submit';
 }
 export function validDepartmentWriteAuthorization(a:unknown,p:Pick<DocumentProject,'id'|'targetUrl'>,checks:BrowserCheck[],time=Date.now()):a is Authorization{
- const v=a as Authorization;return !!v&&v.schema===1&&v.authorizedBy==='user'&&known(p.targetUrl)&&v.profileId===p.id&&v.targetUrl===p.targetUrl&&Date.parse(v.expiresAt)>time&&Number.isSafeInteger(v.maxSubmissions)&&v.maxSubmissions>0&&v.maxSubmissions<=20&&Array.isArray(v.caseIds)&&checks.every(c=>!!departmentWriteKind(c)&&v.caseIds.includes(c.id));
+ const v=a as Authorization;const limit=v?.schema===2?v.maxSubmissionsPerRun:v?.schema===1?v.maxSubmissions:undefined;
+ return !!v&&(v.schema===1||v.schema===2)&&v.authorizedBy==='user'&&known(p.targetUrl)&&v.profileId===p.id&&v.targetUrl===p.targetUrl&&Date.parse(v.expiresAt)>time&&Number.isSafeInteger(limit)&&limit!>0&&limit!<=20&&Array.isArray(v.caseIds)&&checks.every(c=>!!departmentWriteKind(c)&&v.caseIds.includes(c.id));
+}
+/** A fresh regression is a new business execution. Only legacy schema 1 has
+ * a lifetime budget; schema 2 bounds each run and retains unresolved-write holds. */
+export function departmentWriteRunBlocker(auth:Authorization,planned:number,journals:Journal[],profileId:string):string|undefined{
+ const own=journals.filter(j=>j.profileId===profileId);
+ if(own.some(j=>j.attempts.some(a=>a.phase==='reserved'||a.phase==='unknown')))return '存在结果未核实的提交；先按已保存唯一标记查库，不自动重放或开始下一笔。';
+ if(auth.schema===2)return planned>auth.maxSubmissionsPerRun?'本轮计划提交笔数超过单轮上限；未提交。':undefined;
+ const used=own.reduce((sum,j)=>sum+j.attempts.length,0);
+ return used+planned>auth.maxSubmissions?'旧版累计测试提交上限已用完；未创建新申请。':undefined;
 }
 const database={marked:readMarkedDepartmentApplication,goods:readDepartmentGoods};
 
@@ -81,14 +92,14 @@ export async function executeAuthorizedDepartmentWrites(root:string,project:Docu
  let auth:unknown;try{auth=JSON.parse(await readFile(path.join(root,'dify-web-modules','department-write-authorization.json'),'utf8'));}catch{return[];}
  if(!validDepartmentWriteAuthorization(auth,project,selected))return[];
  const dir=path.join(root,'dify-web-modules','authorized-writes');await mkdir(dir,{recursive:true});const file=path.join(dir,jobId+'.json');
- try{const old=JSON.parse(await readFile(file,'utf8')) as Journal;if(old.results)return old.results;return selected.map(c=>({caseId:c.id,status:'blocked',detail:'本任务存在未完成的真实写入日志；先按唯一标记核对，不自动重放。'}));}catch{}
+ try{const old=JSON.parse(await readFile(file,'utf8')) as Journal;if(old.results)return old.results;return selected.map(c=>({caseId:c.id,status:'blocked',detail:'本任务存在未完成的真实写入日志；先按唯一标记核对，不自动重放。'}));}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')return selected.map(c=>({caseId:c.id,status:'blocked',detail:'本任务写入日志无法完整读取，已保留原文件；先核实原提交结果，不覆盖或重放。'}));}
  const release=acquireDocumentPageLease(project.id);if(!release)return selected.map(c=>({caseId:c.id,status:'blocked',detail:'业务测试窗口被占用，未提交。'}));
  const journal:Journal={schema:1,jobId,profileId:project.id,startedAt:new Date().toISOString(),attempts:[]};const results:DepartmentWriteResult[]=[];
  let page:Page|undefined;
  try{
-  let used=0;for(const name of await readdir(dir)){if(!/^[a-f0-9-]+\.json$/.test(name))continue;const j=JSON.parse(await readFile(path.join(dir,name),'utf8')) as Journal;if(j.profileId===project.id)used+=j.attempts.length;}
+  const prior:Journal[]=[];for(const name of await readdir(dir)){if(!/^[a-f0-9-]+\.json$/.test(name))continue;prior.push(JSON.parse(await readFile(path.join(dir,name),'utf8')) as Journal);}
   const notes=selected.some(c=>departmentWriteKind(c)==='note-submit')?['测',('TP'+jobId.replaceAll('-','')).slice(0,27)+'勿发货']:[('TP'+jobId.replaceAll('-','')).slice(0,27)+'勿发货'];
-  if(used+notes.length>auth.maxSubmissions)throw Error('Blocked: 本轮授权的有界测试提交数量已用完；未创建新申请。');
+  const blocked=departmentWriteRunBlocker(auth,notes.length,prior,project.id);if(blocked)throw Error('Blocked: '+blocked);
   const session=await getExistingPersistentTestPage(path.join(root,'document-tests','browser-profiles',project.browserProfileIsolation?`isolated-${project.id}`:project.id),{isolated:project.browserProfileIsolation===true});if(!session)throw Error('Blocked: 已登录测试窗口不可用。');page=session.page;
   await writeFile(file,JSON.stringify(journal,null,2),{flag:'wx'});
   const save=async(a:Attempt)=>{const at=journal.attempts.findIndex(v=>v.recipient===a.recipient);if(at<0)journal.attempts.push({...a});else journal.attempts[at]={...a};await writeFile(file,JSON.stringify(journal,null,2));};
