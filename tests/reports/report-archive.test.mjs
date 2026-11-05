@@ -15,3 +15,7 @@ test('missing or corrupted screenshots remain explicit without changing outcomes
  const original=detail(),files=unzipSync(await buildReportArchive(original,async()=>{throw Error('missing');})),manifest=JSON.parse(strFromU8(files['manifest.json'])),snapshot=JSON.parse(strFromU8(files['report.json']));assert.equal(manifest.missingEvidence.length,1);assert.equal(snapshot.report.counts.failed,1);assert.equal(snapshot.groups[0].steps[0].evidencePath,'');
  const active=detail();active.report.phase='running';await assert.rejects(()=>buildReportArchive(active,async()=>png),/运行未结束/);const unsafe=detail();unsafe.groups[0].steps[0].evidencePath='https://example.com/private';await assert.rejects(()=>buildReportArchive(unsafe,async()=>png),/无效证据路径/);
 });
+test('legacy evidence IDs are not assumed to be content digests',async()=>{
+ const original=detail();original.groups[0].steps[0].evidencePath=original.groups[0].steps[0].evidencePath.replace(digest,'a'.repeat(64));
+ const files=unzipSync(await buildReportArchive(original,async()=>png)),manifest=JSON.parse(strFromU8(files['manifest.json']));assert.equal(manifest.missingEvidence.length,0);assert.ok(files['evidence/'+digest+'.png']);assert.ok(manifest.evidenceSources[0].source.endsWith('a'.repeat(64)+'.png'));
+});

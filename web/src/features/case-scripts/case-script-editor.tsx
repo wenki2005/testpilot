@@ -62,7 +62,8 @@ export default function CaseScriptEditor() {
                 return;
             setCatalog(next);
             const params = new URLSearchParams(location.search), wanted = selectedKey ?? ((params.get('module') ?? '') + ':' + (params.get('case') ?? ''));
-            const candidate = next.cases.find(c => key(c) === wanted) ?? next.cases.find(c => c.id === 'xmind-84') ?? next.cases[0];
+            const identified = !params.get('module') ? next.cases.filter(c => c.id === params.get('case')) : [];
+            const candidate = next.cases.find(c => key(c) === wanted) ?? (identified.length === 1 ? identified[0] : undefined) ?? next.cases.find(c => c.id === 'xmind-84') ?? next.cases[0];
             if (candidate)
                 loadCase(candidate);
             else {

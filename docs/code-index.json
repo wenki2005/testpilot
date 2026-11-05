@@ -5977,7 +5977,7 @@
       "file": "src/adapters/reports/report-archive.ts",
       "category": "运行报告",
       "purpose": "report archive",
-      "lines": 38,
+      "lines": 39,
       "previousPaths": [],
       "symbols": [
         {
@@ -14924,7 +14924,7 @@
       "file": "tests/reports/report-archive.test.mjs",
       "category": "运行报告",
       "purpose": "report archive.test",
-      "lines": 18,
+      "lines": 22,
       "previousPaths": [],
       "symbols": []
     },
@@ -15745,7 +15745,7 @@
       "file": "web/src/features/case-scripts/case-script-editor.tsx",
       "category": "用例与脚本",
       "purpose": "用例和脚本编辑、前置关系、保存及版本",
-      "lines": 287,
+      "lines": 288,
       "previousPaths": [],
       "symbols": [
         {
