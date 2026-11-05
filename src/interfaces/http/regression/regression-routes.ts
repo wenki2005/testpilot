@@ -16,6 +16,7 @@ import { createRunReportRoutes } from '../reports/run-report-routes.js';
 import { initializeBundledResources } from '../../../bootstrap/resource-initialization.js';
 import { caseMaintenancePackage } from '../../mcp/connection-package.js';
 import { prepareCaseVersion } from '../../../adapters/regression/resources/case-version-import.js';
+import { scriptCoverage } from '../../../adapters/regression/resources/script-coverage.js';
 /** Owns the Dify endpoints; the shared server only mounts this handler. */
 export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceDirectory }: {
     artifactsDir: string;
@@ -51,6 +52,7 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceD
                 try {
                     const root = '/api/system-module-regression';
                     const route = url.pathname.slice(root.length);
+                    if (route === '/script-coverage' && req.method === 'GET') { json(res, 200, scriptCoverage(systemModules.exportResources(url.searchParams.get('systemId') || '').resources.cases)); return; }
                     if (route === '/connections' && req.method === 'GET') { json(res, 200, systemModules.connectionSettings()); return; }
                     if (route === '/resources/cases/preview' && req.method === 'POST') {
                         const data = await documentBody(req), current = systemModules.exportResources(data.systemId);

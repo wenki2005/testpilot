@@ -17,6 +17,7 @@ export type CaseScript = {
 export type EditableCase = {
     sourceId?: string;
     scriptReview?: { status: 'pending' | 'reviewed'; note: string };
+    executionSupport?: { kind: string; label: string; handler: string; source: string; nextAction: string };
     changeSource?: 'manual' | 'mcp' | 'resources';
     moduleId: string;
     versionId: string;

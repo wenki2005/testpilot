@@ -357,6 +357,14 @@
       ]
     },
     {
+      "file": "scripts/resources/audit-script-coverage.mjs",
+      "category": "开发维护工具",
+      "purpose": "audit script coverage",
+      "lines": 14,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
       "file": "scripts/resources/build-dify-workflow.mjs",
       "category": "开发维护工具",
       "purpose": "build dify workflow",
@@ -3948,279 +3956,279 @@
       "file": "src/adapters/regression/catalog/module-regression-service.ts",
       "category": "申样回归执行",
       "purpose": "系统、模块、用例编辑、前置校验和批次调度",
-      "lines": 956,
+      "lines": 957,
       "previousPaths": [
         "src/adapters/system-module-regression.ts"
       ],
       "symbols": [
         {
           "name": "SystemModuleRegression",
-          "line": 24,
+          "line": 25,
           "kind": "ClassDeclaration"
         },
         {
           "name": "SystemModuleRegression.list",
-          "line": 62,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.save",
           "line": 63,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.save",
+          "line": 64,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.get",
-          "line": 71,
+          "line": 72,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.getSystem",
-          "line": 78,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.getModule",
           "line": 79,
           "kind": "method"
         },
         {
-          "name": "SystemModuleRegression.connectionSettings",
+          "name": "SystemModuleRegression.getModule",
           "line": 80,
           "kind": "method"
         },
         {
-          "name": "SystemModuleRegression.occupied",
-          "line": 83,
+          "name": "SystemModuleRegression.connectionSettings",
+          "line": 81,
           "kind": "method"
         },
         {
-          "name": "SystemModuleRegression.saveSystem",
+          "name": "SystemModuleRegression.occupied",
           "line": 84,
           "kind": "method"
         },
         {
-          "name": "SystemModuleRegression.accountProfile",
-          "line": 115,
+          "name": "SystemModuleRegression.saveSystem",
+          "line": 85,
           "kind": "method"
         },
         {
-          "name": "SystemModuleRegression.addAccount",
+          "name": "SystemModuleRegression.accountProfile",
           "line": 116,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.addAccount",
+          "line": 117,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.selectAccount",
-          "line": 130,
+          "line": 131,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.hasProfile",
-          "line": 142,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.saveSelection",
           "line": 143,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.saveSelection",
+          "line": 144,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.importModule",
-          "line": 157,
+          "line": 158,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.attachLegacy",
-          "line": 169,
+          "line": 170,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.attach",
-          "line": 176,
+          "line": 177,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.archiveModule",
-          "line": 195,
+          "line": 196,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.saveCore",
-          "line": 208,
+          "line": 209,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.markdown",
-          "line": 230,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.cases",
           "line": 231,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.cases",
+          "line": 232,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.editorCatalog",
-          "line": 238,
+          "line": 239,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorRevision",
-          "line": 248,
+          "line": 249,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorCases",
-          "line": 252,
+          "line": 253,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorHistory",
-          "line": 279,
+          "line": 280,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.initializeResources",
-          "line": 281,
+          "line": 282,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.exportResources",
-          "line": 305,
+          "line": 306,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.previewResources",
-          "line": 320,
+          "line": 321,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.applyResources",
-          "line": 335,
+          "line": 336,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorScript",
-          "line": 377,
+          "line": 378,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.savePrerequisitePlan",
-          "line": 383,
+          "line": 384,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.saveEditorCase",
-          "line": 446,
+          "line": 447,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.assertEditorPrerequisites",
-          "line": 495,
+          "line": 496,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.state",
-          "line": 511,
+          "line": 512,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.getBatch",
-          "line": 517,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.view",
           "line": 518,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.view",
+          "line": 519,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.start",
-          "line": 540,
+          "line": 541,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.retest",
-          "line": 582,
+          "line": 583,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.replay",
-          "line": 620,
+          "line": 621,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.confirmCase",
-          "line": 628,
+          "line": 629,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.create",
-          "line": 648,
+          "line": 649,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.run",
-          "line": 672,
+          "line": 673,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.cancel",
-          "line": 714,
+          "line": 715,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.continueBatch",
-          "line": 729,
+          "line": 730,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.connect",
-          "line": 737,
+          "line": 738,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.continueConnection",
-          "line": 771,
+          "line": 772,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.cancelConnection",
-          "line": 778,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.retryReports",
           "line": 779,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.retryReports",
+          "line": 780,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.notify",
-          "line": 824,
+          "line": 825,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.retryNotification",
-          "line": 845,
+          "line": 846,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.scripts",
-          "line": 865,
+          "line": 866,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.selectionScripts",
-          "line": 871,
+          "line": 872,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.report",
-          "line": 936,
+          "line": 937,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.close",
-          "line": 937,
+          "line": 938,
           "kind": "method"
         }
       ]
@@ -5078,6 +5086,30 @@
       ]
     },
     {
+      "file": "src/adapters/regression/resources/script-coverage.ts",
+      "category": "申样回归执行",
+      "purpose": "script coverage",
+      "lines": 23,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "ScriptSupport",
+          "line": 3,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "scriptSupport",
+          "line": 5,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "scriptCoverage",
+          "line": 19,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "src/adapters/regression/scenarios/application/client-validation.ts",
       "category": "申样回归执行",
       "purpose": "前端拦截、按钮与字段校验",
@@ -5580,37 +5612,61 @@
       ]
     },
     {
+      "file": "src/adapters/regression/scenarios/orders/admin-filter-contract.ts",
+      "category": "申样回归执行",
+      "purpose": "admin filter contract",
+      "lines": 25,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "Row",
+          "line": 1,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "AdminFilterKind",
+          "line": 2,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "auditAdminFilters",
+          "line": 4,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "src/adapters/regression/scenarios/orders/admin-order-records.ts",
       "category": "申样回归执行",
       "purpose": "管理订单数据读回及关联",
-      "lines": 85,
+      "lines": 96,
       "previousPaths": [
         "src/adapters/dify-admin-order-records.ts"
       ],
       "symbols": [
         {
           "name": "Row",
-          "line": 5,
-          "kind": "TypeAliasDeclaration"
-        },
-        {
-          "name": "Result",
           "line": 6,
           "kind": "TypeAliasDeclaration"
         },
         {
+          "name": "Result",
+          "line": 7,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
           "name": "AdminRecordKind",
-          "line": 10,
+          "line": 11,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "isAdminRecordKind",
-          "line": 11,
+          "line": 12,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "verifyAdminOrderRecords",
-          "line": 12,
+          "line": 13,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -8584,7 +8640,7 @@
       "file": "src/domain/cases/case-script-contract.ts",
       "category": "规则与数据契约",
       "purpose": "case script contract",
-      "lines": 55,
+      "lines": 56,
       "previousPaths": [
         "src/domain/case-script-editor-contract.ts"
       ],
@@ -8611,7 +8667,7 @@
         },
         {
           "name": "CaseEditorCatalog",
-          "line": 37,
+          "line": 38,
           "kind": "TypeAliasDeclaration"
         }
       ]
@@ -9933,7 +9989,7 @@
       "file": "src/domain/regression/connected-evidence-contract.ts",
       "category": "申样回归执行",
       "purpose": "connected evidence contract",
-      "lines": 85,
+      "lines": 91,
       "previousPaths": [
         "src/domain/dify-connected-contract.ts"
       ],
@@ -11356,14 +11412,14 @@
       "file": "src/interfaces/http/regression/regression-routes.ts",
       "category": "申样回归执行",
       "purpose": "执行测试、用例编辑、核心链路及脚本下载 HTTP 接口",
-      "lines": 477,
+      "lines": 479,
       "previousPaths": [
         "src/interfaces/http/dify-regression-routes.ts"
       ],
       "symbols": [
         {
           "name": "createDifyRegressionRoutes",
-          "line": 20,
+          "line": 21,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -14620,6 +14676,22 @@
           "kind": "FunctionDeclaration"
         }
       ]
+    },
+    {
+      "file": "tests/regression/resources/script-coverage.test.mjs",
+      "category": "申样回归执行",
+      "purpose": "script coverage.test",
+      "lines": 14,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/regression/scenarios/admin-filter-contract.test.mjs",
+      "category": "申样回归执行",
+      "purpose": "admin filter contract.test",
+      "lines": 15,
+      "previousPaths": [],
+      "symbols": []
     },
     {
       "file": "tests/regression/scenarios/application/client-validation.test.mjs",
