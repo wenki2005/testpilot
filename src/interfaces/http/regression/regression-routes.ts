@@ -45,6 +45,22 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
                 try {
                     const root = '/api/system-module-regression';
                     const route = url.pathname.slice(root.length);
+                    if (route === '/resources' && req.method === 'GET') {
+                        json(res, 200, systemModules.exportResources(url.searchParams.get('systemId') || ''));
+                        return;
+                    }
+                    if (route === '/resources/preview' && req.method === 'POST') {
+                        json(res, 200, systemModules.previewResources(await documentBody(req)));
+                        return;
+                    }
+                    if (route === '/resources/apply' && req.method === 'POST') {
+                        const data = await documentBody(req);
+                        const project = data.resources as { project?: { id?: string } } | undefined;
+                        if (project?.project?.id && coreChains.activeForSystem(project.project.id)) throw Error('核心链路正在运行，请结束后更新资源。');
+                        try { json(res, 200, await systemModules.applyResources(data)); }
+                        catch (error) { const message = error instanceof Error ? error.message : '资源更新失败。'; fail(res, /版本冲突|状态已变化/.test(message) ? 409 : 400, message); }
+                        return;
+                    }
                     if (route === '/case-editor' && req.method === 'GET') {
                         json(res, 200, systemModules.editorCatalog(url.searchParams.get('systemId') || undefined));
                         return;

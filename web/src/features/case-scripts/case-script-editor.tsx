@@ -6,6 +6,7 @@ import CaseEditorColumns from './case-editor-columns';
 import CaseEditorDiff, { type CaseEditorFields, type CaseDiffTab } from './case-editor-diff';
 import CaseEditorAiGuide from './case-editor-ai-guide';
 import './case-editor-review.css';
+import CaseEditorResources from './case-editor-resources';
 const root = '/api/system-module-regression/case-editor';
 const key = (c: {
     moduleId: string;
@@ -223,7 +224,7 @@ export default function CaseScriptEditor() {
     const changed = form && baseline ? (['title', 'manual', 'prerequisites', 'expected', 'script'] as const).filter(k => JSON.stringify(form[k]) !== JSON.stringify(baseline[k])) : [];
     const dependencyBlocked = form?.prerequisites.some(d => byKey.get(key(d))?.status !== 'passed');
     return <section className="case-script-editor case-page" aria-label="用例与脚本" aria-busy={loading || busy}>
-  <header className="case-page-heading"><h1>用例与脚本</h1><div className="ce-page-actions"><button type="button" onClick={() => { setHistoryOpen(false); setAiOpen(true); }}>AI 接入说明</button><button type="button" className={diffOpen ? 'ce-action-selected' : ''} aria-pressed={diffOpen} onClick={() => { setHistoryOpen(false); setDiffOpen(!diffOpen); }} disabled={!current || loading}>修改对比{changed.length > 0 && <span className="ce-change-count">{changed.length}</span>}</button><button type="button" onClick={() => historyOpen ? setHistoryOpen(false) : void showHistory()} disabled={!current || busy || loading} aria-expanded={historyOpen}>版本</button></div></header>
+  <header className="case-page-heading"><h1>用例与脚本</h1><div className="ce-page-actions">{catalog?.systemId && <CaseEditorResources systemId={catalog.systemId} disabled={busy || loading || dirty} onBusyChange={setBusy} onApplied={() => void refresh(catalog.systemId)} />}<button type="button" onClick={() => { setHistoryOpen(false); setAiOpen(true); }}>AI 接入说明</button><button type="button" className={diffOpen ? 'ce-action-selected' : ''} aria-pressed={diffOpen} onClick={() => { setHistoryOpen(false); setDiffOpen(!diffOpen); }} disabled={!current || loading}>修改对比{changed.length > 0 && <span className="ce-change-count">{changed.length}</span>}</button><button type="button" onClick={() => historyOpen ? setHistoryOpen(false) : void showHistory()} disabled={!current || busy || loading} aria-expanded={historyOpen}>版本</button></div></header>
   {error && <div className="ce-error" role="alert">{error}<button type="button" onClick={() => loading ? undefined : guard(() => void refresh(catalog?.systemId, current ? key(current) : undefined))}>刷新</button></div>}
   {loading && !catalog ? <div className="ce-empty">正在读取用例…</div> : !catalog?.cases.length ? <div className="ce-empty">该项目暂无用例。</div> : <>
   <CaseEditorColumns review={diffOpen && current && form && baseline ? <CaseEditorDiff before={baseline} after={form} current={current} cases={catalog.cases} tab={diffTab} onTab={setDiffTab} origin={changeOrigin}/> : undefined}>

@@ -59,7 +59,7 @@
 - 当前目录入口见 `docs/project-layout.md`，源码迁移映射见 `docs/collaboration/source-layout-moves.json`。
 - 用例与脚本页面实现位于 `web/src/features/case-scripts/`，运行报告实现位于 `web/src/features/run-reports/`；组件及其样式放在同一功能目录。
 - 旧归档、重复转发、旧计划及旧步骤镜像已经清理；`scripts/verify/` 仅保留当前数据维护工具，脚本根目录仅保留正式启动入口。
-- `project-resources/department-sample/` 为当前网页定义的只读导出快照，不含结果与登录配置；文件同步及新安装初始化尚未实现。网页有效模块版本和缓存仍是执行准源，不能直接改快照冒充网页已更新。
+- `project-resources/department-sample/` 不含结果与登录配置。文件同步通过资源预览/应用接口或resources:sync进行，必须校验依赖及版本冲突；网页有效模块版本和缓存仍是执行准源。新安装初始化见模块交付计划。
 - 当前运行路径 `dist/`、`web/dist/`、`runtime-data/` 保持原位。本机四类目录导航中的联接不是另一份源码或数据备份；迁移数据库须另行受控实施，不把目录联接当作物理分离已经完成。
 
 ## 源码内部规范补充（2026-11-05）

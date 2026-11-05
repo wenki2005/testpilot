@@ -21,6 +21,7 @@ import { departmentBlockerDiagnostic } from '../evidence/blocker-diagnostics.js'
 import { setTimeout as delay } from 'node:timers/promises';
 import type { CaseDependency, PrerequisiteReview } from '../../../domain/cases/case-script-contract.js';
 import type { RegressionDatabaseBinding, RegressionDatabaseEvidence } from '../../../domain/database/regression-database-contract.js';
+import type { ResourceCase } from '../resources/project-resource-contract.js';
 import { supportsDepartmentDatabase } from '../../../domain/database/regression-database-contract.js';
 export const moduleDigest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const now = () => new Date().toISOString();
@@ -35,6 +36,7 @@ export type WebModule = {
     createdAt: string;
     project: DocumentProject;
     sourceCases?: ImportedDocument['testCases'];
+    resourceSources?: Record<string, { sourcePath: string[]; sourceExpected: string }>;
     manualSteps?: Record<string, string[]>;
     prerequisiteCases?: Record<string, CaseDependency[]>;
     prerequisiteReviews?: Record<string, PrerequisiteReview>;
@@ -218,6 +220,37 @@ export class DifyWebModuleStore {
     state() { return { modules: this.list<WebModule>('module').map(({ project, cachedSteps, sourceCases, ...m }) => ({ ...m, targetUrl: project.targetUrl, caseCount: project.cases.length })), jobs: this.list<WebModuleJob>('job').map(({ snapshot, executionProject, ...j }) => j), configured: { prepare: !!process.env.TESTPILOT_DIFY_API_KEY, execution: !!process.env.TESTPILOT_DIFY_EXECUTION_API_KEY } }; }
     getModule(key: string) { return this.get<WebModule>('module', id.parse(key)); }
     getJob(key: string) { return this.get<WebModuleJob>('job', id.parse(key)); }
+    /** Prepare without persisting: all modules must validate before pointers change. */
+    prepareResourceModule(sourceId: string | undefined, name: string, targetUrl: string, cases: ResourceCase[]): WebModule {
+        const source = sourceId ? this.getModule(sourceId) : undefined;
+        const document: ImportedDocument = { format: 'markdown', text: cases.map(c => c.title + '\n' + c.expected).join('\n'), testCases: cases.map(c => ({ id: c.id, title: c.title, source: c.sourcePath.join(' > ') || c.id, expected: c.expected })) };
+        const project = source ? structuredClone(source.project) : makeDocumentProject({ name, fileName: 'project-resources.json', document, targetUrl, caseMode: 'existing' });
+        const defaults = makeDocumentProject({ name, fileName: 'project-resources.json', document, targetUrl, caseMode: 'existing' });
+        const previous = new Map(source?.project.cases.map(c => [c.id, c]));
+        project.id = randomUUID(); project.name = name; project.updatedAt = now(); project.targetUrl = moduleTarget(targetUrl);
+        project.cases = validateCases(cases.map((c, index) => ({ ...(previous.get(c.id) ?? defaults.cases[index]!), id: c.id, title: c.title, expected: c.expected, steps: c.script.steps, modulePath: c.sourcePath })));
+        for (const c of project.cases) {
+            delete c.authorizedWriteOperationId;
+            delete c.writeResultOperationId;
+            delete c.writeResultSourceRunId;
+        }
+        const value: WebModule = {
+            id: randomUUID(), name, fileName: 'project-resources.json', digest: '', createdAt: now(), project,
+            manualSteps: Object.fromEntries(cases.map(c => [c.id, c.manualSteps])),
+            prerequisiteCases: Object.fromEntries(cases.map(c => [c.id, c.prerequisites])),
+            prerequisiteReviews: Object.fromEntries(cases.filter(c => c.prerequisiteReview).map(c => [c.id, c.prerequisiteReview!])),
+            sourceCases: document.testCases!,
+            resourceSources: Object.fromEntries(cases.map(c => [c.id, { sourcePath: c.sourcePath, sourceExpected: c.sourceExpected }])),
+        };
+        // Imported steps are explicitly authored; never generate over them later.
+        value.editedSteps = Object.fromEntries(project.cases.filter(c => c.steps.length).map(c => [c.id, moduleDigest(c)]));
+        value.digest = moduleDigest({ project: value.project, manualSteps: value.manualSteps, prerequisites: value.prerequisiteCases });
+        return value;
+    }
+    async commitResourceModule(value: WebModule) {
+        await this.deps.saveProject(value.project);
+        return this.save('module', value);
+    }
     revisePrerequisites(key: string, changes: Array<{
         caseId: string;
         prerequisites: CaseDependency[];

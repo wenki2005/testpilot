@@ -10,6 +10,7 @@
   "scripts": {
     "workbench:start": "node scripts/start-integrated-workspaces.mjs --workspace dify",
     "resources:export": "node scripts/resources/export-project-resources.mjs",
+    "resources:sync": "node scripts/resources/sync-project-resources.mjs",
     "dev": "tsx src/cli.ts",
     "build": "node scripts/build/clean-server-output.mjs && tsc -p tsconfig.json && vite build web",
     "build:server": "tsc -p tsconfig.json",
