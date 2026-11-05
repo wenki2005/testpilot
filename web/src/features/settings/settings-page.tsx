@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import ConnectionSettings from './connection-settings';
 type Settings = {
     baseUrl: string;
     model: string;
@@ -31,8 +32,9 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
         throw new Error(body.error ?? `请求失败（HTTP ${response.status}）。`);
     return body as T;
 }
-export default function SettingsPage({ onSaved }: {
+export default function SettingsPage({ onSaved, workspace }: {
     onSaved: () => Promise<void>;
+    workspace?: string | undefined;
 }) {
     const [settings, setSettings] = useState<Settings | null>(null);
     const [baseUrl, setBaseUrl] = useState('https://api.openai.com/v1');
@@ -140,7 +142,7 @@ export default function SettingsPage({ onSaved }: {
             setBusy(false);
         }
     };
-    return <div className="secondary-page settings-page">
+    const advanced = <div className="secondary-page settings-page">
     <div className="page-heading"><div><div className="eyebrow">模型服务连接</div><h1>设置</h1><p>配置兼容 OpenAI Chat Completions 与工具调用的模型 API。</p></div><span className={`settings-state ${settings?.keyConfigured ? 'configured' : ''}`}><i />{settings?.keyConfigured ? '已配置密钥' : '尚未配置'}</span></div>
     <div className="settings-grid">
       <form className="settings-card settings-form" onSubmit={save}>
@@ -156,7 +158,7 @@ export default function SettingsPage({ onSaved }: {
         {settings?.keyConfigured && <div className="settings-secret-state"><span>密钥来源：{settings.keySource === 'environment' ? '环境变量' : '本地设置'}</span>{settings.keySource === 'settings' && <label className="settings-clear-key"><input type="checkbox" checked={clearApiKey} onChange={(event) => setClearApiKey(event.target.checked)}/>清除已保存密钥</label>}</div>}
         <div className="settings-actions"><button className="button-secondary" type="submit" disabled={busy}>{busy ? '保存中…' : '保存设置'}</button><button className="button-primary" type="button" disabled={busy} onClick={saveAndTest}>{busy ? '连接中…' : '保存并测试连接'}</button></div>
         {message && <p className="settings-message success" role="status">{message}</p>}{error && <p className="settings-message error" role="alert">{error}</p>}
-        <p className="settings-privacy">API Key 不会从服务端回传到页面；此本地 Demo 将密钥保存在本机的 artifacts/demo/model-settings.json 中。请勿在共享电脑上保存个人密钥。</p>
+        <p className="settings-privacy">API Key 保存在本机私有配置，不会回传到页面或加入源码包。</p>
       </form>
       <aside className="settings-card settings-compatibility">
         <h2>兼容范围</h2>
@@ -166,4 +168,5 @@ export default function SettingsPage({ onSaved }: {
       </aside>
     </div>
   </div>;
+    return workspace === 'dify' ? <div className="secondary-page settings-page"><ConnectionSettings /><details className="settings-card"><summary>高级设置（可选）</summary>{advanced}</details></div> : advanced;
 }

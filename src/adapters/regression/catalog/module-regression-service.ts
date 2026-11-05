@@ -77,6 +77,9 @@ export class SystemModuleRegression {
     }
     getSystem(key: string) { return this.get<TestedSystem>('system', key); }
     getModule(key: string) { return this.get<FixedModule>('module', key); }
+    connectionSettings() {
+        return { systems: this.list<TestedSystem>('system').map(s => ({ id: s.id, name: s.name, environment: s.environment, targetUrl: s.targetUrl, profileId: s.profileId, activeAccountId: s.activeAccountId ?? s.profileId, accountProfiles: s.accountProfiles ?? [], ...(s.databaseBinding ? { databaseBinding: s.databaseBinding } : {}), account: this.accounts[s.id] ?? { state: 'unknown', message: '尚未检查当前账号。' } })), services: { fixedExecution: 'local', aiAuthoringConfigured: !!process.env.TESTPILOT_DIFY_API_KEY, aiExecutionConfigured: !!process.env.TESTPILOT_DIFY_EXECUTION_API_KEY } };
+    }
     private occupied(systemId: string) { return [...this.active.keys()].some(key => this.get<RegressionBatch>('batch', key).systemId === systemId) || this.connections.has(systemId); }
     saveSystem(input: unknown) {
         const data = systemInput.parse(input);

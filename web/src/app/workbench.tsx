@@ -202,7 +202,7 @@ export default function App() {
     const [moreOpen, setMoreOpen] = useState(false);
     const sidebarProjects = useSidebarProjects();
     const executionPage = page === 'dify-regression' || page === 'module-regression';
-    const projectPage = executionPage || page === 'case-scripts' || page === 'run-reports';
+    const projectPage = executionPage || page === 'case-scripts' || page === 'run-reports' || page === 'settings' && config?.workspaces?.current === 'dify';
     const selectedRun = useMemo(() => runs.find((r) => r.id === selectedId) ?? null, [runs, selectedId]);
     const activeRun = runs.find((r) => r.status === 'queued' || r.status === 'running');
     const refresh = useCallback(async () => {
@@ -387,7 +387,7 @@ export default function App() {
     };
     const navigate = (destination: Page) => {
         const workspaces = config?.workspaces;
-        const owner = destination === 'dify-regression' || destination === 'module-regression' || destination === 'case-scripts' || destination === 'run-reports' ? 'dify' : 'web-regression';
+        const owner = ['settings', 'mysql-browser', 'architecture'].includes(destination) ? workspaces?.current : destination === 'dify-regression' || destination === 'module-regression' || destination === 'case-scripts' || destination === 'run-reports' ? 'dify' : 'web-regression';
         if (owner && workspaces && owner !== workspaces.current) {
             const target = new URL(owner === 'dify' ? workspaces.difyUrl : workspaces.webUrl);
             target.searchParams.set('page', destination);
@@ -592,7 +592,7 @@ export default function App() {
       {page === 'sqlite-migrations' && <SqliteMigrationPage />}
       {page === 'mysql-browser' && <MysqlExplorerPage />}
       {page === 'source-tests' && <SourceTestsPage onOpenScriptReview={() => setPage('project-tests')}/>}
-      {page === 'settings' && <SettingsPage onSaved={refresh}/>}
+      {page === 'settings' && <SettingsPage workspace={config?.workspaces?.current} onSaved={refresh}/>}
     </main>
   </div>;
 }

@@ -51,6 +51,7 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceD
                 try {
                     const root = '/api/system-module-regression';
                     const route = url.pathname.slice(root.length);
+                    if (route === '/connections' && req.method === 'GET') { json(res, 200, systemModules.connectionSettings()); return; }
                     if (route === '/resources/cases/preview' && req.method === 'POST') {
                         const data = await documentBody(req), current = systemModules.exportResources(data.systemId);
                         json(res, 200, { ...await prepareCaseVersion(current.resources, data), revision: current.revision }); return;

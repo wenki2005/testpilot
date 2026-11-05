@@ -517,6 +517,15 @@ export class DifyWebModuleStore {
         this.save('job', job);
     }
     private async report(job: WebModuleJob, signal: AbortSignal) {
+        if (job.runMode === 'fixed') {
+            signal.throwIfAborted();
+            checkModulePlan(job);
+            if (job.databaseEvidence && moduleDigest(job.databaseEvidence) !== job.databaseEvidenceDigest) throw Error('数据库证据指纹不一致，未完成汇总。');
+            this.event(job, 'reporting', '正在本机汇总真实执行结果。');
+            job.outcome = jobOutcome(job); job.report = this.renderReport(job);
+            this.event(job, 'completed', job.outcome === 'passed' ? '本轮实际执行全部通过。' : job.outcome === 'failed' ? '本轮发现失败，请查看证据。' : '本轮存在阻塞或未执行项。');
+            return;
+        }
         this.event(job, 'reporting', 'Dify 正在汇总真实执行结果。');
         if (job.databaseEvidence) {
             if (moduleDigest(job.databaseEvidence) !== job.databaseEvidenceDigest)
@@ -579,7 +588,7 @@ export class DifyWebModuleStore {
             const inputFor = (batch: BrowserCheck[]) => JSON.stringify({ baseline_sha256: sha, cases: sourcesFor(batch), page_capabilities: capabilities, ...(job.databaseEvidence ? { database_context: job.databaseEvidence, database_context_sha256: job.databaseEvidenceDigest } : {}) });
             const batches: BrowserCheck[][] = [];
             let pending: BrowserCheck[] = [];
-            for (const item of selected) {
+            for (const item of job.runMode === 'fixed' ? [] : selected) {
                 if (pending.length && (pending.length >= 6 || inputFor([...pending, item]).length > 59000)) {
                     batches.push(pending);
                     pending = [];
@@ -607,7 +616,7 @@ export class DifyWebModuleStore {
                 }
             }
             else
-                this.event(job, 'preparing', '固定回归：使用原包或已保存步骤，未调用 AI 整理；Dify 派发和汇总仍实际执行。');
+                this.event(job, 'preparing', '使用已保存脚本，本机校验、执行与汇总。');
             const execution = structuredClone(job.snapshot);
             execution.reviewStatus = 'approved';
             execution.confirmationRequired = false;
@@ -740,8 +749,8 @@ export class DifyWebModuleStore {
             checkModulePlan(job);
             const runnable = execution.cases.filter(c => job.selectedCaseIds.includes(c.id) && c.lifecycleStatus === 'runnable' && c.selectedForRegression);
             if (runnable.length) {
-                this.event(job, 'dispatching', `Dify 正在派发 ${runnable.length} 条可执行用例。`);
-                for (let offset = 0; offset < runnable.length; offset += 20) {
+                this.event(job, 'dispatching', job.runMode === 'fixed' ? `本机派发 ${runnable.length} 条可执行用例。` : `Dify 正在派发 ${runnable.length} 条可执行用例。`);
+                for (let offset = 0; job.runMode !== 'fixed' && offset < runnable.length; offset += 20) {
                     const manifest: ExecutionManifest = { schema: 1, run_id: job.id, module_id: job.moduleId, plan_digest: job.planDigest!, suite_digest: job.moduleDigest, case_ids: runnable.slice(offset, offset + 20).map(c => c.id) };
                     checkDispatch(await this.cloud(job, 'dispatch', offset / 20, { execution_json: JSON.stringify({ ...manifest, phase: 'dispatch' }) }, manifest.case_ids, signal, 'execution'), manifest);
                 }
