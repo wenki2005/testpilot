@@ -15,6 +15,7 @@ import { json, fail, bodyJson, documentBody } from '../shared/http-utils.js';
 import { createRunReportRoutes } from '../reports/run-report-routes.js';
 import { initializeBundledResources } from '../../../bootstrap/resource-initialization.js';
 import { caseMaintenancePackage } from '../../mcp/connection-package.js';
+import { prepareCaseVersion } from '../../../adapters/regression/resources/case-version-import.js';
 /** Owns the Dify endpoints; the shared server only mounts this handler. */
 export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceDirectory }: {
     artifactsDir: string;
@@ -50,6 +51,20 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceD
                 try {
                     const root = '/api/system-module-regression';
                     const route = url.pathname.slice(root.length);
+                    if (route === '/resources/cases/preview' && req.method === 'POST') {
+                        const data = await documentBody(req), current = systemModules.exportResources(data.systemId);
+                        json(res, 200, { ...await prepareCaseVersion(current.resources, data), revision: current.revision }); return;
+                    }
+                    if (route === '/case-editor/review-script' && req.method === 'POST') {
+                        const data = await bodyJson(req), module = systemModules.getModule(data.moduleId);
+                        if (module.versions.at(-1)?.id !== data.versionId) throw Error('版本已更新，请刷新后核对。');
+                        if (coreChains.activeForSystem(module.systemId)) throw Error('核心链路正在运行。');
+                        const current = systemModules.exportResources(module.systemId), c = current.resources.cases.find(c => c.moduleId === data.moduleId && c.id === data.caseId);
+                        if (!c || c.scriptReview?.status !== 'pending') throw Error('当前用例没有待核对脚本。');
+                        if (!c.script.steps.length) throw Error('请先补充脚本，再核对。');
+                        c.scriptReview = { status: 'reviewed', note: '已在用例与脚本核对，保存为新版本；执行结果仍以真实运行证据为准。' };
+                        json(res, 200, await systemModules.applyResources({ resources: current.resources, baseRevision: current.revision })); return;
+                    }
                     if (route === '/maintenance/package' && req.method === 'GET') {
                         const id = url.searchParams.get('systemId') || '';
                         systemModules.getSystem(id);

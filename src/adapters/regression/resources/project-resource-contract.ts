@@ -5,6 +5,8 @@ import { assertDifyExportSafe } from '../exports/export-policy.js';
 const identifier = z.string().regex(/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,79}$/);
 const dependency = z.object({ moduleId: z.string().uuid(), caseId: identifier }).strict();
 const resourceCase = z.object({
+    sourceId: z.string().min(1).max(200).optional(),
+    scriptReview: z.object({ status: z.enum(['pending', 'reviewed']), note: z.string().max(2000) }).strict().optional(),
     id: identifier,
     moduleId: z.string().uuid(),
     title: z.string().trim().min(1).max(500),

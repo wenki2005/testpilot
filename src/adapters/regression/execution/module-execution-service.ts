@@ -36,7 +36,8 @@ export type WebModule = {
     createdAt: string;
     project: DocumentProject;
     sourceCases?: ImportedDocument['testCases'];
-    resourceSources?: Record<string, { sourcePath: string[]; sourceExpected: string }>;
+    resourceSources?: Record<string, { sourcePath: string[]; sourceExpected: string; sourceId?: string }>;
+    scriptReviews?: Record<string, { status: 'pending' | 'reviewed'; note: string }>;
     manualSteps?: Record<string, string[]>;
     prerequisiteCases?: Record<string, CaseDependency[]>;
     prerequisiteReviews?: Record<string, PrerequisiteReview>;
@@ -239,8 +240,9 @@ export class DifyWebModuleStore {
             manualSteps: Object.fromEntries(cases.map(c => [c.id, c.manualSteps])),
             prerequisiteCases: Object.fromEntries(cases.map(c => [c.id, c.prerequisites])),
             prerequisiteReviews: Object.fromEntries(cases.filter(c => c.prerequisiteReview).map(c => [c.id, c.prerequisiteReview!])),
+            scriptReviews: Object.fromEntries(cases.filter(c => c.scriptReview).map(c => [c.id, c.scriptReview!])),
             sourceCases: document.testCases!,
-            resourceSources: Object.fromEntries(cases.map(c => [c.id, { sourcePath: c.sourcePath, sourceExpected: c.sourceExpected }])),
+            resourceSources: Object.fromEntries(cases.map(c => [c.id, { sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, ...(c.sourceId ? { sourceId: c.sourceId } : {}) }])),
         };
         // Imported steps are explicitly authored; never generate over them later.
         value.editedSteps = Object.fromEntries(project.cases.filter(c => c.steps.length).map(c => [c.id, moduleDigest(c)]));
@@ -377,6 +379,7 @@ export class DifyWebModuleStore {
         }
         const module = this.getModule(data.moduleId);
         const selected = data.selectedCaseIds ?? module.project.cases.map(c => c.id);
+        if (selected.some(c => module.scriptReviews?.[c]?.status === 'pending')) throw Error('用例已更新，脚本待核对；请在用例与脚本确认后执行。');
         const known = new Set(module.project.cases.map(c => c.id));
         if (new Set(selected).size !== selected.length || selected.some(c => !known.has(c)) || data.confirmedCaseIds.some(c => !selected.includes(c)))
             throw new Error('选择范围包含重复或不属于当前模块的用例。');

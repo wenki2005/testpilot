@@ -43,6 +43,7 @@
 | [exports/export-policy.ts](exports/export-policy.ts) | 导出材料中的凭据与敏感字段检查 | `assertDifyExportSafe` |
 | [exports/script-package.ts](exports/script-package.ts) | 逐模块脚本包组装 | `ScriptPackageContext`、`DifyScriptModuleInput`、`difyPortableRunner` |
 | [notifications/batch-notifier.ts](notifications/batch-notifier.ts) | 批次通知、通知重试和失败信息 | `Payload`、`Transport`、`difyNotificationWebhook` |
+| [resources/case-version-import.ts](resources/case-version-import.ts) | case version import | `Row`、`rows`、`caseVersionInput` |
 | [resources/project-resource-contract.ts](resources/project-resource-contract.ts) | 资源定义、差异与前置引用校验 | `projectResourceSchema`、`ProjectResources`、`ResourceCase` |
 | [resources/resource-directory.ts](resources/resource-directory.ts) | 逐条资源文件读入、摘要和目录边界校验 | `readResourceDirectory` |
 | [scenarios/application/client-validation.ts](scenarios/application/client-validation.ts) | 前端拦截、按钮与字段校验 | `ClientValidationKind`、`Result`、`clientValidationKind` |
