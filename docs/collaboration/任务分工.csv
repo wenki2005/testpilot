@@ -1,4 +1,0 @@
-task_id,module,task,owner,branch,status,xmind_reference,shared_files,verification
-SETUP-001,shared,共同跑通一条原用例,A和B,test/first-regression,pending,,,
-APPLY-001,department-apply,选择三到五条申样原用例,A,test/apply-baseline,pending,,,
-QUERY-001,applications-logistics,选择三到五条申请及物流原用例,B,test/query-logistics-baseline,pending,,,

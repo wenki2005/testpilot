@@ -1,5 +1,5 @@
 import type { CDPSession, Page } from 'playwright';
-import type { DocumentProjectExecutionConfig } from '../../domain/document-test-model.js';
+import type { DocumentProjectExecutionConfig } from '../../domain/documents/shared/test-model.js';
 
 export const documentMobileUserAgent = 'Mozilla/5.0 (Linux; Android 13; TestPilot) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36';
 const overrides = new WeakMap<Page, { session: CDPSession; original: string }>();

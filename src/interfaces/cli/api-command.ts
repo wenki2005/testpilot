@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { option, reportPath } from "./arguments.js";
-import { loadApiSuite } from "../../storage/api-suite-loader.js";
-import { runApiSuite } from "../../adapters/api-test-adapter.js";
+import { loadApiSuite } from "../../storage/api-tests/api-suite-loader.js";
+import { runApiSuite } from "../../adapters/api/test-adapter.js";
 
 export async function runApiCommand(args: string[], outputRoot: string): Promise<void> {
   const suitePath = option(args, "--suite");

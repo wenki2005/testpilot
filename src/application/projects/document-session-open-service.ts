@@ -1,6 +1,6 @@
-import type { DocumentProject } from '../../domain/document-test-model.js';
+import type { DocumentProject } from '../../domain/documents/shared/test-model.js';
 import type { DocumentProjectRepository } from '../ports/document-project-repository.js';
-import { resolveDocumentSessionProfileKey } from '../../domain/document-session-profile.js';
+import { resolveDocumentSessionProfileKey } from '../../domain/documents/projects/session-profile.js';
 
 export type SessionOpenState = {
   requestId: string;

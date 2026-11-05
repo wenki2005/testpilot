@@ -1,16 +1,16 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './workbench';
+import App from './app/workbench';
 
-const difyPage = ['dify-regression', 'module-regression'].includes(new URLSearchParams(window.location.search).get('page') ?? '');
+const difyPage = ['dify-regression', 'module-regression', 'case-scripts', 'run-reports'].includes(new URLSearchParams(window.location.search).get('page') ?? '');
 if (difyPage) {
-  await import('./dify-workbench-base.css');
+  await import('./app/styles/execution-base.css');
 } else {
-  await import('./styles.css');
-  await import('./workbench-design.css');
-  await import('./shared-sidebar.css');
+  await import('./app/styles/base.css');
+  await import('./app/styles/workbench.css');
+  await import('./app/styles/sidebar-shared.css');
 }
-await import('./approved-sidebar.css');
+await import('./app/styles/sidebar.css');
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode><App /></React.StrictMode>,

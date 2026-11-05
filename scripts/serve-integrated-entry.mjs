@@ -7,7 +7,7 @@ import path from 'node:path';
 import { runtimeRoot, workspacePorts } from './lib/integrated-workspaces.mjs';
 
 const host = '127.0.0.1', port = 4325, origin = `http://${host}:${port}`;
-const ownerForPage = url => ['dify-regression', 'module-regression'].includes(url.searchParams.get('page')) ? 'dify' : 'web-regression';
+const ownerForPage = url => ['dify-regression', 'module-regression', 'case-scripts', 'run-reports'].includes(url.searchParams.get('page')) ? 'dify' : 'web-regression';
 const prefixFor = owner => owner === 'dify' ? '/dify' : '/web';
 const pathOwner = url => /^\/dify(?:\/|$)/.test(url.pathname) ? 'dify' : /^\/web(?:\/|$)/.test(url.pathname) ? 'web-regression' : undefined;
 const reply = (res, status, message) => { res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }); res.end(JSON.stringify(message)); };

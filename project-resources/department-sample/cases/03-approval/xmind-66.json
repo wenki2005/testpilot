@@ -1,0 +1,28 @@
+{
+  "id": "xmind-66",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "重新按仓库优先级请求库存查询并再次锁单",
+  "expected": "重新按仓库优先级请求库存查询并再次锁单",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+      "caseId": "xmind-64"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "必须先有真实锁单失败申请，点击其重试按钮；成功订单不得为重试测试再次锁单。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-用书审批详情页",
+    "审批通过后系统锁单",
+    "调用企微审批接口回传审批结果后，进入库存检查",
+    "锁单失败页重试",
+    "点击底部重试按钮"
+  ],
+  "sourceExpected": "重新按仓库优先级请求库存查询并再次锁单"
+}

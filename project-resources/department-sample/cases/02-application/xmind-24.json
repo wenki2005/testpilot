@@ -1,0 +1,27 @@
+{
+  "id": "xmind-24",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "客户列表为最新数据（非缓存历史快照）",
+  "expected": "客户列表为最新数据（非缓存历史快照）",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "准备可对照更新时间的客户源数据及同次查询证据；数据库有客户不等于已证明实时调用。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "费用划归客户",
+    "客户数据实时性",
+    "提交时实时调接口全量拉取最新客户"
+  ],
+  "sourceExpected": "客户列表为最新数据（非缓存历史快照）"
+}

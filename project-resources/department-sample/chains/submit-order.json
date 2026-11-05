@@ -1,0 +1,55 @@
+{
+  "id": "submit-order",
+  "title": "提交申请 → 审批通过 → 锁单建单",
+  "description": "营销用书、产品用书两个分支；同一申请贯穿提交凭证、审批和订单。",
+  "steps": [
+    {
+      "id": "submitted",
+      "title": "提交申请与落库",
+      "expected": "真实提交成功凭证可追溯，同一申请、本人、商品及提交后待审状态可核验。",
+      "caseIds": [
+        "xmind-39",
+        "xmind-50"
+      ]
+    },
+    {
+      "id": "application-detail",
+      "title": "核对申请明细",
+      "expected": "同一申请的收件信息、备注、商品数量及金额与数据库一致。",
+      "caseIds": [
+        "xmind-75",
+        "xmind-78"
+      ]
+    },
+    {
+      "id": "approved",
+      "title": "审批通过回传",
+      "expected": "同一申请审批通过，真实进度及前端时间轴与数据库一致。",
+      "caseIds": [
+        "xmind-54",
+        "xmind-119"
+      ]
+    },
+    {
+      "id": "order-created",
+      "title": "锁单成功并生成订单",
+      "expected": "同一申请审批通过且锁单成功后生成唯一订单，订单明细对应本人及原商品。",
+      "caseIds": [
+        "xmind-100",
+        "xmind-84"
+      ]
+    },
+    {
+      "id": "outbound",
+      "title": "核验最终出库规则",
+      "expected": "营销/产品分支的最终发送备注、旺店通店铺及易诚通出库分类取得同单证据。",
+      "caseIds": [
+        "xmind-6",
+        "xmind-7",
+        "xmind-11",
+        "xmind-12",
+        "xmind-15"
+      ]
+    }
+  ]
+}

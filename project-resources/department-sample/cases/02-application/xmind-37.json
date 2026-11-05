@@ -1,0 +1,27 @@
+{
+  "id": "xmind-37",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "发货方式固定为「快递」，无其他可选",
+  "expected": "发货方式固定为「快递」，无其他可选",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "进入申请表单查看快递选项，不需要先下单。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "发货方式",
+    "查看发货方式选项",
+    "仅支持快递，H5不展示快递公司选择"
+  ],
+  "sourceExpected": "发货方式固定为「快递」，无其他可选"
+}

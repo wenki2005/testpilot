@@ -1,0 +1,30 @@
+{
+  "id": "xmind-88",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）",
+  "expected": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "准备带申请编号及订单号的本人记录，分别核对复制内容，不把复制申请号当作订单号也已验证。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-历史申请记录页（我的申请）",
+    "查看我的申请",
+    "按申请时间倒序展示申请记录卡片"
+  ],
+  "sourceExpected": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）"
+}

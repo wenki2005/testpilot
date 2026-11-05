@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { option, reportPath } from "./arguments.js";
-import { loadSqliteMigrationSuite } from "../../storage/sqlite-migration-suite.js";
-import { runSqliteMigrationSuite } from "../../adapters/sqlite-migration-adapter.js";
+import { loadSqliteMigrationSuite } from "../../storage/database/sqlite-migration-suite.js";
+import { runSqliteMigrationSuite } from "../../adapters/database/sqlite/sqlite-migration-adapter.js";
 
 export async function runMigrationsCommand(args: string[], outputRoot: string): Promise<void> {
   const suiteOption = option(args, "--suite");

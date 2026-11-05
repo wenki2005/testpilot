@@ -7,97 +7,103 @@ import { RunInvestigation } from './RunInvestigation';
 import { RunRecoveryReadiness } from './RunRecoveryReadiness';
 import { RunRecoveryAdoption } from './RunRecoveryAdoption';
 import { RunAutomaticRecovery } from './RunAutomaticRecovery';
-
 export function RunResultsPanel({ run, project, busy, retestCaseIds, onRetestUnresolved, onRetryCheckpoint, onProjectChanged, sectionId = 'doc-results' }: {
-  sectionId?: string;
-  run: Run;
-  project?: Project;
-  busy: boolean;
-  retestCaseIds: string[];
-  onRetestUnresolved: () => void;
-  onRetryCheckpoint?: (caseId: string, stepIndex: number, adviceRecordId?: string) => void;
-  onProjectChanged?: () => void;
+    sectionId?: string;
+    run: Run;
+    project?: Project;
+    busy: boolean;
+    retestCaseIds: string[];
+    onRetestUnresolved: () => void;
+    onRetryCheckpoint?: (caseId: string, stepIndex: number, adviceRecordId?: string) => void;
+    onProjectChanged?: () => void;
 }) {
-  const renderComparison = (item: Comparison) => {
-    const scopeLabel = run.scopePlan
-      ? run.scopePlan.targetCaseIds.includes(item.id) ? '直接目标' : run.scopePlan.impactCaseIds.includes(item.id) ? '关联影响' : run.scopePlan.prerequisiteCaseIds?.includes(item.id) ? '自动前置' : '范围未分类'
-      : run.caseScopeKnown === false ? '历史范围未标注' : '目标/影响未标注';
-    const scopeTone = scopeLabel === '直接目标' ? 'target' : scopeLabel === '关联影响' ? 'impact' : 'unknown';
-    const failed = item.deterministic === 'failed' || item.apiContract === 'failed';
-    const unresolved = item.resolution === 'unresolved';
-    const mismatch = item.resolution === 'mismatch';
-    const impactReasons = run.scopePlan?.impactReasons?.[item.id] ?? [];
-    const frozenCase = run.executionCaseSnapshots?.find(candidate => candidate.id === item.id);
-    const caseEvidence = run.evidence?.filter(evidence => evidence.caseId === item.id) ?? [];
-    const cancelled = item.deterministic === 'cancelled' || item.computerUse === 'cancelled' || item.apiContract === 'cancelled';
-    const notRun = item.deterministic === 'not-run' || item.computerUse === 'not-run' || item.apiContract === 'not-run';
-    const resultLabel = cancelled ? 'Ⅱ 已取消'
-      : notRun ? '— 未运行'
-        : unresolved ? '! 未验证'
-          : mismatch ? '⚠ 结果不一致'
-            : failed ? '× 回归失败'
-              : item.resolution === 'not-applicable' ? '— N/A'
-                : run.runMode === 'regression' ? '✓ 通过'
-                  : item.aligned ? '✓ 已对齐' : '! 待处理';
-    const resultClass = cancelled || notRun || item.resolution === 'not-applicable'
-      ? ''
-      : item.aligned && !failed && !mismatch && !unresolved ? 'aligned' : 'mismatch';
-    return <article key={item.id} className={`doc-comparison ${resultClass}`}>
+    const renderComparison = (item: Comparison) => {
+        const scopeLabel = run.scopePlan
+            ? run.scopePlan.targetCaseIds.includes(item.id) ? '直接目标' : run.scopePlan.impactCaseIds.includes(item.id) ? '关联影响' : run.scopePlan.prerequisiteCaseIds?.includes(item.id) ? '自动前置' : '范围未分类'
+            : run.caseScopeKnown === false ? '历史范围未标注' : '目标/影响未标注';
+        const scopeTone = scopeLabel === '直接目标' ? 'target' : scopeLabel === '关联影响' ? 'impact' : 'unknown';
+        const failed = item.deterministic === 'failed' || item.apiContract === 'failed';
+        const unresolved = item.resolution === 'unresolved';
+        const mismatch = item.resolution === 'mismatch';
+        const impactReasons = run.scopePlan?.impactReasons?.[item.id] ?? [];
+        const frozenCase = run.executionCaseSnapshots?.find(candidate => candidate.id === item.id);
+        const caseEvidence = run.evidence?.filter(evidence => evidence.caseId === item.id) ?? [];
+        const cancelled = item.deterministic === 'cancelled' || item.computerUse === 'cancelled' || item.apiContract === 'cancelled';
+        const notRun = item.deterministic === 'not-run' || item.computerUse === 'not-run' || item.apiContract === 'not-run';
+        const resultLabel = cancelled ? 'Ⅱ 已取消'
+            : notRun ? '— 未运行'
+                : unresolved ? '! 未验证'
+                    : mismatch ? '⚠ 结果不一致'
+                        : failed ? '× 回归失败'
+                            : item.resolution === 'not-applicable' ? '— N/A'
+                                : run.runMode === 'regression' ? '✓ 通过'
+                                    : item.aligned ? '✓ 已对齐' : '! 待处理';
+        const resultClass = cancelled || notRun || item.resolution === 'not-applicable'
+            ? ''
+            : item.aligned && !failed && !mismatch && !unresolved ? 'aligned' : 'mismatch';
+        return <article key={item.id} className={`doc-comparison ${resultClass}`}>
       <strong>{resultLabel} · <span className={`doc-run-scope-badge ${scopeTone}`}>{scopeLabel}</span> · {item.title} ({item.id})</strong>
       <p>脚本：{item.deterministic}{run.runMode !== 'regression' ? `　Computer Use：${item.computerUse}` : ''}</p>
       {impactReasons.length > 0 && <small className="doc-impact-run-reason">关联影响依据：{impactReasons.join('；')}</small>}
-      <CaseCodeViewer key={`${run.id}:${item.id}`} runId={run.id} caseId={item.id} title={item.title} />
+      <CaseCodeViewer key={`${run.id}:${item.id}`} runId={run.id} caseId={item.id} title={item.title}/>
       {frozenCase && <details className="doc-frozen-case"><summary>查看本轮冻结步骤（{frozenCase.steps.length} 步）</summary><p>来源：运行快照 · 用例 {frozenCase.id} · 版本摘要 {run.caseVersion?.slice(0, 16) ?? '旧记录未保存'}。该 DSL 由受限 BrowserStep 解释器执行。</p><pre>{JSON.stringify(frozenCase.steps, null, 2)}</pre></details>}
       {caseEvidence.map(evidence => evidence.type === 'screenshot'
-        ? <a className="doc-case-evidence" href={`/api/document-runs/${encodeURIComponent(run.id)}/evidence/${encodeURIComponent(evidence.evidenceId)}`} target="_blank" rel="noreferrer" key={evidence.evidenceId}><img src={`/api/document-runs/${encodeURIComponent(run.id)}/evidence/${encodeURIComponent(evidence.evidenceId)}`} alt={`${item.title} · ${evidence.reason}`} /><small>步骤 {evidence.stepIndex === undefined ? '未定位' : evidence.stepIndex + 1} · {evidence.reason} · SHA-256 {evidence.sha256?.slice(0, 12)}</small></a>
-        : <small className="doc-evidence-unavailable" key={evidence.evidenceId}>截图不可用：{evidence.reason}</small>)}
+                ? <a className="doc-case-evidence" href={`/api/document-runs/${encodeURIComponent(run.id)}/evidence/${encodeURIComponent(evidence.evidenceId)}`} target="_blank" rel="noreferrer" key={evidence.evidenceId}><img src={`/api/document-runs/${encodeURIComponent(run.id)}/evidence/${encodeURIComponent(evidence.evidenceId)}`} alt={`${item.title} · ${evidence.reason}`}/><small>步骤 {evidence.stepIndex === undefined ? '未定位' : evidence.stepIndex + 1} · {evidence.reason} · SHA-256 {evidence.sha256?.slice(0, 12)}</small></a>
+                : <small className="doc-evidence-unavailable" key={evidence.evidenceId}>截图不可用：{evidence.reason}</small>)}
       {item.issue && <small>{item.issue} 编辑脚本 / 预期后重新审核并重跑。</small>}
       {item.triage && <small className="doc-triage">初步归类：{triageLabels[item.triage.category]}（{item.triage.confidence === 'evidence-based' ? '有直接证据' : '需复核'}） · {item.triage.detail}</small>}
       {(failed || mismatch || unresolved) && item.nextAction && <p className="doc-next-action"><strong>下一步可执行动作：</strong>{item.nextAction}</p>}
     </article>;
-  };
-
-  const targetComparisons = run.scopePlan ? run.comparisons.filter(item => run.scopePlan!.targetCaseIds.includes(item.id)) : [];
-  const impactComparisons = run.scopePlan ? run.comparisons.filter(item => run.scopePlan!.impactCaseIds.includes(item.id)) : [];
-  const prerequisiteComparisons = run.scopePlan ? run.comparisons.filter(item => run.scopePlan!.prerequisiteCaseIds?.includes(item.id)) : [];
-  const baselineGroupOrder: BaselineScopeGroup[] = ['target', 'impact', 'unselected', 'removed', 'unknown'];
-  const baselineComparisons = run.baselineComparison ?? [];
-  const baselineScopePlan = run.scopePlan;
-  const baselineCaseScopeLabel = (caseId: string) => {
-    const scope = run.baselineRunSnapshot?.scopePlan;
-    if (!scope) return '旧版范围未标注';
-    if (scope.targetCaseIds.includes(caseId)) return '直接目标';
-    if (scope.impactCaseIds.includes(caseId)) return '关联影响';
-    return '基线未选';
-  };
-  const currentBaselineCaseScopeLabel = (item: BaselineComparison) => {
-    if (item.disposition === 'removed') return '已从当前项目移除';
-    if (run.scopePlan) {
-      if (run.scopePlan.targetCaseIds.includes(item.caseId)) return '直接目标';
-      if (run.scopePlan.impactCaseIds.includes(item.caseId)) return '关联影响';
-    }
-    if (run.caseScope?.selectedCaseIds.includes(item.caseId)) return '本轮已执行，范围未分类';
-    if (run.caseScopeKnown === false) return '本轮历史范围未标注';
-    if (run.caseScope?.excludedCaseIds.includes(item.caseId)) return '本轮未选';
-    return '本轮范围未知';
-  };
-  const baselineGroups = baselineComparisons.length ? baselineGroupOrder.map(group => ({
-    group,
-    label: baselineScopeGroupLabels[group],
-    items: baselineComparisons.filter(item => baselineScopeGroup(item, baselineScopePlan) === group),
-  })).filter(group => group.items.length > 0) : [];
-  const excludedCaseIds = run.caseScope?.excludedCaseIds ?? [];
-  const excludedCaseLabels = excludedCaseIds.map(id => ({ id, title: project?.cases.find(item => item.id === id)?.title ?? run.baselineComparison?.find(item => item.caseId === id)?.title ?? id }));
-
-  return <section className="doc-run-card" id={sectionId}>
+    };
+    const targetComparisons = run.scopePlan ? run.comparisons.filter(item => run.scopePlan!.targetCaseIds.includes(item.id)) : [];
+    const impactComparisons = run.scopePlan ? run.comparisons.filter(item => run.scopePlan!.impactCaseIds.includes(item.id)) : [];
+    const prerequisiteComparisons = run.scopePlan ? run.comparisons.filter(item => run.scopePlan!.prerequisiteCaseIds?.includes(item.id)) : [];
+    const baselineGroupOrder: BaselineScopeGroup[] = ['target', 'impact', 'unselected', 'removed', 'unknown'];
+    const baselineComparisons = run.baselineComparison ?? [];
+    const baselineScopePlan = run.scopePlan;
+    const baselineCaseScopeLabel = (caseId: string) => {
+        const scope = run.baselineRunSnapshot?.scopePlan;
+        if (!scope)
+            return '旧版范围未标注';
+        if (scope.targetCaseIds.includes(caseId))
+            return '直接目标';
+        if (scope.impactCaseIds.includes(caseId))
+            return '关联影响';
+        return '基线未选';
+    };
+    const currentBaselineCaseScopeLabel = (item: BaselineComparison) => {
+        if (item.disposition === 'removed')
+            return '已从当前项目移除';
+        if (run.scopePlan) {
+            if (run.scopePlan.targetCaseIds.includes(item.caseId))
+                return '直接目标';
+            if (run.scopePlan.impactCaseIds.includes(item.caseId))
+                return '关联影响';
+        }
+        if (run.caseScope?.selectedCaseIds.includes(item.caseId))
+            return '本轮已执行，范围未分类';
+        if (run.caseScopeKnown === false)
+            return '本轮历史范围未标注';
+        if (run.caseScope?.excludedCaseIds.includes(item.caseId))
+            return '本轮未选';
+        return '本轮范围未知';
+    };
+    const baselineGroups = baselineComparisons.length ? baselineGroupOrder.map(group => ({
+        group,
+        label: baselineScopeGroupLabels[group],
+        items: baselineComparisons.filter(item => baselineScopeGroup(item, baselineScopePlan) === group),
+    })).filter(group => group.items.length > 0) : [];
+    const excludedCaseIds = run.caseScope?.excludedCaseIds ?? [];
+    const excludedCaseLabels = excludedCaseIds.map(id => ({ id, title: project?.cases.find(item => item.id === id)?.title ?? run.baselineComparison?.find(item => item.caseId === id)?.title ?? id }));
+    return <section className="doc-run-card" id={sectionId}>
     <header><div><h2>{run.runMode === 'regression' ? '常规回归结果' : 'AI 辅助对照结果'}</h2><p>{run.overall === 'cancelled' ? '本轮已取消；部分结果已保存' : run.runMode === 'regression' ? run.overall === 'passed' ? '本轮通过' : run.overall === 'failed' ? '本轮发现失败' : '本轮存在未验证或阻塞项' : run.finalReady ? `本轮范围已对齐 · ${run.overall === 'passed' ? '用例全部通过' : '两侧一致发现失败'}` : `本轮有未对齐结果 · ${run.comparisons.filter(item => item.aligned).length}/${run.comparisons.length} 条已对齐；blocked 不代表失败或通过`}{run.caseScope ? ` · ${run.caseScopeKnown === false ? '历史范围未知' : `实际选中 ${run.caseScope.selectedCaseIds.length}/${run.caseScope.totalCases} 条`}` : ''}</p>{run.scopePlan && <small>本轮范围：{run.scopePlan.mode === 'single' ? '单项测试' : run.scopePlan.mode === 'feature' ? '功能测试' : run.scopePlan.mode === 'impact' ? run.scopePlan.targetCaseIds.length ? '功能与影响检查' : '纯影响检查' : run.scopePlan.mode === 'full' ? '全量回归' : '自定义'} · 直接目标 {run.scopePlan.targetCaseIds.length} 条 · 关联影响 {run.scopePlan.impactCaseIds.length} 条</small>}{run.siteVersionSnapshot && <small>网站版本：{run.siteVersionSnapshot.environment} · {run.siteVersionSnapshot.label} · {run.siteVersionSnapshot.targetUrl}{run.siteVersionSnapshot.changeNotes ? ` · 迭代：${run.siteVersionSnapshot.changeNotes}` : ''}</small>}{!run.siteVersionSnapshot && <small>网站版本：未登记（旧运行）</small>}{run.caseVersion && <small>用例/脚本版本：{run.caseVersion}</small>}{run.materialVersion && <small>需求/测试资料版本：{run.materialVersion}</small>}{run.testDataVersion && <small>本轮测试数据版本：{run.testDataVersion}</small>}{run.sourceMaterialsSnapshot?.map(item => <small key={item.id}>资料快照：{item.fileName} · {item.role} · SHA-256 {item.sha256}</small>)}{run.parentRunId && <small>定向重测 · 父运行 {run.parentRunId}{run.retestSelection ? ` · 本次 ${run.retestSelection.join('、')}` : ''}{run.retestNotes ? ` · ${run.retestNotes}` : ''}</small>}</div>
       <div className="doc-buttons">{retestCaseIds.length > 0 && <button className="button-secondary" disabled={busy} onClick={onRetestUnresolved}>重测失败 / 未验证项（{retestCaseIds.length}）</button>}{(run.reportReady || run.report) && <a className="button-secondary" href={`/api/document-runs/${run.id}/report`} download>{run.reportReady ? '下载本轮报告' : '下载部分运行报告'}</a>}{(run.packageReady || run.finalReady) && <a className="button-primary" href={`/api/document-runs/${run.id}/package`} download>下载可复用脚本包 ZIP</a>}</div></header>
     {run.parameterValues && Object.keys(run.parameterValues).length > 0 && <p className="doc-notice">本轮参数{run.testDataSetId ? '（数据组 ' + (project?.testDataSets?.find(item => item.id === run.testDataSetId)?.name ?? run.testDataSetId) + '）' : '（手动输入）'}：{Object.entries(run.parameterValues).map(([key, value]) => key + '=' + JSON.stringify(value)).join(' · ')}</p>}
-    <RunNotificationStatus runId={run.id} />
-    <RunInvestigation runId={run.id} overall={run.overall} evidence={run.evidence ?? []} onProjectChanged={onProjectChanged} />
-    <RunRecoveryAdoption adoption={run.checkpointRecovery?.adoptedAdvice} automatic={run.checkpointRecovery?.trigger === 'automatic-policy'} />
-    <RunAutomaticRecovery runId={run.id} overall={run.overall} />
-    <RunRecoveryReadiness runId={run.id} overall={run.overall} busy={busy} onRetryCheckpoint={onRetryCheckpoint} />
+    <RunNotificationStatus runId={run.id}/>
+    <RunInvestigation runId={run.id} overall={run.overall} evidence={run.evidence ?? []} onProjectChanged={onProjectChanged}/>
+    <RunRecoveryAdoption adoption={run.checkpointRecovery?.adoptedAdvice} automatic={run.checkpointRecovery?.trigger === 'automatic-policy'}/>
+    <RunAutomaticRecovery runId={run.id} overall={run.overall}/>
+    <RunRecoveryReadiness runId={run.id} overall={run.overall} busy={busy} onRetryCheckpoint={onRetryCheckpoint}/>
     {(!run.finalReady || (run.caseScope && run.caseScope.selectedCaseIds.length < run.caseScope.totalCases)) && <p className="doc-notice">{!run.finalReady ? '报告和脚本包保留了本轮结果并标注未验证项；请复核证据后再决定是否重跑。' : '本轮只执行了所选回归子集；未选用例不在本次结果范围内。'}</p>}
     {run.coverageSummary && <p className="doc-notice">已识别领域：{run.coverageSummary.projectAreas.map(area => categoryOptions.find(option => option.value === area)?.label ?? area).join('、') || '无'}；本轮覆盖：{run.coverageSummary.selectedAreas.map(area => categoryOptions.find(option => option.value === area)?.label ?? area).join('、') || '无'}；本轮未覆盖：{run.coverageSummary.notCoveredThisRun.map(area => categoryOptions.find(option => option.value === area)?.label ?? area).join('、') || '无'}。这是整理后用例的分类汇总，不代表需求完整性审计。</p>}
     {run.caseScopeKnown === false && <p className="doc-notice">这是旧版运行记录，原始执行范围信息缺失；页面仅按留存的逐用例结果统计，不能据此判断全量覆盖。</p>}

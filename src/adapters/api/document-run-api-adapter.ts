@@ -1,9 +1,9 @@
-import { executeDocumentRunApiLane } from "../../application/runs/document-run-api-lane-service.js";
-import type { BrowserCheck, DocumentProject } from "../../domain/document-test-model.js";
-import type { DocumentApiLane } from "../../domain/document-test-contracts.js";
-import { planCaseExecution } from "../../domain/document-case-routing.js";
-import { executeApprovedApiSuite, getApiSuiteCandidate } from "../api-suite-workflow.js";
-import { executeDocumentApiLane } from "../api-document-lane.js";
+import { executeDocumentRunApiLane } from "../../application/runs/execution/api-lane-service.js";
+import type { BrowserCheck, DocumentProject } from "../../domain/documents/shared/test-model.js";
+import type { DocumentApiLane } from "../../domain/documents/shared/test-contracts.js";
+import { planCaseExecution } from "../../domain/documents/cases/case-routing.js";
+import { executeApprovedApiSuite, getApiSuiteCandidate } from "./suite-workflow.js";
+import { executeDocumentApiLane } from "./document-lane.js";
 
 /** Bridge frozen document-run cases to the reviewed API-suite runner. */
 export async function dispatchDocumentRunApiLane(input: {

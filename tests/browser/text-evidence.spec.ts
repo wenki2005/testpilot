@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { inspectTextRenderSupport } from '../../src/adapters/browser-text-evidence.js';
+import { inspectTextRenderSupport } from '../../src/adapters/browser/text-evidence.js';
 
 test('decorative SVGs do not turn a missing business assertion into a visual blocker', async ({ page }) => {
   await page.setContent('<h1>Sample application</h1><svg width="24" height="24"><path d="M0 0h20v20z"/></svg><p>Book lookup failed</p>');

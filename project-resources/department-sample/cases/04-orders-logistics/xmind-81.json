@@ -1,0 +1,26 @@
+{
+  "id": "xmind-81",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
+  "version": 2,
+  "title": "无订单：展示空状态",
+  "expected": "无订单：展示空状态",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "使用无订单账号或空订单数据环境，不能把创建订单成功作为空态分支前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-订单列表页",
+    "查看订单列表",
+    "按订单生成时间倒序展示"
+  ],
+  "sourceExpected": "无订单：展示空状态"
+}

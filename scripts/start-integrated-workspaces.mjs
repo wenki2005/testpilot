@@ -55,7 +55,7 @@ for (const workspace of selected) {
     if (!ready)
         throw Error(workspace.owner + ' did not become ready. See its server.log.');
     if (existsSync(path.join(workspace.privateDir, 'mysql-connection.xml'))) {
-        const connection = spawnSync(process.execPath, [path.join(repoRoot, 'scripts', 'connect-workspace-database.mjs'), '--workspace', workspace.owner], { cwd: repoRoot, windowsHide: true, encoding: 'utf8', timeout: 35000 });
+        const connection = spawnSync(process.execPath, [path.join(repoRoot, "scripts/data/connect-workspace-database.mjs"), '--workspace', workspace.owner], { cwd: repoRoot, windowsHide: true, encoding: 'utf8', timeout: 35000 });
         console.log(connection.status === 0 ? workspace.owner + ': database connection restored.' : workspace.owner + ': reconnect the database in its panel.');
     }
     console.log(workspace.owner + ': ' + url + ' | data: ' + workspace.root);

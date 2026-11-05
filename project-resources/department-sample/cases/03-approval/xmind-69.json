@@ -1,0 +1,28 @@
+{
+  "id": "xmind-69",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "物流快递单号回传至H5供员工查看物流轨迹",
+  "expected": "物流快递单号回传至H5供员工查看物流轨迹",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已建订单还需仓库实际发货及真实快递单号回传；原131条没有自动完成仓库发货的独立用例。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-用书审批详情页",
+    "审批通过后系统锁单",
+    "调用企微审批接口回传审批结果后，进入库存检查",
+    "⚠️ 旺店通发货与出库单回传规则",
+    "锁单成功推送旺店通发货"
+  ],
+  "sourceExpected": "物流快递单号回传至H5供员工查看物流轨迹"
+}

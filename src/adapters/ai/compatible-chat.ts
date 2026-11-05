@@ -1,4 +1,4 @@
-import { resolveModelSettings } from "../model-settings.js";
+import { resolveModelSettings } from "./model-settings.js";
 import type { ChatMessage as ChatMessageContract, ChatModelOptions, ChatModelPort } from "../../application/ports/chat-model.js";
 
 export type ChatMessage = ChatMessageContract;

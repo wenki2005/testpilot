@@ -1,0 +1,15 @@
+{
+  "caseId": "xmind-70",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "dependsOn": [
+    {
+      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+      "caseId": "xmind-68",
+      "requiredStatus": "passed"
+    }
+  ],
+  "hasSteps": false,
+  "steps": []
+}

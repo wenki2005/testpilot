@@ -1,0 +1,27 @@
+{
+  "id": "xmind-59",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据",
+  "expected": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "使用原申请之外的另一员工账号访问同一申请，验证越权拒绝；不要求另一员工先通过xmind-1之外的业务测试。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-用书审批详情页",
+    "查看申请明细（本次需求变更补齐）",
+    "审批详情页「申请编号」右侧展示「查看明细",
+    "」入口，点击进入申请表单明细展示页"
+  ],
+  "sourceExpected": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据"
+}

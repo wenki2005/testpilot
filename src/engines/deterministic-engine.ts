@@ -1,6 +1,6 @@
 ﻿import { randomUUID } from "node:crypto";
-import { executeCommand } from "../adapters/command-adapter.js";
-import type { RunRecord, RunRequest, TestEngine } from "../domain/types.js";
+import { executeCommand } from "../adapters/commands/command-adapter.js";
+import type { RunRecord, RunRequest, TestEngine } from "../domain/testing/test-contracts.js";
 
 export class DeterministicEngine implements TestEngine {
   readonly mode = "deterministic" as const;

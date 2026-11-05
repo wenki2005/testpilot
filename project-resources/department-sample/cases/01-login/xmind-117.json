@@ -1,0 +1,26 @@
+{
+  "id": "xmind-117",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
+  "version": 2,
+  "title": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+  "expected": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-101"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "真实超过72小时未发货取消事件，核对同单通知；不把数据库取消字段当通知回执。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "企微消息通知",
+    "消息推送触发场景",
+    "订单72小时未发货"
+  ],
+  "sourceExpected": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」"
+}

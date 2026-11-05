@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {browserRequestAllowed,isAuthenticationRoute} from '../../src/adapters/login-handoff.js';
+import {browserRequestAllowed,isAuthenticationRoute} from '../../src/adapters/browser/login-handoff.js';
 
 test('login QR bootstrap and same-site code exchange load under the actual route policy while submit stays blocked',async({page})=>{
  const target='https://cdn.yibentushu.com/test-sample-apply/index.html#/login?redirect=%252Fhome';const targetOrigin=new URL(target).origin;const allowed:string[]=[];const denied:string[]=[];

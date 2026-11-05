@@ -1,0 +1,28 @@
+{
+  "id": "xmind-40",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": ">30字：限制输入或提示超长",
+  "expected": ">30字：限制输入或提示超长",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "在备注框输入超过30字，核对限制或提示，不以成功提交作为前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "备注",
+    "输入备注内容",
+    "校验字数",
+    "❌"
+  ],
+  "sourceExpected": ">30字：限制输入或提示超长"
+}

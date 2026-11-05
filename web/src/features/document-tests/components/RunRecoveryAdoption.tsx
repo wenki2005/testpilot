@@ -1,14 +1,17 @@
 import React from 'react';
 import type { AdoptedRecoveryAdvice } from '../types';
-
 /** Displays the frozen source of a human recovery attempt, independently of newer investigations. */
-export function RunRecoveryAdoption({ adoption, automatic }: { adoption?: AdoptedRecoveryAdvice; automatic?: boolean }) {
-  if (!adoption) return null;
-  if (typeof adoption.recordId !== 'string' || typeof adoption.caseId !== 'string' || typeof adoption.summary !== 'string'
-    || typeof adoption.runDigest !== 'string' || typeof adoption.adoptedAt !== 'string' || !Array.isArray(adoption.evidence)) {
-    return <p>本次恢复包含无法核验的历史建议记录，请检查原运行资料。</p>;
-  }
-  return <React.Fragment><details className="doc-recovery-advice">
+export function RunRecoveryAdoption({ adoption, automatic }: {
+    adoption?: AdoptedRecoveryAdvice;
+    automatic?: boolean;
+}) {
+    if (!adoption)
+        return null;
+    if (typeof adoption.recordId !== 'string' || typeof adoption.caseId !== 'string' || typeof adoption.summary !== 'string'
+        || typeof adoption.runDigest !== 'string' || typeof adoption.adoptedAt !== 'string' || !Array.isArray(adoption.evidence)) {
+        return <p>本次恢复包含无法核验的历史建议记录，请检查原运行资料。</p>;
+    }
+    return <React.Fragment><details className="doc-recovery-advice">
     <summary>本次恢复采纳的调查建议</summary>
     <p>用例：{adoption.caseId} · 采纳时间：{adoption.adoptedAt}</p>
     <p>{adoption.summary}</p>

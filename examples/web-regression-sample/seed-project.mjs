@@ -3,10 +3,10 @@ import { createHash, randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createApiSuiteCandidate } from '../../src/adapters/api-suite-workflow.ts';
-import { openApiOperationFacts, summarizeOpenApiSpecification } from '../../src/adapters/openapi-summary.ts';
-import { createDocumentWorkflow } from '../../src/adapters/document-workflow-record.ts';
-import { makeDocumentProject, saveDocumentProject, validateCases, writeDocumentSource } from '../../src/adapters/document-test-workflow.ts';
+import { createApiSuiteCandidate } from '../../src/adapters/api/suite-workflow.ts';
+import { openApiOperationFacts, summarizeOpenApiSpecification } from '../../src/adapters/api/openapi-summary.ts';
+import { createDocumentWorkflow } from '../../src/adapters/documents/execution/workflow-record.ts';
+import { makeDocumentProject, saveDocumentProject, validateCases, writeDocumentSource } from '../../src/adapters/documents/execution/workflow-facade.ts';
 
 function localHttpOrigin(value, label) {
   const url = new URL(value);

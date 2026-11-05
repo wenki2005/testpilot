@@ -1,0 +1,31 @@
+{
+  "id": "xmind-14",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "审批流=直属上级单级审批",
+  "expected": "审批流=直属上级单级审批",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    },
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-128"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "产品用书申请创建成功，按原预期核对直属上级审批流；实际审批节点需绑定该申请，不只看配置姓名。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "样书用途",
+    "选择产品用书",
+    "确定后端备注规则、出库单类别与发货店铺"
+  ],
+  "sourceExpected": "审批流=直属上级单级审批"
+}

@@ -1,0 +1,20 @@
+{
+  "id": "xmind-118",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
+  "version": 2,
+  "title": "推送失败：🔄待澄清 消息推送失败是否重试与告警",
+  "expected": "[需澄清] 推送失败：🔄待澄清 消息推送失败是否重试与告警",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "pending",
+    "note": "通知发送失败后的重试和告警策略原文待澄清；需明确失败注入方式及预期后建立具体分支依赖。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "企微消息通知",
+    "消息推送触发场景"
+  ],
+  "sourceExpected": "[需澄清] 推送失败：🔄待澄清 消息推送失败是否重试与告警"
+}

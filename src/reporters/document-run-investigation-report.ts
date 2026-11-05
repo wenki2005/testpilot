@@ -1,4 +1,4 @@
-import type { DocumentRunInvestigationRecord } from '../application/runs/document-run-investigation-service.js';
+import type { DocumentRunInvestigationRecord } from '../application/runs/results/investigation-service.js';
 
 /** Render an advisory investigation without changing the saved record or the original run. */
 export function renderDocumentRunInvestigationMarkdown(record: DocumentRunInvestigationRecord): string {

@@ -1,0 +1,1574 @@
+{
+  "schema": 1,
+  "name": "部门申样原131条前置编号整理",
+  "reviewedAt": "2026-11-05",
+  "source": "原始XMind标题、分支路径及已确认业务链路；非新增业务预期",
+  "cases": [
+    {
+      "caseId": "xmind-1",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "流程起点：使用企微架构内的在职员工账号完成授权，保留当前登录人与公司、部门信息。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门"
+    },
+    {
+      "caseId": "xmind-2",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "独立拒绝授权分支：使用非本公司或不在企微架构的账号，不能要求先通过员工成功登录。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单"
+    },
+    {
+      "caseId": "xmind-3",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "pending",
+        "note": "原用例已标本期兼职暂不涉及；兼职身份数据源及口径仍待业务确认，不编造前置编号。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "待澄清 兼职部门员工身份判定数据源与口径（本期仅校验是否在企微架构，兼职暂不涉及）"
+    },
+    {
+      "caseId": "xmind-4",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "当前企微登录员工，以本人申请方式打开表单并核对姓名和部门。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "本人申请：申请人取当前企微登录人姓名与部门"
+    },
+    {
+      "caseId": "xmind-5",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "pending",
+        "note": "代人申请字段口径原文待澄清；需确认被代申请人的必填字段和测试账号后补充该分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "代人申请未选择被代申请人：🔄待澄清 代人申请需填写的被代申请人字段口径"
+    },
+    {
+      "caseId": "xmind-6",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用营销用书分支已审批、锁单建单的同一申请；6还需最终发送备注，7还需店铺和出库分类的同单回执。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "后端备注=「发送样书」+该流程企微审批编号+用户选填备注"
+    },
+    {
+      "caseId": "xmind-7",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用营销用书分支已审批、锁单建单的同一申请；6还需最终发送备注，7还需店铺和出库分类的同单回执。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "推送至旺店通「样书出库店铺」→ 易诚通其他出库单分类=「样书出库」"
+    },
+    {
+      "caseId": "xmind-8",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "营销用书分支准备1004.00合作客户样本；这是客户数据条件，不要求先通过其他客户筛选断言。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "费用划归客户通常为外部客户（合作客户）"
+    },
+    {
+      "caseId": "xmind-9",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-128"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "营销用书申请创建成功，并有当前企微架构及实际审批节点证据；保留原单级审批预期，不以实际多级流程改写预期。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "审批流=企微架构直属上级单级审批"
+    },
+    {
+      "caseId": "xmind-10",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "员工登录后打开申请表单并选择营销用书，无需提交申请。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」"
+    },
+    {
+      "caseId": "xmind-11",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用产品用书分支同一审批、锁单和订单证据；15分别准备3本和5本订单，最终备注、店铺和分类仍需下游读回。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "后端备注=「内部样书」+企微审批编号+用户选填备注"
+    },
+    {
+      "caseId": "xmind-12",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用产品用书分支同一审批、锁单和订单证据；15分别准备3本和5本订单，最终备注、店铺和分类仍需下游读回。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」"
+    },
+    {
+      "caseId": "xmind-13",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "产品用书分支准备1004.06部门费用客户样本，不要求营销分支先执行。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "费用划归客户通常为内部部门（部门费用）"
+    },
+    {
+      "caseId": "xmind-14",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-128"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "产品用书申请创建成功，按原预期核对直属上级审批流；实际审批节点需绑定该申请，不只看配置姓名。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "审批流=直属上级单级审批"
+    },
+    {
+      "caseId": "xmind-15",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用产品用书分支同一审批、锁单和订单证据；15分别准备3本和5本订单，最终备注、店铺和分类仍需下游读回。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "产品用书不论本数（3本/5本）均归为赠送出库类型"
+    },
+    {
+      "caseId": "xmind-16",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "本期出版社用书不展示或不可选，只检查选项，不提交该用途申请。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）"
+    },
+    {
+      "caseId": "xmind-17",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备分类明确的客户数据；17为1004.00、18为1004.06、19为其他分类，21/22分别使用可命中及不可命中的关键词。各分支独立。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "1004.00 外部客户—合作客户：正常展示可选"
+    },
+    {
+      "caseId": "xmind-18",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备分类明确的客户数据；17为1004.00、18为1004.06、19为其他分类，21/22分别使用可命中及不可命中的关键词。各分支独立。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "1004.06 内部客户—部门费用：正常展示可选"
+    },
+    {
+      "caseId": "xmind-19",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备分类明确的客户数据；17为1004.00、18为1004.06、19为其他分类，21/22分别使用可命中及不可命中的关键词。各分支独立。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "其他分类（信用客户1004.01/呆账客户1004.02/内部结算客户1004.03/内部客户其他1004.04/控价不发货1004.05）：不展示"
+    },
+    {
+      "caseId": "xmind-20",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "pending",
+        "note": "客户接口是否返回分类字段、缺失时采用哪种过滤方案仍是原文待澄清项；需接口契约或实际字段证据。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）"
+    },
+    {
+      "caseId": "xmind-21",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备分类明确的客户数据；17为1004.00、18为1004.06、19为其他分类，21/22分别使用可命中及不可命中的关键词。各分支独立。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "命中关键词：下拉展示匹配客户名称供选择"
+    },
+    {
+      "caseId": "xmind-22",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备分类明确的客户数据；17为1004.00、18为1004.06、19为其他分类，21/22分别使用可命中及不可命中的关键词。各分支独立。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "无匹配客户：下拉无结果并提示"
+    },
+    {
+      "caseId": "xmind-23",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "pending",
+        "note": "只对客户查询接口触发异常；原用例未明确失败降级文案，需先确认预期。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "接口异常：🔄待澄清 客户接口失败时的前端降级提示"
+    },
+    {
+      "caseId": "xmind-24",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备可对照更新时间的客户源数据及同次查询证据；数据库有客户不等于已证明实时调用。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "客户列表为最新数据（非缓存历史快照）"
+    },
+    {
+      "caseId": "xmind-25",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "进入申请表单；25使用有效编码，26使用无效数字编码，27使用非数字。无效分支不依赖有效编码用例通过。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)"
+    },
+    {
+      "caseId": "xmind-26",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "进入申请表单；25使用有效编码，26使用无效数字编码，27使用非数字。无效分支不依赖有效编码用例通过。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "编码不存在/输入错误：输入框边框变红，显示「未获取图书信息」"
+    },
+    {
+      "caseId": "xmind-27",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "进入申请表单；25使用有效编码，26使用无效数字编码，27使用非数字。无效分支不依赖有效编码用例通过。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "输入非数字：校验拦截，不调用接口"
+    },
+    {
+      "caseId": "xmind-28",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "pending",
+        "note": "图书接口单本重量字段的契约仍待澄清，需独立接口或字段证据，不把商品表字段存在当作接口已回传。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）"
+    },
+    {
+      "caseId": "xmind-29",
+      "prerequisiteIds": [
+        "xmind-25"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "先取得有效图书及定价、重量；再分别测试合法数量、非法数量和超出9999，不串联互斥输入。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "正整数（1~9999）：小计=数量×定价，总计=所有图书小计之和，预估总重=∑(数量×单本重量)"
+    },
+    {
+      "caseId": "xmind-30",
+      "prerequisiteIds": [
+        "xmind-25"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "先取得有效图书及定价、重量；再分别测试合法数量、非法数量和超出9999，不串联互斥输入。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮"
+    },
+    {
+      "caseId": "xmind-31",
+      "prerequisiteIds": [
+        "xmind-25"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "先取得有效图书及定价、重量；再分别测试合法数量、非法数量和超出9999，不串联互斥输入。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "数量>9999：前端拦截提示超出范围"
+    },
+    {
+      "caseId": "xmind-32",
+      "prerequisiteIds": [
+        "xmind-25",
+        "xmind-29"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "以有效重量和正确合计为基础，准备总重超过19kg的表单；仅验证拦截，不提交超重单。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交"
+    },
+    {
+      "caseId": "xmind-33",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单点击继续添加样书，作为多行输入和删除操作的起点。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段"
+    },
+    {
+      "caseId": "xmind-34",
+      "prerequisiteIds": [
+        "xmind-33"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "先新增样书行；34在新增行校验编码，35删除该误加行，保留其他明细。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "新增行编码同样需通过易诚通校验，否则边框变红"
+    },
+    {
+      "caseId": "xmind-35",
+      "prerequisiteIds": [
+        "xmind-33"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "先新增样书行；34在新增行校验编码，35删除该误加行，保留其他明细。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增）"
+    },
+    {
+      "caseId": "xmind-36",
+      "prerequisiteIds": [
+        "xmind-33"
+      ],
+      "review": {
+        "status": "pending",
+        "note": "最大行数上限原文待澄清；先能添加行，再按已确认上限补边界值。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "待澄清 样书明细可添加的最大行数限制"
+    },
+    {
+      "caseId": "xmind-37",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "进入申请表单查看快递选项，不需要先下单。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "发货方式固定为「快递」，无其他可选"
+    },
+    {
+      "caseId": "xmind-38",
+      "prerequisiteIds": [
+        "xmind-100",
+        "xmind-130"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用已建订单及对应店铺默认快递配置，核对实际快递选择来源；H5不提供选择需同时查前端。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "快递公司由旺店通店铺默认快递决定，H5不提供快递选择（同员工福利领书模式）"
+    },
+    {
+      "caseId": "xmind-39",
+      "prerequisiteIds": [
+        "xmind-1",
+        "xmind-25",
+        "xmind-29",
+        "xmind-41",
+        "xmind-44",
+        "xmind-46",
+        "xmind-48"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "有效客户、图书、数量和收件信息齐备，使用1至30字备注走正常提交；新一轮使用新唯一标记。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "0<字数≤30：正常提交"
+    },
+    {
+      "caseId": "xmind-40",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在备注框输入超过30字，核对限制或提示，不以成功提交作为前置。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": ">30字：限制输入或提示超长"
+    },
+    {
+      "caseId": "xmind-41",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "文本≤20字：通过"
+    },
+    {
+      "caseId": "xmind-42",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "为空：字段标红提示必填"
+    },
+    {
+      "caseId": "xmind-43",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": ">20字：限制输入"
+    },
+    {
+      "caseId": "xmind-44",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "11位数字：通过"
+    },
+    {
+      "caseId": "xmind-45",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "非11位/含非数字字符：红色提示「手机号格式错误」P1"
+    },
+    {
+      "caseId": "xmind-46",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "逐级选择成功回填所在地区"
+    },
+    {
+      "caseId": "xmind-47",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "未选全三级：提交校验标红"
+    },
+    {
+      "caseId": "xmind-48",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "手动输入≤20字：通过"
+    },
+    {
+      "caseId": "xmind-49",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "未填写：标红提示必填"
+    },
+    {
+      "caseId": "xmind-50",
+      "prerequisiteIds": [
+        "xmind-1",
+        "xmind-4",
+        "xmind-25",
+        "xmind-29",
+        "xmind-41",
+        "xmind-44",
+        "xmind-46",
+        "xmind-48"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "有效客户已选，必填收件字段及图书金额重量均准备正确；正常提交产生带唯一标记的新待审申请，不与39重复重放同一请求。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录"
+    },
+    {
+      "caseId": "xmind-51",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "分别准备漏填/格式错误或必填未完成的表单，验证不跳转/按钮灰色，不依赖50成功提交。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "存在漏填或格式校验失败：对应字段输入框标红，不跳转"
+    },
+    {
+      "caseId": "xmind-52",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "分别准备漏填/格式错误或必填未完成的表单，验证不跳转/按钮灰色，不依赖50成功提交。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "必填未完成时提交按钮置灰不可点击"
+    },
+    {
+      "caseId": "xmind-53",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用同一本人申请的真实待审批状态；若已审批则换已有待审样本，不改数据库审批状态。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "待审核：状态按钮置灰"
+    },
+    {
+      "caseId": "xmind-54",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用119通过分支的同一申请，核对审批回传后的绿色状态，不要求先执行驳回用例。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "审核通过：状态按钮绿色"
+    },
+    {
+      "caseId": "xmind-55",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用119驳回分支的同一申请及真实理由，检查红色状态与重新申请/联系入口；不复用已通过申请。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "审核驳回：状态按钮红色，展示驳回原因文案，支持重新申请或联系审批人"
+    },
+    {
+      "caseId": "xmind-56",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-119",
+        "xmind-64",
+        "xmind-100",
+        "xmind-69",
+        "xmind-101"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "分别准备待审、通过、驳回、锁单失败、已下单、发货、签收、取消样本；这些不是同一申请同时满足的状态。发货/签收仍需真实外部回执，不因前置编号通过就认定所有样本齐全。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口"
+    },
+    {
+      "caseId": "xmind-57",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "用原申请发起人账号访问其本人申请明细，记录申请号和用户的对应关系。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "仅申请发起人本人可见并可进入「查看明细」入口"
+    },
+    {
+      "caseId": "xmind-58",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "pending",
+        "note": "需一笔真实代人申请及被代申请人账号；代人字段口径仍受xmind-5待澄清项影响，不能用普通本人申请代替。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "代人申请时被代申请人（非发起人）不展示入口，直接访问返回无权限"
+    },
+    {
+      "caseId": "xmind-59",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用原申请之外的另一员工账号访问同一申请，验证越权拒绝；不要求另一员工先通过xmind-1之外的业务测试。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "越权：非发起人通过URL/申请单号直接访问他人明细，返回无权限且不展示数据"
+    },
+    {
+      "caseId": "xmind-60",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备该申请直属上级的OA审批可见会话，核对OA表单；上级没有H5入口不作为缺陷。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需）"
+    },
+    {
+      "caseId": "xmind-61",
+      "prerequisiteIds": [
+        "xmind-73"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "先实际进入同一申请的只读明细页，再返回对应审批详情，核对时间轴与状态。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失"
+    },
+    {
+      "caseId": "xmind-62",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "审批通过后进入锁单：62为长沙有货、63为长沙无货天津有货、64为两仓无货/部分不足、65为开单错误。四者是独立分支，不能互为必须通过的前置。库存和错误均需当前同单证据。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "长沙快递总仓有货：锁定长沙仓发货"
+    },
+    {
+      "caseId": "xmind-63",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "审批通过后进入锁单：62为长沙有货、63为长沙无货天津有货、64为两仓无货/部分不足、65为开单错误。四者是独立分支，不能互为必须通过的前置。库存和错误均需当前同单证据。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "长沙仓缺货 → 查天津快递仓有货：锁定天津仓发货"
+    },
+    {
+      "caseId": "xmind-64",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "审批通过后进入锁单：62为长沙有货、63为长沙无货天津有货、64为两仓无货/部分不足、65为开单错误。四者是独立分支，不能互为必须通过的前置。库存和错误均需当前同单证据。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "两仓均缺货/部分缺货：显示锁单失败，提示「联系运营查看库存/协调库存」"
+    },
+    {
+      "caseId": "xmind-65",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "审批通过后进入锁单：62为长沙有货、63为长沙无货天津有货、64为两仓无货/部分不足、65为开单错误。四者是独立分支，不能互为必须通过的前置。库存和错误均需当前同单证据。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）"
+    },
+    {
+      "caseId": "xmind-66",
+      "prerequisiteIds": [
+        "xmind-64"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "必须先有真实锁单失败申请，点击其重试按钮；成功订单不得为重试测试再次锁单。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "重新按仓库优先级请求库存查询并再次锁单"
+    },
+    {
+      "caseId": "xmind-67",
+      "prerequisiteIds": [
+        "xmind-66"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "在仍然缺货的失败申请上完成一次重试，核对仍失败且没有重复订单；不能使用已成功重试的申请。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "重试仍缺货：保持锁单失败状态"
+    },
+    {
+      "caseId": "xmind-68",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用审批通过且锁单建单成功的同一业务记录，核对旺店通推送及易诚通出库单生成证据。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "旺店通自动推送易诚通生成其他出库单（同员工福利领书模式，无需额外接口开发）"
+    },
+    {
+      "caseId": "xmind-69",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "已建订单还需仓库实际发货及真实快递单号回传；原131条没有自动完成仓库发货的独立用例。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "物流快递单号回传至H5供员工查看物流轨迹"
+    },
+    {
+      "caseId": "xmind-70",
+      "prerequisiteIds": [
+        "xmind-68"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "已有内部其他出库单号，检查H5不暴露该单号并使用对应虚拟订单号追踪。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "其他出库单号不回传至H5/小程序（仅系统内部记录，用虚拟订单号作网单号追踪，H5不展示该单号）"
+    },
+    {
+      "caseId": "xmind-71",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "本期物流仓WMS逻辑不实施；该条是范围说明，无需前置执行编号。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "// 前置：本期均走旺店通快递仓发货"
+    },
+    {
+      "caseId": "xmind-72",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "已有本期快递仓订单，核对未触发物流仓WMS锁定/推送；需同单调用证据，不能只凭H5未显示推断。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "不触发物流仓WMS锁定/推送逻辑"
+    },
+    {
+      "caseId": "xmind-73",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用同一本人申请；75必须为多行图书明细，74需要真实商品源调用证据，78保留提交原值，79仅检查只读。可复用既有数据，不要求每条重新提交。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "申请单自身字段（申请人/用途/收件信息/备注/数量）实时读申请单记录，与提交内容一致"
+    },
+    {
+      "caseId": "xmind-74",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用同一本人申请；75必须为多行图书明细，74需要真实商品源调用证据，78保留提交原值，79仅检查只读。可复用既有数据，不要求每条重新提交。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "商品关联字段（图书名称/出版社/定价/单本重量）实时调易诚通商品接口拼接最新值"
+    },
+    {
+      "caseId": "xmind-75",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用同一本人申请；75必须为多行图书明细，74需要真实商品源调用证据，78保留提交原值，79仅检查只读。可复用既有数据，不要求每条重新提交。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "多行样书明细逐行展示小计，总计=∑小计、预估总重=∑(数量×单本重量)"
+    },
+    {
+      "caseId": "xmind-76",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "pending",
+        "note": "提交后价格/重量变化时展示存储值还是实时重算值，原文尚待业务确认，不能自行选择口径。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "待澄清 实时读取下若提交后商品定价/重量被调整，明细页金额/总重与提交时及订单/出库单不一致——需确认金额、总重展示「提交时存储值」还是「实时重算值」（建议存储值以保证对账一致）"
+    },
+    {
+      "caseId": "xmind-77",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "只使商品上游查询失败，保留申请基础信息成功返回；整份detail失败不能替代该故障场景。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "商品接口查询失败：对应字段降级提示，不阻塞整页加载"
+    },
+    {
+      "caseId": "xmind-78",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用同一本人申请；75必须为多行图书明细，74需要真实商品源调用证据，78保留提交原值，79仅检查只读。可复用既有数据，不要求每条重新提交。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "收件人/手机号/所在地区/详细地址、备注按提交内容完整原样回显"
+    },
+    {
+      "caseId": "xmind-79",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用同一本人申请；75必须为多行图书明细，74需要真实商品源调用证据，78保留提交原值，79仅检查只读。可复用既有数据，不要求每条重新提交。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "页面纯只读，无编辑/提交/删除入口"
+    },
+    {
+      "caseId": "xmind-80",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用本人已建订单；80分页需要足够订单或真实总数，82使用已知订单关键词，84实际点击同一订单详情。"
+      },
+      "moduleName": "订单与物流",
+      "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条"
+    },
+    {
+      "caseId": "xmind-81",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用无订单账号或空订单数据环境，不能把创建订单成功作为空态分支前置。"
+      },
+      "moduleName": "订单与物流",
+      "title": "无订单：展示空状态"
+    },
+    {
+      "caseId": "xmind-82",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用本人已建订单；80分页需要足够订单或真实总数，82使用已知订单关键词，84实际点击同一订单详情。"
+      },
+      "moduleName": "订单与物流",
+      "title": "模糊匹配返回对应订单"
+    },
+    {
+      "caseId": "xmind-83",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用不会匹配订单的关键词，验证无结果提示，不要求先命中搜索。"
+      },
+      "moduleName": "订单与物流",
+      "title": "无匹配：提示无结果"
+    },
+    {
+      "caseId": "xmind-84",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "复用本人已建订单；80分页需要足够订单或真实总数，82使用已知订单关键词，84实际点击同一订单详情。"
+      },
+      "moduleName": "订单与物流",
+      "title": "展示对应订单详情"
+    },
+    {
+      "caseId": "xmind-85",
+      "prerequisiteIds": [
+        "xmind-84",
+        "xmind-69"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "打开同一订单详情，并取得真实快递单号/物流数据；状态、金额、明细和10分钟刷新分别需要对应证据，不以任意一项通过代替整条。"
+      },
+      "moduleName": "订单与物流",
+      "title": "展示订单号/下单时间/收货人/手机号/地址/总价、图书明细(书名/数量/价格)、订单状态(已下单/已发货/已签收/已取消/已退单)，物流轨迹最新状态置顶，数据来自易查单/自有物流接口每10分钟刷新一次"
+    },
+    {
+      "caseId": "xmind-86",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备创建超过72小时且无物流信息的真实测试订单和时间证据；不伪造订单状态或把其他系统订单当样本。"
+      },
+      "moduleName": "订单与物流",
+      "title": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态"
+    },
+    {
+      "caseId": "xmind-87",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "本人有可追溯申请记录，核对列表卡片和时间倒序。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "展示申请编号、申请时间、申请用途、申请人、申请诉求(仅第一本书)及总本数、申请状态"
+    },
+    {
+      "caseId": "xmind-88",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备带申请编号及订单号的本人记录，分别核对复制内容，不把复制申请号当作订单号也已验证。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "申请编号/订单号支持一键复制按钮（H5设计稿已确认新增，便于技术排查）"
+    },
+    {
+      "caseId": "xmind-89",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "分别有营销、产品用途的本人申请，核对筛选；不要求一个申请同时属于两种用途。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "按用途筛选（营销用书/产品用书）生效"
+    },
+    {
+      "caseId": "xmind-90",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备待审、通过、驳回三类本人申请，核对状态筛选；各状态使用不同适合样本。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "按状态筛选（待审批/已通过/已驳回）生效"
+    },
+    {
+      "caseId": "xmind-91",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "使用无命中筛选或无申请账号核空态，不依赖已有非空列表用例通过。"
+      },
+      "moduleName": "申请记录与审批详情",
+      "title": "无符合条件记录：空状态"
+    },
+    {
+      "caseId": "xmind-92",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "读取当前企微认证用户信息并与本人核对。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "关联企微认证信息正确展示"
+    },
+    {
+      "caseId": "xmind-93",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "本人已存在申请和订单，再检查两个快捷入口、实时加载和每页20条；分页不足20条时仍需实际请求/总数证据。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条"
+    },
+    {
+      "caseId": "xmind-94",
+      "prerequisiteIds": [
+        "xmind-1",
+        "xmind-50",
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备员工登录、已有申请和订单，在PC/H5检查申请页、记录页、订单物流页的对应布局。"
+      },
+      "moduleName": "PC/H5 横向适配",
+      "title": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致"
+    },
+    {
+      "caseId": "xmind-95",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "原文明确本期不做统计看板，保留范围外说明，不填虚构前置编号。"
+      },
+      "moduleName": "PC/H5 横向适配",
+      "title": "// 本期不做统计看板，待后续需求提出时再实现"
+    },
+    {
+      "caseId": "xmind-96",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "管理端账号和菜单访问已准备，独立核对本期不提供统计看板，不要求先验证其他订单功能。"
+      },
+      "moduleName": "PC/H5 横向适配",
+      "title": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板"
+    },
+    {
+      "caseId": "xmind-97",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "分别准备内部图书订单管理员、管理员、其他角色的独立管理端会话。员工H5登录不等于管理端授权，三个角色分支不得串为AND前置。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "可查看/编辑「员工福利订单」「部门用书订单」页面"
+    },
+    {
+      "caseId": "xmind-98",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "分别准备内部图书订单管理员、管理员、其他角色的独立管理端会话。员工H5登录不等于管理端授权，三个角色分支不得串为AND前置。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "可查看/编辑「内部订单管理」板块下所有页面"
+    },
+    {
+      "caseId": "xmind-99",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "分别准备内部图书订单管理员、管理员、其他角色的独立管理端会话。员工H5登录不等于管理端授权，三个角色分支不得串为AND前置。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "「内部订单管理」菜单不可见，直接访问URL返回无权限"
+    },
+    {
+      "caseId": "xmind-100",
+      "prerequisiteIds": [
+        "xmind-119",
+        "xmind-124"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "同一申请审批通过且真实锁单成功后核对订单创建；待审/驳回还需对应反例。124的仓库优先级通过不能替代当前申请的锁单成功记录。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "OA审批通过且锁单成功才创建订单至本页，创建订单时间即下单时间"
+    },
+    {
+      "caseId": "xmind-101",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "用已创建且超过72小时无物流单的测试订单核对取消事件，需要调度/状态变化证据；不执行SQL伪改状态。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "72小时后无物流单状态：订单状态变更为「订单取消」"
+    },
+    {
+      "caseId": "xmind-102",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "管理端订单列表可访问，按原澄清检查头部不提供其他出库单号筛选；无需为了该控件检查新造订单。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "// 已澄清(2026.10.13)：「其他出库单号」本期不做筛选项，已从头部筛选去除"
+    },
+    {
+      "caseId": "xmind-103",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "管理端会话及可对照订单数据已准备；103含两种用途，104含客户数据，105如缺物流仓样本须保留分支缺口，不伪造物流仓订单。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "用书类型筛选（全部/营销用书/产品用书）生效"
+    },
+    {
+      "caseId": "xmind-104",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "管理端会话及可对照订单数据已准备；103含两种用途，104含客户数据，105如缺物流仓样本须保留分支缺口，不伪造物流仓订单。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "划归客户支持下拉筛选与模糊搜索"
+    },
+    {
+      "caseId": "xmind-105",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "管理端会话及可对照订单数据已准备；103含两种用途，104含客户数据，105如缺物流仓样本须保留分支缺口，不伪造物流仓订单。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "发货方式（全部/快递仓发货/物流仓发货）筛选生效"
+    },
+    {
+      "caseId": "xmind-106",
+      "prerequisiteIds": [
+        "xmind-100",
+        "xmind-69"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "已有审批编号和实际快递单号的同一订单，核对模糊/精确搜索；不能用内部其他出库单号替代物流单号。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "物流单号/企微审批单号支持模糊与精准搜索"
+    },
+    {
+      "caseId": "xmind-107",
+      "prerequisiteIds": [
+        "xmind-100",
+        "xmind-68",
+        "xmind-69"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "同一管理端订单、审批号、实际出库单和快递单号可关联；最终备注必须读取发送记录或最终字段。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注"
+    },
+    {
+      "caseId": "xmind-108",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "迁移已完成，准备新旧系统地址及管理端授权账号，独立检查迁移入口和功能。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "迁移后菜单入口可达，列表/详情/查询/导出功能与原系统一致"
+    },
+    {
+      "caseId": "xmind-109",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "准备迁移前基线与迁移后数据库的同范围快照，核总数、金额、状态；数据库可读即可核对，不把缺后台界面当唯一阻塞。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）"
+    },
+    {
+      "caseId": "xmind-110",
+      "prerequisiteIds": [
+        "xmind-108"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "新入口已可达后，检查旧入口下线或跳转，保留原地址证据。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "原「教师服务系统-员工福利订单」入口下线或跳转至新地址，不再重复展示"
+    },
+    {
+      "caseId": "xmind-111",
+      "prerequisiteIds": [
+        "xmind-108",
+        "xmind-109"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "新系统可访问且迁移数据基线可比；111查询已知历史订单，112逐字段对照历史明细、物流和备注。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确"
+    },
+    {
+      "caseId": "xmind-112",
+      "prerequisiteIds": [
+        "xmind-108",
+        "xmind-109"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "新系统可访问且迁移数据基线可比；111查询已知历史订单，112逐字段对照历史明细、物流和备注。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "迁移后历史订单详情、物流信息、备注字段无丢失"
+    },
+    {
+      "caseId": "xmind-113",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "需隔离迁移演练环境、迁移前备份和已授权的回滚方案；这次只整理编号，不执行回滚或改生产数据。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "P0 迁移期间存量订单不可访问/丢失：数据迁移回滚校验"
+    },
+    {
+      "caseId": "xmind-114",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "分别准备两个允许角色和其他拒绝角色，独立检查员工福利订单菜单及URL权限，不串联互斥角色。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "「内部图书订单管理员」与管理员角色可访问员工福利订单，其他角色不可见"
+    },
+    {
+      "caseId": "xmind-115",
+      "prerequisiteIds": [
+        "xmind-50"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "从真实创建申请事件核对通知接收上级和文案；申请提交成功不能单独证明通知送达。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "推送文案「员工\"XXX\"发起部门用书申请单，申请单号XXX，请立即查看」至对应上级"
+    },
+    {
+      "caseId": "xmind-116",
+      "prerequisiteIds": [
+        "xmind-64"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "真实库存不足锁单失败事件，核对同单通知及接收记录。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」"
+    },
+    {
+      "caseId": "xmind-117",
+      "prerequisiteIds": [
+        "xmind-101"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "真实超过72小时未发货取消事件，核对同单通知；不把数据库取消字段当通知回执。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "推送文案「订单72小时未发货，已为你取消订单，请联系运营查看」"
+    },
+    {
+      "caseId": "xmind-118",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "pending",
+        "note": "通知发送失败后的重试和告警策略原文待澄清；需明确失败注入方式及预期后建立具体分支依赖。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "推送失败：🔄待澄清 消息推送失败是否重试与告警"
+    },
+    {
+      "caseId": "xmind-119",
+      "prerequisiteIds": [
+        "xmind-50",
+        "xmind-128"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "从已提交申请和已配置模板核对审批创建与回传；通过、驳回、待审用不同申请事件核对，完整保留真实审批人处理。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "通过template_id创建审批单，审批进度/结果/驳回理由回传至审批详情页"
+    },
+    {
+      "caseId": "xmind-120",
+      "prerequisiteIds": [
+        "xmind-1"
+      ],
+      "review": {
+        "status": "pending",
+        "note": "原文未确定审批接口失败的容错/重试策略，需准备有效表单及限定审批接口故障的测试方式，不能以申请已创建成功替代失败输入。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "接口异常：🔄待澄清 审批接口失败的容错与重试"
+    },
+    {
+      "caseId": "xmind-121",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "准备客户接口/数据库分类基线及调用凭据，独立核对1004.00与1004.06字段，不先依赖H5过滤结果。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤"
+    },
+    {
+      "caseId": "xmind-122",
+      "prerequisiteIds": [
+        "xmind-68"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "已有真实其他出库单及随后快递单号回传事件，核对教师管理系统后台与H5编号边界。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）"
+    },
+    {
+      "caseId": "xmind-123",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "审批通过后，在开单接口位置触发明确错误，核对H5错误原因；与65同类观测，不互相设为前置。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "开单返回错误信息：前端toast展示错误原因"
+    },
+    {
+      "caseId": "xmind-124",
+      "prerequisiteIds": [
+        "xmind-119",
+        "xmind-129",
+        "xmind-130"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "审批通过，仓库ID和店铺映射基线明确；按不同库存样本核长沙优先及天津回退，不要求两种仓同时锁同一单。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "先查长沙快递总仓，无货再查天津快递仓，按店铺映射发货"
+    },
+    {
+      "caseId": "xmind-125",
+      "prerequisiteIds": [
+        "xmind-119"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "审批通过后只让库存查询接口失败，核失败分支；不能拿开单失败或整页失败替代库存查询失败。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "库存查询失败：进入锁单失败分支"
+    },
+    {
+      "caseId": "xmind-126",
+      "prerequisiteIds": [
+        "xmind-69"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "同一订单已有快递单号和物流来源，采集至少相邻调度周期的真实拉取证据，不能只看页面更新时间。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "每10分钟拉取一次物流最新信息"
+    },
+    {
+      "caseId": "xmind-127",
+      "prerequisiteIds": [
+        "xmind-100"
+      ],
+      "review": {
+        "status": "reviewed",
+        "note": "准备超过72小时无物流信息的同一订单、时间基线和调度证据；与101、86是不同观测面，不互为前置。"
+      },
+      "moduleName": "申样申请与经销商数据",
+      "title": "无物流信息且超72小时：置订单异常/取消"
+    },
+    {
+      "caseId": "xmind-128",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "配置核验起点：取得当前环境真实OA模板ID和模板内容基线；不依赖创建审批成功来倒推配置已正确。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "企微OA审批模板ID配置正确"
+    },
+    {
+      "caseId": "xmind-129",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "配置核验起点：取得长沙、天津仓库ID及对应名称基线，使用数据库、配置接口或授权配置资料核对。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "快递仓仓库ID配置正确（长沙仓/天津仓）"
+    },
+    {
+      "caseId": "xmind-130",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "reviewed",
+        "note": "配置核验起点：取得样书出库、部门用书两个店铺ID和用途映射基线。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "旺店通两个店铺ID配置正确（样书出库店铺/部门用书店铺）"
+    },
+    {
+      "caseId": "xmind-131",
+      "prerequisiteIds": [],
+      "review": {
+        "status": "pending",
+        "note": "配置异常的降级与告警策略仍待澄清；需隔离配置错误样本及明确预期，不猜测系统应如何处理。"
+      },
+      "moduleName": "登录入口与公共基础",
+      "title": "配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略"
+    }
+  ]
+}

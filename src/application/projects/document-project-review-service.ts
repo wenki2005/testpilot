@@ -1,4 +1,4 @@
-import type { DocumentProject } from '../../domain/document-test-model.js';
+import type { DocumentProject } from '../../domain/documents/shared/test-model.js';
 import type { DocumentProjectRepository } from '../ports/document-project-repository.js';
 
 export class DocumentProjectReviewError extends Error {

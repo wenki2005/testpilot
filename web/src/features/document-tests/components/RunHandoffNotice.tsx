@@ -1,16 +1,15 @@
 import type { LoginHandoff, Recovery } from '../types';
 import { recoveryCaseStatusLabels, recoveryStageLabel } from '../presentation';
-
 export function RunHandoffNotice(props: {
-  recovery: Recovery | null;
-  loginHandoff: LoginHandoff | null;
-  busy: boolean;
-  resume(): void;
-  finalizePackage(): void;
-  continueAfterLogin(): void;
+    recovery: Recovery | null;
+    loginHandoff: LoginHandoff | null;
+    busy: boolean;
+    resume(): void;
+    finalizePackage(): void;
+    continueAfterLogin(): void;
 }) {
-  const { recovery, loginHandoff, busy } = props;
-  return <>
+    const { recovery, loginHandoff, busy } = props;
+    return <>
     {recovery && <section id="doc-run-recovery" className="login-handoff" role="status"><div><strong>{recovery.isRunning ? recovery.stage === 'packaging' ? '正在生成报告和脚本包' : '测试正在运行' : recovery.stage === 'packaging' ? '执行结束，报告打包未完成' : '发现一轮未完成的测试'}</strong><p>{recovery.reason} {recovery.isRunning ? `当前阶段：${recoveryStageLabel[recovery.stage]}。` : ''} {recovery.isRunning && recovery.progress ? `已记录 ${recovery.progress.completed}/${recovery.progress.total} 项：通过 ${recovery.progress.counts.passed ?? 0}，失败 ${recovery.progress.counts.failed ?? 0}，阻塞 ${recovery.progress.counts.blocked ?? 0}。` : ''} {recovery.isRunning && recovery.progress?.currentCase ? `当前：${recovery.progress.currentCase.id} ${recovery.progress.currentCase.title}（${recovery.progress.currentCase.lane}）。` : ''} {!recovery.isRunning && recovery.stage === 'awaiting-login' ? '上次中断在登录接力阶段。恢复时会检查原 Edge 标签页中的当前登录状态；若仍需登录，才会再次提醒。恢复会重用原运行编号与 Edge 会话，跳过已完成用例；中断项只在风险可确认时重试。' : ''}</p>{recovery.lastError && <small>上次错误：{recovery.lastError}</small>}<small>{recovery.isRunning ? '页面每 3 秒更新进度' : `上次开始：${new Date(recovery.startedAt).toLocaleString()} · 已恢复 ${recovery.resumeCount} 次`}</small>{!recovery.isRunning && (recovery.recordedResults?.length ?? 0) > 0 && <details className="recovery-result-details"><summary>查看已记录的逐用例结果（{recovery.recordedResultCount ?? recovery.recordedResults!.length} 条）</summary><ul>{recovery.recordedResults!.map((item, index) => <li key={`${item.lane}-${item.id}-${item.updatedAt}-${index}`}><span className={`recovery-result-status status-${item.status}`}>{recoveryCaseStatusLabels[item.status] ?? item.status}</span><strong>{item.id} · {item.title}</strong><small>{item.lane === 'deterministic' ? '确定性脚本' : '视觉 Computer Use'} · {item.durationMs} ms</small></li>)}</ul>{(recovery.recordedResultCount ?? 0) > recovery.recordedResults!.length && <small>只显示最近 {recovery.recordedResults!.length} 条；共记录 {recovery.recordedResultCount} 条。</small>}</details>}</div>{recovery.canFinalizePackage && !recovery.isRunning ? <button className="button-primary" disabled={busy} onClick={props.finalizePackage}>{busy ? '正在打包…' : '重试报告与脚本包'}</button> : recovery.canResume && !recovery.isRunning && <button className="button-primary" disabled={busy} onClick={props.resume}>{busy ? '正在恢复…' : '恢复上次运行'}</button>}</section>}
     {loginHandoff && <section className="login-handoff" role="alert"><div><strong>请在测试浏览器中完成登录</strong><p>{loginHandoff.status === 'ready_to_continue' ? '已收到完成登录的确认，正在恢复测试。' : '测试窗口已置顶。请在那个窗口里自行完成登录；TestPilot 不会查看或保存你的密码。登录成功后回到此处点击继续。'}</p><small>{loginHandoff.targetUrl}</small></div><button className="button-primary" disabled={loginHandoff.status === 'ready_to_continue'} onClick={props.continueAfterLogin}>{loginHandoff.status === 'ready_to_continue' ? '正在继续…' : '我已登录，继续测试'}</button></section>}
   </>;

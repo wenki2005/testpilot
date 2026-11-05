@@ -1,4 +1,4 @@
-import type { DocumentProject, DocumentSiteVersion } from '../../domain/document-test-model.js';
+import type { DocumentProject, DocumentSiteVersion } from '../../domain/documents/shared/test-model.js';
 import type { DocumentProjectRepository } from '../ports/document-project-repository.js';
 
 export type DocumentSiteVersionErrorCode = 'not-found' | 'invalid-input' | 'limit-reached' | 'duplicate-version';

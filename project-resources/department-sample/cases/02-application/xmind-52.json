@@ -1,0 +1,27 @@
+{
+  "id": "xmind-52",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "必填未完成时提交按钮置灰不可点击",
+  "expected": "必填未完成时提交按钮置灰不可点击",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "分别准备漏填/格式错误或必填未完成的表单，验证不跳转/按钮灰色，不依赖50成功提交。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "提交申请",
+    "点击「提交申请」按钮",
+    "校验全部必填项与格式"
+  ],
+  "sourceExpected": "必填未完成时提交按钮置灰不可点击"
+}

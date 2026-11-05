@@ -1,0 +1,29 @@
+{
+  "caseId": "xmind-31",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "dependsOn": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-25",
+      "requiredStatus": "passed"
+    }
+  ],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "fillByLabel",
+      "label": "数量（册）",
+      "value": "10000"
+    },
+    {
+      "action": "blurByLabel",
+      "label": "数量（册）"
+    },
+    {
+      "action": "assertText",
+      "text": "超出范围"
+    }
+  ]
+}

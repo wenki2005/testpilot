@@ -1,0 +1,23 @@
+{
+  "id": "xmind-2",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
+  "version": 2,
+  "title": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单",
+  "expected": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "独立拒绝授权分支：使用非本公司或不在企微架构的账号，不能要求先通过员工成功登录。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "企微工作台入口",
+    "部门样书申请",
+    "身份校验",
+    "点击工作台「部门样书」入口",
+    "系统校验员工是否在企微架构内"
+  ],
+  "sourceExpected": "非本公司员工/不在企微架构：toast提示「暂无申请权限」，不进入表单"
+}

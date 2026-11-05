@@ -1,0 +1,26 @@
+{
+  "id": "xmind-89",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "按用途筛选（营销用书/产品用书）生效",
+  "expected": "按用途筛选（营销用书/产品用书）生效",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "分别有营销、产品用途的本人申请，核对筛选；不要求一个申请同时属于两种用途。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-历史申请记录页（我的申请）",
+    "查看我的申请",
+    "按样书用途/审批状态筛选"
+  ],
+  "sourceExpected": "按用途筛选（营销用书/产品用书）生效"
+}

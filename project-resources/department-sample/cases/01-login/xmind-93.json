@@ -1,0 +1,30 @@
+{
+  "id": "xmind-93",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
+  "version": 2,
+  "title": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+  "expected": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "本人已存在申请和订单，再检查两个快捷入口、实时加载和每页20条；分页不足20条时仍需实际请求/总数证据。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-我的页面",
+    "快捷入口",
+    "点击「我的申请」/「订单物流」"
+  ],
+  "sourceExpected": "页面平滑切换，数据实时加载，默认展示全部并支持分页20条"
+}

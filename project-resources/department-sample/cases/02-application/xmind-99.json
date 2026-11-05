@@ -1,0 +1,22 @@
+{
+  "id": "xmind-99",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "「内部订单管理」菜单不可见，直接访问URL返回无权限",
+  "expected": "「内部订单管理」菜单不可见，直接访问URL返回无权限",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "分别准备内部图书订单管理员、管理员、其他角色的独立管理端会话。员工H5登录不等于管理端授权，三个角色分支不得串为AND前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "管理端后台（经销商系统服务端）",
+    "内部订单管理（菜单迁移+新增，排序置于菜单最末位）",
+    "权限控制（新增角色「内部图书订单管理员」）",
+    "其他角色 访问"
+  ],
+  "sourceExpected": "「内部订单管理」菜单不可见，直接访问URL返回无权限"
+}

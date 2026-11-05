@@ -1,0 +1,24 @@
+{
+  "caseId": "xmind-45",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "dependsOn": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1",
+      "requiredStatus": "passed"
+    }
+  ],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "blurByLabel",
+      "label": "手机号码"
+    },
+    {
+      "action": "assertFieldInvalid",
+      "label": "手机号码"
+    }
+  ]
+}

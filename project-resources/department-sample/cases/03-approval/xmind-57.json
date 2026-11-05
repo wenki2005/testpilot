@@ -1,0 +1,27 @@
+{
+  "id": "xmind-57",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "仅申请发起人本人可见并可进入「查看明细」入口",
+  "expected": "仅申请发起人本人可见并可进入「查看明细」入口",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "用原申请发起人账号访问其本人申请明细，记录申请号和用户的对应关系。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-用书审批详情页",
+    "查看申请明细（本次需求变更补齐）",
+    "审批详情页「申请编号」右侧展示「查看明细",
+    "」入口，点击进入申请表单明细展示页"
+  ],
+  "sourceExpected": "仅申请发起人本人可见并可进入「查看明细」入口"
+}
