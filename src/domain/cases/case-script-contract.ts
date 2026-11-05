@@ -15,6 +15,7 @@ export type CaseScript = {
     steps: BrowserCheck['steps'];
 };
 export type EditableCase = {
+    changeSource?: 'manual' | 'mcp' | 'resources';
     moduleId: string;
     versionId: string;
     version: number;

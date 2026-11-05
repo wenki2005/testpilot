@@ -3948,7 +3948,7 @@
       "file": "src/adapters/regression/catalog/module-regression-service.ts",
       "category": "申样回归执行",
       "purpose": "系统、模块、用例编辑、前置校验和批次调度",
-      "lines": 948,
+      "lines": 953,
       "previousPaths": [
         "src/adapters/system-module-regression.ts"
       ],
@@ -4059,158 +4059,163 @@
           "kind": "method"
         },
         {
-          "name": "SystemModuleRegression.editorCases",
+          "name": "SystemModuleRegression.editorRevision",
           "line": 245,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.editorCases",
+          "line": 249,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.editorHistory",
-          "line": 272,
+          "line": 276,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.initializeResources",
-          "line": 274,
+          "line": 278,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.exportResources",
-          "line": 298,
+          "line": 302,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.previewResources",
-          "line": 313,
+          "line": 317,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.applyResources",
-          "line": 328,
+          "line": 332,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorScript",
-          "line": 370,
+          "line": 374,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.savePrerequisitePlan",
-          "line": 376,
+          "line": 380,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.saveEditorCase",
-          "line": 439,
+          "line": 443,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.assertEditorPrerequisites",
-          "line": 487,
+          "line": 492,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.state",
-          "line": 503,
+          "line": 508,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.getBatch",
-          "line": 509,
+          "line": 514,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.view",
-          "line": 510,
+          "line": 515,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.start",
-          "line": 532,
+          "line": 537,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.retest",
-          "line": 574,
+          "line": 579,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.replay",
-          "line": 612,
+          "line": 617,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.confirmCase",
-          "line": 620,
+          "line": 625,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.create",
-          "line": 640,
+          "line": 645,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.run",
-          "line": 664,
+          "line": 669,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.cancel",
-          "line": 706,
+          "line": 711,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.continueBatch",
-          "line": 721,
+          "line": 726,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.connect",
-          "line": 729,
+          "line": 734,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.continueConnection",
-          "line": 763,
+          "line": 768,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.cancelConnection",
-          "line": 770,
+          "line": 775,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.retryReports",
-          "line": 771,
+          "line": 776,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.notify",
-          "line": 816,
+          "line": 821,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.retryNotification",
-          "line": 837,
+          "line": 842,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.scripts",
-          "line": 857,
+          "line": 862,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.selectionScripts",
-          "line": 863,
+          "line": 868,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.report",
-          "line": 928,
+          "line": 933,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.close",
-          "line": 929,
+          "line": 934,
           "kind": "method"
         }
       ]
@@ -8545,7 +8550,7 @@
       "file": "src/domain/cases/case-script-contract.ts",
       "category": "规则与数据契约",
       "purpose": "case script contract",
-      "lines": 52,
+      "lines": 53,
       "previousPaths": [
         "src/domain/case-script-editor-contract.ts"
       ],
@@ -8572,7 +8577,7 @@
         },
         {
           "name": "CaseEditorCatalog",
-          "line": 34,
+          "line": 35,
           "kind": "TypeAliasDeclaration"
         }
       ]
@@ -9981,7 +9986,7 @@
       "file": "src/domain/regression/module-catalog-contract.ts",
       "category": "申样回归执行",
       "purpose": "module catalog contract",
-      "lines": 109,
+      "lines": 110,
       "previousPaths": [
         "src/domain/system-module-contract.ts"
       ],
@@ -9998,32 +10003,32 @@
         },
         {
           "name": "FixedModule",
-          "line": 32,
+          "line": 33,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "BatchEntry",
-          "line": 45,
+          "line": 46,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "RegressionBatch",
-          "line": 56,
+          "line": 57,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "BatchView",
-          "line": 78,
+          "line": 79,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "AccountView",
-          "line": 82,
+          "line": 83,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "SystemModuleState",
-          "line": 89,
+          "line": 90,
           "kind": "TypeAliasDeclaration"
         }
       ]
@@ -11317,14 +11322,14 @@
       "file": "src/interfaces/http/regression/regression-routes.ts",
       "category": "申样回归执行",
       "purpose": "执行测试、用例编辑、核心链路及脚本下载 HTTP 接口",
-      "lines": 431,
+      "lines": 461,
       "previousPaths": [
         "src/interfaces/http/dify-regression-routes.ts"
       ],
       "symbols": [
         {
           "name": "createDifyRegressionRoutes",
-          "line": 18,
+          "line": 19,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -11500,6 +11505,34 @@
       ]
     },
     {
+      "file": "src/interfaces/mcp/case-maintenance-tools.ts",
+      "category": "公共基础",
+      "purpose": "case maintenance tools",
+      "lines": 21,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "registerCaseMaintenanceTools",
+          "line": 4,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/interfaces/mcp/connection-package.ts",
+      "category": "公共基础",
+      "purpose": "connection package",
+      "lines": 12,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "caseMaintenancePackage",
+          "line": 5,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "src/interfaces/mcp/document-test-tools.ts",
       "category": "网页测试",
       "purpose": "document test tools",
@@ -11609,6 +11642,14 @@
           "kind": "FunctionDeclaration"
         }
       ]
+    },
+    {
+      "file": "src/mcp/maintenance-server.ts",
+      "category": "公共基础",
+      "purpose": "maintenance server",
+      "lines": 16,
+      "previousPaths": [],
+      "symbols": []
     },
     {
       "file": "src/mcp/server.ts",
@@ -14111,6 +14152,14 @@
       "symbols": []
     },
     {
+      "file": "tests/mcp/case-maintenance.test.mjs",
+      "category": "公共基础",
+      "purpose": "case maintenance.test",
+      "lines": 41,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
       "file": "tests/regression/authoring/case-baseline-store.test.mjs",
       "category": "申样回归执行",
       "purpose": "case baseline store.test",
@@ -15423,7 +15472,7 @@
       "file": "web/src/features/case-scripts/case-editor-ai-guide.tsx",
       "category": "用例与脚本",
       "purpose": "AI 接入说明；维护接口仍待完成",
-      "lines": 34,
+      "lines": 35,
       "previousPaths": [],
       "symbols": [
         {
@@ -15560,7 +15609,7 @@
       "file": "web/src/features/case-scripts/case-script-editor.tsx",
       "category": "用例与脚本",
       "purpose": "用例和脚本编辑、前置关系、保存及版本",
-      "lines": 259,
+      "lines": 285,
       "previousPaths": [],
       "symbols": [
         {

@@ -242,6 +242,10 @@ export class SystemModuleRegression {
         const chains = departmentCoreChains.map((c, i) => ({ id: c.id, title: short[i]!, caseKeys: [...new Set(c.steps.flatMap(s => s.caseIds))].flatMap(id => cases.filter(v => v.id === id).map(v => v.moduleId + ':' + id)) })).filter(c => c.caseKeys.length);
         return { systems: systems.map(s => ({ id: s.id, name: s.name })), systemId: system.id, modules: modules.map(m => ({ id: m.id, name: m.name, caseKeys: cases.filter(c => c.moduleId === m.id).map(c => c.moduleId + ':' + c.id) })), cases, chains };
     }
+    editorRevision(systemId: string) {
+        this.getSystem(systemId);
+        return this.list<FixedModule>('module').filter(m => m.systemId === systemId && !m.archived).map(m => m.id + ':' + m.versions.at(-1)?.id).sort().join('|');
+    }
     private editorCases(m: FixedModule, versionId?: string, system = this.getSystem(m.systemId)): EditableCase[] {
         const v = versionId ? m.versions.find(v => v.id === versionId) : m.versions.at(-1);
         if (!v)
@@ -266,7 +270,7 @@ export class SystemModuleRegression {
                 break;
             }
             const prerequisites = pack.prerequisiteCases?.[c.id] ?? [];
-            return { moduleId: m.id, versionId: v.id, version: v.version, id: c.id, title: c.title, expected: c.expected, manualSteps: pack.manualSteps?.[c.id] ?? [], prerequisites, ...(pack.prerequisiteReviews?.[c.id] ? { prerequisiteReview: pack.prerequisiteReviews[c.id] } : {}), script: { caseId: c.id, dependsOn: prerequisites.map(d => ({ ...d, requiredStatus: 'passed' as const })), steps }, sourcePath: pack.resourceSources?.[c.id]?.sourcePath ?? c.modulePath ?? [], sourceExpected: pack.resourceSources?.[c.id]?.sourceExpected ?? original.project.cases.find(v => v.id === c.id)?.expected ?? c.expected, scriptPath: `/api/system-module-regression/case-editor/${m.id}/${c.id}/script?version=${v.id}`, status, ...(resultAt ? { resultAt } : {}) };
+            return { ...(v.source ? { changeSource: v.source } : {}), moduleId: m.id, versionId: v.id, version: v.version, id: c.id, title: c.title, expected: c.expected, manualSteps: pack.manualSteps?.[c.id] ?? [], prerequisites, ...(pack.prerequisiteReviews?.[c.id] ? { prerequisiteReview: pack.prerequisiteReviews[c.id] } : {}), script: { caseId: c.id, dependsOn: prerequisites.map(d => ({ ...d, requiredStatus: 'passed' as const })), steps }, sourcePath: pack.resourceSources?.[c.id]?.sourcePath ?? c.modulePath ?? [], sourceExpected: pack.resourceSources?.[c.id]?.sourceExpected ?? original.project.cases.find(v => v.id === c.id)?.expected ?? c.expected, scriptPath: `/api/system-module-regression/case-editor/${m.id}/${c.id}/script?version=${v.id}`, status, ...(resultAt ? { resultAt } : {}) };
         });
     }
     editorHistory(moduleId: string, caseId: string) { const m = this.getModule(moduleId); return m.versions.map(v => ({ version: v.version, createdAt: v.createdAt, data: this.editorCases(m, v.id).find(c => c.id === caseId) })).filter(v => v.data).reverse(); }
@@ -325,7 +329,7 @@ export class SystemModuleRegression {
         }
         return { revision: current.revision, definitionRevision: resourceDigest(current.resources), incomingRevision: resourceDigest(resources), ...compareProjectResources(current.resources, resources), modulesAdded: resources.modules.filter(m => !current.resources.modules.some(v => v.id === m.id)).map(m => m.id), modulesRemoved: current.resources.modules.filter(m => !resources.modules.some(v => v.id === m.id)).map(m => m.id) };
     }
-    async applyResources(input: unknown) {
+    async applyResources(input: unknown, source: 'resources' | 'mcp' = 'resources') {
         const data = z.object({ resources: z.unknown(), baseRevision: z.string().regex(/^[a-f0-9]{64}$/) }).strict().parse(input);
         const resources = validateProjectResources(data.resources), system = this.getSystem(resources.project.id);
         if (this.occupied(system.id)) throw Error('项目正在运行或连接，请结束后更新资源。');
@@ -350,7 +354,7 @@ export class SystemModuleRegression {
                     const rows = resources.cases.filter(c => c.moduleId === p.module.id);
                     saved = old ?? { id: p.module.id, systemId: system.id, name: p.module.name, archived: false, versions: [], createdAt: now(), updatedAt: now() };
                     saved.name = p.module.name; saved.archived = false; saved.updatedAt = now();
-                    saved.versions.push({ id: pack.id, version: (previous?.version ?? 0) + 1, digest: pack.digest, caseCount: rows.length, createdAt: now(), added: preview.added.filter(k => k.startsWith(p.module.id + ':')).length, removed: preview.removed.filter(k => k.startsWith(p.module.id + ':')).length, changed: preview.changed.filter(k => k.startsWith(p.module.id + ':')).length });
+                    saved.versions.push({ source, id: pack.id, version: (previous?.version ?? 0) + 1, digest: pack.digest, caseCount: rows.length, createdAt: now(), added: preview.added.filter(k => k.startsWith(p.module.id + ':')).length, removed: preview.removed.filter(k => k.startsWith(p.module.id + ':')).length, changed: preview.changed.filter(k => k.startsWith(p.module.id + ':')).length });
                 } else saved = old!;
                 const versionId = saved.versions.at(-1)!.id;
                 if (p.module.coreCaseIds) { saved.coreCaseIds = p.module.coreCaseIds; saved.coreVersionId = versionId; } else { delete saved.coreCaseIds; delete saved.coreVersionId; }
@@ -436,7 +440,7 @@ export class SystemModuleRegression {
         }
         return { systemId: data.systemId, cases: rows.size, withPrerequisites: data.cases.filter(c => c.prerequisites.length).length, pending: data.cases.filter(c => c.review.status === 'pending').length, versions: updates.map(m => ({ moduleId: m.id, versionId: m.versions.at(-1)!.id, version: m.versions.at(-1)!.version })) };
     }
-    async saveEditorCase(moduleId: string, input: unknown) {
+    async saveEditorCase(moduleId: string, input: unknown, source: 'manual' | 'mcp' = 'manual') {
         const dep = z.object({ moduleId: uuid, caseId: z.string().min(1).max(80) }).strict();
         const data = z.object({ versionId: uuid, caseId: z.string().min(1).max(80), title: z.string().trim().min(1).max(500), expected: z.string().trim().min(1).max(2000), manualSteps: z.array(z.string().max(2000)).max(100), prerequisites: z.array(dep).max(30), script: z.object({ caseId: z.string(), dependsOn: z.array(dep.extend({ requiredStatus: z.literal('passed') })).max(30), steps: z.array(z.unknown()).max(100) }).strict() }).strict().parse(input);
         const m = this.getModule(moduleId);
@@ -477,6 +481,7 @@ export class SystemModuleRegression {
         if (fresh.versions.at(-1)?.id !== data.versionId || this.occupied(m.systemId))
             throw Error('保存期间模块状态发生变化，请刷新重试。');
         const saved = this.attach(m.systemId, fresh, revised.id, m.name);
+        saved.versions.at(-1)!.source = source;
         if (saved.coreVersionId === data.versionId)
             saved.coreVersionId = revised.id;
         if (saved.starterVersionId === data.versionId)

@@ -36,12 +36,13 @@ export default function CaseScriptEditor() {
     const [catalog, setCatalog] = useState<CaseEditorCatalog>(), [current, setCurrent] = useState<EditableCase>(), [form, setForm] = useState<Fields>(), [baseline, setBaseline] = useState<Fields>(), [scope, setScope] = useState(new URLSearchParams(location.search).get('caseScope') === 'core' ? 'core' : 'all'), [query, setQuery] = useState(''), [collapsed, setCollapsed] = useState(false), [source, setSource] = useState(false), [picker, setPicker] = useState(false), [depQuery, setDepQuery] = useState(''), [history, setHistory] = useState<HistoryEntry[]>(), [historyOpen, setHistoryOpen] = useState(false), [loading, setLoading] = useState(true), [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
     const [diffOpen, setDiffOpen] = useState(false), [diffTab, setDiffTab] = useState<CaseDiffTab>('script'), [aiOpen, setAiOpen] = useState(false), [historyError, setHistoryError] = useState(''), [changeOrigin, setChangeOrigin] = useState('手动修改');
     const historySerial = useRef(0);
+    const [externalBefore, setExternalBefore] = useState<Fields>(), [externalPending, setExternalPending] = useState(false);
     const pending = useRef<() => void>(() => { }), dialog = useRef<HTMLDialogElement>(null), dirtyRef = useRef(false), allowNavigation = useRef(false), mounted = useRef(true), serial = useRef(0), numbers = useRef<HTMLPreElement>(null), busyRef = useRef(false);
     busyRef.current = busy;
     const dirty = !!form && JSON.stringify(form) !== JSON.stringify(baseline);
     dirtyRef.current = dirty;
     const byKey = useMemo(() => new Map(catalog?.cases.map(c => [key(c), c]) ?? []), [catalog]);
-    const loadCase = useCallback((c: EditableCase) => { setCurrent(c); const next = fields(c); setForm(next); setBaseline(next); dirtyRef.current = false; setSource(false); setPicker(false); setHistoryOpen(false); setHistory(undefined); setHistoryError(''); historySerial.current++; setDiffOpen(false); setChangeOrigin('手动修改'); setError(''); const url = new URL(location.href); url.searchParams.set('case', c.id); url.searchParams.set('module', c.moduleId); window.history.replaceState(null, '', url); }, []);
+    const loadCase = useCallback((c: EditableCase) => { setExternalBefore(undefined); setExternalPending(false); setCurrent(c); const next = fields(c); setForm(next); setBaseline(next); dirtyRef.current = false; setSource(false); setPicker(false); setHistoryOpen(false); setHistory(undefined); setHistoryError(''); historySerial.current++; setDiffOpen(false); setChangeOrigin('手动修改'); setError(''); const url = new URL(location.href); url.searchParams.set('case', c.id); url.searchParams.set('module', c.moduleId); window.history.replaceState(null, '', url); }, []);
     const guard = useCallback((action: () => void) => {
         if (!dirtyRef.current) {
             action();
@@ -82,6 +83,30 @@ export default function CaseScriptEditor() {
         }
     }, [loadCase]);
     useEffect(() => { mounted.current = true; void refresh(new URLSearchParams(location.search).get('system') || undefined); return () => { mounted.current = false; serial.current++; }; }, [refresh]);
+    useEffect(() => {
+        if (!catalog?.systemId || loading || busy) return;
+        let stopped = false, checking = false;
+        const expected = [...new Map(catalog.cases.map(c => [c.moduleId, c.versionId])).entries()].map(([m, v]) => m + ':' + v).sort().join('|');
+        const timer = setInterval(async () => {
+            if (stopped || checking || busyRef.current || document.hidden) return;
+            checking = true;
+            try {
+                const value = await request<{ revision: string }>('/../maintenance/revision?systemId=' + encodeURIComponent(catalog.systemId));
+                if (stopped || value.revision === expected) return;
+                if (dirtyRef.current || busyRef.current) { setExternalPending(true); return; }
+                const next = await request<CaseEditorCatalog>('?systemId=' + encodeURIComponent(catalog.systemId));
+                if (stopped) return;
+                if (dirtyRef.current || busyRef.current) { setExternalPending(true); return; }
+                const candidate = next.cases.find(c => current && key(c) === key(current)) ?? next.cases[0];
+                const before = current && candidate?.id === current.id && candidate.moduleId === current.moduleId ? fields(current) : undefined;
+                setCatalog(next);
+                if (candidate) loadCase(candidate);
+                setExternalBefore(before); setExternalPending(false); setChangeOrigin(candidate?.changeSource === 'mcp' ? 'MCP 更新' : '外部更新'); setDiffTab(before?.script !== (candidate ? fields(candidate).script : undefined) ? 'script' : 'case'); setDiffOpen(!!before); setNotice('已同步外部修改');
+            } catch { /* Keep local edits when the service is temporarily unavailable. */ }
+            finally { checking = false; }
+        }, 4000);
+        return () => { stopped = true; clearInterval(timer); };
+    }, [catalog, current, loading, busy, loadCase]);
     useEffect(() => {
         if (!catalog)
             return;
@@ -149,7 +174,7 @@ export default function CaseScriptEditor() {
             validation = 'JSON 格式有误，请修正后保存。';
         }
     }
-    const change = (patch: Partial<Fields>) => { setChangeOrigin('手动修改'); setForm(f => f ? { ...f, ...patch } : f); };
+    const change = (patch: Partial<Fields>) => { setExternalBefore(undefined); setChangeOrigin('手动修改'); setForm(f => f ? { ...f, ...patch } : f); };
     const save = useCallback(async () => {
         if (!current || !form || !dirty || busy || validation)
             return;
@@ -227,7 +252,7 @@ export default function CaseScriptEditor() {
   <header className="case-page-heading"><h1>用例与脚本</h1><div className="ce-page-actions">{catalog?.systemId && <CaseEditorResources systemId={catalog.systemId} disabled={busy || loading || dirty} onBusyChange={setBusy} onApplied={() => void refresh(catalog.systemId)} />}<button type="button" onClick={() => { setHistoryOpen(false); setAiOpen(true); }}>AI 接入说明</button><button type="button" className={diffOpen ? 'ce-action-selected' : ''} aria-pressed={diffOpen} onClick={() => { setHistoryOpen(false); setDiffOpen(!diffOpen); }} disabled={!current || loading}>修改对比{changed.length > 0 && <span className="ce-change-count">{changed.length}</span>}</button><button type="button" onClick={() => historyOpen ? setHistoryOpen(false) : void showHistory()} disabled={!current || busy || loading} aria-expanded={historyOpen}>版本</button></div></header>
   {error && <div className="ce-error" role="alert">{error}<button type="button" onClick={() => loading ? undefined : guard(() => void refresh(catalog?.systemId, current ? key(current) : undefined))}>刷新</button></div>}
   {loading && !catalog ? <div className="ce-empty">正在读取用例…</div> : !catalog?.cases.length ? <div className="ce-empty">该项目暂无用例。</div> : <>
-  <CaseEditorColumns review={diffOpen && current && form && baseline ? <CaseEditorDiff before={baseline} after={form} current={current} cases={catalog.cases} tab={diffTab} onTab={setDiffTab} origin={changeOrigin}/> : undefined}>
+  <CaseEditorColumns review={diffOpen && current && form && baseline ? <CaseEditorDiff before={externalBefore ?? baseline} after={form} current={current} cases={catalog.cases} tab={diffTab} onTab={setDiffTab} origin={changeOrigin}/> : undefined}>
    <aside className="case-directory" aria-label="用例目录"><div className="directory-tools"><div className="scope-tabs" role="tablist" aria-label="用例范围">{['all', 'core'].map(s => <button type="button" role="tab" key={s} data-scope={s} aria-selected={scope === s} className={scope === s ? 'selected' : ''} onClick={() => { setScope(s); const u = new URL(location.href); u.searchParams.set('caseScope', s); window.history.replaceState(null, '', u); }}>{s === 'all' ? <>全部 <span>{catalog.cases.length}</span></> : '核心'}</button>)}</div><div className="directory-search"><svg className="ce-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input value={query} onChange={e => setQuery(e.target.value)} placeholder="编号 / 关键词" aria-label="搜索用例编号或内容"/></div><div className="directory-count"><span>{groups.length} {scope === 'all' ? '模块' : '链路'} · {visible} 条</span><button type="button" className="text-button" onClick={() => setCollapsed(!collapsed)}>{collapsed ? '展开' : '收起'}</button></div></div>
     <div className="case-tree" key={scope + String(collapsed)}>{!groups.length ? <p className="ce-empty">没有匹配的用例</p> : groups.map((g, index) => <details className="tree-group" key={g.id} open={!collapsed && (!!query || g.caseKeys.includes(current ? key(current) : ''))}><summary><Chevron /><span>{scope === 'core' ? index + 1 + '. ' : ''}{'name' in g ? g.name : g.title}</span><span className="n">{g.caseKeys.length}</span></summary>{g.caseKeys.map(k => { const c = byKey.get(k)!; return <button type="button" key={k} data-case={c.id} className={'tree-case' + (current && key(current) === k ? ' selected' : '')} aria-current={current && key(current) === k ? 'true' : undefined} title={c.id + ' · ' + c.title} disabled={busy || loading} onClick={() => guard(() => loadCase(c))}><span className="no">{c.id.replace(/^xmind-/, '').padStart(3, '0')}</span><span className="case-label">{c.title}</span>{dirty && current && key(current) === k && <span className="ce-tree-dirty" aria-label="未保存"/>}</button>; })}</details>)}</div>
    </aside>
@@ -250,8 +275,9 @@ export default function CaseScriptEditor() {
                     }
                 }}/></div></section></>}
   </CaseEditorColumns>{validation && <p className="ce-validation" role="alert">{validation}</p>}<footer className="editor-footer"><div className={'save-status' + (dirty ? ' ce-unsaved' : '')}><span /><strong>{busy ? '正在保存…' : dirty ? '未保存' : '已保存'}</strong></div><div className="footer-actions"><button type="button" disabled={!dirty || busy || loading} onClick={() => current && loadCase(current)}>放弃</button><button type="button" className="primary" title="保存为新版本，不执行测试" disabled={!dirty || busy || loading || !!validation} onClick={() => void save()}>保存</button></div></footer></>}
-  {historyOpen && <section className="history-panel" aria-label="历史版本"><header><h2>历史版本</h2><button type="button" onClick={() => setHistoryOpen(false)}>关闭</button></header>{historyError ? <div className="ce-history-error"><p role="alert">{historyError}</p><button type="button" onClick={() => void showHistory()}>重试</button></div> : !history ? <p>正在读取…</p> : !history.length ? <p>暂无版本</p> : history.map(v => <div className="history-record" key={v.data.versionId}><strong>v{v.version}</strong>{v.data.versionId === current?.versionId ? <span>当前</span> : <button type="button" disabled={busy || loading} onClick={() => guard(() => { setForm(fields(v.data)); setChangeOrigin('版本恢复'); setDiffOpen(true); setHistoryOpen(false); setNotice('已载入，保存后生效'); })}>恢复</button>}<span>{new Date(v.createdAt).toLocaleString('zh-CN', { hour12: false })}</span></div>)}</section>}
-  <CaseEditorAiGuide open={aiOpen} onClose={() => setAiOpen(false)} onCopy={value => void copy(value)}/>
+  {historyOpen && <section className="history-panel" aria-label="历史版本"><header><h2>历史版本</h2><button type="button" onClick={() => setHistoryOpen(false)}>关闭</button></header>{historyError ? <div className="ce-history-error"><p role="alert">{historyError}</p><button type="button" onClick={() => void showHistory()}>重试</button></div> : !history ? <p>正在读取…</p> : !history.length ? <p>暂无版本</p> : history.map(v => <div className="history-record" key={v.data.versionId}><strong>v{v.version}</strong><span>{v.data.changeSource === 'mcp' ? 'MCP' : v.data.changeSource === 'resources' ? '资源导入' : v.data.changeSource === 'manual' ? '手动' : '历史版本'}</span>{v.data.versionId === current?.versionId ? <span>当前</span> : <button type="button" disabled={busy || loading} onClick={() => guard(() => { setForm(fields(v.data)); setChangeOrigin('版本恢复'); setDiffOpen(true); setHistoryOpen(false); setNotice('已载入，保存后生效'); })}>恢复</button>}<span>{new Date(v.createdAt).toLocaleString('zh-CN', { hour12: false })}</span></div>)}</section>}
+  <CaseEditorAiGuide systemId={catalog?.systemId ?? ''} open={aiOpen} onClose={() => setAiOpen(false)} onCopy={value => void copy(value)}/>
+  {externalPending && <div role="status" className="ce-validation">外部已有新版本，当前编辑已保留。<button type="button" onClick={() => guard(() => void refresh(catalog?.systemId, current ? key(current) : undefined))}>查看更新</button></div>}
   {notice && <div className="ce-toast" role="status">{notice}</div>}
   <dialog ref={dialog} className="ce-switch-dialog"><h2>修改尚未保存</h2><p>切换会丢弃当前修改。</p><div><button type="button" onClick={() => dialog.current?.close()}>继续编辑</button><button type="button" onClick={() => { dialog.current?.close(); dirtyRef.current = false; pending.current(); }}>放弃并切换</button></div></dialog>
  </section>;

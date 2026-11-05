@@ -14,6 +14,7 @@ import { getDocumentProject, getDocumentRunProgress } from '../../../adapters/do
 import { json, fail, bodyJson, documentBody } from '../shared/http-utils.js';
 import { createRunReportRoutes } from '../reports/run-report-routes.js';
 import { initializeBundledResources } from '../../../bootstrap/resource-initialization.js';
+import { caseMaintenancePackage } from '../../mcp/connection-package.js';
 /** Owns the Dify endpoints; the shared server only mounts this handler. */
 export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceDirectory }: {
     artifactsDir: string;
@@ -49,6 +50,35 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceD
                 try {
                     const root = '/api/system-module-regression';
                     const route = url.pathname.slice(root.length);
+                    if (route === '/maintenance/package' && req.method === 'GET') {
+                        const id = url.searchParams.get('systemId') || '';
+                        systemModules.getSystem(id);
+                        const entryPort = process.env.TESTPILOT_ENTRY_PORT || '4325';
+                        const localPort = Number(entryPort);
+                        if (!Number.isInteger(localPort) || localPort < 1024 || localPort > 65535) throw Error('本机入口端口无效。');
+                        let base = `http://127.0.0.1:${localPort}/dify/`;
+                        if (req.headers.referer) {
+                            const from = new URL(req.headers.referer);
+                            if (from.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(from.hostname) && [String(port), String(localPort)].includes(from.port)) base = from.origin + (from.pathname.startsWith('/dify/') ? '/dify/' : '/');
+                        }
+                        const bytes = caseMaintenancePackage(id, base);
+                        res.writeHead(200, { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="TestPilot-MCP.zip"', 'content-length': bytes.length, 'cache-control': 'no-store' }); res.end(bytes); return;
+                    }
+                    if (route === '/maintenance/revision' && req.method === 'GET') {
+                        const id = url.searchParams.get('systemId') || ''; systemModules.getSystem(id);
+                        json(res, 200, { revision: systemModules.editorRevision(id) }); return;
+                    }
+                    if (route === '/maintenance/save' && req.method === 'POST') {
+                        const data = await documentBody(req);
+                        if (systemModules.getModule(data.moduleId).systemId !== data.systemId) throw Error('模块不属于当前项目。');
+                        if (coreChains.activeForSystem(data.systemId)) throw Error('核心链路正在运行。');
+                        json(res, 200, await systemModules.saveEditorCase(data.moduleId, data.change, 'mcp')); return;
+                    }
+                    if (route === '/maintenance/resources' && req.method === 'POST') {
+                        const data = await documentBody(req);
+                        if (coreChains.activeForSystem(data.resources?.project?.id)) throw Error('核心链路正在运行。');
+                        json(res, 200, await systemModules.applyResources(data, 'mcp')); return;
+                    }
                     if (route === '/resources/initialization' && req.method === 'GET') {
                         json(res, 200, initialization);
                         return;

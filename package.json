@@ -22,6 +22,7 @@
     "demo:start": "node dist/demo/server.js",
     "mcp": "node --import tsx src/mcp/server.ts",
     "mcp:start": "node dist/mcp/server.js",
+    "mcp:cases": "node dist/mcp/maintenance-server.js",
     "dev:web": "vite web --host 127.0.0.1",
     "sample:regression": "node examples/web-regression-sample/server.mjs",
     "sample:regression:seed": "node --import tsx examples/web-regression-sample/seed-project.mjs",
