@@ -270,6 +270,31 @@ export class SystemModuleRegression {
         });
     }
     editorHistory(moduleId: string, caseId: string) { const m = this.getModule(moduleId); return m.versions.map(v => ({ version: v.version, createdAt: v.createdAt, data: this.editorCases(m, v.id).find(c => c.id === caseId) })).filter(v => v.data).reverse(); }
+    /** New-machine initialization imports definitions only, never another user's data. */
+    async initializeResources(input: unknown, configuration: { targetUrl: string; environment: string }) {
+        const resources = validateProjectResources(input);
+        const existing = this.list<TestedSystem>('system').find(s => s.id === resources.project.id);
+        if (existing) return { initialized: false, systemId: existing.id, reason: 'existing' as const };
+        const targetUrl = moduleTarget(configuration.targetUrl), environment = z.string().trim().min(1).max(80).parse(configuration.environment);
+        for (const m of resources.modules) if (this.db.prepare('SELECT id FROM records WHERE id=?').get(m.id)) throw Error('初始化模块编号与本机已有记录冲突。');
+        const supportedChains = departmentCoreChains.filter(c => c.steps.every(s => s.caseIds.every(id => resources.cases.some(c => c.id === id)))).map(c => ({ id: c.id, title: c.title, description: c.description, steps: c.steps.map(s => ({ id: s.id, title: s.title, expected: s.expected, caseIds: s.caseIds })) }));
+        if (resourceDigest(resources.chains) !== resourceDigest(supportedChains)) throw Error('资源的核心链路模板与当前工具版本不兼容。');
+        const packs = resources.modules.map(m => ({ module: m, pack: this.store.prepareResourceModule(undefined, m.name, targetUrl, resources.cases.filter(c => c.moduleId === m.id)) }));
+        for (const p of packs) await this.store.commitResourceModule(p.pack);
+        if (this.list<TestedSystem>('system').some(s => s.id === resources.project.id)) return { initialized: false, systemId: resources.project.id, reason: 'existing' as const };
+        const system: TestedSystem = { id: resources.project.id, name: resources.project.name, environment, targetUrl, profileId: randomUUID(), selectedModuleIds: resources.modules.map(m => m.id), createdAt: now(), updatedAt: now(), notifyFailures: false, notifyScreenshots: false };
+        if (supportsDepartmentDatabase(targetUrl)) system.databaseBinding = 'department-supply-readonly';
+        this.db.exec('BEGIN IMMEDIATE');
+        try {
+            this.save('system', system);
+            for (const { module: m, pack } of packs) {
+                const value: FixedModule = { id: m.id, systemId: system.id, name: m.name, archived: false, versions: [{ id: pack.id, version: 1, digest: pack.digest, caseCount: pack.project.cases.length, createdAt: now(), added: pack.project.cases.length, removed: 0, changed: 0 }], createdAt: now(), updatedAt: now(), ...(m.coreCaseIds ? { coreCaseIds: m.coreCaseIds, coreVersionId: pack.id } : {}), ...(m.starterCaseIds ? { starterCaseIds: m.starterCaseIds, starterVersionId: pack.id } : {}) };
+                this.save('module', value);
+            }
+            this.db.exec('COMMIT');
+        } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+        return { initialized: true, systemId: system.id, modules: packs.length, cases: resources.cases.length, chains: resources.chains.length, resourceRevision: resourceDigest(resources) };
+    }
     exportResources(systemId: string) {
         const catalog = this.editorCatalog(systemId);
         const resources: ProjectResources = {

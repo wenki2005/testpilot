@@ -114,7 +114,7 @@ const handleDifyRegressionRoutes = workspaces?.current === 'web-regression'
         fail(res, 409, '此入口属于 Dify 数据区，请从侧栏进入 Dify 回归工作台。');
         return true;
     }
-    : createDifyRegressionRoutes({ artifactsDir, host, port });
+    : createDifyRegressionRoutes({ artifactsDir, host, port, resourceDirectory: process.env.TESTPILOT_RESOURCE_DIR ?? path.join(projectRoot, 'project-resources', 'department-sample') });
 const authorizedBrowserWrites = createAuthorizedBrowserWrite(path.join(artifactsDir, 'authorized-browser-writes'));
 const regressionsFile = path.join(artifactsDir, "regressions.json");
 const distDir = path.join(projectRoot, "web", "dist");

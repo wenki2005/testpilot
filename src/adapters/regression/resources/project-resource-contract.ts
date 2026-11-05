@@ -36,6 +36,7 @@ export function validateProjectResources(input: unknown): ProjectResources {
     const modules = new Map(bundle.modules.map(m => [m.id, m]));
     if (modules.size !== bundle.modules.length || new Set(bundle.modules.map(m => m.name)).size !== bundle.modules.length)
         throw Error('资源包含重复模块编号或名称。');
+    if (modules.has(bundle.project.id)) throw Error('项目与模块不能使用相同编号。');
     const cases = new Map(bundle.cases.map(c => [resourceKey(c), c]));
     if (cases.size !== bundle.cases.length) throw Error('资源包含重复用例编号。');
     for (const c of bundle.cases) {

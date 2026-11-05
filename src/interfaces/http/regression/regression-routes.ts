@@ -13,11 +13,13 @@ import { webModuleDependencies } from "../../../adapters/regression/browser/modu
 import { getDocumentProject, getDocumentRunProgress } from '../../../adapters/documents/execution/run-executor.js';
 import { json, fail, bodyJson, documentBody } from '../shared/http-utils.js';
 import { createRunReportRoutes } from '../reports/run-report-routes.js';
+import { initializeBundledResources } from '../../../bootstrap/resource-initialization.js';
 /** Owns the Dify endpoints; the shared server only mounts this handler. */
-export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
+export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceDirectory }: {
     artifactsDir: string;
     host: string;
     port: number;
+    resourceDirectory?: string;
 }) {
     const difyRegression = new DifyRegressionStore(path.join(artifactsDir, "dify-regression"));
     const moduleRegression = new ModuleRegressionStore(artifactsDir);
@@ -25,6 +27,7 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
     const systemModules = new SystemModuleRegression(artifactsDir, difyWebModules, webModuleDependencies(artifactsDir));
     const coreChains = new DepartmentCoreChainStore(artifactsDir, systemModules, webModuleDependencies(artifactsDir));
     const reportRoutes = createRunReportRoutes(artifactsDir, systemModules, coreChains);
+    const resourcesReady = initializeBundledResources(systemModules, resourceDirectory);
     // Many open workbench tabs poll the same multi-megabyte history. Serialize it
     // once per second so status polling does not starve browser protocol messages.
     let systemModuleStateCache: {
@@ -34,6 +37,7 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
     return async function handleDifyRegressionRoutes(req: IncomingMessage, res: ServerResponse, url: URL): Promise<boolean> {
         if (!['/api/system-module-regression', '/api/dify-web-modules', '/api/module-regression', '/api/dify-regression'].some(prefix => url.pathname === prefix || url.pathname.startsWith(prefix + '/')))
             return false;
+        const initialization = await resourcesReady;
         await (async () => {
             if (await reportRoutes(req, res, url))
                 return;
@@ -45,6 +49,10 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
                 try {
                     const root = '/api/system-module-regression';
                     const route = url.pathname.slice(root.length);
+                    if (route === '/resources/initialization' && req.method === 'GET') {
+                        json(res, 200, initialization);
+                        return;
+                    }
                     if (route === '/resources' && req.method === 'GET') {
                         json(res, 200, systemModules.exportResources(url.searchParams.get('systemId') || ''));
                         return;
@@ -62,6 +70,10 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
                         return;
                     }
                     if (route === '/case-editor' && req.method === 'GET') {
+                        if (['error', 'missing'].includes(initialization.status) && !systemModules.state().systems.length) {
+                            fail(res, 503, initialization.message);
+                            return;
+                        }
                         json(res, 200, systemModules.editorCatalog(url.searchParams.get('systemId') || undefined));
                         return;
                     }

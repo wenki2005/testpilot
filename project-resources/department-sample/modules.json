@@ -17,6 +17,14 @@
       "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-129",
       "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-130",
       "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-131"
+    ],
+    "coreCaseIds": [
+      "xmind-1",
+      "xmind-92",
+      "xmind-93"
+    ],
+    "starterCaseIds": [
+      "xmind-92"
     ]
   },
   {
@@ -100,6 +108,52 @@
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-125",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-126",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-127"
+    ],
+    "coreCaseIds": [
+      "xmind-4",
+      "xmind-10",
+      "xmind-17",
+      "xmind-18",
+      "xmind-21",
+      "xmind-25",
+      "xmind-29",
+      "xmind-33",
+      "xmind-37",
+      "xmind-39",
+      "xmind-46",
+      "xmind-50"
+    ],
+    "starterCaseIds": [
+      "xmind-17",
+      "xmind-18",
+      "xmind-21",
+      "xmind-22",
+      "xmind-25",
+      "xmind-29",
+      "xmind-33",
+      "xmind-37",
+      "xmind-40",
+      "xmind-43",
+      "xmind-46",
+      "xmind-52",
+      "xmind-30",
+      "xmind-41",
+      "xmind-44",
+      "xmind-48",
+      "xmind-42",
+      "xmind-45",
+      "xmind-47",
+      "xmind-49",
+      "xmind-35",
+      "xmind-26",
+      "xmind-34",
+      "xmind-19",
+      "xmind-32",
+      "xmind-51",
+      "xmind-4",
+      "xmind-10",
+      "xmind-27",
+      "xmind-31"
     ]
   },
   {
@@ -139,6 +193,27 @@
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-89",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-90",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-91"
+    ],
+    "coreCaseIds": [
+      "xmind-53",
+      "xmind-54",
+      "xmind-55",
+      "xmind-56",
+      "xmind-57",
+      "xmind-61",
+      "xmind-73",
+      "xmind-74",
+      "xmind-75",
+      "xmind-78",
+      "xmind-79",
+      "xmind-87"
+    ],
+    "starterCaseIds": [
+      "xmind-91",
+      "xmind-79",
+      "xmind-87",
+      "xmind-61",
+      "xmind-53"
     ]
   },
   {
@@ -153,6 +228,18 @@
       "b7de8f06-4e4d-4a62-a48d-881566a6f933:xmind-84",
       "b7de8f06-4e4d-4a62-a48d-881566a6f933:xmind-85",
       "b7de8f06-4e4d-4a62-a48d-881566a6f933:xmind-86"
+    ],
+    "coreCaseIds": [
+      "xmind-80",
+      "xmind-81",
+      "xmind-82",
+      "xmind-83",
+      "xmind-84",
+      "xmind-85"
+    ],
+    "starterCaseIds": [
+      "xmind-81",
+      "xmind-83"
     ]
   },
   {
@@ -163,6 +250,12 @@
       "a1288838-bcb7-43a2-b79c-179e54132ebb:xmind-94",
       "a1288838-bcb7-43a2-b79c-179e54132ebb:xmind-95",
       "a1288838-bcb7-43a2-b79c-179e54132ebb:xmind-96"
+    ],
+    "coreCaseIds": [
+      "xmind-94"
+    ],
+    "starterCaseIds": [
+      "xmind-94"
     ]
   }
 ]

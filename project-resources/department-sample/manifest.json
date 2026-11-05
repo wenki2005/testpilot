@@ -1,9 +1,9 @@
 {
   "schema": 1,
-  "kind": "testpilot-case-editor-snapshot",
+  "kind": "testpilot-project-resources",
   "projectId": "436847ad-f144-425f-b303-1ca9b22e0b52",
-  "exportedAt": "2026-11-05T08:47:28.869Z",
-  "installableSeed": false,
+  "exportedAt": "2026-11-05T15:08:58.127Z",
+  "installableSeed": true,
   "historyIncluded": false,
   "credentialsIncluded": false,
   "counts": {
@@ -15,11 +15,11 @@
   "files": [
     {
       "file": "project.json",
-      "sha256": "07755cf953700299186b94917917a65b43c07b879e61ce5b01f69fa472ed86fc"
+      "sha256": "512f78eb8f6f5996996b68a1c0d73161d0360dd975da962199f8c4af0f94a5fb"
     },
     {
       "file": "modules.json",
-      "sha256": "876f40e09370578ecb17e040ab13214c4c747b648763fbab986304545ee35389"
+      "sha256": "54c61c0b1acdd2b5c148dd8b8d52b8519cadb8f6ba23b468a9d96eb90ae48395"
     },
     {
       "file": "cases/01-login/xmind-1.json",
@@ -1095,7 +1095,7 @@
     },
     {
       "file": "README.md",
-      "sha256": "1f57abc89bd7a28ecaa35e49a2d6446228d8e9965a4ba7e4fba9a53d9a55491b"
+      "sha256": "03bc707efa1aa8a37bbfc2904a5dc35387b53c000686282097bd87a38fe082d9"
     }
   ]
 }
