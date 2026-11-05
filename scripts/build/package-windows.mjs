@@ -18,11 +18,13 @@ const stage=path.join(path.dirname(dir),'.package-'+path.basename(dir)+'-'+Date.
 fs.mkdirSync(stage,{recursive:true});
 const excluded=new Set(['.git','node_modules','.local','.cache']);
 function copyTree(source,destination,isDependencies=false){
+ const sourceRelative=path.relative(repo,source).replaceAll('\\','/');
+ if(!isDependencies&&/^tests\/(?:.*\/)?(?:artifacts|test-artifacts|runtime-data|dist|node_modules)(?:\/|$)/.test(sourceRelative))return;
  const entry=fs.lstatSync(source);if(entry.isSymbolicLink())throw Error('Linked package input is not supported: '+source);
  if(entry.isDirectory()){fs.mkdirSync(destination,{recursive:true});for(const name of fs.readdirSync(source)){if(name==='.cache'||name==='.git'||isDependencies&&['.modules.yaml','.pnpm-workspace-state-v1.json'].includes(name)||(!isDependencies&&excluded.has(name))||/^\.env(?:\.|$)/.test(name)&&!['.env.example','.env.regression.example'].includes(name))continue;copyTree(path.join(source,name),path.join(destination,name),isDependencies);}return;}
  fs.mkdirSync(path.dirname(destination),{recursive:true});fs.copyFileSync(source,destination);
 }
-const sourceDirs=['src','web/src','project-resources','regression','scripts','packaging','examples','tests','docs','.agents','.github'];
+const sourceDirs=['src','web/src','project-resources','regression','integrations','scripts','packaging','examples','tests','docs','.agents','.github'];
 for(const relative of sourceDirs)copyTree(path.join(repo,relative),path.join(stage,relative));
 for(const relative of ['package.json','package-lock.json','tsconfig.json','playwright.config.ts','web/index.html','web/tsconfig.json','web/vite.config.ts','.env.example','.env.regression.example','.gitignore','.gitattributes','AGENTS.md','代码导航.md','启动测试工作台.cmd','停止测试工作台.cmd'])copyTree(path.join(repo,relative),path.join(stage,relative));
 if(values['--dependencies'])copyTree(path.resolve(values['--dependencies']),path.join(stage,'node_modules'),true);

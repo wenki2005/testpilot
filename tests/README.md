@@ -7,7 +7,6 @@
 
 - [ai](ai/)
 - [api](api/)
-- [artifacts](artifacts/)
 - [browser](browser/)
 - [case-generation](case-generation/)
 - [database](database/)
