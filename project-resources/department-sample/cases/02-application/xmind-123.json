@@ -1,0 +1,26 @@
+{
+  "id": "xmind-123",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "开单返回错误信息：前端toast展示错误原因",
+  "expected": "开单返回错误信息：前端toast展示错误原因",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-119"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "审批通过后，在开单接口位置触发明确错误，核对H5错误原因；与65同类观测，不互相设为前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "数据接口层",
+    "易诚通接口",
+    "图书信息/客户字段查询 + 其他出库单创建"
+  ],
+  "sourceExpected": "开单返回错误信息：前端toast展示错误原因"
+}

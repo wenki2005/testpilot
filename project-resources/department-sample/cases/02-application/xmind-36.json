@@ -1,0 +1,27 @@
+{
+  "id": "xmind-36",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "待澄清 样书明细可添加的最大行数限制",
+  "expected": "[需澄清] 待澄清 样书明细可添加的最大行数限制",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-33"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "pending",
+    "note": "最大行数上限原文待澄清；先能添加行，再按已确认上限补边界值。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "样书明细区",
+    "点击「继续添加样书」按钮",
+    "向下复制空白图书明细行"
+  ],
+  "sourceExpected": "[需澄清] 待澄清 样书明细可添加的最大行数限制"
+}

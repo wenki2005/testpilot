@@ -1,0 +1,55 @@
+{
+  "id": "xmind-50",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录",
+  "expected": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-4"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-25"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-29"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-41"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-44"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-46"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-48"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "有效客户已选，必填收件字段及图书金额重量均准备正确；正常提交产生带唯一标记的新待审申请，不与39重复重放同一请求。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "提交申请",
+    "点击「提交申请」按钮",
+    "校验全部必填项与格式"
+  ],
+  "sourceExpected": "全部必填完成且格式正确：提交按钮可点击，跳转至用书审批详情页并创建待审核记录"
+}

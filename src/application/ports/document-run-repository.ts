@@ -1,4 +1,4 @@
-import type { ExecutionJournal } from "../../domain/document-test-model.js";
+import type { ExecutionJournal } from "../../domain/documents/shared/test-model.js";
 
 /** Durable execution journal storage. Workflow policy remains in application services. */
 export interface DocumentRunRepository {

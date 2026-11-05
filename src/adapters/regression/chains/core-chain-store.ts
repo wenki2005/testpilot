@@ -1,0 +1,174 @@
+import { mkdirSync } from 'node:fs';
+import { writeFile, readFile } from 'node:fs/promises';
+import path from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+import { createHash, randomUUID } from 'node:crypto';
+import { z } from 'zod';
+import { departmentCoreChains, type CoreRun, type CoreState, type CoreChainResult } from '../../../domain/regression/core-chain-definitions.js';
+import type { SystemModuleRegression } from '../catalog/module-regression-service.js';
+import type { WebModuleDependencies } from '../execution/module-execution-service.js';
+import { departmentCoreChainBrowser, type CoreChainExecutor } from './core-chain-browser.js';
+import { checkDispatch, resultCounts, type ExecutionManifest } from '../execution/execution-manifest-store.js';
+const hash = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex'), now = () => new Date().toISOString();
+/** Separate result store: core journeys do not add/rename original modules or
+ * overwrite the original 131 case verdicts. Restart never replays a journey. */
+export class DepartmentCoreChainStore {
+    private db: DatabaseSync;
+    private active = new Map<string, AbortController>();
+    private executor: CoreChainExecutor;
+    constructor(private root: string, private catalog: SystemModuleRegression, private deps: WebModuleDependencies, executor?: CoreChainExecutor) {
+        mkdirSync(path.join(root, 'department-core-chains'), { recursive: true });
+        this.db = new DatabaseSync(path.join(root, 'department-core-chains', 'records.sqlite'));
+        this.db.exec('PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS runs(id TEXT PRIMARY KEY,payload TEXT NOT NULL);CREATE TABLE IF NOT EXISTS requests(id TEXT PRIMARY KEY,digest TEXT NOT NULL,run_id TEXT NOT NULL)');
+        for (const r of this.list())
+            if (['queued', 'running', 'awaiting-login'].includes(r.phase)) {
+                r.phase = 'interrupted';
+                r.message = '服务重启，已有步骤结果已保存；不会自动重放。';
+                this.save(r);
+            }
+        this.executor = executor ?? departmentCoreChainBrowser(root, deps, async (id, bytes) => { const name = createHash('sha256').update(bytes).digest('hex') + '.png', dir = path.join(root, 'department-core-chains', 'evidence', id); mkdirSync(dir, { recursive: true }); await writeFile(path.join(dir, name), bytes); return name; });
+    }
+    private list(): CoreRun[] { return this.db.prepare('SELECT payload FROM runs ORDER BY rowid DESC').all().map(r => JSON.parse(String(r.payload))); }
+    private save(run: CoreRun) { run.updatedAt = now(); this.db.prepare('INSERT INTO runs VALUES(?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload').run(run.id, JSON.stringify(run)); }
+    get(id: string) {
+        z.string().uuid().parse(id);
+        const row = this.db.prepare('SELECT payload FROM runs WHERE id=?').get(id);
+        if (!row)
+            throw Error('核心链路批次不存在。');
+        return JSON.parse(String(row.payload)) as CoreRun;
+    }
+    activeForSystem(id: string) { return [...this.active.keys()].some(k => this.get(k).systemId === id); }
+    state(systemId: string): CoreState { const s = this.catalog.getSystem(systemId), supported = s.targetUrl === 'https://cdn.yibentushu.com/test-sample-apply/index.html#/home' && s.databaseBinding === 'department-supply-readonly'; return { definitions: structuredClone(departmentCoreChains), runs: this.list().filter(r => r.systemId === systemId && r.profileId === (s.activeAccountId ?? s.profileId) && r.targetUrl === s.targetUrl && r.environment === s.environment), supported }; }
+    historyForSystem(systemId: string): CoreRun[] { this.catalog.getSystem(systemId); return this.list().filter(r => r.systemId === systemId); }
+    start(input: unknown) {
+        const data = z.object({ systemId: z.string().uuid(), requestId: z.string().uuid(), chainIds: z.array(z.enum(['submit-order', 'reject-reapply', 'stock-retry', 'order-logistics'])).min(1).max(4), stockApplicationNos: z.array(z.string().regex(/^\d{12}$/)).min(1).max(6).optional() }).parse(input), digest = hash(data), old = this.db.prepare('SELECT digest,run_id FROM requests WHERE id=?').get(data.requestId);
+        if (old) {
+            if (old.digest !== digest)
+                throw Error('同一请求不能对应不同链路。');
+            return this.get(String(old.run_id));
+        }
+        if (data.stockApplicationNos && (!data.chainIds.includes('stock-retry') || new Set(data.stockApplicationNos).size !== data.stockApplicationNos.length))
+            throw Error('库存申请绑定需要库存链路且编号不能重复。');
+        if (new Set(data.chainIds).size !== data.chainIds.length)
+            throw Error('链路不能重复选择。');
+        const s = this.catalog.getSystem(data.systemId), state = this.catalog.state();
+        if (!this.state(s.id).supported)
+            throw Error('核心链路需要部门申样测试环境与数据库绑定。');
+        if (this.activeForSystem(s.id) || state.batches.some(b => b.systemId === s.id && ['queued', 'running'].includes(b.phase)) || ['connecting', 'awaiting-login'].includes(state.accounts[s.id]?.state ?? ''))
+            throw Error('该系统正在运行或连接账号，请先结束已有任务。');
+        const modules = state.modules.filter(m => m.systemId === s.id && !m.archived), sources = modules.flatMap(m => { const p = this.catalog.cases(m.id); return p.cases.map(c => ({ caseId: c.id, moduleId: m.id, versionId: p.version.id, title: c.title, expected: c.expected, source: c.source })); });
+        const chains: CoreChainResult[] = departmentCoreChains.filter(c => data.chainIds.includes(c.id as typeof data.chainIds[number])).map(c => ({ ...structuredClone(c), references: [], steps: c.steps.map(step => {
+                const refs = step.caseIds.map(id => {
+                    const match = sources.filter(c => c.caseId === id);
+                    if (match.length !== 1)
+                        throw Error('核心步骤未唯一关联原用例：' + id);
+                    return match[0]!;
+                });
+                return { ...structuredClone(step), sources: refs, status: 'not_executed', detail: '尚未执行。' };
+            }) }));
+        const run: CoreRun = { id: randomUUID(), requestId: data.requestId, systemId: s.id, systemName: s.name, profileId: s.activeAccountId ?? s.profileId, targetUrl: s.targetUrl, environment: s.environment, definitionDigest: hash({ chains, ...(data.stockApplicationNos ? { stockApplicationNos: data.stockApplicationNos } : {}) }), ...(data.stockApplicationNos ? { stockApplicationNos: data.stockApplicationNos } : {}), createdAt: now(), updatedAt: now(), phase: 'queued', message: '已保存链路顺序，等待执行。', chains, difyRuns: [] };
+        this.db.exec('BEGIN IMMEDIATE');
+        try {
+            this.save(run);
+            this.db.prepare('INSERT INTO requests VALUES(?,?,?)').run(data.requestId, digest, run.id);
+            this.db.exec('COMMIT');
+        }
+        catch (e) {
+            this.db.exec('ROLLBACK');
+            throw e;
+        }
+        const controller = new AbortController();
+        this.active.set(run.id, controller);
+        void this.execute(run, controller.signal).finally(() => this.active.delete(run.id));
+        return this.get(run.id);
+    }
+    private async execute(run: CoreRun, signal: AbortSignal) {
+        try {
+            run.phase = 'running';
+            this.save(run);
+            for (const chain of run.chains) {
+                signal.throwIfAborted();
+                run.message = '正在执行：' + chain.title;
+                this.save(run);
+                const moduleId = randomUUID(), manifest: ExecutionManifest = { schema: 1, run_id: run.id, module_id: moduleId, plan_digest: run.definitionDigest, suite_digest: hash({ id: chain.id, steps: chain.steps.map(s => ({ id: s.id, expected: s.expected, sources: s.sources })) }), case_ids: chain.steps.map(s => s.id) };
+                try {
+                    const r = await this.deps.cloud('execution', { execution_json: JSON.stringify({ ...manifest, phase: 'dispatch' }) }, 'core-' + run.id, signal);
+                    checkDispatch(r.output, manifest);
+                    run.difyRuns.push({ chainId: chain.id, phase: 'dispatch', id: r.workflowRunId, status: 'succeeded' });
+                    this.save(run);
+                    await this.executor(run, chain, (id, patch) => {
+                        const row = chain.steps.find(s => s.id === id);
+                        if (!row)
+                            throw Error('链路返回未知步骤。');
+                        Object.assign(row, patch);
+                        this.save(run);
+                    }, signal, waiting => { run.phase = waiting ? 'awaiting-login' : 'running'; run.message = waiting ? '请在测试窗口登录后继续。' : '正在执行：' + chain.title; this.save(run); });
+                }
+                catch (e) {
+                    if (signal.aborted)
+                        throw e;
+                    for (const row of chain.steps)
+                        if (row.status === 'not_executed') {
+                            row.status = 'blocked';
+                            row.detail = '该链路未完成：' + (e instanceof Error ? e.message : '当前证据不可用');
+                            row.finishedAt = now();
+                        }
+                    if (!run.difyRuns.some(r => r.chainId === chain.id && r.phase === 'dispatch'))
+                        run.difyRuns.push({ chainId: chain.id, phase: 'dispatch', id: '', status: 'failed' });
+                    this.save(run);
+                }
+                if (run.difyRuns.some(r => r.chainId === chain.id && r.phase === 'dispatch' && r.status === 'succeeded'))
+                    try {
+                        const results = chain.steps.map(s => ({ case_id: s.id, status: s.status })), r = await this.deps.cloud('execution', { execution_json: JSON.stringify({ ...manifest, phase: 'report', results }) }, 'core-' + run.id, signal), output = r.output as any;
+                        for (const k of ['schema', 'run_id', 'module_id', 'plan_digest', 'suite_digest', 'case_ids'] as const)
+                            if (JSON.stringify(output?.[k]) !== JSON.stringify(manifest[k]))
+                                throw Error('Dify汇总清单不一致');
+                        const counts = resultCounts(results);
+                        if (output.phase !== 'report' || output.results !== undefined && JSON.stringify(output.results) !== JSON.stringify(results) || Object.entries(counts).some(([k, v]) => output.counts?.[k] !== v))
+                            throw Error('Dify汇总不能改变真实步骤结果');
+                        run.difyRuns.push({ chainId: chain.id, phase: 'report', id: r.workflowRunId, status: 'succeeded' });
+                    }
+                    catch {
+                        if (signal.aborted)
+                            signal.throwIfAborted();
+                        run.difyRuns.push({ chainId: chain.id, phase: 'report', id: '', status: 'failed' });
+                    }
+                this.save(run);
+            }
+            run.phase = 'completed';
+            run.message = '本轮核心链路核验结束；历史提交凭证与本轮读回分别标注，阻塞不算通过。';
+            this.save(run);
+        }
+        catch (e) {
+            run.phase = signal.aborted ? 'cancelled' : 'interrupted';
+            run.message = signal.aborted ? '已停止，已完成步骤保留，后续未执行。' : e instanceof Error ? e.message : '本轮未完成。';
+            this.save(run);
+        }
+    }
+    async cancel(id: string) {
+        const run = this.get(id), controller = this.active.get(id);
+        if (!controller)
+            throw Error('该链路批次已结束。');
+        controller.abort();
+        await this.deps.cancel(run.profileId);
+        return this.get(id);
+    }
+    async continue(id: string) {
+        const run = this.get(id);
+        if (run.phase !== 'awaiting-login')
+            throw Error('当前没有等待登录。');
+        await this.deps.continueLogin(run.profileId);
+        return this.get(id);
+    }
+    async evidence(id: string, name: string) {
+        const r = this.get(id);
+        if (!/^[a-f0-9]{64}\.png$/.test(name) || !r.chains.some(c => c.steps.some(s => s.evidence === name)))
+            throw Error('没有该步骤证据。');
+        return readFile(path.join(this.root, 'department-core-chains', 'evidence', id, name));
+    }
+    close() {
+        for (const c of this.active.values())
+            c.abort();
+        this.db.close();
+    }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "xmind-94",
+  "moduleId": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+  "versionId": "e99540bb-31c0-41c6-b205-0092b640fdcc",
+  "version": 2,
+  "title": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+  "expected": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "准备员工登录、已有申请和订单，在PC/H5检查申请页、记录页、订单物流页的对应布局。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "PC端适配",
+    "页面适配",
+    "样书申请页/历史记录页/订单物流页"
+  ],
+  "sourceExpected": "PC与H5共用代码，通过响应式布局区分展示（识别PC/移动端切换布局），内容与交互与移动端一致"
+}

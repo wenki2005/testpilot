@@ -1,5 +1,5 @@
 import { option } from "./arguments.js";
-import { runPlaywrightTest } from "../../adapters/playwright-test-adapter.js";
+import { runPlaywrightTest } from "../../adapters/browser/playwright-test-adapter.js";
 
 export async function runPlaywrightCommand(args: string[], outputRoot: string): Promise<void> {
   const projectRoot = option(args, "--project-root");

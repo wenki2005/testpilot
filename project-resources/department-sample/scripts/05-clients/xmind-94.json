@@ -1,0 +1,42 @@
+{
+  "caseId": "xmind-94",
+  "moduleId": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+  "versionId": "e99540bb-31c0-41c6-b205-0092b640fdcc",
+  "version": 2,
+  "dependsOn": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1",
+      "requiredStatus": "passed"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50",
+      "requiredStatus": "passed"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100",
+      "requiredStatus": "passed"
+    }
+  ],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "setViewport",
+      "width": 1280,
+      "height": 800
+    },
+    {
+      "action": "assertNoHorizontalOverflow"
+    },
+    {
+      "action": "assertText",
+      "text": "费用划归客户"
+    },
+    {
+      "action": "assertText",
+      "text": "收件人"
+    }
+  ]
+}

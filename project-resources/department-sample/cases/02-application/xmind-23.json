@@ -1,0 +1,27 @@
+{
+  "id": "xmind-23",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "接口异常：🔄待澄清 客户接口失败时的前端降级提示",
+  "expected": "[需澄清] 接口异常：🔄待澄清 客户接口失败时的前端降级提示",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "pending",
+    "note": "只对客户查询接口触发异常；原用例未明确失败降级文案，需先确认预期。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "费用划归客户",
+    "输入关键词模糊搜索客户",
+    "在过滤后的客户范围内检索"
+  ],
+  "sourceExpected": "[需澄清] 接口异常：🔄待澄清 客户接口失败时的前端降级提示"
+}

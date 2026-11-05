@@ -1,0 +1,20 @@
+{
+  "caseId": "xmind-106",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "dependsOn": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100",
+      "requiredStatus": "passed"
+    },
+    {
+      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+      "caseId": "xmind-69",
+      "requiredStatus": "passed"
+    }
+  ],
+  "hasSteps": false,
+  "steps": []
+}

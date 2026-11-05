@@ -1,0 +1,20 @@
+{
+  "id": "xmind-96",
+  "moduleId": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+  "versionId": "e99540bb-31c0-41c6-b205-0092b640fdcc",
+  "version": 2,
+  "title": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+  "expected": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "管理端账号和菜单访问已准备，独立核对本期不提供统计看板，不要求先验证其他订单功能。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "PC端适配",
+    "申请数据看板页"
+  ],
+  "sourceExpected": "本期PC后台仅提供订单明细列表，不提供申请数据统计看板"
+}

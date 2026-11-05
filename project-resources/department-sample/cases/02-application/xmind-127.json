@@ -1,0 +1,26 @@
+{
+  "id": "xmind-127",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "无物流信息且超72小时：置订单异常/取消",
+  "expected": "无物流信息且超72小时：置订单异常/取消",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "准备超过72小时无物流信息的同一订单、时间基线和调度证据；与101、86是不同观测面，不互为前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "数据接口层",
+    "易查单物流接口",
+    "物流轨迹查询"
+  ],
+  "sourceExpected": "无物流信息且超72小时：置订单异常/取消"
+}

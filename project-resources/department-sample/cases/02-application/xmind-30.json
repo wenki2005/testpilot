@@ -1,0 +1,27 @@
+{
+  "id": "xmind-30",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮",
+  "expected": "数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-25"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "先取得有效图书及定价、重量；再分别测试合法数量、非法数量和超出9999，不串联互斥输入。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "样书明细区",
+    "输入图书数量",
+    "自动计算小计、总计与预估总重"
+  ],
+  "sourceExpected": "数量为空/0/负数/小数/字母：拦截，提交按钮不可点亮"
+}

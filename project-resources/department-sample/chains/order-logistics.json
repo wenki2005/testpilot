@@ -1,0 +1,50 @@
+{
+  "id": "order-logistics",
+  "title": "查找订单 → 订单详情 → 物流状态",
+  "description": "复用本人已存在订单，检查查询、逐行明细与后续物流。",
+  "steps": [
+    {
+      "id": "search",
+      "title": "查找本人订单",
+      "expected": "通过订单号关键词搜索，结果包含对应本人订单。",
+      "caseIds": [
+        "xmind-82"
+      ]
+    },
+    {
+      "id": "detail",
+      "title": "查看订单明细与金额",
+      "expected": "实际打开同一订单，收件信息、商品、小计和总价与申请数据库一致。",
+      "caseIds": [
+        "xmind-84",
+        "xmind-85"
+      ]
+    },
+    {
+      "id": "status",
+      "title": "核对当前订单状态",
+      "expected": "页面状态名称、时间、说明与同一订单实时接口一致。",
+      "caseIds": [
+        "xmind-85"
+      ]
+    },
+    {
+      "id": "tracking",
+      "title": "查看快递单号与物流轨迹",
+      "expected": "真实快递单号回传，轨迹内容一致且最新记录置顶。",
+      "caseIds": [
+        "xmind-69",
+        "xmind-85"
+      ]
+    },
+    {
+      "id": "refresh",
+      "title": "核验物流刷新",
+      "expected": "取得同一订单上游物流来源与每10分钟实际拉取执行证据。",
+      "caseIds": [
+        "xmind-85",
+        "xmind-126"
+      ]
+    }
+  ]
+}

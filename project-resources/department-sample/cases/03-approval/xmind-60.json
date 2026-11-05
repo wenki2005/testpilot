@@ -1,0 +1,31 @@
+{
+  "id": "xmind-60",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需）",
+  "expected": "直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需）",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-119"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "准备该申请直属上级的OA审批可见会话，核对OA表单；上级没有H5入口不作为缺陷。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-用书审批详情页",
+    "查看申请明细（本次需求变更补齐）",
+    "审批详情页「申请编号」右侧展示「查看明细",
+    "」入口，点击进入申请表单明细展示页"
+  ],
+  "sourceExpected": "直属上级不在H5端查看明细，改由OA审批表单查看（H5明细入口对上级非必需）"
+}

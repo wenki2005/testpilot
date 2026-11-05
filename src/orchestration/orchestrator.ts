@@ -1,4 +1,4 @@
-import type { EngineMode, RunRecord, RunRequest, TestEngine } from "../domain/types.js";
+import type { EngineMode, RunRecord, RunRequest, TestEngine } from "../domain/testing/test-contracts.js";
 import { saveRun } from "../reporters/markdown-reporter.js";
 
 export interface OrchestratedRun {

@@ -1,0 +1,27 @@
+{
+  "id": "xmind-16",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）",
+  "expected": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "本期出版社用书不展示或不可选，只检查选项，不提交该用途申请。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "样书用途",
+    "出版社用书",
+    "查看出版社用书选项"
+  ],
+  "sourceExpected": "本期不展示/不可选（本期不做出版社用书，走物流发货为二/三期）"
+}

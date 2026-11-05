@@ -1,0 +1,21 @@
+{
+  "id": "xmind-121",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤",
+  "expected": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "准备客户接口/数据库分类基线及调用凭据，独立核对1004.00与1004.06字段，不先依赖H5过滤结果。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "数据接口层",
+    "易诚通接口",
+    "图书信息/客户字段查询 + 其他出库单创建"
+  ],
+  "sourceExpected": "客户接口按客户分类返回（1004.00/1004.06）供H5过滤"
+}

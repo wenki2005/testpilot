@@ -3,6 +3,12 @@ node_modules/
 dist/
 coverage/
 *.tsbuildinfo
+web/dist-*/
+release-output/
+project-resources/*.export-*/
+project-resources/*/private/
+project-resources/*/runs/
+project-resources/*/evidence/
 
 # Credentials and per-machine configuration
 .env
@@ -36,3 +42,21 @@ test-artifacts/
 .DS_Store
 Thumbs.db
 ~$*
+
+# Optional generated step mirror; current definitions live in project-resources
+/regression/scripts/
+
+# Local investigation, browser captures and database state
+/work/
+/output/
+/outputs/
+/backups/
+/.cache/
+/browser-profiles/
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.har

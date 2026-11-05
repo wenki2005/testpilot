@@ -1,0 +1,26 @@
+{
+  "id": "xmind-120",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "接口异常：🔄待澄清 审批接口失败的容错与重试",
+  "expected": "[需澄清] 接口异常：🔄待澄清 审批接口失败的容错与重试",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "pending",
+    "note": "原文未确定审批接口失败的容错/重试策略，需准备有效表单及限定审批接口故障的测试方式，不能以申请已创建成功替代失败输入。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "数据接口层",
+    "企微审批接口",
+    "后台创建OA审批模板（含部门、申请人、用途、公司、图书明细字段），通过template_id创建审批单"
+  ],
+  "sourceExpected": "[需澄清] 接口异常：🔄待澄清 审批接口失败的容错与重试"
+}

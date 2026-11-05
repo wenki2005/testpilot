@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { option } from "./arguments.js";
-import { loadSourceResume, runSourceTestAgent } from "../../adapters/source-test-agent.js";
+import { loadSourceResume, runSourceTestAgent } from "../../adapters/source-tests/source-test-agent.js";
 
 export async function runSourceAgentCommand(args: string[], outputRoot: string): Promise<void> {
   const resumeFile = option(args, "--resume-run");

@@ -1,0 +1,1101 @@
+{
+  "schema": 1,
+  "kind": "testpilot-case-editor-snapshot",
+  "projectId": "436847ad-f144-425f-b303-1ca9b22e0b52",
+  "exportedAt": "2026-11-05T08:47:28.869Z",
+  "installableSeed": false,
+  "historyIncluded": false,
+  "credentialsIncluded": false,
+  "counts": {
+    "modules": 5,
+    "cases": 131,
+    "scriptsWithSteps": 74,
+    "chains": 4
+  },
+  "files": [
+    {
+      "file": "project.json",
+      "sha256": "07755cf953700299186b94917917a65b43c07b879e61ce5b01f69fa472ed86fc"
+    },
+    {
+      "file": "modules.json",
+      "sha256": "876f40e09370578ecb17e040ab13214c4c747b648763fbab986304545ee35389"
+    },
+    {
+      "file": "cases/01-login/xmind-1.json",
+      "sha256": "9112c36bb838a3bed7545ddd7607e5e4823776a2ae9fbc4ef7f7e0369ad7ff5a"
+    },
+    {
+      "file": "scripts/01-login/xmind-1.json",
+      "sha256": "682626511cefb7130f1235764a01883a5d7f094abda835ae93b83135de585ea1"
+    },
+    {
+      "file": "cases/01-login/xmind-2.json",
+      "sha256": "d851086cf719dd8f4d9af3153cc277f7186d331272238cde50c5678540a50bd6"
+    },
+    {
+      "file": "scripts/01-login/xmind-2.json",
+      "sha256": "bc8f52265c326adebf019d703e352d0e0a0fa9c52c38d046067ef52dabfa62b1"
+    },
+    {
+      "file": "cases/01-login/xmind-3.json",
+      "sha256": "98ac5d3a8c80cbbcbd08cb0b7c7e6b882b7f92e4a84d7e94d5de178ef7aa123e"
+    },
+    {
+      "file": "scripts/01-login/xmind-3.json",
+      "sha256": "e4ca54ae9a6929dc7faaabaf19e3d1f2aeab852c55986d9997745534a8df5092"
+    },
+    {
+      "file": "cases/01-login/xmind-92.json",
+      "sha256": "820c693bfbcaab05cd9ad2b8dad03d46f0db4e2d31629d247e1135a2cc24671d"
+    },
+    {
+      "file": "scripts/01-login/xmind-92.json",
+      "sha256": "a37456f4bef80a61e83cefd613946f9fdce3cecc32aefbcee66e0cad32a83097"
+    },
+    {
+      "file": "cases/01-login/xmind-93.json",
+      "sha256": "1e604456bd995ec7840d614957f0521644be92e307a05a10d855f96f00a8bb5f"
+    },
+    {
+      "file": "scripts/01-login/xmind-93.json",
+      "sha256": "9d7ff1b779fd511f4f9a77102d2e56f3047f751bdda2b6f4a37b3a9658e46834"
+    },
+    {
+      "file": "cases/01-login/xmind-115.json",
+      "sha256": "3d9506950bde95d2b4f200eb6b2b291b6b661fb1e9a0d96cdcbb726728c54de1"
+    },
+    {
+      "file": "scripts/01-login/xmind-115.json",
+      "sha256": "908785bb938938d577b660252c0726da433d1bbfd4ff52ef29ec6d0e060686b9"
+    },
+    {
+      "file": "cases/01-login/xmind-116.json",
+      "sha256": "433df48e80d8a6ace94e2b765058608a1c32962fca7646fe7af65baa25e72ac9"
+    },
+    {
+      "file": "scripts/01-login/xmind-116.json",
+      "sha256": "d6a6b897dbdd587d7780fec4781ff088c5feb22eb862c3ae076375613d352ef7"
+    },
+    {
+      "file": "cases/01-login/xmind-117.json",
+      "sha256": "0eda53a7c6541c72e899ce634c45410edad2a6580a7471866dc1ebbeea4aefff"
+    },
+    {
+      "file": "scripts/01-login/xmind-117.json",
+      "sha256": "4590f2dccd3621661be19fdbc4ed083c634200319a3a6dde391b2ad42f06491b"
+    },
+    {
+      "file": "cases/01-login/xmind-118.json",
+      "sha256": "079435d165ec574cbde7ea7e306e483273d05948f33d8fd9694156357ef0c403"
+    },
+    {
+      "file": "scripts/01-login/xmind-118.json",
+      "sha256": "db74f828f9aa9998d123b19c7bf46e9fe3e25e6799c959396bb6edc3595f3b69"
+    },
+    {
+      "file": "cases/01-login/xmind-128.json",
+      "sha256": "2982fd91b4655e6648d90036998eaa224af3b770d47179a589c635d8b2595e26"
+    },
+    {
+      "file": "scripts/01-login/xmind-128.json",
+      "sha256": "6a067fda633120935fd3ca61e00ae6aa7c7633f1113eac161d20c34054b747c3"
+    },
+    {
+      "file": "cases/01-login/xmind-129.json",
+      "sha256": "6e9b8a11f02412aa49c4c20111df1666c6bc3ab4331719d4bcefa938dca2c851"
+    },
+    {
+      "file": "scripts/01-login/xmind-129.json",
+      "sha256": "07b33b625920f7baace8f7e37beee933f00dfed7cb222e7094e057174cf65bd2"
+    },
+    {
+      "file": "cases/01-login/xmind-130.json",
+      "sha256": "5edccef0615efd40f6c01ac36178d718569ddea10bc90066ee747ebe1e3e9a19"
+    },
+    {
+      "file": "scripts/01-login/xmind-130.json",
+      "sha256": "8344739f158ee4ec1dca161fdf2e19c7032ddd7a36b26f74c10e85912484825b"
+    },
+    {
+      "file": "cases/01-login/xmind-131.json",
+      "sha256": "95e4d89ee61db1131ba0e06be784c37ec412b9524ee188fb05907833be18a7bb"
+    },
+    {
+      "file": "scripts/01-login/xmind-131.json",
+      "sha256": "dfc60c6b0e9b700af2837c9f01f032e53eb8ff77eda959ba0a6137215d543c50"
+    },
+    {
+      "file": "cases/02-application/xmind-4.json",
+      "sha256": "9204dd6e147db2c9c4872db48f5196cd512445057f65298ffeb032e335ff3f0a"
+    },
+    {
+      "file": "scripts/02-application/xmind-4.json",
+      "sha256": "a45fd1eceb200e3a59124438827529eff15e6c9007ed7ece4260750f3931b828"
+    },
+    {
+      "file": "cases/02-application/xmind-5.json",
+      "sha256": "a9958a7c8e1a56d7417893b3fb9f003699c5606077cb91532a3ef4e5f9353508"
+    },
+    {
+      "file": "scripts/02-application/xmind-5.json",
+      "sha256": "a2a431046076b79b6d277ca9a081fc62787b7126ed87f96be179c9536c722a2b"
+    },
+    {
+      "file": "cases/02-application/xmind-6.json",
+      "sha256": "8152c28d63d75ba2dfc86a00164553e3c83e1cfe1e47f2d28dc092befd500f5f"
+    },
+    {
+      "file": "scripts/02-application/xmind-6.json",
+      "sha256": "ae1e7233549f28ec41d2bf7b02daaa255cf56444d3c18a094f155132a1ad0227"
+    },
+    {
+      "file": "cases/02-application/xmind-7.json",
+      "sha256": "94643a7ae395eef828eacb44f0ef84cf18243bb8b4ece28e47acc0b1ce8e0b44"
+    },
+    {
+      "file": "scripts/02-application/xmind-7.json",
+      "sha256": "e7fdfd9c9af02e271b14018edb9324b5ea390ba9e471d1b6bea2f880c825e993"
+    },
+    {
+      "file": "cases/02-application/xmind-8.json",
+      "sha256": "4fc5529c2a11f0db39f1e681b41615b2c6a2564af160101697051a89d4628843"
+    },
+    {
+      "file": "scripts/02-application/xmind-8.json",
+      "sha256": "9773c63f7bcad95c9d99ae1254f60b45c56bf8ebe9e072ed81d88364119bcd0e"
+    },
+    {
+      "file": "cases/02-application/xmind-9.json",
+      "sha256": "6c865355ebcaef4fd2ebe0a1ea5d4c2179d70b94165e7b69a57841f643abc44f"
+    },
+    {
+      "file": "scripts/02-application/xmind-9.json",
+      "sha256": "5f72432ca88b87d86b05e9e7fd3b8f087b42e329dcf29af7a965d9a873a5e9bb"
+    },
+    {
+      "file": "cases/02-application/xmind-10.json",
+      "sha256": "ad05252a5ac019cb5e3f83c29839ea5769b801105398a85f35da4133965c328e"
+    },
+    {
+      "file": "scripts/02-application/xmind-10.json",
+      "sha256": "27e67543854a8b92394fc55efebe2cc5abe97de3eff069968971cbeaeaaa77fa"
+    },
+    {
+      "file": "cases/02-application/xmind-11.json",
+      "sha256": "ac882e0894e4ce7d96ee8080fb6835786bc200e96b6edec2dd77f111cb884033"
+    },
+    {
+      "file": "scripts/02-application/xmind-11.json",
+      "sha256": "635449a44274db7ec7c2e70fe53ad234e256d94c4184e6968e2d75bc92670797"
+    },
+    {
+      "file": "cases/02-application/xmind-12.json",
+      "sha256": "4dd83050795021b72f3370193cbb345a7e0165f11784b7ff54c00ce31b0986be"
+    },
+    {
+      "file": "scripts/02-application/xmind-12.json",
+      "sha256": "231a88f641599200f1b722142a85f9b4a9cffc8bba0b44aacbc2e1eeb6474063"
+    },
+    {
+      "file": "cases/02-application/xmind-13.json",
+      "sha256": "177ebeffdb0e5a9a54165c3f7584b7cae4b011f5df76148a4faa710564c97065"
+    },
+    {
+      "file": "scripts/02-application/xmind-13.json",
+      "sha256": "9afd7661423f0f50ffbe2d059d33c4d95c73aa85002c349d23d2307df7a0bb42"
+    },
+    {
+      "file": "cases/02-application/xmind-14.json",
+      "sha256": "1073ebce414edbcc18be5c81f3c0501befea54dfd946ace5cd171e72e435f479"
+    },
+    {
+      "file": "scripts/02-application/xmind-14.json",
+      "sha256": "b349ec62019bcbdeb1fe4c5c9ded34c30fc070d9420052b10bc6b95bd13ac93e"
+    },
+    {
+      "file": "cases/02-application/xmind-15.json",
+      "sha256": "8eb94d12f724c53c461ee1afe0407c6ef215ac833e045fe5a829e439756f675b"
+    },
+    {
+      "file": "scripts/02-application/xmind-15.json",
+      "sha256": "08fd52bfd2575aa977f8df6a27ac8895271f3d0960dc29d1970f451c253286e5"
+    },
+    {
+      "file": "cases/02-application/xmind-16.json",
+      "sha256": "894f7a1297fa290b9006c48d250b74fa8ba86fcc6d3a2d59816335885055259f"
+    },
+    {
+      "file": "scripts/02-application/xmind-16.json",
+      "sha256": "24525ce257e98268312adfcdc782a9b3d451ef675381b231a135cccbbd607fd3"
+    },
+    {
+      "file": "cases/02-application/xmind-17.json",
+      "sha256": "f1201ef940b7f850d0175172cb548d329d3bcbf943f613e80b764e40850cca25"
+    },
+    {
+      "file": "scripts/02-application/xmind-17.json",
+      "sha256": "a6bbca290e2903e3c598f10b866e318f13b938d091fa03ab56c306ffcd417d4f"
+    },
+    {
+      "file": "cases/02-application/xmind-18.json",
+      "sha256": "e284ad756cc774a5d2c46214d779c1437c993e68ebbb5d294076e690f420b258"
+    },
+    {
+      "file": "scripts/02-application/xmind-18.json",
+      "sha256": "1800a3767cf0c7fd11ee957a46e71bde75659b1d808eedad3102148dfad4410d"
+    },
+    {
+      "file": "cases/02-application/xmind-19.json",
+      "sha256": "3254edc3eb9e8ca45a689958ac37b0578cc9203583df2ab8059117157f605c76"
+    },
+    {
+      "file": "scripts/02-application/xmind-19.json",
+      "sha256": "b58dd76cdbf8d425ec8453dac61f0745d9085ef38bc8c995bb61839dbff27c94"
+    },
+    {
+      "file": "cases/02-application/xmind-20.json",
+      "sha256": "ca4e47fe2a5bc38669ce1106250a2fcdd751bf473072f7ec1657ba44903cd3e2"
+    },
+    {
+      "file": "scripts/02-application/xmind-20.json",
+      "sha256": "8225e8b13f61ca5984aefc894c7f9b8209e1856c669e3df4aa68585562754567"
+    },
+    {
+      "file": "cases/02-application/xmind-21.json",
+      "sha256": "0a3dad3fc3ca6bc2ef219977631d93dc98f9daa78fe58747b80ed2ac745d895d"
+    },
+    {
+      "file": "scripts/02-application/xmind-21.json",
+      "sha256": "e785cd5eafe3d79cc0f907e64d38971b73b98b836784e96da319d28715ea5196"
+    },
+    {
+      "file": "cases/02-application/xmind-22.json",
+      "sha256": "0a67600710a8ce14b428336289ef5b37c933fea191d13ad7cc44bee0cb2eafa3"
+    },
+    {
+      "file": "scripts/02-application/xmind-22.json",
+      "sha256": "491cb89736d241c4c3f8491f72a4bb368a0f400be647fb7a7b589c1ae8fb2ed3"
+    },
+    {
+      "file": "cases/02-application/xmind-23.json",
+      "sha256": "6c7ee82c6513365fba85a699fc1a85727dde1fe243e855126bc4ffe47c1d7043"
+    },
+    {
+      "file": "scripts/02-application/xmind-23.json",
+      "sha256": "4e994e081b1013551972b4fc41bebf0b2e24e25d08fdda6cf38f8969653fc59e"
+    },
+    {
+      "file": "cases/02-application/xmind-24.json",
+      "sha256": "723b2fd3ad41986a5147eec2f98a538ba8922dee6882af68d596f08d7c2dc954"
+    },
+    {
+      "file": "scripts/02-application/xmind-24.json",
+      "sha256": "2ce6942b1eb057b78260243681dcbe95ff13ebbd338e18b1007222aedeee5314"
+    },
+    {
+      "file": "cases/02-application/xmind-25.json",
+      "sha256": "242806ac4f1cbe2ca0e5513d9c720efc2c20d572f7a84f7b4cc0a7452357a75f"
+    },
+    {
+      "file": "scripts/02-application/xmind-25.json",
+      "sha256": "366a41ed63aee348e32c47ccbd91895711d4dec74c55d86eb4f4c6d0d2b432aa"
+    },
+    {
+      "file": "cases/02-application/xmind-26.json",
+      "sha256": "c3cd061d58a9cf7acbae012ac74ce8cf30de61b9acd9f77de48d778c8cdd8658"
+    },
+    {
+      "file": "scripts/02-application/xmind-26.json",
+      "sha256": "862c538bab929ca0b692c93577b1d36086ce93ec7e2984aae3d6e9fe0f3a0d02"
+    },
+    {
+      "file": "cases/02-application/xmind-27.json",
+      "sha256": "ddacc2555971a6ac593d60c44bc42f0b3e4b4e92206188b25370ccc259ba9c6e"
+    },
+    {
+      "file": "scripts/02-application/xmind-27.json",
+      "sha256": "8476f1214d5b4b9fd2c8d993d0dff38ba00b3be167ae885f0462c2cbf215809d"
+    },
+    {
+      "file": "cases/02-application/xmind-28.json",
+      "sha256": "be4c8d2c7cd753caafb335311cb75701f0415212b2360608ab012f10169718dc"
+    },
+    {
+      "file": "scripts/02-application/xmind-28.json",
+      "sha256": "7f4bb509c91d9d34a4f7b4e84d43cc16912e0aa61157cbafcc8ff2bd7b2458f6"
+    },
+    {
+      "file": "cases/02-application/xmind-29.json",
+      "sha256": "c66e538a2d1392572aa34f803f9234680f6f17aa6bdab6b6fe113a617dc386f0"
+    },
+    {
+      "file": "scripts/02-application/xmind-29.json",
+      "sha256": "54fbef79d7552f22d25f4f8c4ec4a2d412ee07e64178a0aa87e8668f7900262e"
+    },
+    {
+      "file": "cases/02-application/xmind-30.json",
+      "sha256": "4d5c5255887c94e6cb4a85d623dae1eb1d54d49fff83a3824ed315dd4c86ccc2"
+    },
+    {
+      "file": "scripts/02-application/xmind-30.json",
+      "sha256": "c424246263a95b4a7f101bd4661fd1a8155773d39923911988a7d1f8f945b350"
+    },
+    {
+      "file": "cases/02-application/xmind-31.json",
+      "sha256": "909f609d36aa787a2b60a7ca4209ffb9a966929d8125461f935560a98af9c92e"
+    },
+    {
+      "file": "scripts/02-application/xmind-31.json",
+      "sha256": "7ddc52fc05bab8c594367e6b92c74e836239092e14ae8c78fef58fb7865d81db"
+    },
+    {
+      "file": "cases/02-application/xmind-32.json",
+      "sha256": "bf696f3f98230a3a1841c32ad7fe19a4a87730f9c58cb7d266b61aec1f3b8580"
+    },
+    {
+      "file": "scripts/02-application/xmind-32.json",
+      "sha256": "39753f8f76131fa88e420b9607827b9957275d16fde7a6b57a8a442240dc8675"
+    },
+    {
+      "file": "cases/02-application/xmind-33.json",
+      "sha256": "427bbf2dc2c878770541ffdd7b1c9507c8e1b3861371e62a5ad8c5c8078b49b6"
+    },
+    {
+      "file": "scripts/02-application/xmind-33.json",
+      "sha256": "9660f3394e968da9470b8098c797da7d6332d26e5767b6413eb2a2399c7199d2"
+    },
+    {
+      "file": "cases/02-application/xmind-34.json",
+      "sha256": "72d83c0a97edd891b45860fff8c79151a10209b8e2ad7bf516156e473234aaca"
+    },
+    {
+      "file": "scripts/02-application/xmind-34.json",
+      "sha256": "58c8f6f415a1e1dfb54c0d0fd8ffb892a294aafac1d24dd4cfc88dac143e9fb1"
+    },
+    {
+      "file": "cases/02-application/xmind-35.json",
+      "sha256": "fc28f90c65fae638202a2ebdb02da789659c5bf2901fb86f5196f685655f4d03"
+    },
+    {
+      "file": "scripts/02-application/xmind-35.json",
+      "sha256": "b2b1f0e95e57494d8546be3e914daf90dd2409934a72aaf7e053ac54f9f09e5c"
+    },
+    {
+      "file": "cases/02-application/xmind-36.json",
+      "sha256": "5d342997b1bf1ae502f0308f97d4fc15b79744cce77c7861ffad205347a5fcbd"
+    },
+    {
+      "file": "scripts/02-application/xmind-36.json",
+      "sha256": "49ae3c6d0b5e976d085b1da694ab8bf30c29621d3dffeef6622aefacba760d61"
+    },
+    {
+      "file": "cases/02-application/xmind-37.json",
+      "sha256": "361030576ddf093734b546d0464da25c20a198f9b89f73ac85298497efde1090"
+    },
+    {
+      "file": "scripts/02-application/xmind-37.json",
+      "sha256": "b4259b4f9c7275e159aeea858cd82be7a8b4d9a48644d769470c4ab4a60789db"
+    },
+    {
+      "file": "cases/02-application/xmind-38.json",
+      "sha256": "8f62cbc78a929a37878778b71c3b777e66faa92800ee6a859233a2125c8ba659"
+    },
+    {
+      "file": "scripts/02-application/xmind-38.json",
+      "sha256": "928771b849b0b153ecb4f012bdbc20f798bd69429573d7297f9a51db5e5249ab"
+    },
+    {
+      "file": "cases/02-application/xmind-39.json",
+      "sha256": "deda10f40c1fac73044538ce452d690a2afa1f34b273ea920c946d19c3ff6adb"
+    },
+    {
+      "file": "scripts/02-application/xmind-39.json",
+      "sha256": "56d742318e709c5880adb6e040b80c281a938596a7ccba77640bb237780e8ca2"
+    },
+    {
+      "file": "cases/02-application/xmind-40.json",
+      "sha256": "94ed32a82908c4afc6dc82770ef69007842646889de3d782e6adf639c9da3e37"
+    },
+    {
+      "file": "scripts/02-application/xmind-40.json",
+      "sha256": "f7636e74955a94f9c5841ae81e74e7943d6fbb912437c5408c4014822a305ad2"
+    },
+    {
+      "file": "cases/02-application/xmind-41.json",
+      "sha256": "15aac62b713d6b9029f26d100690fc04c8100f1980e5f343fe024241e28d176f"
+    },
+    {
+      "file": "scripts/02-application/xmind-41.json",
+      "sha256": "02f382d5cb23ace20beacba3a4fcb2023810978303f6c9a5b75d1b9e4c9b8e9c"
+    },
+    {
+      "file": "cases/02-application/xmind-42.json",
+      "sha256": "5cca525525fa441592b6cf84f7250e935b6bf667e4d3f9a99fb9315a9798559d"
+    },
+    {
+      "file": "scripts/02-application/xmind-42.json",
+      "sha256": "02cdcc9a2cec7587c0af38049400bff801d32bb4cd05f354e73bf41a8c7474d3"
+    },
+    {
+      "file": "cases/02-application/xmind-43.json",
+      "sha256": "b186bde3c2f7c34738496e5d4ff922689ba52171c95e4e10765eb794b077d51e"
+    },
+    {
+      "file": "scripts/02-application/xmind-43.json",
+      "sha256": "e6e8d952cfe77c4c1b191cf6f8feb13c767580a7f8e28978d626f37887d8540f"
+    },
+    {
+      "file": "cases/02-application/xmind-44.json",
+      "sha256": "6da022476e72acab893efa738cc4514a4c495ba9f459ef4d1089856acdc0b26d"
+    },
+    {
+      "file": "scripts/02-application/xmind-44.json",
+      "sha256": "8a748bd4b0e1f9f5d48cd1b669df82564b7604bddb92ea80258b1266d5fe26f7"
+    },
+    {
+      "file": "cases/02-application/xmind-45.json",
+      "sha256": "2ce9cadfb1c14480a71d0b601ffb480d882cdc97202c3be0a4ed20805e2df387"
+    },
+    {
+      "file": "scripts/02-application/xmind-45.json",
+      "sha256": "553c90bce620ae0e6cb3783858788d24739ddaf7694ed57bdea2056ce3647dfd"
+    },
+    {
+      "file": "cases/02-application/xmind-46.json",
+      "sha256": "38c84ba26a7ef58d17d1a05829b68475f8abefd8db44eeb94db06d3f5b799ddd"
+    },
+    {
+      "file": "scripts/02-application/xmind-46.json",
+      "sha256": "e5d7d45ea155df9f30f8f15d0669d11ee33222644aa68a84f135416545f33487"
+    },
+    {
+      "file": "cases/02-application/xmind-47.json",
+      "sha256": "77a3224ddb3a1fe810f72b42540c638ba069d5b5dbaa3c1a09f66d47e4364e5a"
+    },
+    {
+      "file": "scripts/02-application/xmind-47.json",
+      "sha256": "5007773ff459f8b7ec8f05bdb553f93af3d74f56c1f98c28e401a2838ea895fb"
+    },
+    {
+      "file": "cases/02-application/xmind-48.json",
+      "sha256": "2eca57faadcad5138f5ae8dd0184251b378a1ded1f09d58499008d5a9959d8e3"
+    },
+    {
+      "file": "scripts/02-application/xmind-48.json",
+      "sha256": "28b0b663019b6725fbd77623ad8b06923e323bb4ae2247d251ed03f4e307a639"
+    },
+    {
+      "file": "cases/02-application/xmind-49.json",
+      "sha256": "c04c7018e92b7cde346f4e010754849e5f973163efa9c798e19f25c00b757db8"
+    },
+    {
+      "file": "scripts/02-application/xmind-49.json",
+      "sha256": "d63424370256728c4416ff1a67c561489c983552c6818712ac8db54271f95517"
+    },
+    {
+      "file": "cases/02-application/xmind-50.json",
+      "sha256": "fccf504c3838ec5c93592e425d208502ce77aa6c5c533db2a8843c870408e336"
+    },
+    {
+      "file": "scripts/02-application/xmind-50.json",
+      "sha256": "435f05a489c816f39a21c3fc8125567a79cf094ae35f2263663a53d31861063c"
+    },
+    {
+      "file": "cases/02-application/xmind-51.json",
+      "sha256": "9b28b5b038ea20881656a161ae2f76d85897797f1c00c4f15c6c759326754cfd"
+    },
+    {
+      "file": "scripts/02-application/xmind-51.json",
+      "sha256": "1c48b234a795895363ea946da55ec8a793c57e438d207a7f9a0a8ddd79bd8a22"
+    },
+    {
+      "file": "cases/02-application/xmind-52.json",
+      "sha256": "a0ac2a0636fe675542fa65750f144b849928e421b6bbc2eebf3f7572133b1208"
+    },
+    {
+      "file": "scripts/02-application/xmind-52.json",
+      "sha256": "f83a24d6f253e654cd089120fedebc856ef7da6675100ccb7d3aa04a95d60a37"
+    },
+    {
+      "file": "cases/02-application/xmind-97.json",
+      "sha256": "e85deddd707c46dcfcc24263bac1530518fedff0b419ef0c801a77fedda31304"
+    },
+    {
+      "file": "scripts/02-application/xmind-97.json",
+      "sha256": "61569df64815ce68b3e3234dcefdf1c04f8c4af1b397a3a8daa20d3f61fa228e"
+    },
+    {
+      "file": "cases/02-application/xmind-98.json",
+      "sha256": "0b3878ef907770e7b96ee9247a8892ed5e683c96537307360d0fd4652f725f96"
+    },
+    {
+      "file": "scripts/02-application/xmind-98.json",
+      "sha256": "f87b7515991e6c2c201be70af68422d1a9b0f4d569740cbead398dd356413758"
+    },
+    {
+      "file": "cases/02-application/xmind-99.json",
+      "sha256": "aebc3df78bc21dc46f21a22b5f2184478a7b723a65792a369c97722445904f57"
+    },
+    {
+      "file": "scripts/02-application/xmind-99.json",
+      "sha256": "61b06308a768e3f1d50512f414ce489b8e39fd6838ef92db1490515a66fd160a"
+    },
+    {
+      "file": "cases/02-application/xmind-100.json",
+      "sha256": "f04fc15be04009177781099e6358dd393131cc71ec7fc364eb7b8300cbbd403a"
+    },
+    {
+      "file": "scripts/02-application/xmind-100.json",
+      "sha256": "1e8f8832fe02ede277841d31c2f96c18cac6a6daab7335b6292448456bec18ba"
+    },
+    {
+      "file": "cases/02-application/xmind-101.json",
+      "sha256": "c09a181c415c5ecdc436fc9feef1d9243d5ece129228c9cf4c671b04aae9f109"
+    },
+    {
+      "file": "scripts/02-application/xmind-101.json",
+      "sha256": "20a8e76797e85ea3531fb65d88eedd482e89f13afb3573c164e68125a075cb86"
+    },
+    {
+      "file": "cases/02-application/xmind-102.json",
+      "sha256": "cf419ce5c01f34ae751405c5597ab71bfc17c9d4270109f9f336117a603c1638"
+    },
+    {
+      "file": "scripts/02-application/xmind-102.json",
+      "sha256": "b0f6ee07c1143268496040f79cc9d6a27f28d117da62c1467ccbe38f78c233de"
+    },
+    {
+      "file": "cases/02-application/xmind-103.json",
+      "sha256": "734e0d7f7b39b389ea9e5b4f2bb4d1df0e0f9c9a38bfe3f25ea67f3033029ed3"
+    },
+    {
+      "file": "scripts/02-application/xmind-103.json",
+      "sha256": "33564b5abe3c96d5705829fc3cc7321a8a37f23d6422538fe3175874f8774d91"
+    },
+    {
+      "file": "cases/02-application/xmind-104.json",
+      "sha256": "6dd574bff0e18c697e3652459f1bb253717196a0daa70a3aa413aeced5799e5d"
+    },
+    {
+      "file": "scripts/02-application/xmind-104.json",
+      "sha256": "4800a9cb39677158ea82e1b588126d173098f54abe4599dc807d5dabf0e678ab"
+    },
+    {
+      "file": "cases/02-application/xmind-105.json",
+      "sha256": "58049ba2bda1c4bbf8893604dc8004cd1178823b61f9dd280c53284b17d4be13"
+    },
+    {
+      "file": "scripts/02-application/xmind-105.json",
+      "sha256": "736f1035c438259c5db44bb47fc3093d13f9ef616393e92c72bb0cb279afe8e6"
+    },
+    {
+      "file": "cases/02-application/xmind-106.json",
+      "sha256": "a7f115cb1be6704f61dc4cadc4ff893e2ddea4abad767abd5b87d7eb1c56d655"
+    },
+    {
+      "file": "scripts/02-application/xmind-106.json",
+      "sha256": "6c62b173dee387f4c83d8272f2b2654b96aa71c73f8197d0b0c49765548df81c"
+    },
+    {
+      "file": "cases/02-application/xmind-107.json",
+      "sha256": "7f001263063b103a3f08a1d8ba5a90377fa2018c559fd1931e011d7888e82917"
+    },
+    {
+      "file": "scripts/02-application/xmind-107.json",
+      "sha256": "882b56c0617813be05c2bb684f0d348ef03b28fee52c8a2fe2549fda98209939"
+    },
+    {
+      "file": "cases/02-application/xmind-108.json",
+      "sha256": "d7b34f834c16c38669d50d9b8a6c8752c23f4489f03584f243f9e98c0fc73729"
+    },
+    {
+      "file": "scripts/02-application/xmind-108.json",
+      "sha256": "080c87735082d09f61bc5d1e8a79f4d6d0fd63cd27411d52bd0acacfd00879c6"
+    },
+    {
+      "file": "cases/02-application/xmind-109.json",
+      "sha256": "00ffa56e14416a04fe88297a5b1386c641856f51a1b5a9a5daa9d09e2036f154"
+    },
+    {
+      "file": "scripts/02-application/xmind-109.json",
+      "sha256": "eab9dd825105921f4fcfe86470b8b5c34a4f02be9f9de1ce982e8f9fcf6995b1"
+    },
+    {
+      "file": "cases/02-application/xmind-110.json",
+      "sha256": "b2d69378a34a64693d386f26cb7a1ae023b9e3339e5444f89e041461d1521e6e"
+    },
+    {
+      "file": "scripts/02-application/xmind-110.json",
+      "sha256": "2851af141891906013a4eab90e77cf2105f8ee9c8f6a39a9eebbdccc053b5573"
+    },
+    {
+      "file": "cases/02-application/xmind-111.json",
+      "sha256": "0de0341a6d658504010d229911ac9f751a0f99366a126417eec15c11c87e2a0a"
+    },
+    {
+      "file": "scripts/02-application/xmind-111.json",
+      "sha256": "a6819f2e017fb5d927e72d47fdd8a47cd7f362f9ab0653009a9e26ec748ad9bd"
+    },
+    {
+      "file": "cases/02-application/xmind-112.json",
+      "sha256": "1c6eaccbd2076d15b3bff4b8fefe076a268a6dbd54dad7862c269eeccd19bedd"
+    },
+    {
+      "file": "scripts/02-application/xmind-112.json",
+      "sha256": "9bce7a092e0ec17a22a0999de6af8e0be3c11997815d509ed2cc5ea5b323b4b4"
+    },
+    {
+      "file": "cases/02-application/xmind-113.json",
+      "sha256": "17e81a4b522a8ab0fe0443dd9590874cd4656565c4d2d578cc7fa4f4068f829d"
+    },
+    {
+      "file": "scripts/02-application/xmind-113.json",
+      "sha256": "a91e55c21d0c8e3db78fdac71e7f36cf7bb476666557d41a62a81f0f14902ac2"
+    },
+    {
+      "file": "cases/02-application/xmind-114.json",
+      "sha256": "bf454a65dcba96fcf27eb1587dca9420c511cad3888c4ccfe8c9ca03c5b09d54"
+    },
+    {
+      "file": "scripts/02-application/xmind-114.json",
+      "sha256": "9bb9abbaa0312a14ed3239c6f4b7d9bb21d2cafa8ad6a3c6373c6237af4699de"
+    },
+    {
+      "file": "cases/02-application/xmind-119.json",
+      "sha256": "ef6c8da0e61cd448ba5eafbdc00ed852647e791bb1f89875aa2b6df3be26a863"
+    },
+    {
+      "file": "scripts/02-application/xmind-119.json",
+      "sha256": "7a96110a846e4336ac15906a0e8268d8500233be0ce978fe191ce562f0028d02"
+    },
+    {
+      "file": "cases/02-application/xmind-120.json",
+      "sha256": "10a10710c0ec4cc7f8297d9b96a3e7ce5c5a4c404d08634ae8177ef13459ec6e"
+    },
+    {
+      "file": "scripts/02-application/xmind-120.json",
+      "sha256": "6015320797a90f729fbab29d68e9d7f0ff2aa46205b3b6334d977ab73849f705"
+    },
+    {
+      "file": "cases/02-application/xmind-121.json",
+      "sha256": "9eba8e7ae0f7798eda5c4d686cb24fdfa5ada81ba59644b99dc36cfa2bafa690"
+    },
+    {
+      "file": "scripts/02-application/xmind-121.json",
+      "sha256": "80488cacb82636971db085a2555030c3116f49468f537b86058c7d37c0ce26c4"
+    },
+    {
+      "file": "cases/02-application/xmind-122.json",
+      "sha256": "ccadb91238fc082d85b69a74737409a47ebc5de83b2737e5427d6e73bdfc075e"
+    },
+    {
+      "file": "scripts/02-application/xmind-122.json",
+      "sha256": "dee2664a7149ed6404cb6d604b2983915197ee0c46f83df2c8fbf10ea396be0a"
+    },
+    {
+      "file": "cases/02-application/xmind-123.json",
+      "sha256": "2f572eb8ee6afc8d51c9da085a53616a6f4ce32b5e984ca0de7ced88f684eaeb"
+    },
+    {
+      "file": "scripts/02-application/xmind-123.json",
+      "sha256": "9e07ecfd2057373c0cf76a786b1e30c546691e0e3547924c5ff29855aab6f076"
+    },
+    {
+      "file": "cases/02-application/xmind-124.json",
+      "sha256": "cfaa17f885f8ad092659c58b6dbdaa74f01c0d512b276699db8f1a328aa1485f"
+    },
+    {
+      "file": "scripts/02-application/xmind-124.json",
+      "sha256": "0c8cef939d9a169cfc5e0d447df9016548e13cc770e42f9f9887486d04b1cf77"
+    },
+    {
+      "file": "cases/02-application/xmind-125.json",
+      "sha256": "98ca4ce7a688082cf774b0348185357cb8fa28437064862df6e32fb89112da67"
+    },
+    {
+      "file": "scripts/02-application/xmind-125.json",
+      "sha256": "61913a561217242a957a4a595de06151e5ec3686fb102b796aae15e5775e09e4"
+    },
+    {
+      "file": "cases/02-application/xmind-126.json",
+      "sha256": "d6190e4d11606bd47c54e18ce09fa6584d908f3504f486c10815593e80506e62"
+    },
+    {
+      "file": "scripts/02-application/xmind-126.json",
+      "sha256": "e36fd913c339f86de088932c78ef315a079a5e22a2eac7647d3e440dbe7f0c3a"
+    },
+    {
+      "file": "cases/02-application/xmind-127.json",
+      "sha256": "e99af6a54dfd7b88923453549f0a245267175c08769247a78195d8fa9936d19c"
+    },
+    {
+      "file": "scripts/02-application/xmind-127.json",
+      "sha256": "676a6d0c15d6e9e79145d8b12b10b485146585021453a2caf5e32d70eb381202"
+    },
+    {
+      "file": "cases/03-approval/xmind-53.json",
+      "sha256": "213e61dbe48210112b26213ca6b30768b468835af450f0ceb39e147518afeb41"
+    },
+    {
+      "file": "scripts/03-approval/xmind-53.json",
+      "sha256": "a1b70d4678c294efa818e0a46ec1443e24bd21b80f471a82edff7aa5da5ae64c"
+    },
+    {
+      "file": "cases/03-approval/xmind-54.json",
+      "sha256": "075393d05c7a90bc0fec62312796eac600caf26bec9ba2bfb3e8deb97560ca50"
+    },
+    {
+      "file": "scripts/03-approval/xmind-54.json",
+      "sha256": "7e68eab8ef13a6788738cddd7a8d36f595fb6576d9004e502e6486d49eb82527"
+    },
+    {
+      "file": "cases/03-approval/xmind-55.json",
+      "sha256": "ebd12437d0fa5d311dce9c38dda5d2a38224446e17f18a946635643ae6dad45a"
+    },
+    {
+      "file": "scripts/03-approval/xmind-55.json",
+      "sha256": "52d894c310361039f35d924635ee160e1252b0a71b0b2a87ad6037f83852c232"
+    },
+    {
+      "file": "cases/03-approval/xmind-56.json",
+      "sha256": "94ef841b63c9315fb9537106932b40293980fe5daceab6ae5687aae5dfffddad"
+    },
+    {
+      "file": "scripts/03-approval/xmind-56.json",
+      "sha256": "e31d4a6ce683170bb3d5ae66b3d85f9a1163005e1e3200c2830b6ee247f9ac71"
+    },
+    {
+      "file": "cases/03-approval/xmind-57.json",
+      "sha256": "719a4ccad6031b346b3c032eee6a856ab40521c0ccc0831cc625f23a1bb5d67a"
+    },
+    {
+      "file": "scripts/03-approval/xmind-57.json",
+      "sha256": "31a2cdbc178471f9b01ca0226947a067f9b8aebc6a98e842037edfda587004b0"
+    },
+    {
+      "file": "cases/03-approval/xmind-58.json",
+      "sha256": "5a4c6529cdfea8b74cd6c3a76b283aef50c962b26b3743255a0c3ea99109a979"
+    },
+    {
+      "file": "scripts/03-approval/xmind-58.json",
+      "sha256": "d8f7b7cdbc215ddf3f0d0562d5485d825c8b82777d180cb43b7e8909c2abb4fb"
+    },
+    {
+      "file": "cases/03-approval/xmind-59.json",
+      "sha256": "b8247b9bb83f40dce3a3375ef8b9e42ae8ec7f1a2c115e236437fff8c3f6da86"
+    },
+    {
+      "file": "scripts/03-approval/xmind-59.json",
+      "sha256": "76ab7c9b38ef92dde86e3d3762cd5c458858488a57b0e3ba7355b9611bbc4a84"
+    },
+    {
+      "file": "cases/03-approval/xmind-60.json",
+      "sha256": "b9d28b8126f3d4913e0ae78fb659b492529b71efe7a848c876c973a028ee5f21"
+    },
+    {
+      "file": "scripts/03-approval/xmind-60.json",
+      "sha256": "1a9e83ff913e89ca261501a88cdc61db54b98e30923c88c803d2fa31b6aa3187"
+    },
+    {
+      "file": "cases/03-approval/xmind-61.json",
+      "sha256": "124646a7921e52831e92797b5b31fd2316c2a0b59afd04911463c7f6e61198cc"
+    },
+    {
+      "file": "scripts/03-approval/xmind-61.json",
+      "sha256": "6ee483a25ae4088b35fe4c1783b1684f586377a2390d6c189bb8be21ac7fa401"
+    },
+    {
+      "file": "cases/03-approval/xmind-62.json",
+      "sha256": "7223cdf53d0f1397a2deeac6a2b1c1493930959404e25d09087767486808ebe9"
+    },
+    {
+      "file": "scripts/03-approval/xmind-62.json",
+      "sha256": "aef29ea8c738e9e4441495c78f12cddfde0ea3794c0ed7d7754b8450410f9beb"
+    },
+    {
+      "file": "cases/03-approval/xmind-63.json",
+      "sha256": "629443207d2cc7ef1eeff1f375ba1dc04b50e8274de8be80078e7f136715da59"
+    },
+    {
+      "file": "scripts/03-approval/xmind-63.json",
+      "sha256": "2b504bbbbc55104e2ad05cf7424b4a921832b6c23fd3d3c082fdd86a9b1cac67"
+    },
+    {
+      "file": "cases/03-approval/xmind-64.json",
+      "sha256": "d0b6cfbf58220dc73e82d4ea85f6f91514943dc6bb8830e554f3c005dbdf39c8"
+    },
+    {
+      "file": "scripts/03-approval/xmind-64.json",
+      "sha256": "d1abee50391160768ff66c864c355b7163f93e508f7c9f045ff3bbc3c02e62b6"
+    },
+    {
+      "file": "cases/03-approval/xmind-65.json",
+      "sha256": "aa1f149f333c8ae939887b421ef1bda9b52cfd26ce67f503b4e0a93d2d461cc6"
+    },
+    {
+      "file": "scripts/03-approval/xmind-65.json",
+      "sha256": "2c6977fab87441ba7af318769d907e1c14c93a78fcd86b73e65edf7be6684fac"
+    },
+    {
+      "file": "cases/03-approval/xmind-66.json",
+      "sha256": "5dca0f17f462fd187fc0bac2f7820d38cb4dfc60db161710264aa0f8abd1b0bd"
+    },
+    {
+      "file": "scripts/03-approval/xmind-66.json",
+      "sha256": "b09169fd7777597a39fc2708f4788057a1f2727b84b3653b9ecf66de5e19f12d"
+    },
+    {
+      "file": "cases/03-approval/xmind-67.json",
+      "sha256": "61a52377d5b9a746ed8366bb2b6c9a86ac5e1282d490be12ce6ed9631bb67858"
+    },
+    {
+      "file": "scripts/03-approval/xmind-67.json",
+      "sha256": "27e7d15a4067c29e4a90231a4abaf52cadfa9e10d924672d4aa5e249531a32c7"
+    },
+    {
+      "file": "cases/03-approval/xmind-68.json",
+      "sha256": "f54fa65f039507cbd3267e86ad2edbc522abcc848982e031c8674e852fc336b9"
+    },
+    {
+      "file": "scripts/03-approval/xmind-68.json",
+      "sha256": "843f3f701d5f863645703849c33e81ca197941e076843280928168d2797074d8"
+    },
+    {
+      "file": "cases/03-approval/xmind-69.json",
+      "sha256": "a11077940d04e6168ea920553528a537134d2f30fae9009774faf8e1979ec518"
+    },
+    {
+      "file": "scripts/03-approval/xmind-69.json",
+      "sha256": "332badbd0f7c01ed372bb4e74310a16de83196f282164a31792efe39a20c6b9d"
+    },
+    {
+      "file": "cases/03-approval/xmind-70.json",
+      "sha256": "eddf04261120ae0d20df75e4e6b6166e61c5ce25a31745ce44cd31dbb4c18940"
+    },
+    {
+      "file": "scripts/03-approval/xmind-70.json",
+      "sha256": "cec2adff657b9c7795a732f04c740cc5969b769944c80c82f2b4bf3dd654174b"
+    },
+    {
+      "file": "cases/03-approval/xmind-71.json",
+      "sha256": "564d6ceed4cdc327b8883af5d53b2871e5f34370635e6f5c62949c1e7baf3c86"
+    },
+    {
+      "file": "scripts/03-approval/xmind-71.json",
+      "sha256": "eeaa3627f0ea1ad8a95c99c946fccad3935bb774e5fa0452dc68db0fc4bc085f"
+    },
+    {
+      "file": "cases/03-approval/xmind-72.json",
+      "sha256": "48527b54c58e92072d5c354bfc8f749e0ca4357cdc00dbd4ae437bc318470bad"
+    },
+    {
+      "file": "scripts/03-approval/xmind-72.json",
+      "sha256": "c375db1e6fc095315972c9cd21cbe6aa65cf8e3f72fb3ed7b38b3bedaba5df54"
+    },
+    {
+      "file": "cases/03-approval/xmind-73.json",
+      "sha256": "274ec2f7a94c905f38c8c7cd53648c778adfd31b89dcc47f0a2300259d3c80d5"
+    },
+    {
+      "file": "scripts/03-approval/xmind-73.json",
+      "sha256": "49425f05d258394c12eba738edd0a72dfefd714f1ef2c56b80262c7386680eaa"
+    },
+    {
+      "file": "cases/03-approval/xmind-74.json",
+      "sha256": "819f48bcd2468806dc748a0341b956ee07233df15151fe117e7cfd291ef679ba"
+    },
+    {
+      "file": "scripts/03-approval/xmind-74.json",
+      "sha256": "195ee5f2655eecf43d137f5b381c84ed6b647279b701ab520948672f8a6271a1"
+    },
+    {
+      "file": "cases/03-approval/xmind-75.json",
+      "sha256": "e4f6684ba6b86fae60c646d14ff69c35051e053308028968fc377e840d4f6433"
+    },
+    {
+      "file": "scripts/03-approval/xmind-75.json",
+      "sha256": "cc6341c11ee89afb2d6536c9477ba986e17e833266383cbd84f347ce0671d3fd"
+    },
+    {
+      "file": "cases/03-approval/xmind-76.json",
+      "sha256": "5e28d6a2e4daf43020d064bae71d45e9f8cda80e36d859d0e89be1bdcdf46a4b"
+    },
+    {
+      "file": "scripts/03-approval/xmind-76.json",
+      "sha256": "df8de69c637b672fef8199c34e6c1f62febe5e06e3be6df0f02c37334c969350"
+    },
+    {
+      "file": "cases/03-approval/xmind-77.json",
+      "sha256": "6481f5c103142cb2605a19983cc51216742c2820ebfd32a3b0ed9e81bd75f22a"
+    },
+    {
+      "file": "scripts/03-approval/xmind-77.json",
+      "sha256": "6344559580a09dc6f3f2c039b8e60f697dde17f2c5bcf48db0cd6c60a3493623"
+    },
+    {
+      "file": "cases/03-approval/xmind-78.json",
+      "sha256": "821c29c30b24059dc9435fd4340a04eec3b1ba11c7f3588a91d2007afc8b1c85"
+    },
+    {
+      "file": "scripts/03-approval/xmind-78.json",
+      "sha256": "f8f69ac80cd32d04f890d26f8d061b2869c7b340e7244e652b5926e85b48884f"
+    },
+    {
+      "file": "cases/03-approval/xmind-79.json",
+      "sha256": "f7d531e1ab6b7fe3e0e936c1315ef358eafbeec83a7242b9d2c550568d74f486"
+    },
+    {
+      "file": "scripts/03-approval/xmind-79.json",
+      "sha256": "51d52ad32a1f9f61dcd31b5d46ad5152852728854a315ff060e19971b695b324"
+    },
+    {
+      "file": "cases/03-approval/xmind-87.json",
+      "sha256": "51e7a3ca04860eb432155dc3599ac388e68fe5840da4044d36d4d55436cb7b2b"
+    },
+    {
+      "file": "scripts/03-approval/xmind-87.json",
+      "sha256": "9d94d26445402c8b2c287ca478ea1369006776d5862b65c03473797fa1be7574"
+    },
+    {
+      "file": "cases/03-approval/xmind-88.json",
+      "sha256": "8107f1994c4192b17921a141dff49579e89950e46248f5d7fc99b020df6b1ac2"
+    },
+    {
+      "file": "scripts/03-approval/xmind-88.json",
+      "sha256": "1ef720f13a4f8920e7577240625cbde015bba0dcd5ea2e6f83cbb6dc3e0584db"
+    },
+    {
+      "file": "cases/03-approval/xmind-89.json",
+      "sha256": "34b11e390a64005e6bddeff679d091b9af2a479d1e8b71b92a5fb67fd4c249e5"
+    },
+    {
+      "file": "scripts/03-approval/xmind-89.json",
+      "sha256": "f89116a9e9e5dc457fdc40c608b70eb59fe2f5097e15472b231957fea6aa4834"
+    },
+    {
+      "file": "cases/03-approval/xmind-90.json",
+      "sha256": "d87ff823741ee60d738cb2d88af72e7a81883fb5d5841cac66a2f371e466ef28"
+    },
+    {
+      "file": "scripts/03-approval/xmind-90.json",
+      "sha256": "9ad24f0a2179c50ca6ecddc39cf34cbc102b37ec08a2e21c4e6dea16314f5b40"
+    },
+    {
+      "file": "cases/03-approval/xmind-91.json",
+      "sha256": "0fad2454fa2b4b00a7d5da918a6ec6f725ac4c57c97f666adb7e368369d7b6b1"
+    },
+    {
+      "file": "scripts/03-approval/xmind-91.json",
+      "sha256": "ac2261de30a067440258c1dcb4ac800865bc4baaf15b5029ffb0b99657f7fc44"
+    },
+    {
+      "file": "cases/04-orders-logistics/xmind-80.json",
+      "sha256": "332fc501a954744adc3e1b45c331e587d92f740b85f9e0990f863eda55b20736"
+    },
+    {
+      "file": "scripts/04-orders-logistics/xmind-80.json",
+      "sha256": "170136d6f6303e58bd102c7d8d9cef25ef0285b3bcd5626a0ad37f1a236b4262"
+    },
+    {
+      "file": "cases/04-orders-logistics/xmind-81.json",
+      "sha256": "266ad2b472b96b61f2c7fc8dfbf5cf1ca251da906062bab133b44e6ae8f5a69b"
+    },
+    {
+      "file": "scripts/04-orders-logistics/xmind-81.json",
+      "sha256": "b1127137d9c2afc5322bc55e7c9a59bb82046b832afa1c24ed76d343198cab9a"
+    },
+    {
+      "file": "cases/04-orders-logistics/xmind-82.json",
+      "sha256": "df6eef70a12ae462a8bbb185f2aefe249bc62f1e54bb1f44002f2d521307e3af"
+    },
+    {
+      "file": "scripts/04-orders-logistics/xmind-82.json",
+      "sha256": "49928b9fd1578f552cb60698990a32906dd5aeb010badd187b7e84a63115f7ca"
+    },
+    {
+      "file": "cases/04-orders-logistics/xmind-83.json",
+      "sha256": "f424fc6d18367265aa7f9537de624874e1efa99d4af4da14020ee95301947227"
+    },
+    {
+      "file": "scripts/04-orders-logistics/xmind-83.json",
+      "sha256": "9b58a1f7f3a89d34b2a1013c1cd7803713ef6f889ce7c2acfe43b0ffa4ba3915"
+    },
+    {
+      "file": "cases/04-orders-logistics/xmind-84.json",
+      "sha256": "1fb5a2760d054b496b8df764ea7a6a67605f80ce517184ecd7640361db6eed4a"
+    },
+    {
+      "file": "scripts/04-orders-logistics/xmind-84.json",
+      "sha256": "29f9b34b35ca1d833ec508204eba4ce7059aeaf7160ebfe0071fa9c6b8ea56bc"
+    },
+    {
+      "file": "cases/04-orders-logistics/xmind-85.json",
+      "sha256": "07a6f41a11b611d3b081c89d27ed1f2a09f5ca6d0e6a8d7e78ff58203dca9f88"
+    },
+    {
+      "file": "scripts/04-orders-logistics/xmind-85.json",
+      "sha256": "7dad44f916a6817bee698a178c6c2489e230d3666b6a1231db3de23828710a9b"
+    },
+    {
+      "file": "cases/04-orders-logistics/xmind-86.json",
+      "sha256": "129d7ae4acf4bda73c99e8a1a4cd2efea77654066aa80019ab3f06d550f034a2"
+    },
+    {
+      "file": "scripts/04-orders-logistics/xmind-86.json",
+      "sha256": "26e727dcfa74f20dfbd4cf63cc3b31784955a5efabf768e006027abb27c9421f"
+    },
+    {
+      "file": "cases/05-clients/xmind-94.json",
+      "sha256": "578a539702c00021d503b464386eadde2005dd4c251c8c7b2add8c4f0ba88985"
+    },
+    {
+      "file": "scripts/05-clients/xmind-94.json",
+      "sha256": "74ffead57ec1aea77c2f3985fdbd05d863e18c4f1d4df46105d8a89113713496"
+    },
+    {
+      "file": "cases/05-clients/xmind-95.json",
+      "sha256": "eebbed30fa13bed373d8461d105a1e17a718f91baa2b4b159271b233131d8b67"
+    },
+    {
+      "file": "scripts/05-clients/xmind-95.json",
+      "sha256": "3588a878f1d048e646fe0f08872c7a525e2b56102ed1bb6e56bd88d6625ab22b"
+    },
+    {
+      "file": "cases/05-clients/xmind-96.json",
+      "sha256": "76dd1860f85b730b59a243deba8989183af2947d3cee94f5901340ad7e448a60"
+    },
+    {
+      "file": "scripts/05-clients/xmind-96.json",
+      "sha256": "7ac61706b4cd6ba31dad8602bc98d671e1cf151785ad426393ec6061574f5504"
+    },
+    {
+      "file": "chains/submit-order.json",
+      "sha256": "ee776f46fd3fb508366071c3e470c8b10d1a38821a02e64b2f57a8c88b4cd938"
+    },
+    {
+      "file": "chains/reject-reapply.json",
+      "sha256": "a1d9f060c84a5052bd804d077561a421f2cbdabe1506a384273fe9a4a50e9056"
+    },
+    {
+      "file": "chains/stock-retry.json",
+      "sha256": "90b58390d0bea55c635ec23ff5e756f57aedafc8cc6d4bd6033edd2046e0cc35"
+    },
+    {
+      "file": "chains/order-logistics.json",
+      "sha256": "628e7e262a1c23f3455bc52cfed54a5b1b4cb8e07720593877b15c97adcf5974"
+    },
+    {
+      "file": "config/environment.example.json",
+      "sha256": "9c6fdfed24a0d09ac9b5cdc7c50a707fca968a966cb9719c6435eb54aec6ae92"
+    },
+    {
+      "file": "fixtures/README.md",
+      "sha256": "6ee6e8c8c54575d6e637eb4afb024e1a80fdf6465b0471a014696d8c0c8395d9"
+    },
+    {
+      "file": "README.md",
+      "sha256": "1f57abc89bd7a28ecaa35e49a2d6446228d8e9965a4ba7e4fba9a53d9a55491b"
+    }
+  ]
+}

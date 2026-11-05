@@ -1,0 +1,27 @@
+{
+  "id": "xmind-4",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "本人申请：申请人取当前企微登录人姓名与部门",
+  "expected": "本人申请：申请人取当前企微登录人姓名与部门",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "当前企微登录员工，以本人申请方式打开表单并核对姓名和部门。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "申请人类型",
+    "选择本人申请/代人申请",
+    "表单带出对应申请人信息"
+  ],
+  "sourceExpected": "本人申请：申请人取当前企微登录人姓名与部门"
+}

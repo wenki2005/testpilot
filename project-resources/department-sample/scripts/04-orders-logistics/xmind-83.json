@@ -1,0 +1,37 @@
+{
+  "caseId": "xmind-83",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
+  "version": 2,
+  "dependsOn": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1",
+      "requiredStatus": "passed"
+    }
+  ],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "clickExactText",
+      "text": "订单物流"
+    },
+    {
+      "action": "assertText",
+      "text": "待发货"
+    },
+    {
+      "action": "fillByPlaceholder",
+      "placeholder": "搜索订单号/书籍",
+      "value": "TP_NO_MATCH_7E41_A023"
+    },
+    {
+      "action": "blurByPlaceholder",
+      "placeholder": "搜索订单号/书籍"
+    },
+    {
+      "action": "assertExactVisible",
+      "text": "暂无订单物流记录"
+    }
+  ]
+}

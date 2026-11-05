@@ -1,0 +1,26 @@
+{
+  "id": "xmind-44",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "11位数字：通过",
+  "expected": "11位数字：通过",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "在申请表单独立准备对应收件字段：合法、留空、超长或格式错误；无需先通过相反输入分支。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "收件信息",
+    "填写手机号码"
+  ],
+  "sourceExpected": "11位数字：通过"
+}

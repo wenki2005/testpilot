@@ -1,38 +1,41 @@
 import type { Project, RunListItem, TestDataSet } from '../types';
 import { runOutcomeLabels, runScopeLabels } from '../presentation';
-
 export function RunConfigurationPanel(props: {
-  project: Project;
-  busy: boolean;
-  addCase(): void;
-  configuration: {
-    notes: string;
-    setNotes(value: string): void;
-    runMode: 'regression' | 'compare';
-    setRunMode(value: 'regression' | 'compare'): void;
-    dataParameterInputs: Array<{ key: string; required: boolean; label: string }>;
-    testDataSetId: string;
-    parameterValues: Record<string, string>;
-    testDataSetName: string;
-    selectedTestDataSet: TestDataSet | undefined;
-    selectDataSet(id: string): void;
-    setParameterValue(key: string, value: string): void;
-    setTestDataSetName(value: string): void;
-    saveTestDataSet(): void;
-    deleteTestDataSet(): void;
-    baselineRunId: string;
-    setBaselineRunId(id: string): void;
-    runHistory: RunListItem[];
-    baselineEnvironmentReview: 'same' | 'different' | 'unknown' | undefined;
-    baselineRunModeReview: 'same' | 'different' | 'unknown' | undefined;
-  };
+    project: Project;
+    busy: boolean;
+    addCase(): void;
+    configuration: {
+        notes: string;
+        setNotes(value: string): void;
+        runMode: 'regression' | 'compare';
+        setRunMode(value: 'regression' | 'compare'): void;
+        dataParameterInputs: Array<{
+            key: string;
+            required: boolean;
+            label: string;
+        }>;
+        testDataSetId: string;
+        parameterValues: Record<string, string>;
+        testDataSetName: string;
+        selectedTestDataSet: TestDataSet | undefined;
+        selectDataSet(id: string): void;
+        setParameterValue(key: string, value: string): void;
+        setTestDataSetName(value: string): void;
+        saveTestDataSet(): void;
+        deleteTestDataSet(): void;
+        baselineRunId: string;
+        setBaselineRunId(id: string): void;
+        runHistory: RunListItem[];
+        baselineEnvironmentReview: 'same' | 'different' | 'unknown' | undefined;
+        baselineRunModeReview: 'same' | 'different' | 'unknown' | undefined;
+    };
 }) {
-  const { project, busy, addCase, configuration } = props;
-  const config = configuration;
-  return <>
+    const { project, busy, addCase, configuration } = props;
+    const config = configuration;
+    return <>
     <div className="doc-section-head"><div><h2>运行回归测试</h2><p>在这里选择单条用例或一组模块，审核后手动启动本轮回归。</p></div></div>
     <button className="button-secondary doc-add-case" onClick={addCase}>＋ 添加测试用例</button>
-    <label>测试备注<textarea value={config.notes} onChange={event => config.setNotes(event.target.value)} maxLength={2000} /></label>
+    <label>测试备注<textarea value={config.notes} onChange={event => config.setNotes(event.target.value)} maxLength={2000}/></label>
     <label>运行方式<select value={config.runMode} onChange={event => config.setRunMode(event.target.value as 'regression' | 'compare')}><option value="regression">常规回归 · 优先复用步骤</option><option value="compare">AI 辅助对照 · 确定性 + 视觉</option></select></label>
     {config.dataParameterInputs.length > 0 && <fieldset className="doc-parameter-panel">
       <legend>本轮测试参数</legend>
@@ -41,8 +44,8 @@ export function RunConfigurationPanel(props: {
         <option value="">手动填写本轮参数</option>
         {project.testDataSets?.map(item => <option key={item.id} value={item.id}>{item.name} · 更新于 {new Date(item.updatedAt).toLocaleString()}</option>)}
       </select></label>
-      <div className="doc-parameter-fields">{config.dataParameterInputs.map(({ key, required, label }) => <label key={key}>{label}<small>{required ? '必需' : '可选，留空不阻断'}</small><input aria-label={'参数 ' + key} value={config.parameterValues[key] ?? config.selectedTestDataSet?.values[key] ?? ''} maxLength={500} onChange={event => config.setParameterValue(key, event.target.value)} /></label>)}</div>
-      <div className="doc-parameter-save"><label>{config.selectedTestDataSet ? '数据组名称' : '保存为数据组'}<input aria-label="数据组名称" value={config.testDataSetName} onChange={event => config.setTestDataSetName(event.target.value)} maxLength={80} placeholder="例如：有效申请数据" /></label>
+      <div className="doc-parameter-fields">{config.dataParameterInputs.map(({ key, required, label }) => <label key={key}>{label}<small>{required ? '必需' : '可选，留空不阻断'}</small><input aria-label={'参数 ' + key} value={config.parameterValues[key] ?? config.selectedTestDataSet?.values[key] ?? ''} maxLength={500} onChange={event => config.setParameterValue(key, event.target.value)}/></label>)}</div>
+      <div className="doc-parameter-save"><label>{config.selectedTestDataSet ? '数据组名称' : '保存为数据组'}<input aria-label="数据组名称" value={config.testDataSetName} onChange={event => config.setTestDataSetName(event.target.value)} maxLength={80} placeholder="例如：有效申请数据"/></label>
         <button className="button-secondary" disabled={busy || !config.testDataSetName.trim()} onClick={config.saveTestDataSet}>{config.selectedTestDataSet ? '更新当前数据组' : '保存为新数据组'}</button>
         {config.selectedTestDataSet && <button className="text-button" disabled={busy} onClick={config.deleteTestDataSet}>删除当前数据组</button>}
       </div>

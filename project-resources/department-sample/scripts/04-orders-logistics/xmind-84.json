@@ -1,0 +1,24 @@
+{
+  "caseId": "xmind-84",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
+  "version": 2,
+  "dependsOn": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100",
+      "requiredStatus": "passed"
+    }
+  ],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "assertVisible",
+      "text": "订单"
+    },
+    {
+      "action": "assertVisible",
+      "text": "订单列表"
+    }
+  ]
+}

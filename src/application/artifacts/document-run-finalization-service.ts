@@ -1,4 +1,4 @@
-import type { DocumentProject, DocumentRun, ExecutionJournal } from "../../domain/document-test-model.js";
+import type { DocumentProject, DocumentRun, ExecutionJournal } from "../../domain/documents/shared/test-model.js";
 import type { DocumentRunRepository } from "../ports/document-run-repository.js";
 
 export interface DocumentRunFinalizationDependencies {

@@ -1,38 +1,80 @@
 import React, { useState } from 'react';
 import { request } from '../api/client';
-
-type CodeFile = { name: string; language: string; code: string; description: string; path?: string; startLine?: number; sha256?: string };
-type CodeView = { caseId: string; origin: string; version: string; runId?: string; notice: string; files: CodeFile[] };
-
-export function CaseCodeViewer({ caseId, title, projectId, runId }: { caseId: string; title: string; projectId?: string; runId?: string }) {
-  const [value, setValue] = useState<CodeView>();
-  const [selected, setSelected] = useState(0);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const [notice, setNotice] = useState('');
-  const load = async () => {
-    if (busy) return;
-    setBusy(true); setError(''); setNotice('');
-    try {
-      const owner = runId ?? projectId;
-      if (!owner) throw new Error('没有可读取的项目或运行标识。');
-      setValue(await request<CodeView>(`/api/${runId ? 'document-runs' : 'document-projects'}/${encodeURIComponent(owner)}/cases/${encodeURIComponent(caseId)}/code`)); setSelected(0);
-    } catch (cause) { setError((cause as Error).message); }
-    finally { setBusy(false); }
-  };
-  const file = value?.files[selected];
-  const copy = async () => {
-    if (!file) return;
-    try { await navigator.clipboard.writeText(file.code); setNotice('代码已复制。'); }
-    catch { setNotice('无法自动复制，请选择代码后按 Ctrl+C。'); }
-  };
-  const download = () => {
-    if (!file) return;
-    const url = URL.createObjectURL(new Blob([file.code], { type: 'text/plain;charset=utf-8' }));
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = file.name.replace(/[\\/:*?"<>|]/gu, '_');
-    anchor.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); setNotice('已下载当前代码文件。');
-  };
-  return <React.Fragment><details className="case-code-viewer" onToggle={event => { if (event.currentTarget.open && !value && !busy && !error) void load(); }}>
+type CodeFile = {
+    name: string;
+    language: string;
+    code: string;
+    description: string;
+    path?: string;
+    startLine?: number;
+    sha256?: string;
+};
+type CodeView = {
+    caseId: string;
+    origin: string;
+    version: string;
+    runId?: string;
+    notice: string;
+    files: CodeFile[];
+};
+export function CaseCodeViewer({ caseId, title, projectId, runId }: {
+    caseId: string;
+    title: string;
+    projectId?: string;
+    runId?: string;
+}) {
+    const [value, setValue] = useState<CodeView>();
+    const [selected, setSelected] = useState(0);
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState('');
+    const [notice, setNotice] = useState('');
+    const load = async () => {
+        if (busy)
+            return;
+        setBusy(true);
+        setError('');
+        setNotice('');
+        try {
+            const owner = runId ?? projectId;
+            if (!owner)
+                throw new Error('没有可读取的项目或运行标识。');
+            setValue(await request<CodeView>(`/api/${runId ? 'document-runs' : 'document-projects'}/${encodeURIComponent(owner)}/cases/${encodeURIComponent(caseId)}/code`));
+            setSelected(0);
+        }
+        catch (cause) {
+            setError((cause as Error).message);
+        }
+        finally {
+            setBusy(false);
+        }
+    };
+    const file = value?.files[selected];
+    const copy = async () => {
+        if (!file)
+            return;
+        try {
+            await navigator.clipboard.writeText(file.code);
+            setNotice('代码已复制。');
+        }
+        catch {
+            setNotice('无法自动复制，请选择代码后按 Ctrl+C。');
+        }
+    };
+    const download = () => {
+        if (!file)
+            return;
+        const url = URL.createObjectURL(new Blob([file.code], { type: 'text/plain;charset=utf-8' }));
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = file.name.replace(/[\\/:*?"<>|]/gu, '_');
+        anchor.click();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setNotice('已下载当前代码文件。');
+    };
+    return <React.Fragment><details className="case-code-viewer" onToggle={event => {
+            if (event.currentTarget.open && !value && !busy && !error)
+                void load();
+        }}>
     <summary aria-label={`${title}：查看代码`}>查看代码</summary>
     {busy && <p role="status">正在读取此用例的代码…</p>}
     {error && <div role="alert"><p>{error}</p><button type="button" className="button-secondary" onClick={() => void load()}>重新读取代码</button></div>}

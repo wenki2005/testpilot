@@ -1,0 +1,32 @@
+{
+  "id": "xmind-106",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "物流单号/企微审批单号支持模糊与精准搜索",
+  "expected": "物流单号/企微审批单号支持模糊与精准搜索",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-100"
+    },
+    {
+      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+      "caseId": "xmind-69"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已有审批编号和实际快递单号的同一订单，核对模糊/精确搜索；不能用内部其他出库单号替代物流单号。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "管理端后台（经销商系统服务端）",
+    "内部订单管理（菜单迁移+新增，排序置于菜单最末位）",
+    "部门用书订单",
+    "头部筛选项",
+    "用书类型/划归客户/发货方式/物流单号/企微审批单号"
+  ],
+  "sourceExpected": "物流单号/企微审批单号支持模糊与精准搜索"
+}

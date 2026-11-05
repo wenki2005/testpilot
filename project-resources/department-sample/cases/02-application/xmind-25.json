@@ -1,0 +1,27 @@
+{
+  "id": "xmind-25",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)",
+  "expected": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "caseId": "xmind-1"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "进入申请表单；25使用有效编码，26使用无效数字编码，27使用非数字。无效分支不依赖有效编码用例通过。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "样书明细区",
+    "输入物流编码（自编码/erp编码）",
+    "调用易诚通图书信息接口校验编码"
+  ],
+  "sourceExpected": "编码存在：展示图书名称、出版社名称、图书定价(元)、单本重量(公斤)"
+}

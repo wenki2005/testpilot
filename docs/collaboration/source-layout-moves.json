@@ -1,0 +1,1879 @@
+{
+  "schema": 2,
+  "moves": [
+    {
+      "from": "src/adapters/api-document-lane.ts",
+      "to": "src/adapters/api/document-lane.ts"
+    },
+    {
+      "from": "src/adapters/api-expectation-review.ts",
+      "to": "src/adapters/api/expectation-review.ts"
+    },
+    {
+      "from": "src/adapters/api-finding-tracker.ts",
+      "to": "src/adapters/api/finding-tracker.ts"
+    },
+    {
+      "from": "src/adapters/api-suite-authoring.ts",
+      "to": "src/adapters/api/suite-authoring.ts"
+    },
+    {
+      "from": "src/adapters/api-suite-workflow.ts",
+      "to": "src/adapters/api/suite-workflow.ts"
+    },
+    {
+      "from": "src/adapters/api-test-adapter.ts",
+      "to": "src/adapters/api/test-adapter.ts"
+    },
+    {
+      "from": "src/adapters/authorized-browser-write.ts",
+      "to": "src/adapters/browser/authorized-write.ts"
+    },
+    {
+      "from": "src/adapters/authorized-run-binding.ts",
+      "to": "src/adapters/browser/authorized-run-binding.ts"
+    },
+    {
+      "from": "src/adapters/browser-runtime.ts",
+      "to": "src/adapters/browser/browser-runtime.ts"
+    },
+    {
+      "from": "src/adapters/browser-text-evidence.ts",
+      "to": "src/adapters/browser/text-evidence.ts"
+    },
+    {
+      "from": "src/adapters/case-generation-agent.ts",
+      "to": "src/adapters/case-generation/generation-agent.ts"
+    },
+    {
+      "from": "src/adapters/case-generation-handoff.ts",
+      "to": "src/adapters/case-generation/generation-handoff.ts"
+    },
+    {
+      "from": "src/adapters/command-adapter.ts",
+      "to": "src/adapters/commands/command-adapter.ts"
+    },
+    {
+      "from": "src/adapters/compatible-chat.ts",
+      "to": "src/adapters/ai/legacy-chat-exports.ts"
+    },
+    {
+      "from": "src/adapters/computer-use-evidence.ts",
+      "to": "src/adapters/browser/computer-use/evidence.ts"
+    },
+    {
+      "from": "src/adapters/computer-use-tool-arguments.ts",
+      "to": "src/adapters/browser/computer-use/tool-arguments.ts"
+    },
+    {
+      "from": "src/adapters/computer-use.ts",
+      "to": "src/adapters/browser/computer-use/computer-use-adapter.ts"
+    },
+    {
+      "from": "src/adapters/department-business-evidence.ts",
+      "to": "src/adapters/regression/evidence/business-readback.ts"
+    },
+    {
+      "from": "src/adapters/department-core-chain-browser.ts",
+      "to": "src/adapters/regression/chains/core-chain-browser.ts"
+    },
+    {
+      "from": "src/adapters/department-core-chain-store.ts",
+      "to": "src/adapters/regression/chains/core-chain-store.ts"
+    },
+    {
+      "from": "src/adapters/dify-admin-order-records.ts",
+      "to": "src/adapters/regression/scenarios/orders/admin-order-records.ts"
+    },
+    {
+      "from": "src/adapters/dify-applicant-identity-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/identity/applicant-identity.ts"
+    },
+    {
+      "from": "src/adapters/dify-approved-chain-evidence.ts",
+      "to": "src/adapters/regression/evidence/approval-order-readback.ts"
+    },
+    {
+      "from": "src/adapters/dify-batch-notifier.ts",
+      "to": "src/adapters/regression/notifications/batch-notifier.ts"
+    },
+    {
+      "from": "src/adapters/dify-blocker-diagnostics.ts",
+      "to": "src/adapters/regression/evidence/blocker-diagnostics.ts"
+    },
+    {
+      "from": "src/adapters/dify-book-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/books/book-search.ts"
+    },
+    {
+      "from": "src/adapters/dify-case-quality.ts",
+      "to": "src/adapters/regression/authoring/case-quality.ts"
+    },
+    {
+      "from": "src/adapters/dify-case-readiness.ts",
+      "to": "src/adapters/regression/authoring/case-readiness.ts"
+    },
+    {
+      "from": "src/adapters/dify-client-validation-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/application/client-validation.ts"
+    },
+    {
+      "from": "src/adapters/dify-connected-contract.ts",
+      "to": "src/adapters/regression/evidence/connected-evidence-contract.ts"
+    },
+    {
+      "from": "src/adapters/dify-connected-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/connected-systems.ts"
+    },
+    {
+      "from": "src/adapters/dify-creation-receipts.ts",
+      "to": "src/adapters/regression/scenarios/application/submission-receipts.ts"
+    },
+    {
+      "from": "src/adapters/dify-department-write.ts",
+      "to": "src/adapters/regression/scenarios/application/submit-application.ts"
+    },
+    {
+      "from": "src/adapters/dify-device-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/clients/device-layout.ts"
+    },
+    {
+      "from": "src/adapters/dify-evidence.ts",
+      "to": "src/adapters/regression/evidence/module-evidence.ts"
+    },
+    {
+      "from": "src/adapters/dify-excluded-customer-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/application/excluded-customers.ts"
+    },
+    {
+      "from": "src/adapters/dify-export-policy.ts",
+      "to": "src/adapters/regression/exports/export-policy.ts"
+    },
+    {
+      "from": "src/adapters/dify-field-validity-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/application/field-validation.ts"
+    },
+    {
+      "from": "src/adapters/dify-form-baseline.ts",
+      "to": "src/adapters/regression/scenarios/application/form-baseline.ts"
+    },
+    {
+      "from": "src/adapters/dify-integration-assertions.ts",
+      "to": "src/adapters/regression/evidence/integration-assertions.ts"
+    },
+    {
+      "from": "src/adapters/dify-invalid-book-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/books/invalid-books.ts"
+    },
+    {
+      "from": "src/adapters/dify-list-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/records/application-list.ts"
+    },
+    {
+      "from": "src/adapters/dify-markdown-pack.ts",
+      "to": "src/adapters/regression/authoring/markdown-case-pack.ts"
+    },
+    {
+      "from": "src/adapters/dify-module-evidence-path.ts",
+      "to": "src/adapters/regression/evidence/evidence-paths.ts"
+    },
+    {
+      "from": "src/adapters/dify-oa-template-configuration.ts",
+      "to": "src/adapters/regression/config/approval-templates.ts"
+    },
+    {
+      "from": "src/adapters/dify-observed-order-creation.ts",
+      "to": "src/adapters/regression/scenarios/orders/order-creation-readback.ts"
+    },
+    {
+      "from": "src/adapters/dify-order85-presentation.ts",
+      "to": "src/adapters/regression/scenarios/orders/order-detail-presentation.ts"
+    },
+    {
+      "from": "src/adapters/dify-owned-order-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/orders/my-orders.ts"
+    },
+    {
+      "from": "src/adapters/dify-readonly-fixtures.ts",
+      "to": "src/adapters/regression/config/test-fixtures.ts"
+    },
+    {
+      "from": "src/adapters/dify-readonly-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/scenario-planner.ts"
+    },
+    {
+      "from": "src/adapters/dify-record-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/records/application-detail.ts"
+    },
+    {
+      "from": "src/adapters/dify-regression.ts",
+      "to": "src/adapters/regression/authoring/case-baseline-store.ts"
+    },
+    {
+      "from": "src/adapters/dify-sample-row-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/application/sample-book-rows.ts"
+    },
+    {
+      "from": "src/adapters/dify-script-package.ts",
+      "to": "src/adapters/regression/exports/script-package.ts"
+    },
+    {
+      "from": "src/adapters/dify-web-browser.ts",
+      "to": "src/adapters/regression/browser/module-browser.ts"
+    },
+    {
+      "from": "src/adapters/dify-web-modules.ts",
+      "to": "src/adapters/regression/execution/module-execution-service.ts"
+    },
+    {
+      "from": "src/adapters/dify-welfare-order-scenarios.ts",
+      "to": "src/adapters/regression/scenarios/orders/welfare-orders.ts"
+    },
+    {
+      "from": "src/adapters/dify-workflow-client.ts",
+      "to": "src/adapters/integrations/dify/workflow-client.ts"
+    },
+    {
+      "from": "src/adapters/document-agent-database.ts",
+      "to": "src/adapters/documents/evidence/agent-database.ts"
+    },
+    {
+      "from": "src/adapters/document-authoring-context.ts",
+      "to": "src/adapters/documents/cases/authoring-context.ts"
+    },
+    {
+      "from": "src/adapters/document-baseline-comparison.ts",
+      "to": "src/adapters/documents/execution/baseline-comparison.ts"
+    },
+    {
+      "from": "src/adapters/document-browser-lane.ts",
+      "to": "src/adapters/documents/execution/browser-lane.ts"
+    },
+    {
+      "from": "src/adapters/document-case-code-source.ts",
+      "to": "src/adapters/documents/cases/case-code-source.ts"
+    },
+    {
+      "from": "src/adapters/document-case-entry.ts",
+      "to": "src/adapters/documents/cases/case-entry.ts"
+    },
+    {
+      "from": "src/adapters/document-case-quality.ts",
+      "to": "src/adapters/documents/cases/case-quality.ts"
+    },
+    {
+      "from": "src/adapters/document-case-routing.ts",
+      "to": "src/adapters/documents/cases/case-routing.ts"
+    },
+    {
+      "from": "src/adapters/document-case-scope.ts",
+      "to": "src/adapters/documents/cases/case-scope.ts"
+    },
+    {
+      "from": "src/adapters/document-generation-batches.ts",
+      "to": "src/adapters/documents/cases/generation-batches.ts"
+    },
+    {
+      "from": "src/adapters/document-impact-analysis.ts",
+      "to": "src/adapters/documents/cases/impact-analysis.ts"
+    },
+    {
+      "from": "src/adapters/document-importer.ts",
+      "to": "src/adapters/documents/resources/importer.ts"
+    },
+    {
+      "from": "src/adapters/document-package-builder.ts",
+      "to": "src/adapters/documents/resources/package-builder.ts"
+    },
+    {
+      "from": "src/adapters/document-package-refresh.ts",
+      "to": "src/adapters/documents/resources/package-refresh.ts"
+    },
+    {
+      "from": "src/adapters/document-page-evidence.ts",
+      "to": "src/adapters/documents/evidence/page-evidence.ts"
+    },
+    {
+      "from": "src/adapters/document-result-classification.ts",
+      "to": "src/adapters/documents/execution/result-classification.ts"
+    },
+    {
+      "from": "src/adapters/document-run-executor.ts",
+      "to": "src/adapters/documents/execution/run-executor.ts"
+    },
+    {
+      "from": "src/adapters/document-run-parameters.ts",
+      "to": "src/adapters/documents/execution/run-parameters.ts"
+    },
+    {
+      "from": "src/adapters/document-sensitive-data.ts",
+      "to": "src/adapters/documents/evidence/sensitive-data.ts"
+    },
+    {
+      "from": "src/adapters/document-source-roles.ts",
+      "to": "src/adapters/documents/cases/source-roles.ts"
+    },
+    {
+      "from": "src/adapters/document-test-types.ts",
+      "to": "src/adapters/documents/execution/legacy-type-exports.ts"
+    },
+    {
+      "from": "src/adapters/document-test-workflow.ts",
+      "to": "src/adapters/documents/execution/workflow-facade.ts"
+    },
+    {
+      "from": "src/adapters/document-workflow-record.ts",
+      "to": "src/adapters/documents/execution/workflow-record.ts"
+    },
+    {
+      "from": "src/adapters/grammar-test-script.ts",
+      "to": "src/adapters/exports/generated-test-script.ts"
+    },
+    {
+      "from": "src/adapters/login-handoff.ts",
+      "to": "src/adapters/browser/login-handoff.ts"
+    },
+    {
+      "from": "src/adapters/midscene-visual-assertion.ts",
+      "to": "src/adapters/browser/midscene-visual-assertion.ts"
+    },
+    {
+      "from": "src/adapters/model-settings.ts",
+      "to": "src/adapters/ai/model-settings.ts"
+    },
+    {
+      "from": "src/adapters/module-regression.ts",
+      "to": "src/adapters/regression/execution/execution-manifest-store.ts"
+    },
+    {
+      "from": "src/adapters/mysql-readonly-browser.ts",
+      "to": "src/adapters/database/mysql-browser.ts"
+    },
+    {
+      "from": "src/adapters/openapi-summary.ts",
+      "to": "src/adapters/api/openapi-summary.ts"
+    },
+    {
+      "from": "src/adapters/playwright-test-adapter.ts",
+      "to": "src/adapters/browser/playwright-test-adapter.ts"
+    },
+    {
+      "from": "src/adapters/project-profile-adapter.ts",
+      "to": "src/adapters/projects/project-profile-adapter.ts"
+    },
+    {
+      "from": "src/adapters/project-script-registry.ts",
+      "to": "src/adapters/projects/project-script-registry.ts"
+    },
+    {
+      "from": "src/adapters/public-page-reader.ts",
+      "to": "src/adapters/browser/public-page-reader.ts"
+    },
+    {
+      "from": "src/adapters/read-only-subcheck-authoring.ts",
+      "to": "src/adapters/case-generation/read-only-subchecks.ts"
+    },
+    {
+      "from": "src/adapters/regression-database.ts",
+      "to": "src/adapters/database/regression-readback.ts"
+    },
+    {
+      "from": "src/adapters/responsive-layout.ts",
+      "to": "src/adapters/browser/responsive-layout.ts"
+    },
+    {
+      "from": "src/adapters/run-report-store.ts",
+      "to": "src/adapters/reports/run-report-store.ts"
+    },
+    {
+      "from": "src/adapters/source-agent-evidence.ts",
+      "to": "src/adapters/source-tests/agent-evidence.ts"
+    },
+    {
+      "from": "src/adapters/source-agent-loop.ts",
+      "to": "src/adapters/source-tests/agent-loop.ts"
+    },
+    {
+      "from": "src/adapters/source-test-agent.ts",
+      "to": "src/adapters/source-tests/source-test-agent.ts"
+    },
+    {
+      "from": "src/adapters/sqlite-migration-adapter.ts",
+      "to": "src/adapters/database/sqlite/sqlite-migration-adapter.ts"
+    },
+    {
+      "from": "src/adapters/sqlite-migration-worker.ts",
+      "to": "src/adapters/database/sqlite/sqlite-migration-worker.ts"
+    },
+    {
+      "from": "src/adapters/sqlite-migration-workflow.ts",
+      "to": "src/adapters/database/sqlite/migration-workflow.ts"
+    },
+    {
+      "from": "src/adapters/system-module-regression.ts",
+      "to": "src/adapters/regression/catalog/module-regression-service.ts"
+    },
+    {
+      "from": "src/adapters/test-example-search.ts",
+      "to": "src/adapters/case-generation/example-search.ts"
+    },
+    {
+      "from": "src/adapters/wecom-run-notifications.ts",
+      "to": "src/adapters/notifications/wecom-run-notifications.ts"
+    },
+    {
+      "from": "src/domain/case-script-editor-contract.ts",
+      "to": "src/domain/cases/case-script-contract.ts"
+    },
+    {
+      "from": "src/domain/demo-contracts.ts",
+      "to": "src/domain/testing/local-test-contracts.ts"
+    },
+    {
+      "from": "src/domain/department-core-chains.ts",
+      "to": "src/domain/regression/core-chain-definitions.ts"
+    },
+    {
+      "from": "src/domain/dify-approved-chain-contract.ts",
+      "to": "src/domain/regression/approval-order-contract.ts"
+    },
+    {
+      "from": "src/domain/dify-connected-contract.ts",
+      "to": "src/domain/regression/connected-evidence-contract.ts"
+    },
+    {
+      "from": "src/domain/dify-notification-contract.ts",
+      "to": "src/domain/regression/notification-contract.ts"
+    },
+    {
+      "from": "src/domain/dify-regression-contracts.ts",
+      "to": "src/domain/regression/case-baseline-contract.ts"
+    },
+    {
+      "from": "src/domain/dify-script-layout.ts",
+      "to": "src/domain/regression/script-package-layout.ts"
+    },
+    {
+      "from": "src/domain/dify-web-module-contract.ts",
+      "to": "src/domain/regression/module-execution-contract.ts"
+    },
+    {
+      "from": "src/domain/document-authoring-context.ts",
+      "to": "src/domain/documents/cases/authoring-context.ts"
+    },
+    {
+      "from": "src/domain/document-baseline-comparison.ts",
+      "to": "src/domain/documents/runs/baseline-comparison.ts"
+    },
+    {
+      "from": "src/domain/document-case-assertion-quality.ts",
+      "to": "src/domain/documents/cases/case-assertion-quality.ts"
+    },
+    {
+      "from": "src/domain/document-case-authoring.ts",
+      "to": "src/domain/documents/cases/case-authoring.ts"
+    },
+    {
+      "from": "src/domain/document-case-code.ts",
+      "to": "src/domain/documents/cases/case-code.ts"
+    },
+    {
+      "from": "src/domain/document-case-entry.ts",
+      "to": "src/domain/documents/cases/case-entry.ts"
+    },
+    {
+      "from": "src/domain/document-case-generation-trace.ts",
+      "to": "src/domain/documents/cases/case-generation-trace.ts"
+    },
+    {
+      "from": "src/domain/document-case-markdown.ts",
+      "to": "src/domain/documents/cases/case-markdown.ts"
+    },
+    {
+      "from": "src/domain/document-case-merge.ts",
+      "to": "src/domain/documents/cases/case-merge.ts"
+    },
+    {
+      "from": "src/domain/document-case-order.ts",
+      "to": "src/domain/documents/cases/case-order.ts"
+    },
+    {
+      "from": "src/domain/document-case-routing.ts",
+      "to": "src/domain/documents/cases/case-routing.ts"
+    },
+    {
+      "from": "src/domain/document-case-scope.ts",
+      "to": "src/domain/documents/cases/case-scope.ts"
+    },
+    {
+      "from": "src/domain/document-case-validation.ts",
+      "to": "src/domain/documents/cases/case-validation.ts"
+    },
+    {
+      "from": "src/domain/document-checkpoint-recovery-integrity.ts",
+      "to": "src/domain/documents/runs/checkpoint-recovery-integrity.ts"
+    },
+    {
+      "from": "src/domain/document-checkpoint-retry.ts",
+      "to": "src/domain/documents/runs/checkpoint-retry.ts"
+    },
+    {
+      "from": "src/domain/document-database-evidence.ts",
+      "to": "src/domain/documents/shared/database-evidence.ts"
+    },
+    {
+      "from": "src/domain/document-dependency-plan.ts",
+      "to": "src/domain/documents/cases/dependency-plan.ts"
+    },
+    {
+      "from": "src/domain/document-navigation-scope.ts",
+      "to": "src/domain/documents/projects/navigation-scope.ts"
+    },
+    {
+      "from": "src/domain/document-prerequisite-handoff.ts",
+      "to": "src/domain/documents/cases/prerequisite-handoff.ts"
+    },
+    {
+      "from": "src/domain/document-project-revision-digest.ts",
+      "to": "src/domain/documents/projects/project-revision-digest.ts"
+    },
+    {
+      "from": "src/domain/document-required-assertions.ts",
+      "to": "src/domain/documents/cases/required-assertions.ts"
+    },
+    {
+      "from": "src/domain/document-result-classification.ts",
+      "to": "src/domain/documents/runs/result-classification.ts"
+    },
+    {
+      "from": "src/domain/document-run-comparison.ts",
+      "to": "src/domain/documents/runs/run-comparison.ts"
+    },
+    {
+      "from": "src/domain/document-run-history.ts",
+      "to": "src/domain/documents/runs/run-history.ts"
+    },
+    {
+      "from": "src/domain/document-run-scope.ts",
+      "to": "src/domain/documents/runs/run-scope.ts"
+    },
+    {
+      "from": "src/domain/document-run-triage.ts",
+      "to": "src/domain/documents/runs/run-triage.ts"
+    },
+    {
+      "from": "src/domain/document-sensitive-data.ts",
+      "to": "src/domain/documents/shared/sensitive-data.ts"
+    },
+    {
+      "from": "src/domain/document-session-profile.ts",
+      "to": "src/domain/documents/projects/session-profile.ts"
+    },
+    {
+      "from": "src/domain/document-test-contracts.ts",
+      "to": "src/domain/documents/shared/test-contracts.ts"
+    },
+    {
+      "from": "src/domain/document-test-model.ts",
+      "to": "src/domain/documents/shared/test-model.ts"
+    },
+    {
+      "from": "src/domain/document-test-types.ts",
+      "to": "src/domain/documents/shared/test-types.ts"
+    },
+    {
+      "from": "src/domain/document-website-map.ts",
+      "to": "src/domain/documents/projects/website-map.ts"
+    },
+    {
+      "from": "src/domain/document-workflow.ts",
+      "to": "src/domain/documents/shared/workflow.ts"
+    },
+    {
+      "from": "src/domain/project-profile.ts",
+      "to": "src/domain/projects/profile-contract.ts"
+    },
+    {
+      "from": "src/domain/project-script.ts",
+      "to": "src/domain/projects/script-contract.ts"
+    },
+    {
+      "from": "src/domain/regression-database-contract.ts",
+      "to": "src/domain/database/regression-database-contract.ts"
+    },
+    {
+      "from": "src/domain/run-report-contract.ts",
+      "to": "src/domain/reports/run-report-contract.ts"
+    },
+    {
+      "from": "src/domain/sha256.ts",
+      "to": "src/domain/shared/sha256.ts"
+    },
+    {
+      "from": "src/domain/source-test.ts",
+      "to": "src/domain/source-tests/source-test-contract.ts"
+    },
+    {
+      "from": "src/domain/system-module-contract.ts",
+      "to": "src/domain/regression/module-catalog-contract.ts"
+    },
+    {
+      "from": "src/domain/types.ts",
+      "to": "src/domain/testing/test-contracts.ts"
+    },
+    {
+      "from": "src/interfaces/http/api-suite-routes.ts",
+      "to": "src/interfaces/http/api-tests/api-suite-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/case-generation-routes.ts",
+      "to": "src/interfaces/http/case-generation/case-generation-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/demo-run-routes.ts",
+      "to": "src/interfaces/http/local-tests/local-test-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/dify-regression-routes.ts",
+      "to": "src/interfaces/http/regression/regression-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-automatic-recovery-routes.ts",
+      "to": "src/interfaces/http/document-runs/automatic-recovery-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-autonomous-execution-routes.ts",
+      "to": "src/interfaces/http/document-runs/autonomous-execution-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-autonomous-plan-routes.ts",
+      "to": "src/interfaces/http/document-runs/autonomous-plan-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-case-code-routes.ts",
+      "to": "src/interfaces/http/document-cases/case-code-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-case-markdown-routes.ts",
+      "to": "src/interfaces/http/document-cases/case-markdown-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-case-selection-routes.ts",
+      "to": "src/interfaces/http/document-cases/case-selection-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-case-step-route.ts",
+      "to": "src/interfaces/http/document-cases/case-step-route.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-impact-review-routes.ts",
+      "to": "src/interfaces/http/document-cases/impact-review-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-notification-routes.ts",
+      "to": "src/interfaces/http/document-runs/notification-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-parallel-run-routes.ts",
+      "to": "src/interfaces/http/document-runs/parallel-run-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-case-authoring-routes.ts",
+      "to": "src/interfaces/http/document-projects/project-case-authoring-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-material-routes.ts",
+      "to": "src/interfaces/http/document-projects/project-material-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-preparation-routes.ts",
+      "to": "src/interfaces/http/document-projects/project-preparation-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-review-routes.ts",
+      "to": "src/interfaces/http/document-projects/project-review-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-revision-routes.ts",
+      "to": "src/interfaces/http/document-projects/project-revision-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-run-route.ts",
+      "to": "src/interfaces/http/document-projects/project-run-route.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-session-routes.ts",
+      "to": "src/interfaces/http/document-projects/project-session-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-project-update-routes.ts",
+      "to": "src/interfaces/http/document-projects/project-update-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-run-handoff-routes.ts",
+      "to": "src/interfaces/http/document-runs/run-handoff-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-run-investigation-routes.ts",
+      "to": "src/interfaces/http/document-runs/run-investigation-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-run-recovery-readiness-routes.ts",
+      "to": "src/interfaces/http/document-runs/run-recovery-readiness-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-run-routes.ts",
+      "to": "src/interfaces/http/document-runs/run-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-session-open-routes.ts",
+      "to": "src/interfaces/http/document-projects/session-open-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-session-profile-routes.ts",
+      "to": "src/interfaces/http/document-projects/session-profile-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-site-version-routes.ts",
+      "to": "src/interfaces/http/document-projects/site-version-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-step-probe-routes.ts",
+      "to": "src/interfaces/http/document-cases/step-probe-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-step-revision-proposal-routes.ts",
+      "to": "src/interfaces/http/document-cases/step-revision-proposal-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-website-map-routes.ts",
+      "to": "src/interfaces/http/document-projects/website-map-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/document-workflow-routes.ts",
+      "to": "src/interfaces/http/document-runs/workflow-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/http-utils.ts",
+      "to": "src/interfaces/http/shared/http-utils.ts"
+    },
+    {
+      "from": "src/interfaces/http/local-request-policy.ts",
+      "to": "src/interfaces/http/shared/local-request-policy.ts"
+    },
+    {
+      "from": "src/interfaces/http/mysql-routes.ts",
+      "to": "src/interfaces/http/database/mysql-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/project-run-routes.ts",
+      "to": "src/interfaces/http/project-tests/project-run-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/project-script-authoring-routes.ts",
+      "to": "src/interfaces/http/project-tests/project-script-authoring-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/project-script-routes.ts",
+      "to": "src/interfaces/http/project-tests/project-script-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/run-report-routes.ts",
+      "to": "src/interfaces/http/reports/run-report-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/settings-routes.ts",
+      "to": "src/interfaces/http/settings/settings-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/source-test-routes.ts",
+      "to": "src/interfaces/http/source-tests/source-test-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/sqlite-migration-routes.ts",
+      "to": "src/interfaces/http/database/sqlite-migration-routes.ts"
+    },
+    {
+      "from": "src/interfaces/http/static-file-route.ts",
+      "to": "src/interfaces/http/shared/static-file-route.ts"
+    },
+    {
+      "from": "src/storage/api-suite-loader.ts",
+      "to": "src/storage/api-tests/api-suite-loader.ts"
+    },
+    {
+      "from": "src/storage/demo-artifact-store.ts",
+      "to": "src/storage/local-tests/demo-artifact-store.ts"
+    },
+    {
+      "from": "src/storage/document-automatic-recovery-store.ts",
+      "to": "src/storage/document-runs/automatic-recovery-store.ts"
+    },
+    {
+      "from": "src/storage/document-autonomous-execution-store.ts",
+      "to": "src/storage/document-runs/autonomous-execution-store.ts"
+    },
+    {
+      "from": "src/storage/document-autonomous-plan-store.ts",
+      "to": "src/storage/document-runs/autonomous-plan-store.ts"
+    },
+    {
+      "from": "src/storage/document-notification-store.ts",
+      "to": "src/storage/document-runs/notification-store.ts"
+    },
+    {
+      "from": "src/storage/document-project-store.ts",
+      "to": "src/storage/document-projects/project-store.ts"
+    },
+    {
+      "from": "src/storage/document-run-artifact-store.ts",
+      "to": "src/storage/document-runs/run-artifact-store.ts"
+    },
+    {
+      "from": "src/storage/document-run-image-analysis-store.ts",
+      "to": "src/storage/document-runs/run-image-analysis-store.ts"
+    },
+    {
+      "from": "src/storage/document-run-investigation-store.ts",
+      "to": "src/storage/document-runs/run-investigation-store.ts"
+    },
+    {
+      "from": "src/storage/document-run-store.ts",
+      "to": "src/storage/document-runs/run-store.ts"
+    },
+    {
+      "from": "src/storage/document-step-revision-proposal-store.ts",
+      "to": "src/storage/document-runs/step-revision-proposal-store.ts"
+    },
+    {
+      "from": "src/storage/document-website-map-store.ts",
+      "to": "src/storage/document-projects/website-map-store.ts"
+    },
+    {
+      "from": "src/storage/openapi-boundary.ts",
+      "to": "src/storage/api-tests/openapi-boundary.ts"
+    },
+    {
+      "from": "src/storage/sqlite-migration-suite.ts",
+      "to": "src/storage/database/sqlite-migration-suite.ts"
+    },
+    {
+      "from": "src/storage/suite-loader.ts",
+      "to": "src/storage/local-tests/suite-loader.ts"
+    },
+    {
+      "from": "src/application/runs/active-document-run-registry.ts",
+      "to": "src/application/runs/execution/active-document-run-registry.ts"
+    },
+    {
+      "from": "src/application/runs/demo-run-service.ts",
+      "to": "src/application/runs/execution/demo-run-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-automatic-recovery-policy.ts",
+      "to": "src/application/runs/recovery/automatic-recovery-policy.ts"
+    },
+    {
+      "from": "src/application/runs/document-automatic-recovery-service.ts",
+      "to": "src/application/runs/recovery/automatic-recovery-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-autonomous-plan-execution-service.ts",
+      "to": "src/application/runs/execution/autonomous-plan-execution-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-checkpoint-start-validation.ts",
+      "to": "src/application/runs/recovery/checkpoint-start-validation.ts"
+    },
+    {
+      "from": "src/application/runs/document-parallel-run-service.ts",
+      "to": "src/application/runs/execution/parallel-run-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-project-run-preparation-service.ts",
+      "to": "src/application/runs/preparation/project-run-preparation-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-project-run-submission-service.ts",
+      "to": "src/application/runs/execution/project-run-submission-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-project-run-usecase-service.ts",
+      "to": "src/application/runs/execution/project-run-usecase-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-project-workflow-preparation-service.ts",
+      "to": "src/application/runs/preparation/project-workflow-preparation-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-resume-start-validation.ts",
+      "to": "src/application/runs/recovery/resume-start-validation.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-api-lane-service.ts",
+      "to": "src/application/runs/execution/api-lane-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-baseline-service.ts",
+      "to": "src/application/runs/results/baseline-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-cancellation-result-service.ts",
+      "to": "src/application/runs/execution/cancellation-result-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-difference-analysis-service.ts",
+      "to": "src/application/runs/results/difference-analysis-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-execution-preparation-service.ts",
+      "to": "src/application/runs/preparation/execution-preparation-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-history-service.ts",
+      "to": "src/application/runs/results/history-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-image-analysis-service.ts",
+      "to": "src/application/runs/results/image-analysis-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-investigation-service.ts",
+      "to": "src/application/runs/results/investigation-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-journal-coordinator.ts",
+      "to": "src/application/runs/execution/journal-coordinator.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-lane-execution-service.ts",
+      "to": "src/application/runs/execution/lane-execution-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-lifecycle-service.ts",
+      "to": "src/application/runs/execution/lifecycle-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-notification-service.ts",
+      "to": "src/application/runs/notifications/notification-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-outcome-service.ts",
+      "to": "src/application/runs/results/outcome-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-recovery-coordinator.ts",
+      "to": "src/application/runs/recovery/recovery-coordinator.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-recovery-readiness-service.ts",
+      "to": "src/application/runs/recovery/recovery-readiness-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-scope-preparation-service.ts",
+      "to": "src/application/runs/preparation/scope-preparation-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-service.ts",
+      "to": "src/application/runs/execution/service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-snapshot-service.ts",
+      "to": "src/application/runs/results/snapshot-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-step-generation-service.ts",
+      "to": "src/application/runs/preparation/step-generation-service.ts"
+    },
+    {
+      "from": "src/application/runs/document-run-workflow-coordinator.ts",
+      "to": "src/application/runs/execution/workflow-coordinator.ts"
+    },
+    {
+      "from": "src/application/runs/document-step-revision-proposal-service.ts",
+      "to": "src/application/runs/execution/step-revision-proposal-service.ts"
+    },
+    {
+      "from": "web/src/workbench.tsx",
+      "to": "web/src/app/workbench.tsx"
+    },
+    {
+      "from": "web/src/workbench-routing.ts",
+      "to": "web/src/app/routes.ts"
+    },
+    {
+      "from": "web/src/sidebar-project-context.ts",
+      "to": "web/src/shared/project-selection.ts"
+    },
+    {
+      "from": "web/src/approved-sidebar.css",
+      "to": "web/src/app/styles/sidebar.css"
+    },
+    {
+      "from": "web/src/shared-sidebar.css",
+      "to": "web/src/app/styles/sidebar-shared.css"
+    },
+    {
+      "from": "web/src/styles.css",
+      "to": "web/src/app/styles/base.css"
+    },
+    {
+      "from": "web/src/workbench-design.css",
+      "to": "web/src/app/styles/workbench.css"
+    },
+    {
+      "from": "web/src/dify-workbench-base.css",
+      "to": "web/src/app/styles/execution-base.css"
+    },
+    {
+      "from": "web/src/system-module-workbench.tsx",
+      "to": "web/src/features/execution/execution-page.tsx"
+    },
+    {
+      "from": "web/src/system-module-workbench.css",
+      "to": "web/src/features/execution/execution-page.css"
+    },
+    {
+      "from": "web/src/system-module-selection-results.tsx",
+      "to": "web/src/features/execution/selected-case-results.tsx"
+    },
+    {
+      "from": "web/src/system-module-latest-results.ts",
+      "to": "web/src/features/execution/latest-case-results.ts"
+    },
+    {
+      "from": "web/src/department-core-chains.tsx",
+      "to": "web/src/features/execution/core-chains/core-chain-selector.tsx"
+    },
+    {
+      "from": "web/src/department-core-chain-results.tsx",
+      "to": "web/src/features/execution/core-chains/core-chain-results.tsx"
+    },
+    {
+      "from": "web/src/department-core-chains.css",
+      "to": "web/src/features/execution/core-chains/core-chains.css"
+    },
+    {
+      "from": "web/src/system-module-report-export.ts",
+      "to": "web/src/features/run-reports/report-export.ts"
+    },
+    {
+      "from": "web/src/department-sample-report-template.json",
+      "to": "web/src/features/run-reports/report-template.json"
+    },
+    {
+      "from": "web/src/dify-module-workbench.tsx",
+      "to": "web/src/features/execution/module-preview/module-workbench.tsx"
+    },
+    {
+      "from": "web/src/dify-module-workbench.css",
+      "to": "web/src/features/execution/module-preview/module-workbench.css"
+    },
+    {
+      "from": "web/src/dify-regression-page.tsx",
+      "to": "web/src/features/case-assistance/case-assistance-page.tsx"
+    },
+    {
+      "from": "web/src/dify-regression.css",
+      "to": "web/src/features/case-assistance/case-assistance.css"
+    },
+    {
+      "from": "web/src/module-regression-page.tsx",
+      "to": "web/src/features/document-tests/module-regression-page.tsx"
+    },
+    {
+      "from": "web/src/document-tests-page.tsx",
+      "to": "web/src/features/document-tests/document-tests-page.tsx"
+    },
+    {
+      "from": "web/src/document-case-selection.ts",
+      "to": "web/src/features/document-tests/legacy-case-selection-exports.ts"
+    },
+    {
+      "from": "web/src/project-script-origin-label.tsx",
+      "to": "web/src/shared/script-origin-label.tsx"
+    },
+    {
+      "from": "web/src/api-mapping-candidates.ts",
+      "to": "web/src/features/api-tests/mapping-candidates.ts"
+    },
+    {
+      "from": "web/src/api-suites-page.tsx",
+      "to": "web/src/features/api-tests/api-suites-page.tsx"
+    },
+    {
+      "from": "web/src/api-tests-page.tsx",
+      "to": "web/src/features/api-tests/api-tests-page.tsx"
+    },
+    {
+      "from": "web/src/case-generator-page.tsx",
+      "to": "web/src/features/case-generation/case-generator-page.tsx"
+    },
+    {
+      "from": "web/src/mysql-explorer-page.tsx",
+      "to": "web/src/features/database/mysql-explorer-page.tsx"
+    },
+    {
+      "from": "web/src/sqlite-migration-page.tsx",
+      "to": "web/src/features/database/sqlite-migration-page.tsx"
+    },
+    {
+      "from": "web/src/sqlite-suite-archive.ts",
+      "to": "web/src/features/database/sqlite-suite-archive.ts"
+    },
+    {
+      "from": "web/src/regression-workbench-page.tsx",
+      "to": "web/src/features/regression-library/regression-library-page.tsx"
+    },
+    {
+      "from": "web/src/settings-page.tsx",
+      "to": "web/src/features/settings/settings-page.tsx"
+    },
+    {
+      "from": "web/src/source-tests-page.tsx",
+      "to": "web/src/features/source-tests/source-tests-page.tsx"
+    },
+    {
+      "from": "scripts/build-dify-module.mjs",
+      "to": "scripts/resources/build-dify-workflow.mjs"
+    },
+    {
+      "from": "scripts/check-architecture.mjs",
+      "to": "scripts/maintenance/check-architecture.mjs"
+    },
+    {
+      "from": "scripts/check-regression-scripts.mjs",
+      "to": "scripts/resources/check-regression-scripts.mjs"
+    },
+    {
+      "from": "scripts/clean-test-artifacts.mjs",
+      "to": "scripts/maintenance/clean-test-artifacts.mjs"
+    },
+    {
+      "from": "scripts/clean.mjs",
+      "to": "scripts/build/clean-server-output.mjs"
+    },
+    {
+      "from": "scripts/connect-workspace-database.mjs",
+      "to": "scripts/data/connect-workspace-database.mjs"
+    },
+    {
+      "from": "scripts/dify-machine-transfer.mjs",
+      "to": "scripts/data/transfer-workspace-config.mjs"
+    },
+    {
+      "from": "scripts/export-project-resources.mjs",
+      "to": "scripts/resources/export-project-resources.mjs"
+    },
+    {
+      "from": "scripts/export-regression-scripts.mjs",
+      "to": "scripts/resources/export-regression-scripts.mjs"
+    },
+    {
+      "from": "scripts/export-workspace-scripts.mjs",
+      "to": "scripts/resources/export-workspace-scripts.mjs"
+    },
+    {
+      "from": "scripts/migrate-workspace-data.mjs",
+      "to": "scripts/data/migrate-workspace-data.mjs"
+    },
+    {
+      "from": "scripts/package-demo.mjs",
+      "to": "scripts/build/package-windows-demo.mjs"
+    },
+    {
+      "from": "scripts/package-department-sample-suite.mjs",
+      "to": "scripts/resources/package-department-sample-suite.mjs"
+    },
+    {
+      "from": "scripts/run-regression-plan.mjs",
+      "to": "scripts/execution/run-regression-plan.mjs"
+    },
+    {
+      "from": "scripts/run-tests.mjs",
+      "to": "scripts/maintenance/run-tool-tests.mjs"
+    },
+    {
+      "from": "scripts/test-browser-processes.mjs",
+      "to": "scripts/lib/test-browser-processes.mjs"
+    },
+    {
+      "from": "scripts/build-case156-executable-matrix.mjs",
+      "to": "scripts/legacy/build-case156-executable-matrix.mjs"
+    },
+    {
+      "from": "scripts/build-department-blocker-audit.mjs",
+      "to": "scripts/legacy/build-department-blocker-audit.mjs"
+    },
+    {
+      "from": "scripts/build-department-run-analysis.mjs",
+      "to": "scripts/legacy/build-department-run-analysis.mjs"
+    },
+    {
+      "from": "scripts/build-department-sample-suite.mjs",
+      "to": "scripts/legacy/build-department-sample-suite.mjs"
+    },
+    {
+      "from": "scripts/curate-xmind-ui-steps.mjs",
+      "to": "scripts/legacy/curate-xmind-ui-steps.mjs"
+    },
+    {
+      "from": "scripts/generate-xmind-ui-steps.mjs",
+      "to": "scripts/legacy/generate-xmind-ui-steps.mjs"
+    },
+    {
+      "from": "scripts/organize-department-prerequisites.mjs",
+      "to": "scripts/legacy/organize-department-prerequisites.mjs"
+    },
+    {
+      "from": "scripts/repair-department-sample-current-project.mjs",
+      "to": "scripts/legacy/repair-department-sample-current-project.mjs"
+    },
+    {
+      "from": "scripts/repair-run-comparison-labels.mjs",
+      "to": "scripts/legacy/repair-run-comparison-labels.mjs"
+    },
+    {
+      "from": "scripts/sync-xmind-browser-steps.mjs",
+      "to": "scripts/legacy/sync-xmind-browser-steps.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-13-minimal.mjs",
+      "to": "scripts/legacy/verify-dify-13-minimal.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-completion.mjs",
+      "to": "scripts/legacy/verify-dify-completion.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-core-regression.mjs",
+      "to": "scripts/legacy/verify-dify-core-regression.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-database-regression.mjs",
+      "to": "scripts/legacy/verify-dify-database-regression.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-expansion.mjs",
+      "to": "scripts/legacy/verify-dify-expansion.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-markdown-fixed.mjs",
+      "to": "scripts/legacy/verify-dify-markdown-fixed.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-minimal.mjs",
+      "to": "scripts/legacy/verify-dify-minimal.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-other-minimal.mjs",
+      "to": "scripts/legacy/verify-dify-other-minimal.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-readonly-expansion.mjs",
+      "to": "scripts/legacy/verify-dify-readonly-expansion.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-readonly-starter.mjs",
+      "to": "scripts/legacy/verify-dify-readonly-starter.mjs"
+    },
+    {
+      "from": "scripts/verify-dify-web-module.mjs",
+      "to": "scripts/legacy/verify-dify-web-module.mjs"
+    },
+    {
+      "from": "scripts/verify-system-module-regression.mjs",
+      "to": "scripts/legacy/verify-system-module-regression.mjs"
+    },
+    {
+      "from": "src/demo/server.ts",
+      "to": "src/server/http-server.ts"
+    },
+    {
+      "from": "src/demo/runtime.ts",
+      "to": "src/server/runtime.ts"
+    },
+    {
+      "from": "src/demo/run-diagnostics.ts",
+      "to": "src/server/run-diagnostics.ts"
+    },
+    {
+      "from": "src/demo/sample.ts",
+      "to": "src/server/local-sample.ts"
+    },
+    {
+      "from": "src/demo/contracts.ts",
+      "to": "src/compat/local-test-contract-exports.ts"
+    },
+    {
+      "from": "src/demo/http-utils.ts",
+      "to": "src/compat/http-helper-exports.ts"
+    },
+    {
+      "from": "src/bootstrap/demo-server-state.ts",
+      "to": "src/bootstrap/server-state.ts"
+    },
+    {
+      "from": "tests/api-document-lane.test.mjs",
+      "to": "tests/api/document-lane.test.mjs"
+    },
+    {
+      "from": "tests/api-expectation-review.test.mjs",
+      "to": "tests/api/expectation-review.test.mjs"
+    },
+    {
+      "from": "tests/api-mcp.integration.test.mjs",
+      "to": "tests/api/api-mcp.integration.test.mjs"
+    },
+    {
+      "from": "tests/api-suite-authoring.test.mjs",
+      "to": "tests/api/suite-authoring.test.mjs"
+    },
+    {
+      "from": "tests/api-suite-local.integration.test.mjs",
+      "to": "tests/api/api-suite-local.integration.test.mjs"
+    },
+    {
+      "from": "tests/api-test-adapter.test.mjs",
+      "to": "tests/api/test-adapter.test.mjs"
+    },
+    {
+      "from": "tests/api-workbench-ui.integration.test.mjs",
+      "to": "tests/api/api-workbench-ui.integration.test.mjs"
+    },
+    {
+      "from": "tests/autonomous-regression-plans-ssr.test.mjs",
+      "to": "tests/documents/runs/autonomous-regression-plans-ssr.test.mjs"
+    },
+    {
+      "from": "tests/browser-session-navigation.test.mjs",
+      "to": "tests/browser/browser-session-navigation.test.mjs"
+    },
+    {
+      "from": "tests/browser-session-restart.integration.test.mjs",
+      "to": "tests/browser/browser-session-restart.integration.test.mjs"
+    },
+    {
+      "from": "tests/case-generation-benchmark-atomic.test.mjs",
+      "to": "tests/case-generation/case-generation-benchmark-atomic.test.mjs"
+    },
+    {
+      "from": "tests/case-generation-handoff.test.mjs",
+      "to": "tests/case-generation/generation-handoff.test.mjs"
+    },
+    {
+      "from": "tests/command-process-tree.test.mjs",
+      "to": "tests/infrastructure/command-process-tree.test.mjs"
+    },
+    {
+      "from": "tests/computer-use-evidence.test.mjs",
+      "to": "tests/browser/computer-use/evidence.test.mjs"
+    },
+    {
+      "from": "tests/computer-use-preflight.test.mjs",
+      "to": "tests/browser/computer-use-preflight.test.mjs"
+    },
+    {
+      "from": "tests/computer-use-regression-repairs.test.mjs",
+      "to": "tests/browser/computer-use-regression-repairs.test.mjs"
+    },
+    {
+      "from": "tests/demo-hub-profile.integration.test.mjs",
+      "to": "tests/infrastructure/demo-hub-profile.integration.test.mjs"
+    },
+    {
+      "from": "tests/demo-integration.test.mjs",
+      "to": "tests/infrastructure/demo-integration.test.mjs"
+    },
+    {
+      "from": "tests/demo-smoke.test.mjs",
+      "to": "tests/infrastructure/demo-smoke.test.mjs"
+    },
+    {
+      "from": "tests/department-core-chain-store.test.mjs",
+      "to": "tests/regression/chains/core-chain-store.test.mjs"
+    },
+    {
+      "from": "tests/dify-a01-compatibility.test.mjs",
+      "to": "tests/regression/behavior/a01-compatibility.test.mjs"
+    },
+    {
+      "from": "tests/dify-account-pagination.test.mjs",
+      "to": "tests/regression/behavior/account-pagination.test.mjs"
+    },
+    {
+      "from": "tests/dify-active-evidence.test.mjs",
+      "to": "tests/regression/behavior/active-evidence.test.mjs"
+    },
+    {
+      "from": "tests/dify-admin-order-records.test.mjs",
+      "to": "tests/regression/scenarios/orders/admin-order-records.test.mjs"
+    },
+    {
+      "from": "tests/dify-applicant-identity-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/identity/applicant-identity.test.mjs"
+    },
+    {
+      "from": "tests/dify-application-empty.test.mjs",
+      "to": "tests/regression/behavior/application-empty.test.mjs"
+    },
+    {
+      "from": "tests/dify-approval-pagination.test.mjs",
+      "to": "tests/regression/behavior/approval-pagination.test.mjs"
+    },
+    {
+      "from": "tests/dify-approved-chain-evidence.test.mjs",
+      "to": "tests/regression/evidence/approval-order-readback.test.mjs"
+    },
+    {
+      "from": "tests/dify-auth-route.test.mjs",
+      "to": "tests/regression/behavior/auth-route.test.mjs"
+    },
+    {
+      "from": "tests/dify-blocker-diagnostics.test.mjs",
+      "to": "tests/regression/evidence/blocker-diagnostics.test.mjs"
+    },
+    {
+      "from": "tests/dify-book-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/books/book-search.test.mjs"
+    },
+    {
+      "from": "tests/dify-client-validation-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/application/client-validation.test.mjs"
+    },
+    {
+      "from": "tests/dify-connected-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/connected-systems.test.mjs"
+    },
+    {
+      "from": "tests/dify-core-policy.test.mjs",
+      "to": "tests/regression/behavior/core-policy.test.mjs"
+    },
+    {
+      "from": "tests/dify-creation-receipts.test.mjs",
+      "to": "tests/regression/scenarios/application/submission-receipts.test.mjs"
+    },
+    {
+      "from": "tests/dify-delete-sample-row.test.mjs",
+      "to": "tests/regression/behavior/delete-sample-row.test.mjs"
+    },
+    {
+      "from": "tests/dify-department-write.test.mjs",
+      "to": "tests/regression/scenarios/application/submit-application.test.mjs"
+    },
+    {
+      "from": "tests/dify-device-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/clients/device-layout.test.mjs"
+    },
+    {
+      "from": "tests/dify-dsl.test.mjs",
+      "to": "tests/regression/behavior/dsl.test.mjs"
+    },
+    {
+      "from": "tests/dify-evidence.test.mjs",
+      "to": "tests/regression/evidence/module-evidence.test.mjs"
+    },
+    {
+      "from": "tests/dify-excluded-customer-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/application/excluded-customers.test.mjs"
+    },
+    {
+      "from": "tests/dify-expense-pagination.test.mjs",
+      "to": "tests/regression/behavior/expense-pagination.test.mjs"
+    },
+    {
+      "from": "tests/dify-failure-evidence.test.mjs",
+      "to": "tests/regression/behavior/failure-evidence.test.mjs"
+    },
+    {
+      "from": "tests/dify-field-validity-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/application/field-validation.test.mjs"
+    },
+    {
+      "from": "tests/dify-form-baseline.test.mjs",
+      "to": "tests/regression/scenarios/application/form-baseline.test.mjs"
+    },
+    {
+      "from": "tests/dify-integration-assertions.test.mjs",
+      "to": "tests/regression/evidence/integration-assertions.test.mjs"
+    },
+    {
+      "from": "tests/dify-integration-readback.test.mjs",
+      "to": "tests/regression/behavior/integration-readback.test.mjs"
+    },
+    {
+      "from": "tests/dify-invalid-book-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/books/invalid-books.test.mjs"
+    },
+    {
+      "from": "tests/dify-list-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/records/application-list.test.mjs"
+    },
+    {
+      "from": "tests/dify-machine-transfer.test.mjs",
+      "to": "tests/regression/behavior/machine-transfer.test.mjs"
+    },
+    {
+      "from": "tests/dify-module-evidence-path.test.mjs",
+      "to": "tests/regression/evidence/evidence-paths.test.mjs"
+    },
+    {
+      "from": "tests/dify-multiline-totals.test.mjs",
+      "to": "tests/regression/behavior/multiline-totals.test.mjs"
+    },
+    {
+      "from": "tests/dify-notifications.test.mjs",
+      "to": "tests/regression/behavior/notifications.test.mjs"
+    },
+    {
+      "from": "tests/dify-oa-template-configuration.test.mjs",
+      "to": "tests/regression/config/approval-templates.test.mjs"
+    },
+    {
+      "from": "tests/dify-observed-order-creation.test.mjs",
+      "to": "tests/regression/scenarios/orders/order-creation-readback.test.mjs"
+    },
+    {
+      "from": "tests/dify-order85-presentation.test.mjs",
+      "to": "tests/regression/scenarios/orders/order-detail-presentation.test.mjs"
+    },
+    {
+      "from": "tests/dify-owner-login-scenarios.test.mjs",
+      "to": "tests/regression/behavior/owner-login-scenarios.test.mjs"
+    },
+    {
+      "from": "tests/dify-pending-status.test.mjs",
+      "to": "tests/regression/behavior/pending-status.test.mjs"
+    },
+    {
+      "from": "tests/dify-processed-source-bindings.test.mjs",
+      "to": "tests/regression/behavior/processed-source-bindings.test.mjs"
+    },
+    {
+      "from": "tests/dify-readonly-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/scenario-planner.test.mjs"
+    },
+    {
+      "from": "tests/dify-record-back.test.mjs",
+      "to": "tests/regression/behavior/record-back.test.mjs"
+    },
+    {
+      "from": "tests/dify-record-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/records/application-detail.test.mjs"
+    },
+    {
+      "from": "tests/dify-regression.test.mjs",
+      "to": "tests/regression/authoring/case-baseline-store.test.mjs"
+    },
+    {
+      "from": "tests/dify-sample-row-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/application/sample-book-rows.test.mjs"
+    },
+    {
+      "from": "tests/dify-transient-stage.test.mjs",
+      "to": "tests/regression/behavior/transient-stage.test.mjs"
+    },
+    {
+      "from": "tests/dify-web-modules.test.mjs",
+      "to": "tests/regression/execution/module-execution-service.test.mjs"
+    },
+    {
+      "from": "tests/dify-welfare-order-scenarios.test.mjs",
+      "to": "tests/regression/scenarios/orders/welfare-orders.test.mjs"
+    },
+    {
+      "from": "tests/document-agent-database.test.mjs",
+      "to": "tests/documents/evidence/agent-database.test.mjs"
+    },
+    {
+      "from": "tests/document-api-contract-ui.integration.test.mjs",
+      "to": "tests/documents/runs/document-api-contract-ui.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-autonomous-execution-http.integration.test.mjs",
+      "to": "tests/documents/runs/document-autonomous-execution-http.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-autonomous-plan-execution-service.test.mjs",
+      "to": "tests/documents/runs/document-autonomous-plan-execution-service.test.mjs"
+    },
+    {
+      "from": "tests/document-baseline-comparison.test.mjs",
+      "to": "tests/documents/execution/baseline-comparison.test.mjs"
+    },
+    {
+      "from": "tests/document-case-auto-preparation.test.mjs",
+      "to": "tests/documents/cases/document-case-auto-preparation.test.mjs"
+    },
+    {
+      "from": "tests/document-case-baseline.integration.test.mjs",
+      "to": "tests/documents/cases/document-case-baseline.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-case-exploration-adoption.integration.test.mjs",
+      "to": "tests/documents/cases/document-case-exploration-adoption.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-case-exploration-review-ssr.test.mjs",
+      "to": "tests/documents/cases/document-case-exploration-review-ssr.test.mjs"
+    },
+    {
+      "from": "tests/document-case-generation-vertical.integration.test.mjs",
+      "to": "tests/documents/cases/document-case-generation-vertical.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-case-metadata.test.mjs",
+      "to": "tests/documents/cases/document-case-metadata.test.mjs"
+    },
+    {
+      "from": "tests/document-case-navigation.test.mjs",
+      "to": "tests/documents/cases/document-case-navigation.test.mjs"
+    },
+    {
+      "from": "tests/document-case-step-authoring-provenance.test.mjs",
+      "to": "tests/documents/cases/document-case-step-authoring-provenance.test.mjs"
+    },
+    {
+      "from": "tests/document-custom-select.test.mjs",
+      "to": "tests/documents/cases/document-custom-select.test.mjs"
+    },
+    {
+      "from": "tests/document-execution-plan.test.mjs",
+      "to": "tests/documents/runs/document-execution-plan.test.mjs"
+    },
+    {
+      "from": "tests/document-failure-triage.test.mjs",
+      "to": "tests/documents/runs/document-failure-triage.test.mjs"
+    },
+    {
+      "from": "tests/document-field-unlabeled.test.mjs",
+      "to": "tests/documents/cases/document-field-unlabeled.test.mjs"
+    },
+    {
+      "from": "tests/document-impact-analysis.test.mjs",
+      "to": "tests/documents/cases/impact-analysis.test.mjs"
+    },
+    {
+      "from": "tests/document-material-version.test.mjs",
+      "to": "tests/documents/projects/document-material-version.test.mjs"
+    },
+    {
+      "from": "tests/document-no-model-step-fallback.integration.mjs",
+      "to": "tests/documents/cases/document-no-model-step-fallback.integration.mjs"
+    },
+    {
+      "from": "tests/document-package-refresh.test.mjs",
+      "to": "tests/documents/resources/package-refresh.test.mjs"
+    },
+    {
+      "from": "tests/document-page-evidence.test.mjs",
+      "to": "tests/documents/evidence/page-evidence.test.mjs"
+    },
+    {
+      "from": "tests/document-placeholder-validation.test.mjs",
+      "to": "tests/documents/cases/document-placeholder-validation.test.mjs"
+    },
+    {
+      "from": "tests/document-post-login-generation.integration.test.mjs",
+      "to": "tests/documents/runs/document-post-login-generation.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-preparation-workflow.integration.test.mjs",
+      "to": "tests/documents/runs/document-preparation-workflow.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-project-session.integration.test.mjs",
+      "to": "tests/documents/projects/document-project-session.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-project-update-service.test.mjs",
+      "to": "tests/documents/projects/document-project-update-service.test.mjs"
+    },
+    {
+      "from": "tests/document-regression-sample.integration.test.mjs",
+      "to": "tests/documents/runs/document-regression-sample.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-revision-api.integration.test.mjs",
+      "to": "tests/documents/projects/document-revision-api.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-revision-history.test.mjs",
+      "to": "tests/documents/projects/document-revision-history.test.mjs"
+    },
+    {
+      "from": "tests/document-route-cleanup.integration.test.mjs",
+      "to": "tests/documents/runs/document-route-cleanup.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-run-cancel.integration.test.mjs",
+      "to": "tests/documents/runs/document-run-cancel.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-run-crash-recovery.integration.test.mjs",
+      "to": "tests/documents/runs/document-run-crash-recovery.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-run-progress.integration.test.mjs",
+      "to": "tests/documents/runs/document-run-progress.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-select-unlabeled.test.mjs",
+      "to": "tests/documents/cases/document-select-unlabeled.test.mjs"
+    },
+    {
+      "from": "tests/document-sensitive-export.test.mjs",
+      "to": "tests/documents/runs/document-sensitive-export.test.mjs"
+    },
+    {
+      "from": "tests/document-site-version.integration.test.mjs",
+      "to": "tests/documents/projects/document-site-version.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-source-roles.test.mjs",
+      "to": "tests/documents/cases/source-roles.test.mjs"
+    },
+    {
+      "from": "tests/document-step-grounding.test.mjs",
+      "to": "tests/documents/cases/document-step-grounding.test.mjs"
+    },
+    {
+      "from": "tests/document-test-data-version.test.mjs",
+      "to": "tests/documents/runs/document-test-data-version.test.mjs"
+    },
+    {
+      "from": "tests/document-test-parameters.test.mjs",
+      "to": "tests/documents/runs/document-test-parameters.test.mjs"
+    },
+    {
+      "from": "tests/document-website-map-http-store.test.mjs",
+      "to": "tests/documents/projects/document-website-map-http-store.test.mjs"
+    },
+    {
+      "from": "tests/document-website-map.test.mjs",
+      "to": "tests/documents/projects/document-website-map.test.mjs"
+    },
+    {
+      "from": "tests/document-workflow-mcp.integration.test.mjs",
+      "to": "tests/documents/runs/document-workflow-mcp.integration.test.mjs"
+    },
+    {
+      "from": "tests/document-workflow-record.test.mjs",
+      "to": "tests/documents/execution/workflow-record.test.mjs"
+    },
+    {
+      "from": "tests/document-workflow.integration.test.mjs",
+      "to": "tests/documents/runs/document-workflow.integration.test.mjs"
+    },
+    {
+      "from": "tests/login-handoff-request-policy.test.mjs",
+      "to": "tests/browser/login-handoff-request-policy.test.mjs"
+    },
+    {
+      "from": "tests/managed-browser-session-restart.integration.test.mjs",
+      "to": "tests/browser/managed-browser-session-restart.integration.test.mjs"
+    },
+    {
+      "from": "tests/managed-edge-handoff.integration.test.mjs",
+      "to": "tests/browser/managed-edge-handoff.integration.test.mjs"
+    },
+    {
+      "from": "tests/model-settings-security.test.mjs",
+      "to": "tests/ai/model-settings-security.test.mjs"
+    },
+    {
+      "from": "tests/module-regression.test.mjs",
+      "to": "tests/regression/execution/execution-manifest-store.test.mjs"
+    },
+    {
+      "from": "tests/mysql-routes.test.mjs",
+      "to": "tests/database/mysql-routes.test.mjs"
+    },
+    {
+      "from": "tests/playwright-test-adapter.test.mjs",
+      "to": "tests/browser/playwright-test-adapter.test.mjs"
+    },
+    {
+      "from": "tests/read-only-subcheck-authoring.test.mjs",
+      "to": "tests/case-generation/read-only-subchecks.test.mjs"
+    },
+    {
+      "from": "tests/regression-database.test.mjs",
+      "to": "tests/database/regression-readback.test.mjs"
+    },
+    {
+      "from": "tests/regression-scripts-layout.test.mjs",
+      "to": "tests/regression/behavior/regression-scripts-layout.test.mjs"
+    },
+    {
+      "from": "tests/responsive-layout.test.mjs",
+      "to": "tests/browser/responsive-layout.test.mjs"
+    },
+    {
+      "from": "tests/run-diagnostics.test.mjs",
+      "to": "tests/infrastructure/run-diagnostics.test.mjs"
+    },
+    {
+      "from": "tests/source-agent-evidence.test.mjs",
+      "to": "tests/source-tests/agent-evidence.test.mjs"
+    },
+    {
+      "from": "tests/source-agent-model-protocol.test.mjs",
+      "to": "tests/source-tests/source-agent-model-protocol.test.mjs"
+    },
+    {
+      "from": "tests/source-test-agent.test.mjs",
+      "to": "tests/source-tests/source-test-agent.test.mjs"
+    },
+    {
+      "from": "tests/source-test-candidate-adoption.integration.test.mjs",
+      "to": "tests/source-tests/source-test-candidate-adoption.integration.test.mjs"
+    },
+    {
+      "from": "tests/source-test-candidate-registry.integration.test.mjs",
+      "to": "tests/source-tests/source-test-candidate-registry.integration.test.mjs"
+    },
+    {
+      "from": "tests/source-test-candidate-review-ssr.test.mjs",
+      "to": "tests/source-tests/source-test-candidate-review-ssr.test.mjs"
+    },
+    {
+      "from": "tests/source-test-job-service.test.mjs",
+      "to": "tests/source-tests/source-test-job-service.test.mjs"
+    },
+    {
+      "from": "tests/sqlite-migration-adapter.test.mjs",
+      "to": "tests/database/sqlite/sqlite-migration-adapter.test.mjs"
+    },
+    {
+      "from": "tests/sqlite-migration-mcp.integration.test.mjs",
+      "to": "tests/database/sqlite-migration-mcp.integration.test.mjs"
+    },
+    {
+      "from": "tests/sqlite-migration-workbench-ui.integration.test.mjs",
+      "to": "tests/database/sqlite-migration-workbench-ui.integration.test.mjs"
+    },
+    {
+      "from": "tests/sqlite-migration-workflow.integration.test.mjs",
+      "to": "tests/database/sqlite-migration-workflow.integration.test.mjs"
+    },
+    {
+      "from": "tests/system-browser-isolation.test.mjs",
+      "to": "tests/regression/behavior/system-browser-isolation.test.mjs"
+    },
+    {
+      "from": "tests/system-module-regression.test.mjs",
+      "to": "tests/regression/catalog/module-regression-service.test.mjs"
+    },
+    {
+      "from": "tests/test-runner-ownership.test.mjs",
+      "to": "tests/infrastructure/test-runner-ownership.test.mjs"
+    },
+    {
+      "from": "tests/wecom-login-policy.test.mjs",
+      "to": "tests/browser/wecom-login-policy.test.mjs"
+    }
+  ],
+  "preservedPublicEntry": "src/demo/server.ts -> ../server/http-server.js",
+  "note": "Source and test path organization. Public HTTP paths, UI text and local data filenames remain unchanged."
+}

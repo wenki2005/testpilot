@@ -1,0 +1,31 @@
+{
+  "id": "xmind-112",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
+  "version": 2,
+  "title": "迁移后历史订单详情、物流信息、备注字段无丢失",
+  "expected": "迁移后历史订单详情、物流信息、备注字段无丢失",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-108"
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-109"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "新系统可访问且迁移数据基线可比；111查询已知历史订单，112逐字段对照历史明细、物流和备注。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "管理端后台（经销商系统服务端）",
+    "内部订单管理（菜单迁移+新增，排序置于菜单最末位）",
+    "员工福利订单（本期迁移，纳入交付范围）",
+    "从原「教师服务系统-员工福利订单」迁移至「经销商系统服务端-内部订单管理-员工福利订单」"
+  ],
+  "sourceExpected": "迁移后历史订单详情、物流信息、备注字段无丢失"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "xmind-131",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
+  "version": 2,
+  "title": "配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+  "expected": "[需澄清] 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "pending",
+    "note": "配置异常的降级与告警策略仍待澄清；需隔离配置错误样本及明确预期，不猜测系统应如何处理。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "系统配置依赖",
+    "关键配置项就绪校验",
+    "上线前配置参数完整性"
+  ],
+  "sourceExpected": "[需澄清] 配置缺失/错误：🔄待澄清 配置异常时的降级与告警策略"
+}

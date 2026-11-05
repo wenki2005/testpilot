@@ -1,0 +1,26 @@
+{
+  "id": "xmind-53",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
+  "version": 2,
+  "title": "待审核：状态按钮置灰",
+  "expected": "待审核：状态按钮置灰",
+  "manualSteps": [],
+  "prerequisites": [
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "caseId": "xmind-50"
+    }
+  ],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "复用同一本人申请的真实待审批状态；若已审批则换已有待审样本，不改数据库审批状态。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-用书审批详情页",
+    "查看审批流程与状态",
+    "页面展示申请编号、申请流程、申请人、申请时间、状态按钮"
+  ],
+  "sourceExpected": "待审核：状态按钮置灰"
+}

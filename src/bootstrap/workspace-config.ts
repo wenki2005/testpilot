@@ -1,4 +1,4 @@
-import type { DemoConfig } from '../domain/demo-contracts.js';
+import type { DemoConfig } from '../domain/testing/local-test-contracts.js';
 
 /** Local instances share code, but own their data, accounts and execution state. */
 export function integratedWorkspaceConfig(env: NodeJS.ProcessEnv = process.env): DemoConfig['workspaces'] {
