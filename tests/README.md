@@ -13,6 +13,7 @@
 - [documents](documents/)
 - [fixtures](fixtures/)
 - [infrastructure](infrastructure/)
+- [mcp](mcp/)
 - [regression](regression/)
 - [source-tests](source-tests/)
 - [storage](storage/)
