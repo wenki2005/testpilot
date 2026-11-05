@@ -8,7 +8,7 @@ import { resolve } from 'node:path';
 import { mkdir, readFile } from 'node:fs/promises';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 const active = new Set(['queued', 'running']);
 
 test('HTTP evidence, Pi tool loop and unchanged regression expectations form a real round trip', { timeout: 180000 }, async t => {
@@ -24,7 +24,7 @@ test('HTTP evidence, Pi tool loop and unchanged regression expectations form a r
   let log = '';
   let authoringEndpoint = '';
   async function start() {
-    child = spawn(process.execPath, ['dist/demo/server.js'], {
+    child = spawn(process.execPath, ['dist/server/http-server.js'], {
       cwd: root,
       env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: authoringEndpoint ? 'mock-key' : '', OPENAI_API_KEY: '', TESTPILOT_BASE_URL: authoringEndpoint, TESTPILOT_MODEL: 'local-authoring-fixture' },
       stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true,

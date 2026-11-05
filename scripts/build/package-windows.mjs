@@ -19,7 +19,7 @@ fs.mkdirSync(stage,{recursive:true});
 const excluded=new Set(['.git','node_modules','.local','.cache']);
 function copyTree(source,destination,isDependencies=false){
  const entry=fs.lstatSync(source);if(entry.isSymbolicLink())throw Error('Linked package input is not supported: '+source);
- if(entry.isDirectory()){fs.mkdirSync(destination,{recursive:true});for(const name of fs.readdirSync(source)){if(name==='.cache'||name==='.git'||(!isDependencies&&excluded.has(name))||/^\.env(?:\.|$)/.test(name)&&!['.env.example','.env.regression.example'].includes(name))continue;copyTree(path.join(source,name),path.join(destination,name),isDependencies);}return;}
+ if(entry.isDirectory()){fs.mkdirSync(destination,{recursive:true});for(const name of fs.readdirSync(source)){if(name==='.cache'||name==='.git'||isDependencies&&['.modules.yaml','.pnpm-workspace-state-v1.json'].includes(name)||(!isDependencies&&excluded.has(name))||/^\.env(?:\.|$)/.test(name)&&!['.env.example','.env.regression.example'].includes(name))continue;copyTree(path.join(source,name),path.join(destination,name),isDependencies);}return;}
  fs.mkdirSync(path.dirname(destination),{recursive:true});fs.copyFileSync(source,destination);
 }
 const sourceDirs=['src','web/src','project-resources','regression','scripts','packaging','examples','tests','docs','.agents','.github'];

@@ -1781,7 +1781,7 @@
       "file": "src/adapters/browser/login-handoff.ts",
       "category": "浏览器执行",
       "purpose": "login handoff",
-      "lines": 327,
+      "lines": 331,
       "previousPaths": [
         "src/adapters/login-handoff.ts"
       ],
@@ -1818,42 +1818,42 @@
         },
         {
           "name": "waitForUserLogin",
-          "line": 169,
+          "line": 173,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "requestLoginContinue",
-          "line": 227,
+          "line": 231,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "clearLoginHandoff",
-          "line": 237,
+          "line": 241,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "isLoginPage",
-          "line": 238,
+          "line": 242,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "browserRequestPolicySource",
-          "line": 273,
+          "line": 277,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "allowBrowserRequest",
-          "line": 274,
+          "line": 278,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "bringBrowserToFront",
-          "line": 292,
+          "line": 296,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "isAuthenticationRoute",
-          "line": 316,
+          "line": 320,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -4474,14 +4474,14 @@
       "file": "src/adapters/regression/evidence/evidence-paths.ts",
       "category": "申样回归执行",
       "purpose": "evidence paths",
-      "lines": 15,
+      "lines": 14,
       "previousPaths": [
         "src/adapters/dify-module-evidence-path.ts"
       ],
       "symbols": [
         {
           "name": "difyModuleEvidencePath",
-          "line": 6,
+          "line": 5,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -5969,6 +5969,20 @@
         {
           "name": "verifyDepartmentReadOnlyResult",
           "line": 274,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/adapters/reports/report-archive.ts",
+      "category": "运行报告",
+      "purpose": "report archive",
+      "lines": 38,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "buildReportArchive",
+          "line": 9,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -11428,14 +11442,14 @@
       "file": "src/interfaces/http/reports/run-report-routes.ts",
       "category": "运行报告",
       "purpose": "报告列表、详情和报告元数据修改 HTTP 接口",
-      "lines": 18,
+      "lines": 32,
       "previousPaths": [
         "src/interfaces/http/run-report-routes.ts"
       ],
       "symbols": [
         {
           "name": "createRunReportRoutes",
-          "line": 6,
+          "line": 10,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13175,6 +13189,414 @@
       ]
     },
     {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/assertion-failure.json",
+      "category": "公共基础",
+      "purpose": "assertion failure",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/cli-suite.json",
+      "category": "公共基础",
+      "purpose": "cli suite",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/fixture-blocked.json",
+      "category": "公共基础",
+      "purpose": "fixture blocked",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/fixture-cleanup-failure.json",
+      "category": "公共基础",
+      "purpose": "fixture cleanup failure",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/fixture-failing-case.json",
+      "category": "公共基础",
+      "purpose": "fixture failing case",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/fixture-invalid-rerun.json",
+      "category": "公共基础",
+      "purpose": "fixture invalid rerun",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/fixture-pass.json",
+      "category": "公共基础",
+      "purpose": "fixture pass",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/fixture-targeted-rerun.json",
+      "category": "公共基础",
+      "purpose": "fixture targeted rerun",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/get-health.json",
+      "category": "公共基础",
+      "purpose": "get health",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/invalid.json",
+      "category": "公共基础",
+      "purpose": "invalid",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/parallel-allowed.json",
+      "category": "公共基础",
+      "purpose": "parallel allowed",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/parallel-denied.json",
+      "category": "公共基础",
+      "purpose": "parallel denied",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/post-denied.json",
+      "category": "公共基础",
+      "purpose": "post denied",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/post-opt-in.json",
+      "category": "公共基础",
+      "purpose": "post opt in",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/prefix-escape.json",
+      "category": "公共基础",
+      "purpose": "prefix escape",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/redirect.json",
+      "category": "公共基础",
+      "purpose": "redirect",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/role-matrix.json",
+      "category": "公共基础",
+      "purpose": "role matrix",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/assertion-failure/8a0910dd-8b59-4a2f-b0cf-350aaf103363/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 77,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/assertion-failure/8a0910dd-8b59-4a2f-b0cf-350aaf103363/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 32,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/auth-boundary-observed/453f73d7-1b46-4588-8116-add70f6ced00/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 169,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/auth-boundary-observed/453f73d7-1b46-4588-8116-add70f6ced00/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 135,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/design-observed/8249da0e-35b0-43da-95b4-5390a8ca4c69/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 188,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/design-observed/8249da0e-35b0-43da-95b4-5390a8ca4c69/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 133,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-blocked/b8508a9b-f7b1-47ae-a827-06c9d639b938/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 97,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-blocked/b8508a9b-f7b1-47ae-a827-06c9d639b938/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 59,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-cleanup-failure/58107a37-531e-4b08-950d-66042e680b81/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 110,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-cleanup-failure/58107a37-531e-4b08-950d-66042e680b81/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 59,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-failing-case/a9952ce6-2c10-4b69-81be-2587518454bc/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 110,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-failing-case/a9952ce6-2c10-4b69-81be-2587518454bc/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 59,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-pass/aa727de9-5340-4f8a-b539-4810e953a6aa/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 109,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-pass/aa727de9-5340-4f8a-b539-4810e953a6aa/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 59,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-targeted-rerun/f5105e70-90ea-4ffb-988d-e6cebcbced58/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 115,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/fixture-targeted-rerun/f5105e70-90ea-4ffb-988d-e6cebcbced58/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 71,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/get-health/a10e9331-36c9-4b54-8043-6efdb0445240/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 65,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/get-health/a10e9331-36c9-4b54-8043-6efdb0445240/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 38,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/parallel-allowed/853f7eeb-117b-4014-b408-ad8b6b1b6f3a/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 155,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/parallel-allowed/853f7eeb-117b-4014-b408-ad8b6b1b6f3a/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 24,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/parallel-denied/12960660-31a9-4e12-8b50-4990e2d2884f/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 48,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/parallel-denied/12960660-31a9-4e12-8b50-4990e2d2884f/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 24,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/post-denied/79b4a1bb-ebb0-489a-9fe5-6fa9fca975c7/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 73,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/post-denied/79b4a1bb-ebb0-489a-9fe5-6fa9fca975c7/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 44,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/post-opt-in/336cbc7f-f6f8-4fc8-8bbd-55724e2e9d41/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 81,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/post-opt-in/336cbc7f-f6f8-4fc8-8bbd-55724e2e9d41/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 44,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/prefix-escape/3133144f-4fb7-44c2-917d-d1150845942b/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 77,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/prefix-escape/3133144f-4fb7-44c2-917d-d1150845942b/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 32,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/redirect/dd34bd86-86f7-449f-af25-cadc371f3480/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 53,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/redirect/dd34bd86-86f7-449f-af25-cadc371f3480/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 20,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/role-matrix/b4407581-244d-414f-9e4c-4041794677a7/run.json",
+      "category": "公共基础",
+      "purpose": "run",
+      "lines": 89,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/api-adapter-fixture/1793904919079/runs/role-matrix/b4407581-244d-414f-9e4c-4041794677a7/suite.json",
+      "category": "公共基础",
+      "purpose": "suite",
+      "lines": 62,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/browser-session-restart/1793904925093/external-edge-profile/Default/arbitration_service_config.json",
+      "category": "公共基础",
+      "purpose": "arbitration_service_config",
+      "lines": 197,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/artifacts/browser-session-restart/1793904925093/external-edge-profile/Default/default_cloud_config.json",
+      "category": "公共基础",
+      "purpose": "default_cloud_config",
+      "lines": 264,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
       "file": "tests/browser/browser-session-navigation.test.mjs",
       "category": "浏览器执行",
       "purpose": "browser session navigation.test",
@@ -13477,6 +13899,78 @@
       "previousPaths": [
         "tests/sqlite-migration-adapter.test.mjs"
       ],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-api-contract-ui/1793905076579/document-tests/projects/doc-api-ui-fixture.json",
+      "category": "网页测试",
+      "purpose": "doc api ui fixture",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-metadata-fixture/1793905026286/document-tests/projects/legacy-project.json",
+      "category": "网页测试",
+      "purpose": "legacy project",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-metadata-fixture/1793905026286/document-tests/runs/legacy-run/run.json",
+      "category": "网页测试",
+      "purpose": "run",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-no-model-step-fallback/1793905034589/document-tests/projects/no-model-page-grounded-fallback.json",
+      "category": "网页测试",
+      "purpose": "no model page grounded fallback",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-workflow-approval-fixture/1793905055113/document-workflows/6b203db7-9207-4f11-acb3-aba1ab1cc74c.json",
+      "category": "网页测试",
+      "purpose": "6b203db7 9207 4f11 acb3 aba1ab1cc74c",
+      "lines": 92,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-workflow-cancel-fixture/1793905055397/document-workflows/aa33d6bf-8ad7-4cab-a86f-430d5e675487.json",
+      "category": "网页测试",
+      "purpose": "aa33d6bf 8ad7 4cab a86f 430d5e675487",
+      "lines": 53,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-workflow-integrity-fixture/1793905055571/document-workflows/a11f93a7-2c24-4cb6-9047-6e7405dd536b.json",
+      "category": "网页测试",
+      "purpose": "a11f93a7 2c24 4cb6 9047 6e7405dd536b",
+      "lines": 1,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-workflow-integrity-fixture/1793905055571/document-workflows/e94cbcee-7286-4f68-a306-74c85317eea6.json",
+      "category": "网页测试",
+      "purpose": "e94cbcee 7286 4f68 a306 74c85317eea6",
+      "lines": 12,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/documents/artifacts/document-workflow-record-fixture/1793905054150/document-workflows/39df2c29-2b3a-4c62-ad25-60cfb5a345c3.json",
+      "category": "网页测试",
+      "purpose": "39df2c29 2b3a 4c62 ad25 60cfb5a345c3",
+      "lines": 193,
+      "previousPaths": [],
       "symbols": []
     },
     {
@@ -14904,6 +15398,14 @@
       "previousPaths": [
         "tests/dify-readonly-scenarios.test.mjs"
       ],
+      "symbols": []
+    },
+    {
+      "file": "tests/reports/report-archive.test.mjs",
+      "category": "运行报告",
+      "purpose": "report archive.test",
+      "lines": 18,
+      "previousPaths": [],
       "symbols": []
     },
     {
@@ -18214,47 +18716,52 @@
       "file": "web/src/features/run-reports/run-reports.tsx",
       "category": "运行报告",
       "purpose": "运行报告列表、筛选、详情、名称备注和重要标记",
-      "lines": 313,
+      "lines": 319,
       "previousPaths": [],
       "symbols": [
         {
+          "name": "DownloadFormat",
+          "line": 5,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
           "name": "Icon",
-          "line": 13,
+          "line": 14,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Badge",
-          "line": 16,
+          "line": 17,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Counts",
-          "line": 20,
+          "line": 21,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "request",
-          "line": 23,
+          "line": 24,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Format",
-          "line": 30,
+          "line": 31,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "EditReport",
-          "line": 35,
+          "line": 36,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "RunReports",
-          "line": 50,
+          "line": 51,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "GroupRows",
-          "line": 301,
+          "line": 307,
           "kind": "FunctionDeclaration"
         }
       ]

@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('a CDP project tab and sessionStorage survive TestPilot service restarts', { timeout: 45_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'browser-session-restart', String(Date.now()));

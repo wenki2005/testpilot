@@ -9,7 +9,7 @@ import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 const baselineMarker = 'HELD_OUT_BASELINE_MUST_NOT_LEAK_TO_GENERATION';
 
 test('case-generation agent runs through trace-preserving review, browser lanes, report and verifiable package', { timeout: 180_000 }, async t => {
@@ -95,7 +95,7 @@ test('case-generation agent runs through trace-preserving review, browser lanes,
     TESTPILOT_BROWSER_KEEP_EDGE_ON_SHUTDOWN: '0',
     TESTPILOT_DISABLE_PUBLIC_SEARCH: '1',
   };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let demoLog = '';
   demo.stdout.on('data', chunk => { demoLog += chunk.toString(); });
   demo.stderr.on('data', chunk => { demoLog += chunk.toString(); });

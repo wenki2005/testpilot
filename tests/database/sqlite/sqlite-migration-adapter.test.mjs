@@ -8,7 +8,7 @@ import { unzipSync } from 'fflate';
 import { loadSqliteMigrationSuite } from '../../../dist/storage/database/sqlite-migration-suite.js';
 import { runSqliteMigrationSuite } from '../../../dist/adapters/database/sqlite/sqlite-migration-adapter.js';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('SQLite migration runner isolates each scenario, rolls back failed SQL and packages immutable source evidence', async t => {
   const temp = await mkdtemp(join(tmpdir(), 'testpilot-sqlite-suite-'));

@@ -26,7 +26,7 @@ test('project saves retain immutable case, step, material and test-data revision
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-revisions-'));
   const previousDataDir = process.env.TESTPILOT_DATA_DIR;
   process.env.TESTPILOT_DATA_DIR = dataDir;
-  const { saveDocumentProject, listDocumentProjectRevisions, getDocumentProjectRevision } = await import(`../dist/adapters/document-test-workflow.js?revision=${Date.now()}`);
+  const { createDocumentProjectStore } = await import('../../../dist/storage/document-projects/project-store.js'); const { saveDocumentProject, listDocumentProjectRevisions, getDocumentProjectRevision } = createDocumentProjectStore(join(dataDir, 'document-tests'));
   t.after(async () => {
     if (previousDataDir === undefined) delete process.env.TESTPILOT_DATA_DIR;
     else process.env.TESTPILOT_DATA_DIR = previousDataDir;
@@ -76,7 +76,7 @@ test('legacy run snapshots seed revision history without rewriting old runs', as
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-revision-migration-'));
   const previousDataDir = process.env.TESTPILOT_DATA_DIR;
   process.env.TESTPILOT_DATA_DIR = dataDir;
-  const { saveDocumentProject, listDocumentProjectRevisions, getDocumentProjectRevision } = await import(`../dist/adapters/document-test-workflow.js?legacyRevision=${Date.now()}`);
+  const { createDocumentProjectStore } = await import('../../../dist/storage/document-projects/project-store.js'); const { saveDocumentProject, listDocumentProjectRevisions, getDocumentProjectRevision } = createDocumentProjectStore(join(dataDir, 'document-tests'));
   t.after(async () => {
     if (previousDataDir === undefined) delete process.env.TESTPILOT_DATA_DIR;
     else process.env.TESTPILOT_DATA_DIR = previousDataDir;
@@ -112,7 +112,7 @@ test('original source files use immutable content-addressed storage keys', async
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-material-storage-'));
   const previousDataDir = process.env.TESTPILOT_DATA_DIR;
   process.env.TESTPILOT_DATA_DIR = dataDir;
-  const { saveDocumentProject, listDocumentProjectRevisions, getDocumentProjectRevision, writeDocumentSource } = await import(`../dist/adapters/document-test-workflow.js?materialStorage=${Date.now()}`);
+  const { createDocumentProjectStore } = await import('../../../dist/storage/document-projects/project-store.js'); const { saveDocumentProject, listDocumentProjectRevisions, getDocumentProjectRevision, writeDocumentSource } = createDocumentProjectStore(join(dataDir, 'document-tests'));
   t.after(async () => {
     if (previousDataDir === undefined) delete process.env.TESTPILOT_DATA_DIR;
     else process.env.TESTPILOT_DATA_DIR = previousDataDir;

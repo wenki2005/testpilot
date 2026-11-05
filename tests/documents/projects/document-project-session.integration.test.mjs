@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('project session status is passive and identity notes do not invalidate approved cases', { timeout: 30_000 }, async t => {
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-project-session-'));
@@ -40,7 +40,7 @@ test('project session status is passive and identity notes do not invalidate app
   await mkdir(projectDir, { recursive: true });
   await writeFile(join(projectDir, `${projectId}.json`), JSON.stringify(project));
 
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], {
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], {
     cwd: root,
     env: {
       ...process.env,

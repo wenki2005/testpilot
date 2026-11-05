@@ -8,7 +8,7 @@ import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { strFromU8, unzipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('document workflow preserves selected scope in partial report, ZIP and MCP export', { timeout: 180_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'document-workflow-integration', String(Date.now()));
@@ -102,7 +102,7 @@ test('document workflow preserves selected scope in partial report, ZIP and MCP 
     TESTPILOT_BROWSER_CHANNEL: '',
     TESTPILOT_BROWSER_KEEP_EDGE_ON_SHUTDOWN: '0',
   };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let demoLog = '';
   demo.stdout.on('data', chunk => { demoLog += chunk.toString(); });
   demo.stderr.on('data', chunk => { demoLog += chunk.toString(); });

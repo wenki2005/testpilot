@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('document workflow record persists fixed specialist attempts, supports reuse and keeps completed artifacts immutable', async t => {
   const artifactsDir = resolve(root, 'artifacts', 'document-workflow-record-fixture', String(Date.now()));

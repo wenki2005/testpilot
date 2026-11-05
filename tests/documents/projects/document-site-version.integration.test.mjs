@@ -10,7 +10,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
 import { strFromU8, unzipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('website versions bind UI runs, reports, packages and retests to the selected deployment', { timeout: 180_000 }, async t => {
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-site-version-'));
@@ -121,7 +121,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   await writeFile(join(dataDir, 'document-tests', 'projects', `${projectId}.json`), JSON.stringify(project));
   await writeFile(join(dataDir, 'document-tests', 'projects', `${secondProjectId}.json`), JSON.stringify(secondProject));
 
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], {
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], {
     cwd: root,
     env: {
       ...process.env,

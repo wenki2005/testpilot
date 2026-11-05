@@ -7,7 +7,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('empty deterministic steps get a page-grounded fallback when no model API is configured', { timeout: 60_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'document-no-model-step-fallback', String(Date.now()));
@@ -38,7 +38,7 @@ test('empty deterministic steps get a page-grounded fallback when no model API i
     TESTPILOT_BROWSER_CDP_ENDPOINT: '', TESTPILOT_BROWSER_HEADLESS: '1', TESTPILOT_BROWSER_CHANNEL: '',
     TESTPILOT_BROWSER_KEEP_EDGE_ON_SHUTDOWN: '0',
   };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let demoLog = '';
   demo.stdout.on('data', chunk => { demoLog += chunk.toString(); });
   demo.stderr.on('data', chunk => { demoLog += chunk.toString(); });

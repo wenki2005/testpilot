@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 import { chromium } from 'playwright';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('document project UI links only an approved API suite and saves explicit mappings with network disabled by default', { timeout: 60_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'document-api-contract-ui', String(Date.now()));
@@ -25,7 +25,7 @@ test('document project UI links only an approved API suite and saves explicit ma
   };
   await mkdir(resolve(dataDir, 'document-tests', 'projects'), { recursive: true });
   await writeFile(resolve(dataDir, 'document-tests', 'projects', `${projectId}.json`), JSON.stringify(project));
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let log = '';
   demo.stdout.on('data', chunk => { log += chunk.toString(); }); demo.stderr.on('data', chunk => { log += chunk.toString(); });
   let browser;

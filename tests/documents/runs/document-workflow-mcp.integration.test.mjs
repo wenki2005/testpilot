@@ -7,7 +7,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('document workflow MCP scopes selection without losing case data and exposes step drafting safely', { timeout: 45_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'document-mcp-authoring', String(Date.now()));
@@ -22,7 +22,7 @@ test('document workflow MCP scopes selection without losing case data and expose
   const port = await reservePort();
   const base = `http://127.0.0.1:${port}`;
   const environment = { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '', TESTPILOT_BASE_URL: base };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   const mcp = spawn(process.execPath, ['dist/mcp/server.js'], { cwd: root, env: environment, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
   let demoLog = ''; let mcpLog = '';
   demo.stdout.on('data', chunk => { demoLog += chunk.toString(); }); demo.stderr.on('data', chunk => { demoLog += chunk.toString(); });

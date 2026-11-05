@@ -9,7 +9,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
 import { strFromU8, unzipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('a document run recovers after a service crash during login handoff and reuses the authenticated Edge tab', { timeout: 180_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'document-run-crash-recovery', String(Date.now()));
@@ -57,7 +57,7 @@ test('a document run recovers after a service crash during login handoff and reu
   const environment = { ...process.env, PORT: String(demoPort), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: 'fixture-key', OPENAI_API_KEY: '', TESTPILOT_BASE_URL: `http://127.0.0.1:${modelPort}/v1`, TESTPILOT_MODEL: 'crash-fixture', TESTPILOT_BROWSER_CDP_ENDPOINT: cdpEndpoint, TESTPILOT_BROWSER_HEADLESS: '1', TESTPILOT_BROWSER_CHANNEL: '' };
   let demo;
   const startDemo = async () => {
-    demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+    demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
     let logs = ''; demo.stdout.on('data', chunk => { logs += chunk.toString(); }); demo.stderr.on('data', chunk => { logs += chunk.toString(); });
     for (let i = 0; i < 120; i++) {
       if (demo.exitCode !== null) throw new Error(`TestPilot exited before becoming healthy: ${logs}`);

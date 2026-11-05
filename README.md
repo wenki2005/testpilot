@@ -80,6 +80,8 @@ Node.js / TypeScript 服务端，React / Vite 网页端，Playwright 浏览器�
 
 首次启动应有131条定义和已有脚本，全部未执行，报告为空。重复启动保留本机编辑，详见[首次启动](docs/tooling/first-run.md)。
 
+新版整份用例使用[更新用例](docs/tooling/case-version-updates.md)，AI编辑器使用[MCP维护](docs/tooling/case-maintenance-mcp.md)，账号和数据库见[连接设置](docs/tooling/connections.md)。报告支持[离线归档](docs/tooling/report-archives.md)。57份空步骤的逐条执行方式和未完成断言见[覆盖清单](docs/planning/script-coverage.md)，不代表全部用例已通过。
+
 源码版也使用外部数据目录。迁移和升级规则见[本机数据](docs/tooling/local-data.md)。后续MCP等功能进度见[模块交付计划](docs/planning/delivery-plan.md)。
 
 源码提交和发行包的内容边界见 [上传与分发](docs/publishing.md)。

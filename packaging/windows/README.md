@@ -25,4 +25,4 @@
 - 无法连接业务系统：检查网络、本人登录及所选用例的环境条件。
 - 原程序仍在运行：先用原程序停止入口关闭，再启动新版本。
 
-安装与维护说明在docs/tooling，RELEASE.json记录程序来源、资源数量及运行要求，MANIFEST.sha256用于核对包体。将整个文件夹交给Agent时，先让它阅读README.md和AGENTS.md；MCP用例维护接入包随M05提供。
+安装与维护说明在docs/tooling，RELEASE.json记录程序来源、资源数量及运行要求，MANIFEST.sha256用于核对包体。将整个文件夹交给Agent时，先让它阅读README.md和AGENTS.md；MCP接入包在“用例与脚本→AI接入说明”下载。整份新版用例使用“更新用例”，离线报告包在“运行报告”下载。
