@@ -17,7 +17,7 @@
 | tests | 工具自身测试 |
 | docs | 当前说明、规范与后续实施计划 |
 
-启动用根目录 **启动测试工作台.cmd**。`node_modules`、`dist`、`runtime-data`、`artifacts` 仍是本机依赖、构建与运行目录，本轮没有移动正在使用的数据。
+启动用根目录 **启动测试工作台.cmd**，关闭用 **停止测试工作台.cmd**。程序与本机数据分开保存，默认数据位置为 `%LOCALAPPDATA%/TestPilot/workspaces/dify`。
 
 当前主要页面：
 
@@ -30,9 +30,9 @@
 ## 运行条件
 
 - Windows、Microsoft Edge，Node.js 22.19 或更高版本。
-- 首次安装依赖需要 npm 及相应网络访问。
+- 源码版首次安装依赖需要 npm 及相应网络访问；完整Windows包已带Node.js和依赖。
 - 能访问被测系统，准备自己的测试账号；所选用例需要的数据库、审批、库存及下游服务条件另行配置。
-- 源码版构建后首次启动会自动加载内置资源，在自己的数据区建立项目。完整运行包装配尚未完成，首次仍需按上面的条件安装依赖。
+- 首次启动自动加载内置资源，在自己的数据区建立项目。完整包解压后双击启动，详见[运行包说明](packaging/windows/README.md)。
 
 ## 运行说明
 
@@ -59,7 +59,7 @@ npm run workbench:start
 | 启动、构建、导出、打包 | `scripts/`，按用途分类；不保存历史转发副本 |
 | 当前业务定义快照 | `project-resources/department-sample/` |
 | 原始用例来源及前置编号 | `regression/packs/`、`regression/plans/`，原始文件用于追溯预期 |
-| 本机运行数据、截图与私有配置 | `runtime-data/`、`artifacts/`，不提交 Git |
+| 本机运行数据、截图与私有配置 | `%LOCALAPPDATA%/TestPilot/workspaces/dify`，不提交 Git；旧数据迁移保留回退副本 |
 | 详细规范 | [目录规范](docs/project-layout.md)、[命名规范](docs/naming-conventions.md) |
 
 ## 测试说明
@@ -80,7 +80,7 @@ Node.js / TypeScript 服务端，React / Vite 网页端，Playwright 浏览器�
 
 首次启动应有131条定义和已有脚本，全部未执行，报告为空。重复启动保留本机编辑，详见[首次启动](docs/tooling/first-run.md)。
 
-**待完善**：运行数据外置、完整发行包装配、MCP 用例维护接入。进度见[模块交付计划](docs/planning/delivery-plan.md)。
+源码版也使用外部数据目录。迁移和升级规则见[本机数据](docs/tooling/local-data.md)。后续MCP等功能进度见[模块交付计划](docs/planning/delivery-plan.md)。
 
 源码提交和发行包的内容边界见 [上传与分发](docs/publishing.md)。
 

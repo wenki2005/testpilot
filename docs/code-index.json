@@ -13,62 +13,27 @@
       "symbols": []
     },
     {
-      "file": "scripts/build/package-windows-demo.mjs",
+      "file": "scripts/build/package-windows.mjs",
       "category": "开发维护工具",
-      "purpose": "Windows 演示包构建、允许清单及摘要",
-      "lines": 182,
+      "purpose": "package windows",
+      "lines": 63,
       "previousPaths": [
         "scripts/package-demo.mjs"
       ],
       "symbols": [
         {
-          "name": "parseArgs",
-          "line": 33,
+          "name": "copyTree",
+          "line": 20,
           "kind": "FunctionDeclaration"
         },
         {
-          "name": "listFiles",
-          "line": 50,
+          "name": "license",
+          "line": 41,
           "kind": "FunctionDeclaration"
         },
         {
-          "name": "assertLauncherEncoding",
-          "line": 66,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "sha256",
-          "line": 97,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "writeManifest",
-          "line": 101,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "buildZip",
-          "line": 112,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "totalSize",
-          "line": 122,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "assemblePackage",
-          "line": 126,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "assertCleanContents",
-          "line": 151,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "main",
-          "line": 167,
+          "name": "list",
+          "line": 52,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -103,12 +68,12 @@
       "file": "scripts/data/relocate-workspace.mjs",
       "category": "开发维护工具",
       "purpose": "relocate workspace",
-      "lines": 70,
+      "lines": 71,
       "previousPaths": [],
       "symbols": [
         {
           "name": "inventory",
-          "line": 19,
+          "line": 20,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -178,7 +143,7 @@
       "file": "scripts/lib/integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "integrated workspaces",
-      "lines": 17,
+      "lines": 20,
       "previousPaths": [],
       "symbols": [
         {
@@ -203,17 +168,22 @@
         },
         {
           "name": "workspacePorts",
-          "line": 9,
+          "line": 10,
+          "kind": "exported value"
+        },
+        {
+          "name": "entryPort",
+          "line": 11,
           "kind": "exported value"
         },
         {
           "name": "workspacePaths",
-          "line": 10,
+          "line": 13,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "argument",
-          "line": 16,
+          "line": 19,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -520,7 +490,7 @@
       "file": "scripts/start-integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "已有工作区的启动与进程复用",
-      "lines": 92,
+      "lines": 94,
       "previousPaths": [],
       "symbols": []
     },
@@ -528,7 +498,7 @@
       "file": "scripts/stop-integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "校验实例身份及活动任务后停止服务",
-      "lines": 63,
+      "lines": 68,
       "previousPaths": [],
       "symbols": []
     },
@@ -14966,7 +14936,7 @@
       "file": "tests/storage/workspace-relocation.test.mjs",
       "category": "公共基础",
       "purpose": "workspace relocation.test",
-      "lines": 28,
+      "lines": 33,
       "previousPaths": [],
       "symbols": []
     },

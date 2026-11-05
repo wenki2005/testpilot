@@ -16,6 +16,7 @@ const fold=p=>process.platform==='win32'?p.toLowerCase():p;
 const from=fold(source),to=fold(destination);
 if(from===to||from.startsWith(to+path.sep)||to.startsWith(from+path.sep))throw Error('Source and destination must be separate directories.');
 const hash=b=>createHash('sha256').update(b).digest('hex');
+const sqlitePath=p=>process.platform==='win32'?path.toNamespacedPath(p):p;
 async function inventory(root,prefix=''){const files=[];for(const e of await fs.readdir(path.join(root,prefix),{withFileTypes:true})){const relative=path.join(prefix,e.name),full=path.join(root,relative);if(e.isSymbolicLink())throw Error('Linked data cannot be relocated: '+relative);if(e.isDirectory())files.push(...await inventory(root,relative));else if(e.isFile()&&!/(?:-wal|-shm|-journal)$/.test(e.name)){const stat=await fs.stat(full);files.push({relative,bytes:stat.size});}}return files;}
 const files=await inventory(source);
 if(!apply){console.log(JSON.stringify({workspace:workspace.owner,source,destination,files:files.length,bytes:files.reduce((n,f)=>n+f.bytes,0),apply:false,sourcePreserved:true},null,2));process.exit(0);}
@@ -39,8 +40,8 @@ for(const f of files){
  const header=Buffer.alloc(16),handle=await fs.open(input,'r');try{await handle.read(header,0,16,0);}finally{await handle.close();}
  const before=await fs.readFile(input),originalHash=hash(before);
  if(header.toString('utf8')==='SQLite format 3\0'){
-  const db=new DatabaseSync(input,{readOnly:true});try{await backup(db,output);}finally{db.close();}
-  const copied=new DatabaseSync(output);try{
+  const db=new DatabaseSync(sqlitePath(input),{readOnly:true});try{await backup(db,sqlitePath(output));}catch(error){throw new Error('SQLite backup failed for '+f.relative+': '+error.message,{cause:error});}finally{db.close();}
+  const copied=new DatabaseSync(sqlitePath(output));try{
    if(Object.values(copied.prepare('PRAGMA quick_check').get())[0]!=='ok')throw Error('Copied SQLite integrity check failed.');
    const tables=copied.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all();
    for(const {name}of tables){const quote=value=>'"'+String(value).replaceAll('"','""')+'"',table=quote(name);const info=copied.prepare('PRAGMA table_info('+table+')').all(),columns=info.filter(c=>/TEXT|JSON/i.test(c.type));
