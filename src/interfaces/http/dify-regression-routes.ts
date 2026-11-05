@@ -12,6 +12,7 @@ import {DepartmentCoreChainStore}from'../../adapters/department-core-chain-store
 import { webModuleDependencies } from "../../adapters/dify-web-browser.js";
 import {getDocumentProject,getDocumentRunProgress} from '../../adapters/document-run-executor.js';
 import {json,fail,bodyJson,documentBody} from './http-utils.js';
+import {createRunReportRoutes} from './run-report-routes.js';
 
 /** Owns the Dify endpoints; the shared server only mounts this handler. */
 export function createDifyRegressionRoutes({artifactsDir,host,port}:{artifactsDir:string;host:string;port:number}) {
@@ -20,6 +21,7 @@ const moduleRegression = new ModuleRegressionStore(artifactsDir);
 const difyWebModules = new DifyWebModuleStore(artifactsDir, webModuleDependencies(artifactsDir));
 const systemModules = new SystemModuleRegression(artifactsDir, difyWebModules, webModuleDependencies(artifactsDir));
 const coreChains=new DepartmentCoreChainStore(artifactsDir,systemModules,webModuleDependencies(artifactsDir));
+const reportRoutes=createRunReportRoutes(artifactsDir,systemModules,coreChains);
 // Many open workbench tabs poll the same multi-megabyte history. Serialize it
 // once per second so status polling does not starve browser protocol messages.
 let systemModuleStateCache:{expires:number;body:string}|undefined;
@@ -27,6 +29,7 @@ let systemModuleStateCache:{expires:number;body:string}|undefined;
   return async function handleDifyRegressionRoutes(req:IncomingMessage,res:ServerResponse,url:URL):Promise<boolean> {
     if(!['/api/system-module-regression','/api/dify-web-modules','/api/module-regression','/api/dify-regression'].some(prefix=>url.pathname===prefix||url.pathname.startsWith(prefix+'/'))) return false;
     await (async()=>{
+  if(await reportRoutes(req,res,url))return;
   if (url.pathname.startsWith('/api/system-module-regression')) {
     if(req.method==='POST'){systemModuleStateCache=undefined;res.once('finish',()=>{systemModuleStateCache=undefined;});}
     try {

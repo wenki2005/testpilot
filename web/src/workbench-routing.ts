@@ -1,4 +1,4 @@
-const pages = ['workbench', 'history', 'run-detail', 'regressions', 'case-scripts', 'architecture', 'project-tests', 'document-tests', 'dify-regression', 'module-regression', 'case-generator', 'api-suites', 'sqlite-migrations', 'mysql-browser', 'source-tests', 'settings'] as const;
+const pages = ['workbench', 'history', 'run-detail', 'run-reports', 'regressions', 'case-scripts', 'architecture', 'project-tests', 'document-tests', 'dify-regression', 'module-regression', 'case-generator', 'api-suites', 'sqlite-migrations', 'mysql-browser', 'source-tests', 'settings'] as const;
 export type WorkbenchPage = typeof pages[number];
 
 /** Explicit tool deep links take precedence over retained document context. */

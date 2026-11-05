@@ -403,20 +403,35 @@ export async function downloadRegressionReport(batchId: string, format: ReportFo
   saveReport(data, format);
 }
 
+export type ReportFile={fileName:string;mime:string;bytes:Uint8Array};
+export async function buildRegressionReportFile(batchId:string,format:ReportFormat):Promise<ReportFile>{return reportFile(await loadReport(batchId),format);}
+
 function saveReport(data: ReportData, format: ReportFormat): void {
+  saveReportFile(reportFile(data,format));
+}
+
+function reportFile(data:ReportData,format:ReportFormat):ReportFile{
   const bytes = format === 'xlsx' ? excel(data) : xmind(data);
   const mime = format === 'xlsx' ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/vnd.xmind.workbook';
-  const url = URL.createObjectURL(new Blob([new Uint8Array(bytes)], { type: mime }));
+  const name = `${data.batch.systemName}-详细报告含截图-${reportScope(data)}-${data.batch.createdAt.slice(0, 10)}-${data.batch.id.slice(0, 8)}`.replace(/[<>:"/\\|?*\u0000-\u001F]/g, '_');
+  return {fileName:`${name}.${format}`,bytes,mime};
+}
+
+export function saveReportFile(file:ReportFile):void{
+  const url = URL.createObjectURL(new Blob([new Uint8Array(file.bytes)], { type: file.mime }));
   const link = document.createElement('a');
   link.href = url;
-  const name = `${data.batch.systemName}-详细报告含截图-${reportScope(data)}-${data.batch.createdAt.slice(0, 10)}-${data.batch.id.slice(0, 8)}`.replace(/[<>:"/\\|?*\u0000-\u001F]/g, '_');
-  link.download = `${name}.${format}`;
+  link.download = file.fileName;
   document.body.append(link); link.click(); link.remove();
   window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 /** Export the selected immutable journey snapshot using the same report formats. */
 export async function downloadCoreRegressionReport(value: CoreRun, format: ReportFormat): Promise<void> {
+  saveReportFile(await buildCoreRegressionReportFile(value,format));
+}
+
+export async function buildCoreRegressionReportFile(value:CoreRun,format:ReportFormat):Promise<ReportFile>{
   const run = structuredClone(value);
   const rows: ReportRow[] = run.chains.flatMap(chain => chain.steps.map(step => ({
     moduleId: chain.id, moduleName: chain.title, version: 0, versionLabel: run.definitionDigest,
@@ -437,5 +452,5 @@ export async function downloadCoreRegressionReport(value: CoreRun, format: Repor
     scope: 'core', runMode: 'fixed', message: run.message, jobs: [], counts,
   };
   await embedScreenshots(rows);
-  saveReport({ kind: 'chains', batch, rows, counts, exportedAt: new Date().toISOString() }, format);
+  return reportFile({ kind: 'chains', batch, rows, counts, exportedAt: new Date().toISOString() }, format);
 }
