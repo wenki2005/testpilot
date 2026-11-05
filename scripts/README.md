@@ -88,3 +88,5 @@
 - 共用函数 → `scripts/lib/`
 - TestPilot 自身测试 → `tests/`
 - 业务固定步骤 → 不进 `scripts/`，由模块版本导出到 `regression/scripts/`
+
+- scripts/organize-department-prerequisites.mjs：整理并应用部门申样原131条前置编号；默认只读，--apply仅写TestPilot模块新版本及本机审计，不调用被测系统。清单见regression/plans/department-prerequisites-2026-11-05.json。

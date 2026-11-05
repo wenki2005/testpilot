@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './workbench';
 
-const difyPage = ['dify-regression', 'module-regression'].includes(new URLSearchParams(window.location.search).get('page') ?? '');
+const difyPage = ['dify-regression', 'module-regression', 'case-scripts'].includes(new URLSearchParams(window.location.search).get('page') ?? '');
 if (difyPage) {
   await import('./dify-workbench-base.css');
 } else {

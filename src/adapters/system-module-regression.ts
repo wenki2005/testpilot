@@ -14,6 +14,8 @@ import {mysqlBrowserStatus} from './mysql-readonly-browser.js';
 import {assertDifyExportSafe} from './dify-export-policy.js';
 import {difyBlocker} from './dify-case-readiness.js';
 import {DifyBatchNotifier} from './dify-batch-notifier.js';
+import type {CaseDependency,CaseEditorCatalog,EditableCase} from '../domain/case-script-editor-contract.js';
+import {departmentCoreChains} from '../domain/department-core-chains.js';
 
 const uuid=z.string().uuid();
 const terminal=new Set(['completed','error','blocked','cancelled','interrupted']);
@@ -31,6 +33,7 @@ export class SystemModuleRegression {
     const dir=path.join(root,'system-module-regression');mkdirSync(dir,{recursive:true});
     this.db=new DatabaseSync(path.join(dir,'catalog.sqlite'));
     this.db.exec('PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS records(kind TEXT,id TEXT PRIMARY KEY,payload TEXT NOT NULL); CREATE TABLE IF NOT EXISTS requests(id TEXT PRIMARY KEY,fingerprint TEXT NOT NULL,batch_id TEXT NOT NULL)');
+    this.store.editorPrerequisiteGuard=(versionId,selected,profileId)=>{const m=this.list<FixedModule>('module').find(m=>m.versions.some(v=>v.id===versionId));if(!m)throw Error('前置用例所在项目不存在。');const system=this.getSystem(m.systemId);if(profileId&&profileId!==(system.activeAccountId??system.profileId))throw Error('前置用例需要在当前项目账号下核验，请切换到对应账号。');const v=m.versions.find(v=>v.id===versionId)!;this.assertEditorPrerequisites(system,[{moduleId:m.id,moduleName:m.name,versionId,version:v.version,digest:v.digest,caseCount:v.caseCount,selectedCaseIds:selected}]);};
     for(const batch of this.list<RegressionBatch>('batch'))if(['queued','running'].includes(batch.phase)){batch.phase='interrupted';batch.message='服务已重启，已保存本轮结果；不会自动重放。';this.save('batch',batch);}
     for(const batch of this.list<RegressionBatch>('batch'))if(batch.notification?.status==='sending'){batch.notification.status='uncertain';for(const item of batch.notification.items)if(item.status==='sending'){item.status='uncertain';item.detail='服务重启前未确认接收结果；请先核对测试群，不自动重发。';}this.save('batch',batch);}
   }
@@ -82,6 +85,75 @@ export class SystemModuleRegression {
   saveCore(key:string,input:unknown){const data=z.object({versionId:uuid,caseIds:z.array(z.string()).max(200),scope:z.enum(['core','starter']).default('core')}).parse(input);const m=this.getModule(key);if(m.versions.at(-1)?.id!==data.versionId)throw Error('模块已更新，请重新查看当前版本后保存范围。');const cases=this.store.getModule(data.versionId).project.cases;const known=new Set(cases.map(c=>c.id));if(new Set(data.caseIds).size!==data.caseIds.length||data.caseIds.some(id=>!known.has(id)))throw Error('范围包含重复或未知用例。');if(data.scope==='starter'){if(cases.some(c=>data.caseIds.includes(c.id)&&difyBlocker(c,'').blockerCode==='write-required'))throw Error('只读起步集合不能包含要求真实提交或落库的用例；原用例仍保留。');m.starterCaseIds=data.caseIds;m.starterVersionId=data.versionId;}else{m.coreCaseIds=data.caseIds;m.coreVersionId=data.versionId;}m.updatedAt=now();return this.save('module',m);}
   markdown(key:string,versionId?:string){return this.store.markdown(this.cases(key,versionId).version.id);}
   cases(key:string,versionId?:string){const m=this.getModule(key);const v=versionId?m.versions.find(v=>/^\d+$/.test(versionId)?v.version===Number(versionId):v.id===uuid.parse(versionId)):m.versions.at(-1);if(!v)throw Error('用例版本不存在。');return {module:m,version:v,cases:this.store.getModule(v.id).project.cases,readiness:this.store.readiness(v.id)};}
+  editorCatalog(systemId?:string):CaseEditorCatalog{
+    const systems=this.list<TestedSystem>('system'),system=systemId?this.getSystem(systemId):systems[0];
+    if(!system)return {systems:[],systemId:'',modules:[],cases:[],chains:[]};
+    const modules=this.list<FixedModule>('module').filter(m=>m.systemId===system.id&&!m.archived).reverse();
+    const cases=modules.flatMap(m=>this.editorCases(m,undefined,system));
+    const short=['审批通过与建单','审批驳回与再次申请','库存不足与重试锁单','订单详情与物流'];
+    const chains=departmentCoreChains.map((c,i)=>({id:c.id,title:short[i]!,caseKeys:[...new Set(c.steps.flatMap(s=>s.caseIds))].flatMap(id=>cases.filter(v=>v.id===id).map(v=>v.moduleId+':'+id))})).filter(c=>c.caseKeys.length);
+    return {systems:systems.map(s=>({id:s.id,name:s.name})),systemId:system.id,modules:modules.map(m=>({id:m.id,name:m.name,caseKeys:cases.filter(c=>c.moduleId===m.id).map(c=>c.moduleId+':'+c.id)})),cases,chains};
+  }
+  private editorCases(m:FixedModule,versionId?:string,system=this.getSystem(m.systemId)):EditableCase[]{
+    const v=versionId?m.versions.find(v=>v.id===versionId):m.versions.at(-1);if(!v)throw Error('版本不存在。');
+    const pack=this.store.getModule(v.id),original=this.store.getModule(m.versions[0]!.id);
+    const batches=this.list<RegressionBatch>('batch').filter(b=>b.systemId===system.id&&b.profileId===(system.activeAccountId??system.profileId)&&b.targetUrl===system.targetUrl&&b.environment===system.environment);
+    const history=batches.flatMap(b=>b.entries.filter(e=>e.moduleId===m.id&&e.jobId).map(e=>({job:this.store.getJob(e.jobId!)})));
+    return pack.project.cases.map(c=>{
+      const cache=pack.cachedSteps?.[c.id],steps=(!c.steps.length||cache?.reviewKind)&&cache?.sourceDigest===moduleDigest(c)?cache.steps:c.steps;
+      let status='not_executed',resultAt:string|undefined;
+      // The latest attempt wins; an old positive result cannot mask a newer failure or edit.
+      for(const {job} of history){const row=job.results.find(r=>r.caseId===c.id);if(!row)continue;const old=job.snapshot.cases.find(v=>v.id===c.id);if(!old||moduleDigest(old)!==moduleDigest(c))break;
+        // Dependency annotation changes do not rerun or erase the original business assertion.
+        status=row.outOfScope?'outside':row.status;resultAt=job.updatedAt;break;
+      }
+      const prerequisites=pack.prerequisiteCases?.[c.id]??[];
+      return {moduleId:m.id,versionId:v.id,version:v.version,id:c.id,title:c.title,expected:c.expected,manualSteps:pack.manualSteps?.[c.id]??[],prerequisites,...(pack.prerequisiteReviews?.[c.id]?{prerequisiteReview:pack.prerequisiteReviews[c.id]}:{}),script:{caseId:c.id,dependsOn:prerequisites.map(d=>({...d,requiredStatus:'passed' as const})),steps},sourcePath:c.modulePath??[],sourceExpected:original.project.cases.find(v=>v.id===c.id)?.expected??c.expected,scriptPath:`/api/system-module-regression/case-editor/${m.id}/${c.id}/script?version=${v.id}`,status,...(resultAt?{resultAt}:{})};
+    });
+  }
+  editorHistory(moduleId:string,caseId:string){const m=this.getModule(moduleId);return m.versions.map(v=>({version:v.version,createdAt:v.createdAt,data:this.editorCases(m,v.id).find(c=>c.id===caseId)})).filter(v=>v.data).reverse();}
+  editorScript(moduleId:string,caseId:string,versionId?:string){const value=this.editorCases(this.getModule(moduleId),versionId).find(c=>c.id===caseId);if(!value)throw Error('用例不存在。');return value.script;}
+  savePrerequisitePlan(input:unknown){
+    const dep=z.object({moduleId:uuid,caseId:z.string().min(1).max(80)}).strict();
+    const data=z.object({systemId:uuid,versionSelections:z.record(z.string(),uuid),cases:z.array(dep.extend({prerequisites:z.array(dep).max(30),review:z.object({status:z.enum(['reviewed','pending']),note:z.string().trim().min(1).max(2000)}).strict()})).min(1).max(600)}).strict().parse(input);
+    this.getSystem(data.systemId);if(this.occupied(data.systemId))throw Error('项目正在运行或连接，请结束后再整理前置。');
+    const modules=this.list<FixedModule>('module').filter(m=>m.systemId===data.systemId&&!m.archived),key=(d:{moduleId:string;caseId:string})=>d.moduleId+':'+d.caseId;
+    const known=new Set(modules.flatMap(m=>this.store.getModule(m.versions.at(-1)!.id).project.cases.map(c=>key({moduleId:m.id,caseId:c.id}))));
+    const rows=new Map(data.cases.map(c=>[key(c),c]));if(rows.size!==data.cases.length||rows.size!==known.size||[...known].some(k=>!rows.has(k)))throw Error('前置计划必须逐条覆盖当前项目全部用例且不能重复。');
+    for(const m of modules)if(data.versionSelections[m.id]!==m.versions.at(-1)!.id)throw Error('模块版本已更新，请重新整理。');
+    const done=new Set<string>(),visiting=new Set<string>();
+    const visit=(id:string)=>{if(visiting.has(id))throw Error('前置编号形成循环：'+id);if(done.has(id))return;visiting.add(id);const row=rows.get(id)!;const ids=row.prerequisites.map(key);if(new Set(ids).size!==ids.length)throw Error('前置编号重复。');for(const d of ids){if(!known.has(d)||d===id)throw Error('前置编号无效或引用自身。');visit(d);}visiting.delete(id);done.add(id);};for(const id of known)visit(id);
+    const updates=modules.map(m=>{const changes=data.cases.filter(c=>c.moduleId===m.id),source=m.versions.at(-1)!,revised=this.store.revisePrerequisites(source.id,changes);if(revised.id===source.id)return m;
+      const next=structuredClone(m);next.updatedAt=now();next.versions.push({id:revised.id,version:source.version+1,digest:revised.digest,caseCount:source.caseCount,createdAt:now(),added:0,removed:0,changed:changes.length});if(next.coreVersionId===source.id)next.coreVersionId=revised.id;if(next.starterVersionId===source.id)next.starterVersionId=revised.id;return next;});
+    this.db.exec('BEGIN IMMEDIATE');try{for(const m of updates)this.save('module',m);this.db.exec('COMMIT');}catch(e){this.db.exec('ROLLBACK');throw e;}
+    return {systemId:data.systemId,cases:rows.size,withPrerequisites:data.cases.filter(c=>c.prerequisites.length).length,pending:data.cases.filter(c=>c.review.status==='pending').length,versions:updates.map(m=>({moduleId:m.id,versionId:m.versions.at(-1)!.id,version:m.versions.at(-1)!.version}))};
+  }
+  async saveEditorCase(moduleId:string,input:unknown){
+    const dep=z.object({moduleId:uuid,caseId:z.string().min(1).max(80)}).strict();
+    const data=z.object({versionId:uuid,caseId:z.string().min(1).max(80),title:z.string().trim().min(1).max(500),expected:z.string().trim().min(1).max(2000),manualSteps:z.array(z.string().max(2000)).max(100),prerequisites:z.array(dep).max(30),script:z.object({caseId:z.string(),dependsOn:z.array(dep.extend({requiredStatus:z.literal('passed')})).max(30),steps:z.array(z.unknown()).max(100)}).strict()}).strict().parse(input);
+    const m=this.getModule(moduleId);if(m.archived||this.occupied(m.systemId))throw Error('模块已归档或正在运行，请结束后保存。');
+    if(m.versions.at(-1)?.id!==data.versionId)throw Error('版本已更新，请刷新后重新修改。');
+    if(data.script.caseId!==data.caseId)throw Error('脚本编号与用例不一致。');
+    const key=(d:CaseDependency)=>d.moduleId+':'+d.caseId,keys=data.prerequisites.map(key);
+    if(new Set(keys).size!==keys.length||JSON.stringify([...keys].sort())!==JSON.stringify(data.script.dependsOn.map(key).sort()))throw Error('脚本与前置用例不一致或重复。');
+    const catalog=this.editorCatalog(m.systemId),all=new Map(catalog.cases.map(c=>[key({moduleId:c.moduleId,caseId:c.id}),c]));
+    const current=key({moduleId,caseId:data.caseId});if(!all.has(current))throw Error('当前用例不存在。');
+    for(const d of keys)if(!all.has(d)||d===current)throw Error('前置用例必须属于同一项目，且不能引用自身。');
+    const visiting=new Set<string>(),done=new Set<string>();
+    const visit=(id:string)=>{if(visiting.has(id))throw Error('前置用例形成循环，请调整。');if(done.has(id))return;visiting.add(id);for(const d of id===current?data.prerequisites:all.get(id)?.prerequisites??[])visit(key(d));visiting.delete(id);done.add(id);};visit(current);
+    const existing=all.get(current)!;
+    if(moduleDigest({title:existing.title,expected:existing.expected,manualSteps:existing.manualSteps,prerequisites:existing.prerequisites,script:existing.script})===moduleDigest({title:data.title,expected:data.expected,manualSteps:data.manualSteps,prerequisites:data.prerequisites,script:data.script}))return existing;
+    const revised=await this.store.reviseCase(data.versionId,data.caseId,{...data,steps:data.script.steps as EditableCase['script']['steps']});
+    const fresh=this.getModule(moduleId);if(fresh.versions.at(-1)?.id!==data.versionId||this.occupied(m.systemId))throw Error('保存期间模块状态发生变化，请刷新重试。');
+    const saved=this.attach(m.systemId,fresh,revised.id,m.name);
+    if(saved.coreVersionId===data.versionId)saved.coreVersionId=revised.id;if(saved.starterVersionId===data.versionId)saved.starterVersionId=revised.id;this.save('module',saved);
+    return this.editorCases(saved).find(c=>c.id===data.caseId)!;
+  }
+  private assertEditorPrerequisites(system:TestedSystem,entries:BatchEntry[]){
+    if(!entries.some(e=>Object.keys(this.store.getModule(e.versionId).prerequisiteCases??{}).length))return;
+    const catalog=this.editorCatalog(system.id),key=(d:CaseDependency)=>d.moduleId+':'+d.caseId,byKey=new Map(catalog.cases.map(c=>[key({moduleId:c.moduleId,caseId:c.id}),c]));
+    for(const e of entries){const pack=this.store.getModule(e.versionId);for(const c of pack.project.cases){if(e.selectedCaseIds&&!e.selectedCaseIds.includes(c.id))continue;for(const d of pack.prerequisiteCases?.[c.id]??[]){if(byKey.get(key(d))?.status!=='passed')throw Error(`${c.id} 的前置用例 ${d.caseId} 尚未通过，请先执行前置用例。`);}}}
+  }
   state():SystemModuleState {
     const old=this.store.state();const modules=this.list<FixedModule>('module');const assigned=new Set(modules.flatMap(m=>m.versions.map(v=>v.id)));
     return {systems:this.list<TestedSystem>('system'),modules,batches:this.list<RegressionBatch>('batch').map(b=>this.view(b)),accounts:this.accounts,legacyModules:old.modules.filter(m=>!assigned.has(m.id)).map(m=>({id:m.id,name:m.name,targetUrl:m.targetUrl,caseCount:m.caseCount})),configured:old.configured,database:{connected:mysqlBrowserStatus().connected},notificationConfigured:this.notifier.configured()};
@@ -131,6 +203,7 @@ export class SystemModuleRegression {
   }
   private create(system:TestedSystem,entries:BatchEntry[],requestId:string,fingerprint:string,parentBatchId?:string,options?:{runMode:'fixed'|'assist';scope:'core'|'all'|'custom'|'starter';accountName?:string}){
     if(this.occupied(system.id))throw Error('该系统正在运行或连接账号，请等待或取消。');
+    this.assertEditorPrerequisites(system,entries);
     const batch:RegressionBatch={id:randomUUID(),requestId,systemId:system.id,systemName:system.name,environment:system.environment,targetUrl:system.targetUrl,profileId:system.profileId,notifyFailures:system.notifyFailures??false,notifyScreenshots:system.notifyScreenshots??false,...(system.databaseBinding?{databaseBinding:system.databaseBinding}:{}),createdAt:now(),updatedAt:now(),phase:'queued',entries,...(options??{}),message:'等待开始。',...(parentBatchId?{parentBatchId}:{})};
     this.db.exec('BEGIN IMMEDIATE');try{this.save('batch',batch);this.db.prepare('INSERT INTO requests VALUES(?,?,?)').run(requestId,fingerprint,batch.id);this.db.exec('COMMIT');}catch(e){this.db.exec('ROLLBACK');throw e;}
     const controller=new AbortController();this.active.set(batch.id,controller);void this.run(batch,controller.signal).finally(()=>this.active.delete(batch.id));return this.getBatch(batch.id);

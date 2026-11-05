@@ -12,6 +12,7 @@ import SettingsPage from './settings-page';
 import CaseGeneratorPage, { type GenerationResult } from './case-generator-page';
 import { resolveWorkbenchPage, type WorkbenchPage as Page } from './workbench-routing';
 import {useSidebarProjects,selectSidebarProject} from './sidebar-project-context';
+import CaseScriptEditor from './case-script-editor';
 
 type Notice = { kind: 'error' | 'success' | 'info'; text: string } | null;
 type ProjectProfile = { id: string; name: string; suiteName: string };
@@ -104,6 +105,7 @@ export default function App() {
   const [moreOpen, setMoreOpen] = useState(false);
   const sidebarProjects=useSidebarProjects();
   const executionPage=page==='dify-regression'||page==='module-regression';
+  const projectPage=executionPage||page==='case-scripts';
 
   const selectedRun = useMemo(() => runs.find((r) => r.id === selectedId) ?? null, [runs, selectedId]);
   const activeRun = runs.find((r) => r.status === 'queued' || r.status === 'running');
@@ -214,7 +216,7 @@ export default function App() {
   };
   const navigate = (destination: Page) => {
     const workspaces = config?.workspaces;
-    const owner = destination === 'dify-regression' || destination === 'module-regression' ? 'dify' : 'web-regression';
+    const owner = destination === 'dify-regression' || destination === 'module-regression' || destination === 'case-scripts' ? 'dify' : 'web-regression';
     if (owner && workspaces && owner !== workspaces.current) {
       const target = new URL(owner === 'dify' ? workspaces.difyUrl : workspaces.webUrl);
       target.searchParams.set('page', destination);
@@ -291,10 +293,10 @@ export default function App() {
   return <div className={`app-shell agent-shell approved-sidebar-shell ${executionPage?'sm-shell':''}`}>
     <aside className="sidebar">
       <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>QUALITY WORKBENCH</span></div></div>
-      <div className="sidebar-project"><label htmlFor="sidebar-project">当前测试项目</label><select id="sidebar-project" aria-label="当前测试项目" value={executionPage?sidebarProjects?.systemId??'':''} disabled={!executionPage||!sidebarProjects?.systems.length||sidebarProjects.disabled} onChange={e=>selectSidebarProject(e.target.value)}>{executionPage&&sidebarProjects?.systems.length?sidebarProjects.systems.map(s=><option key={s.id} value={s.id}>{s.name}</option>):<option value="">{executionPage?'正在读取项目…':'本地工作区'}</option>}</select><p>项目独立维护用例与运行记录</p></div>
+      <div className="sidebar-project"><label htmlFor="sidebar-project">当前测试项目</label><select id="sidebar-project" aria-label="当前测试项目" value={projectPage?sidebarProjects?.systemId??'':''} disabled={!projectPage||!sidebarProjects?.systems.length||sidebarProjects.disabled} onChange={e=>selectSidebarProject(e.target.value)}>{projectPage&&sidebarProjects?.systems.length?sidebarProjects.systems.map(s=><option key={s.id} value={s.id}>{s.name}</option>):<option value="">{projectPage?'正在读取项目…':'本地工作区'}</option>}</select><p>项目独立维护用例与运行记录</p></div>
       <nav aria-label="主导航" className="main-nav">
         <NavItem active={page === 'workbench'} icon="folder" label="项目概览" onClick={() => {navigate('workbench');setMoreOpen(false);}} />
-        <NavItem active={page === 'regressions'} icon="list" label="用例与脚本" count={checks.length || undefined} onClick={() => { navigate('regressions'); setMoreOpen(false); }} />
+        <NavItem active={page === 'case-scripts'} icon="list" label="用例与脚本" onClick={() => { navigate('case-scripts'); setMoreOpen(false); }} />
         <NavItem active={executionPage} icon="play" label="执行测试" onClick={() => { navigate('dify-regression'); setMoreOpen(false); }} />
         <NavItem active={page === 'history' || page === 'run-detail'} icon="file" label="运行报告" onClick={() => { navigate('history'); setMoreOpen(false); }} />
       </nav>
@@ -354,6 +356,7 @@ export default function App() {
       {page === 'history' && <HistoryPage runs={runs} selectedId={selectedId} select={(run) => { setSelectedId(run.id); setPage('run-detail'); }} />}
       {page === 'run-detail' && selectedRun && <div className="run-detail-page"><div className="run-detail-heading"><button className="text-button" onClick={() => navigate('history')}><Icon name="chevron" size={15}/>运行记录</button><div><h1>运行详情</h1><p>{dateText(selectedRun.startedAt)} · {statusNames[selectedRun.status]}</p></div><div className="report-actions"><button className="text-button" onClick={() => downloadReport('md')}><Icon name="download" size={15}/>报告</button><button className="text-button" onClick={() => downloadReport('json')}><Icon name="download" size={15}/>JSON</button>{['queued','running'].includes(selectedRun.status) && <button className="button-secondary" onClick={() => cancelRun(selectedRun)}><Icon name="stop" size={15}/>停止</button>}</div></div><div className="run-detail-grid"><div><RunResults run={selectedRun} onSave={saveRegression} savedIds={savedAssertionIds}/></div><aside className="event-column"><div className="event-header"><div><h2>执行事件</h2><p>{selectedRun.events.length} 条记录</p></div><span className={`run-state state-${selectedRun.status}`}><span/>{statusNames[selectedRun.status]}</span></div><EventStream run={selectedRun}/></aside></div></div>}
       {page === 'regressions' && <RegressionPage checks={checks} busy={busy} rerun={rerunRegressions} />}
+      {page === 'case-scripts' && <CaseScriptEditor />}
       {page === 'architecture' && <ArchitecturePage config={config} />}
       {page === 'project-tests' && <ProjectProfilesPage profiles={profiles} scripts={projectScripts} runs={projectRuns} busy={projectBusy} modelAvailable={config?.modelAvailable ?? false} requirements={scriptRequirements} setRequirement={(id, value) => setScriptRequirements((current) => ({ ...current, [id]: value }))} createCandidate={createScriptCandidate} generateCandidate={generateScriptCandidate} review={reviewProjectScript} runApproved={runApprovedScript} cancel={cancelProjectRun} />}
       {page === 'document-tests' && <DocumentTestsPage modelAvailable={config?.modelAvailable ?? false} computerUseAvailable={config?.computerUseAvailable ?? false} computerUseReason={config?.computerUseReason ?? 'Computer Use 配置状态不可用。'} computerUseModel={config?.computerUseModel ?? ''} initialProjectId={activeDocumentProjectId || requestedDocumentProjectId || undefined} initialRunId={requestedDocumentRunId || undefined} />}
@@ -371,7 +374,7 @@ export default function App() {
 function NavItem({ active, icon, label, count, onClick }: { active: boolean; icon: string; label: string; count?: number; onClick: () => void }) {
   return <button className={`nav-item ${active ? 'active' : ''}`} onClick={onClick} aria-label={label} aria-current={active ? 'page' : undefined}><Icon name={icon}/><span>{label}</span>{count !== undefined && <small>{count}</small>}</button>;
 }
-function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', 'source-tests': '代码测试 Agent', 'dify-regression': '执行测试', 'module-regression': '执行测试', settings: '设置' })[page]; }
+function pageTitle(page: Page) { return ({ workbench: '新建测试', history: '运行记录', 'run-detail': '运行详情', regressions: '回归用例', 'case-scripts': '用例与脚本', architecture: '系统说明', 'project-tests': '本地项目测试', 'document-tests': '网页回归', 'case-generator': '生成测试用例', 'api-suites': 'API 测试套件', 'sqlite-migrations': '数据库迁移测试', 'mysql-browser': 'MySQL 数据查看', 'source-tests': '代码测试 Agent', 'dify-regression': '执行测试', 'module-regression': '执行测试', settings: '设置' })[page]; }
 function RunResults({ run, onSave, savedIds }: { run: DemoRun; onSave: (assertion: DemoAssertion) => void; savedIds: Set<string> }) {
   const [assertionFilter, setAssertionFilter] = useState<'all' | 'failed' | 'passed'>('all');
   const passed = run.assertions.filter((a) => a.status === 'passed').length;

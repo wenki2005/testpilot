@@ -31,6 +31,12 @@ let systemModuleStateCache:{expires:number;body:string}|undefined;
     if(req.method==='POST'){systemModuleStateCache=undefined;res.once('finish',()=>{systemModuleStateCache=undefined;});}
     try {
       const root='/api/system-module-regression';const route=url.pathname.slice(root.length);
+      if(route==='/case-editor'&&req.method==='GET'){json(res,200,systemModules.editorCatalog(url.searchParams.get('systemId')||undefined));return;}
+      if(route==='/case-editor/prerequisites'&&req.method==='POST'){const data=await documentBody(req);if(coreChains.activeForSystem(String(data.systemId)))throw Error('核心链路正在运行，请结束后整理。');json(res,200,systemModules.savePrerequisitePlan(data));return;}
+      const editorScript=route.match(/^\/case-editor\/([0-9a-f-]{36})\/([^/]+)\/script$/i);
+      if(editorScript&&req.method==='GET'){json(res,200,systemModules.editorScript(editorScript[1]!,decodeURIComponent(editorScript[2]!),url.searchParams.get('version')||undefined));return;}
+      const editor=route.match(/^\/case-editor\/([0-9a-f-]{36})(?:\/([^/]+))?$/i);
+      if(editor){if(req.method==='GET'&&editor[2]){json(res,200,systemModules.editorHistory(editor[1]!,decodeURIComponent(editor[2])));return;}if(req.method==='POST'&&!editor[2]){if(coreChains.activeForSystem(systemModules.getModule(editor[1]!).systemId))throw Error('核心链路正在运行，请结束后保存。');json(res,200,await systemModules.saveEditorCase(editor[1]!,await bodyJson(req)));return;}fail(res,404,'用例编辑操作不存在。');return;}
       if(route==='/core-chains'&&req.method==='GET'){json(res,200,coreChains.state(url.searchParams.get('systemId')??''));return;}
       if(route==='/core-chains/runs'&&req.method==='POST'){json(res,202,coreChains.start(await bodyJson(req)));return;}
       const core=route.match(/^\/core-chains\/runs\/([0-9a-f-]{36})(?:\/(cancel|continue|evidence)(?:\/([0-9a-f]{64}\.png))?)?$/i);

@@ -19,6 +19,7 @@ import {excludedCaseReason}from './document-case-scope.js';
 import{connectedEvidenceKind}from'./dify-connected-contract.js';
 import{departmentBlockerDiagnostic}from'./dify-blocker-diagnostics.js';
 import{setTimeout as delay}from'node:timers/promises';
+import type {CaseDependency,PrerequisiteReview} from '../domain/case-script-editor-contract.js';
 
 import type {RegressionDatabaseBinding,RegressionDatabaseEvidence} from '../domain/regression-database-contract.js';
 import {supportsDepartmentDatabase} from '../domain/regression-database-contract.js';
@@ -28,7 +29,7 @@ const now = () => new Date().toISOString();
 const id = z.string().uuid();
 const assertions = new Set(['assertText','assertVisible','assertNotVisible','assertExactVisible','assertRoleVisible','assertRoleDisabled','assertValue','assertValueByPlaceholder','assertSelectedByRoleIndex','assertDisabled','assertFieldInvalid','assertMaxLengthOrMessage','assertNoHorizontalOverflow','assertNoFetchOrXhr']);
 type Outcome = 'passed'|'failed'|'blocked'|'error'|'not_executed';
-export type WebModule = {id:string;name:string;fileName:string;digest:string;createdAt:string;project:DocumentProject;sourceCases?:ImportedDocument['testCases'];manualSteps?:Record<string,string[]>; cachedSteps?:Record<string,{sourceDigest:string;steps:BrowserCheck['steps'];reviewKind?:DifyReviewKind}>};
+export type WebModule = {id:string;name:string;fileName:string;digest:string;createdAt:string;project:DocumentProject;sourceCases?:ImportedDocument['testCases'];manualSteps?:Record<string,string[]>;prerequisiteCases?:Record<string,CaseDependency[]>;prerequisiteReviews?:Record<string,PrerequisiteReview>;editedSteps?:Record<string,string>; cachedSteps?:Record<string,{sourceDigest:string;steps:BrowserCheck['steps'];reviewKind?:DifyReviewKind}>};
 export type WebModuleResult = {caseId:string;title:string;expected:string;priority?:BrowserCheck['priority'];status:Outcome;detail:string;outOfScope?:boolean;evidence?:string|undefined;evidenceOrigin?:'document-run'|'preflight'|'authorized-write';evidenceNote?:string|undefined;proposal?:{steps:string[];preconditions:string[];questions:string[]};steps?:BrowserCheck['steps'];needsConfirmation?:boolean;blockerCode?:DifyBlockerCode;nextAction?:string;preparationReview?:string};
 function moduleOutcome(results:WebModuleResult[]):Outcome{const scoped=results.filter(r=>!r.outOfScope);return !scoped.length?'not_executed':scoped.some(r=>r.status==='failed')?'failed':scoped.some(r=>r.status!=='passed')?'blocked':'passed';}
 function independentRecordScope(job:WebModuleJob):boolean {const checks=job.databaseEvidence?.checks??[];const selected=job.snapshot.cases.filter(c=>job.selectedCaseIds.includes(c.id));return !!selected.length&&selected.every(isDifyRecordIndependent)&&['connection','fixtures','relations','account-scope'].every(id=>checks.some(c=>c.id===id&&c.status==='passed'))&&checks.every(c=>c.status==='passed'||['account-list','account-detail'].includes(c.id)&&c.status==='blocked');}
@@ -71,6 +72,7 @@ export function checkModulePlan(job:WebModuleJob) {
 }
 
 export class DifyWebModuleStore {
+  editorPrerequisiteGuard?: (versionId:string,selected:string[],profileId?:string)=>void;
   private db:DatabaseSync;
   private active=new Map<string,AbortController>();
   private closed=false;
@@ -87,6 +89,37 @@ export class DifyWebModuleStore {
   state(){return {modules:this.list<WebModule>('module').map(({project,cachedSteps,sourceCases,...m})=>({...m,targetUrl:project.targetUrl,caseCount:project.cases.length})),jobs:this.list<WebModuleJob>('job').map(({snapshot,executionProject,...j})=>j),configured:{prepare:!!process.env.TESTPILOT_DIFY_API_KEY,execution:!!process.env.TESTPILOT_DIFY_EXECUTION_API_KEY}};}
   getModule(key:string){return this.get<WebModule>('module',id.parse(key));}
   getJob(key:string){return this.get<WebModuleJob>('job',id.parse(key));}
+  revisePrerequisites(key:string,changes:Array<{caseId:string;prerequisites:CaseDependency[];review:PrerequisiteReview}>){
+    const source=this.getModule(key),next=structuredClone(source);
+    next.prerequisiteCases={...next.prerequisiteCases};next.prerequisiteReviews={...next.prerequisiteReviews};
+    for(const c of changes){if(!next.project.cases.some(v=>v.id===c.caseId))throw Error('前置计划包含未知用例。');next.prerequisiteCases[c.caseId]=structuredClone(c.prerequisites);next.prerequisiteReviews[c.caseId]=structuredClone(c.review);}
+    if(moduleDigest({deps:source.prerequisiteCases,reviews:source.prerequisiteReviews})===moduleDigest({deps:next.prerequisiteCases,reviews:next.prerequisiteReviews}))return source;
+    next.id=randomUUID();next.createdAt=now();next.digest=moduleDigest({source:source.digest,prerequisites:next.prerequisiteCases,reviews:next.prerequisiteReviews});
+    // Only workflow metadata changes; original cases, scripts, cache and projects remain byte-identical.
+    return this.save('module',next);
+  }
+  /** Editor revisions never change existing packages or job snapshots. */
+  async reviseCase(key:string,caseId:string,change:{title:string;expected:string;steps:BrowserCheck['steps'];manualSteps:string[];prerequisites:CaseDependency[]}){
+    const source=this.getModule(key),next=structuredClone(source),index=next.project.cases.findIndex(c=>c.id===caseId);
+    if(index<0)throw Error('用例不存在。');
+    const original=next.project.cases[index]!;
+    const checked=validateCases([{...original,title:change.title,expected:change.expected,steps:change.steps}])[0]!;
+    const cache=source.cachedSteps?.[caseId],effective=(!original.steps.length||cache?.reviewKind)&&cache?.sourceDigest===moduleDigest(original)?cache.steps:original.steps;
+    const stepsChanged=moduleDigest(effective)!==moduleDigest(checked.steps);
+    // Keep existing provenance and business gates; only explicitly edited fields change.
+    next.project.cases[index]={...original,title:checked.title,expected:checked.expected,...(stepsChanged?{steps:checked.steps}:{})};
+    next.id=randomUUID();next.createdAt=now();next.project.id=randomUUID();
+    next.manualSteps={...next.manualSteps,[caseId]:change.manualSteps};
+    next.prerequisiteCases={...next.prerequisiteCases,[caseId]:change.prerequisites};
+    if(moduleDigest(source.prerequisiteCases?.[caseId]??[])!==moduleDigest(change.prerequisites))next.prerequisiteReviews={...next.prerequisiteReviews,[caseId]:{status:'reviewed',note:'前置编号已由用户更新；执行前仍需核对当前账号和对应业务记录。'}};
+    if(stepsChanged||source.editedSteps?.[caseId]===moduleDigest(original))next.editedSteps={...next.editedSteps,[caseId]:moduleDigest(next.project.cases[index])};
+    next.cachedSteps={...next.cachedSteps};
+    if(cache?.sourceDigest===moduleDigest(original))next.cachedSteps[caseId]={...cache,sourceDigest:moduleDigest(next.project.cases[index]),steps:checked.steps};
+    else delete next.cachedSteps[caseId];
+    const sourceCase=next.sourceCases?.find(c=>c.id===caseId);if(sourceCase){sourceCase.title=checked.title;sourceCase.expected=checked.expected;sourceCase.steps=checked.steps;}
+    next.digest=moduleDigest({project:next.project,manualSteps:next.manualSteps,prerequisiteCases:next.prerequisiteCases});
+    await this.deps.saveProject(next.project);return this.save('module',next);
+  }
   async import(input:unknown){
     const data=z.object({fileName:z.string().min(1).max(200),bytesBase64:z.string().min(1).max(5600000),targetUrl:z.string().min(1).max(2000),name:z.string().max(120).optional()}).parse(input);
     if(!/\.(?:csv|md|markdown)$/i.test(data.fileName))throw new Error('请上传 CSV 或 Markdown 模块用例包。');
@@ -118,6 +151,10 @@ export class DifyWebModuleStore {
     if(previous){if(previous.fingerprint!==fingerprint)throw new Error('同一请求编号不能对应不同测试范围。');return this.getJob(String(previous.job_id));}
     const module=this.getModule(data.moduleId);const selected=data.selectedCaseIds??module.project.cases.map(c=>c.id);const known=new Set(module.project.cases.map(c=>c.id));
     if(new Set(selected).size!==selected.length||selected.some(c=>!known.has(c))||data.confirmedCaseIds.some(c=>!selected.includes(c)))throw new Error('选择范围包含重复或不属于当前模块的用例。');
+    if(selected.some(c=>(module.prerequisiteCases?.[c]?.length??0)>0)){
+      if(!this.editorPrerequisiteGuard)throw Error('当前入口无法核验前置用例，请从执行测试运行。');
+      this.editorPrerequisiteGuard(module.id,selected,context?.profileId);
+    }
     if(data.parentJobId){const parent=this.getJob(data.parentJobId);if(parent.moduleId!==module.id)throw new Error('重测必须属于同一个模块版本。');}
     if([...this.active.keys()].some(key=>this.getJob(key).snapshot.id===(context?.profileId??module.project.id)))throw new Error('该模块或系统测试窗口已有运行，请等待或取消后再试。');
     const job:WebModuleJob={id:randomUUID(),moduleId:module.id,moduleName:module.name,moduleDigest:module.digest,requestId:data.requestId,parentJobId:data.parentJobId,createdAt:now(),updatedAt:now(),phase:'queued',outcome:'not_executed',message:'已保存任务，正在准备。',selectedCaseIds:selected,confirmedCaseIds:data.confirmedCaseIds,snapshot:structuredClone(module.project),difyRuns:[],results:selected.map(key=>{const c=module.project.cases.find(c=>c.id===key)!;return {caseId:c.id,title:c.title,expected:c.expected,priority:c.priority,status:'not_executed',detail:'尚未执行。'};}),events:[]};
@@ -208,7 +245,8 @@ export class DifyWebModuleStore {
         signal.throwIfAborted();const row=job.results.find(r=>r.caseId===c.id)!;
         const excluded=excludedCaseReason(c);if(excluded){row.outOfScope=true;row.status='not_executed';row.detail=excluded;c.lifecycleStatus='disabled';c.selectedForRegression=false;continue;}
         if(job.confirmedCaseIds.includes(c.id))c.preconditionsConfirmed=true;
-        const reviewed=reviewedDifyReadOnlyPlan(c,evidence,job.snapshot.targetUrl);if(reviewed){c.steps=reviewed.steps;if(reviewed.executionData)c.testData=[...(c.testData??[]),...reviewed.executionData];row.preparationReview=reviewed.detail;if(/^原包状态：hold-account-or-effect-review/.test(c.coverageGap??'')||connectedEvidenceKind(c)&&/^原包状态：/.test(c.coverageGap??''))delete c.coverageGap;}
+        const edited=module.editedSteps?.[c.id]===moduleDigest(job.snapshot.cases.find(v=>v.id===c.id));
+        const reviewed=reviewedDifyReadOnlyPlan(c,evidence,job.snapshot.targetUrl);if(reviewed){if(!edited)c.steps=reviewed.steps;if(reviewed.executionData)c.testData=[...(c.testData??[]),...reviewed.executionData];row.preparationReview=(edited?'使用已保存的编辑脚本；':'')+reviewed.detail;if(/^原包状态：hold-account-or-effect-review/.test(c.coverageGap??'')||connectedEvidenceKind(c)&&/^原包状态：/.test(c.coverageGap??''))delete c.coverageGap;}
         const cache=module.cachedSteps[c.id];if(!c.steps.length&&cache?.sourceDigest===moduleDigest(job.snapshot.cases.find(v=>v.id===c.id)))c.steps=cache.steps;
         let reason:string|undefined=cache?.reviewKind&&!reviewed?'当前页面未重新核对到已审核只读计划所需的唯一控件。':!c.steps.length&&!canAuthorReadOnlyBrowserSteps(c)?browserStepDraftBlockReason(c):undefined;
         if(c.steps.some(s=>s.action.startsWith('fill')&&isSensitiveExportField('label' in s?s.label:'placeholder' in s?s.placeholder:'')))reason='账号密码和验证码由你在测试窗口输入，不能放入自动执行步骤。';
