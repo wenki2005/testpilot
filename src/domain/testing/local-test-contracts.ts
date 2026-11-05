@@ -99,6 +99,7 @@ export interface DemoConfig {
         dataStatus: 'migrated' | 'awaiting-source';
     };
     framework: string;
+    storage?: { dataDirectory: string; artifactsDirectory: string; external: boolean };
     modelAvailable: boolean;
     modelLabel: string;
     computerUseAvailable?: boolean;

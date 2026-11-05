@@ -100,6 +100,20 @@
       ]
     },
     {
+      "file": "scripts/data/relocate-workspace.mjs",
+      "category": "开发维护工具",
+      "purpose": "relocate workspace",
+      "lines": 70,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "inventory",
+          "line": 19,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "scripts/data/transfer-workspace-config.mjs",
       "category": "开发维护工具",
       "purpose": "transfer workspace config",
@@ -147,40 +161,59 @@
       ]
     },
     {
+      "file": "scripts/lib/data-directory.mjs",
+      "category": "开发维护工具",
+      "purpose": "data directory",
+      "lines": 19,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "resolveDataDirectories",
+          "line": 5,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "scripts/lib/integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "integrated workspaces",
-      "lines": 15,
+      "lines": 17,
       "previousPaths": [],
       "symbols": [
         {
           "name": "repoRoot",
-          "line": 4,
-          "kind": "exported value"
-        },
-        {
-          "name": "runtimeRoot",
           "line": 5,
           "kind": "exported value"
         },
         {
-          "name": "workspaceNames",
+          "name": "runtimeRoot",
           "line": 6,
           "kind": "exported value"
         },
         {
-          "name": "workspacePorts",
+          "name": "legacyRuntimeRoot",
           "line": 7,
           "kind": "exported value"
         },
         {
-          "name": "workspacePaths",
+          "name": "workspaceNames",
           "line": 8,
+          "kind": "exported value"
+        },
+        {
+          "name": "workspacePorts",
+          "line": 9,
+          "kind": "exported value"
+        },
+        {
+          "name": "workspacePaths",
+          "line": 10,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "argument",
-          "line": 14,
+          "line": 16,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -487,7 +520,7 @@
       "file": "scripts/start-integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "已有工作区的启动与进程复用",
-      "lines": 87,
+      "lines": 92,
       "previousPaths": [],
       "symbols": []
     },
@@ -495,7 +528,7 @@
       "file": "scripts/stop-integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "校验实例身份及活动任务后停止服务",
-      "lines": 55,
+      "lines": 63,
       "previousPaths": [],
       "symbols": []
     },
@@ -8351,6 +8384,20 @@
       ]
     },
     {
+      "file": "src/bootstrap/data-environment.ts",
+      "category": "公共基础",
+      "purpose": "data environment",
+      "lines": 11,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "configureDataEnvironment",
+          "line": 5,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "src/bootstrap/document-application-services.ts",
       "category": "网页测试",
       "purpose": "document application services",
@@ -8520,7 +8567,7 @@
       "file": "src/demo/server.ts",
       "category": "公共基础",
       "purpose": "server",
-      "lines": 3,
+      "lines": 5,
       "previousPaths": [],
       "symbols": []
     },
@@ -10196,7 +10243,7 @@
       "file": "src/domain/testing/local-test-contracts.ts",
       "category": "规则与数据契约",
       "purpose": "local test contracts",
-      "lines": 117,
+      "lines": 118,
       "previousPaths": [
         "src/domain/demo-contracts.ts"
       ],
@@ -10248,7 +10295,7 @@
         },
         {
           "name": "RunContext",
-          "line": 111,
+          "line": 112,
           "kind": "InterfaceDeclaration"
         }
       ]
@@ -11746,7 +11793,7 @@
       "file": "src/server/http-server.ts",
       "category": "服务启动与路由装配",
       "purpose": "本地 HTTP 服务启动、依赖装配和路由挂载",
-      "lines": 703,
+      "lines": 704,
       "previousPaths": [
         "src/demo/server.ts"
       ],
@@ -11773,32 +11820,32 @@
         },
         {
           "name": "collectDocumentPageEvidence",
-          "line": 238,
+          "line": 239,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "validRequest",
-          "line": 244,
+          "line": 245,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "persistRegressions",
-          "line": 252,
+          "line": 253,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "persistProjectRun",
-          "line": 255,
+          "line": 256,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "readProjectRunFiles",
-          "line": 258,
+          "line": 259,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "handle",
-          "line": 262,
+          "line": 263,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -14914,6 +14961,14 @@
           "kind": "FunctionDeclaration"
         }
       ]
+    },
+    {
+      "file": "tests/storage/workspace-relocation.test.mjs",
+      "category": "公共基础",
+      "purpose": "workspace relocation.test",
+      "lines": 28,
+      "previousPaths": [],
+      "symbols": []
     },
     {
       "file": "web/src/app/routes.ts",

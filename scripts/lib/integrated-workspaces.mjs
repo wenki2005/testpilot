@@ -1,8 +1,10 @@
 // Shared local paths for independently owned Dify and web-regression workspaces.
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveDataDirectories } from './data-directory.mjs';
 export const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-export const runtimeRoot = path.join(repoRoot, 'runtime-data');
+export const runtimeRoot = resolveDataDirectories().workspacesRoot;
+export const legacyRuntimeRoot = path.join(repoRoot, 'runtime-data');
 export const workspaceNames = ['dify', 'web-regression'];
 export const workspacePorts = { dify: 4323, 'web-regression': 4324 };
 export function workspacePaths(owner) {

@@ -15,3 +15,4 @@
 - [infrastructure](infrastructure/)
 - [regression](regression/)
 - [source-tests](source-tests/)
+- [storage](storage/)

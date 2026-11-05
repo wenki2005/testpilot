@@ -224,6 +224,7 @@ function config(): DemoConfig {
     const computer = computerUseConfiguration();
     return {
         framework: "Pi Agent Core 1.2",
+        storage: { dataDirectory: artifactsDir, artifactsDirectory: process.env.TESTPILOT_ARTIFACTS_DIR ?? path.join(artifactsDir, 'document-tests'), external: path.relative(projectRoot, artifactsDir).startsWith('..') || path.isAbsolute(path.relative(projectRoot, artifactsDir)) },
         ...(workspaces ? { workspaces } : {}),
         modelAvailable: model.available,
         modelLabel: model.label,
