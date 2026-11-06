@@ -3,6 +3,7 @@ import { unzipSync } from 'fflate';
 import { z } from 'zod';
 import { extractDocument } from '../../documents/resources/importer.js';
 import { parseCaseVersionMarkdown, type CaseVersionRow } from './case-markdown-import.js';
+import { inferImportModule, matchImportedCase } from './case-import-matching.js';
 import { compareProjectResources, resourceKey, validateProjectResources, type ProjectResources } from './project-resource-contract.js';
 type Row = CaseVersionRow;
 const clean = (s: string) => s.trim().replace(/^[✅❌⚠️🔄\s]+/u, '').replace(/\s+P[0-3]\s*$/i, '').trim();
@@ -43,7 +44,7 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     const imported = await rows(data.fileName, bytes);
     if (!imported.length || imported.length > 2000 || new Set(imported.map(r => r.key)).size !== imported.length) throw Error('用例为空、过多或源编号重复。');
     const resources = structuredClone(current); resources.cases = [];
-    const unresolved: Array<{ key: string; title: string; sourcePath: string[]; reason: string }> = [], identities = new Set<string>(), scriptsToReview: string[] = [], mappingUpdates: string[] = [];
+    const unresolved: Array<{ key: string; title: string; sourcePath: string[]; reason: string }> = [], identities = new Set<string>(), scriptsToReview: string[] = [], mappingUpdates: string[] = [], autoMappings: Array<{ key: string; caseId?: string; moduleId: string; reason: string; confidence: 'high' | 'medium' }> = [];
     for (const row of imported) {
         const chosen = data.mapping[row.key];
         let matches = current.cases.filter(c => chosen ? c.moduleId === chosen.moduleId && c.id === chosen.caseId : row.id ? c.id === row.id : row.sourceId && c.sourceId === row.sourceId);
@@ -56,12 +57,24 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
                 else if (row.sourcePath.length) { const path = row.sourcePath.slice(1).join(' > '); matches = matches.filter(c => c.sourcePath.slice(1).join(' > ') === path); }
             }
         }
+        if (!chosen && !matches.length) {
+            const automatic = matchImportedCase(row, current.cases);
+            if (automatic)
+                matches = [automatic.value];
+        }
         if (matches.length > 1) { unresolved.push({ ...row, reason: '存在多个候选，请选择原用例。' }); continue; }
         const old = matches[0];
         if (chosen?.caseId && !old) throw Error('映射的原用例不存在。');
-        const candidates = current.modules.filter(m => row.sourcePath.includes(m.name));
-        const moduleId = old?.moduleId ?? chosen?.moduleId ?? (candidates.length === 1 ? candidates[0]!.id : undefined);
-        if (!moduleId || !current.modules.some(m => m.id === moduleId)) { unresolved.push({ ...row, reason: '请选择所属模块或原用例。' }); continue; }
+        const candidates = resources.modules.filter(m => row.sourcePath.includes(m.name));
+        let moduleId = old?.moduleId ?? chosen?.moduleId ?? (candidates.length === 1 ? candidates[0]!.id : undefined);
+        if (!moduleId) {
+            const inferred = inferImportModule(resources, row);
+            moduleId = inferred.module.id;
+            if (inferred.created && !resources.modules.some(m => m.id === moduleId))
+                resources.modules.push(inferred.module);
+            autoMappings.push({ key: row.key, ...(old ? { caseId: old.id } : {}), moduleId, reason: inferred.reason, confidence: inferred.created ? 'medium' : 'high' });
+        }
+        if (!moduleId || !resources.modules.some(m => m.id === moduleId)) { unresolved.push({ ...row, reason: '自动识别失败，请选择所属模块或原用例。' }); continue; }
         const id = old?.id ?? row.id ?? 'case-' + createHash('sha256').update(row.key).digest('hex').slice(0, 20);
         const identity = resourceKey({ moduleId, id }); if (identities.has(identity)) throw Error('多条新用例映射到同一编号，请调整。'); identities.add(identity);
         const unchanged = old && (row.id || row.structured ? row.title === old.title && row.expected === old.expected : row.expected === clean(old.sourceExpected))
@@ -92,5 +105,5 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     const comparison = compareProjectResources(current, resources);
     const metadataOnly = comparison.changed.filter(k => mappingUpdates.includes(k));
     const recognized = imported.map(({ key, id, title, expected, sourcePath, manualSteps, priority }) => ({ key, id, title, expected, sourcePath, manualSteps, priority }));
-    return { resources, recognized, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
+    return { resources, recognized, autoMappings, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
 }

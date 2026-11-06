@@ -7,6 +7,7 @@ const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.
 const build = process.env.TESTPILOT_CHECK_BUILD ?? path.join(repo, 'dist');
 const { parseCaseVersionMarkdown } = await import(pathToFileURL(path.join(build, 'adapters/regression/resources/case-markdown-import.js')));
 const { prepareCaseVersion } = await import(pathToFileURL(path.join(build, 'adapters/regression/resources/case-version-import.js')));
+const { inferImportModule } = await import(pathToFileURL(path.join(build, 'adapters/regression/resources/case-import-matching.js')));
 const systemId = '51000000-0000-4000-8000-000000000001', moduleId = '51000000-0000-4000-8000-000000000002';
 const parse = text => parseCaseVersionMarkdown('新版.md', Buffer.from(text));
 const baseline = () => ({ schema: 1, project: { id: systemId, name: '本机样例' }, modules: [{ id: moduleId, name: '登录模块' }], chains: [], cases: [{ id: 'xmind-1', moduleId, title: '登录成功', expected: '显示首页', sourcePath: ['旧文件', '登录模块'], sourceExpected: '显示首页', prerequisites: [], manualSteps: ['打开页面'], script: { caseId: 'xmind-1', dependsOn: [], steps: [{ action: 'assertText', text: '首页' }] } }] });
@@ -111,4 +112,14 @@ test('ambiguous Markdown names require a mapping and removals still respect core
     before.chains = [{ id: 'core', title: '核心流程', description: '', steps: [{ id: 'step', title: '步骤', expected: '', caseIds: ['xmind-2'] }] }];
     const missing = await prepareCaseVersion(before, input('# 登录模块\n## xmind-1 | 登录成功\n预期：显示首页'));
     assert.ok(missing.issues.some(issue => issue.includes('核心链路')));
+});
+
+test('automatic module mapping uses business aliases and does not require one selector per imported case', () => {
+    const current = baseline(); current.modules.push({ id: '51000000-0000-4000-8000-000000000003', name: '订单与物流' }, { id: '51000000-0000-4000-8000-000000000004', name: '登录入口与公共基础' });
+    current.cases.push({ ...structuredClone(current.cases[0]), id: 'xmind-2', moduleId: '51000000-0000-4000-8000-000000000003', sourcePath: ['旧文件', '订单与物流'] });
+    const row = { key: 'tree:1', title: '订单详情 — 展示订单物流', expected: '展示订单物流', sourcePath: ['V1.1.0', '员工端-订单详情页'], structured: true };
+    const inferred = inferImportModule(current, row);
+    assert.equal(inferred.module.name, '订单与物流'); assert.equal(inferred.created, false);
+    const other = { ...row, key: 'tree:2', sourcePath: ['V1.1.0', '企微消息通知'] };
+    assert.equal(inferImportModule(current, other).module.name, '登录入口与公共基础');
 });
