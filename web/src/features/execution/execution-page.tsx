@@ -129,7 +129,6 @@ export default function SystemModuleWorkbench() {
     const [coreState, setCoreState] = useState<CoreState>();
     const [coreRunId, setCoreRunId] = useState(initial.get('coreRun') ?? '');
     const [coreLoadError, setCoreLoadError] = useState('');
-    const coreInitialized = useRef('');
     const [scope, setScope] = useState<ExecutionScope>(initial.get('scope') === 'all' || initial.get('scope') === 'starter' ? 'all' : initial.get('scope') === 'custom' ? 'custom' : 'chains');
     const [customCases, setCustomCases] = useState<CustomCaseSelection>({});
     const [caseIds, setCaseIds] = useState<string[]>([]);
@@ -212,15 +211,7 @@ export default function SystemModuleWorkbench() {
     function selectCore(id: string) { setScope('chains'); setBatchId(''); setCoreRunId(id); resetResults(); }
     function newDraft(next: ExecutionScope = scope) { setScope(next); setBatchId(''); setCoreRunId(''); setChosen(next === 'custom' ? [] : liveModules.map(m => m.id)); setCustomCases({}); resetResults(); }
     function changeScope(next: ExecutionScope) {
-        if (next === 'chains') {
-            selectCore(coreState?.runs[0]?.id ?? '');
-            return;
-        }
-        const b = history.find(b => scopeForBatch(b) === next);
-        if (b)
-            selectBatch(b.id);
-        else
-            newDraft(next);
+        newDraft(next);
     }
     function selectHistory(value: string) {
         if (value.startsWith('core:'))
@@ -248,11 +239,6 @@ export default function SystemModuleWorkbench() {
                 if (alive) {
                     setCoreState(data);
                     setCoreLoadError('');
-                    if (coreInitialized.current !== systemId) {
-                        coreInitialized.current = systemId;
-                        if (scope === 'chains' && initial.get('draft') !== '1')
-                            setCoreRunId(coreRunId || data.runs[0]?.id || '');
-                    }
                 }
             }
             catch (e) {
@@ -302,16 +288,17 @@ export default function SystemModuleWorkbench() {
         if (!system)
             return;
         if (selectionSystem.current !== systemId) {
+            const switchingSystem = selectionSystem.current !== '';
             selectionSystem.current = systemId;
-            const requested = history.find(b => b.id === batchId), fallback = history.find(b => scopeForBatch(b) === scope);
+            const requested = !switchingSystem && scope !== 'chains' ? history.find(b => b.id === batchId) : undefined;
             if (requested)
                 selectBatch(requested.id);
-            else if (initial.get('draft') !== '1' && scope !== 'chains' && fallback)
-                selectBatch(fallback.id);
             else {
                 setChosen(scope === 'custom' ? [] : system.selectedModuleIds);
                 setCustomCases({});
                 setBatchId('');
+                if (switchingSystem || scope !== 'chains')
+                    setCoreRunId('');
                 resetResults();
             }
         }
@@ -476,7 +463,7 @@ export default function SystemModuleWorkbench() {
       <div className="sm-live-meter"><span>已结束 {finishedModules} / {activeBatch.entries.length} 个模块{current?.progress && current.progress.total > 0 ? ` · 当前模块已执行 ${current.progress.completed} / ${current.progress.total} 条` : ''}</span><progress aria-label={current?.progress && current.progress.total > 0 ? '当前模块用例进度' : '模块执行进度'} value={current?.progress && current.progress.total > 0 ? current.progress.completed : finishedModules} max={current?.progress && current.progress.total > 0 ? current.progress.total : activeBatch.entries.length || 1}/></div>
       <div className="sm-live-actions">{batchId !== activeBatch.id && <button onClick={() => { selectBatch(activeBatch.id); }}>查看运行批次</button>}<button disabled={busy} onClick={() => void perform(async () => { await api(`/batches/${activeBatch.id}/cancel`, {}); })}>取消本轮</button></div>
     </section>}
-    <section className="sm-system" aria-label="被测系统"><div className="sm-system-name"><select aria-label="选择系统" value={systemId} onChange={e => { setSystemId(e.target.value); setBatchId(''); }} disabled={busy}><option value="" disabled>选择系统</option>{state?.systems.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</select>{system && <><span className="sm-environment" title="系统设置中填写的环境名称，用于区分测试、预发布或正式环境。">环境：{viewedRun?.environment ?? system.environment}</span>{!historical && system.databaseBinding && <span className={`sm-connection ${state?.database?.connected ? 'sm-connection-connected' : 'sm-connection-pending'}`}>{state?.database?.connected ? '数据库已连接' : '数据库待连接'}</span>}<button className="sm-link" onClick={() => openSystem(system)} disabled={busy || occupied}>系统设置</button></>}</div>{system && !historical && <div className="sm-account"><select aria-label="选择测试账号" value={activeBatch?.profileId ?? system.activeAccountId ?? system.profileId} disabled={busy || occupied} onChange={e => void perform(async () => { await api(`/systems/${system.id}/account-selection`, { accountId: e.target.value }); })}><option value={system.profileId}>我的账号</option>{system.accountProfiles?.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select><span className={`sm-connection ${!waiting && account?.state === 'connected' ? 'sm-connection-connected' : 'sm-connection-pending'} sm-account-${waiting ? 'awaiting-login' : account?.state ?? 'unknown'}`}>{waiting ? '等待登录' : ({ unknown: '账号待连接', connecting: '正在连接', 'awaiting-login': '等待登录', connected: '窗口已连接', error: '连接未完成' }[account?.state ?? 'unknown'])}</span>{waiting ? <button onClick={() => void perform(async () => { await api(`/batches/${activeBatch!.id}/continue`, {}); })} disabled={busy}>我已登录</button> : account?.state === 'awaiting-login' ? <button onClick={() => void perform(async () => { await api(`/systems/${system.id}/continue`, {}); })} disabled={busy}>我已登录</button> : <button disabled={busy || occupied} onClick={() => void perform(async () => { await api(`/systems/${system.id}/connect`, {}); })}>连接我的账号</button>}{connecting && <button className="sm-link" onClick={() => void perform(async () => { await api(`/systems/${system.id}/disconnect`, {}); })} disabled={busy}>取消连接</button>}</div>}<div className="sm-history"><strong>历史运行批次</strong><select aria-label="历史运行批次" value={coreRun ? 'core:' + coreRun.id : batch ? 'batch:' + batch.id : ''} onChange={e => selectHistory(e.target.value)} disabled={busy}><option value="">新建运行</option>{coreState?.runs.length ? <optgroup label="核心用例">{coreState.runs.map(r => <option key={r.id} value={'core:' + r.id}>{date(r.createdAt)} · {r.chains.length} 条链路 · {labels[r.phase]}</option>)}</optgroup> : null}{(['all', 'custom'] as const).map(category => <optgroup key={category} label={category === 'all' ? '全部用例' : '自选用例 / 历史范围'}>{history.filter(b => scopeForBatch(b) === category).map(b => <option key={b.id} value={'batch:' + b.id}>{date(b.createdAt)} · {b.entries.length} 个模块 · {b.entries.reduce((n, e) => n + (e.selectedCaseIds?.length ?? e.caseCount), 0)} 条 · {labels[b.phase]}</option>)}</optgroup>)}</select>{historical && <><button onClick={() => newDraft()} disabled={busy}>新建运行</button><ReportExport format={reportFormat} onFormat={setReportFormat} onDownload={() => void perform(exportReport)} disabled={busy}/></>}</div>{viewedRun && <div className="sm-history-context" aria-live="polite">正在查看 {date(viewedRun.createdAt)} · {viewedRun.environment} · {batch?.accountName ?? system?.accountProfiles?.find(a => a.id === viewedRun.profileId)?.name ?? (viewedRun.profileId === system?.profileId ? '我的账号' : '历史账号')} · {labels[viewedRun.phase]}</div>}</section>
+    <section className="sm-system" aria-label="被测系统"><div className="sm-system-name"><select aria-label="选择系统" value={systemId} onChange={e => { setSystemId(e.target.value); setBatchId(''); }} disabled={busy}><option value="" disabled>选择系统</option>{state?.systems.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</select>{system && <><span className="sm-environment" title="系统设置中填写的环境名称，用于区分测试、预发布或正式环境。">环境：{viewedRun?.environment ?? system.environment}</span>{!historical && system.databaseBinding && <span className={`sm-connection ${state?.database?.connected ? 'sm-connection-connected' : 'sm-connection-pending'}`}>{state?.database?.connected ? '数据库已连接' : '数据库待连接'}</span>}<button className="sm-link" onClick={() => openSystem(system)} disabled={busy || occupied}>系统设置</button></>}</div>{system && !historical && <div className="sm-account"><select aria-label="选择测试账号" value={activeBatch?.profileId ?? system.activeAccountId ?? system.profileId} disabled={busy || occupied} onChange={e => void perform(async () => { await api(`/systems/${system.id}/account-selection`, { accountId: e.target.value }); })}><option value={system.profileId}>我的账号</option>{system.accountProfiles?.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}</select><span className={`sm-connection ${!waiting && account?.state === 'connected' ? 'sm-connection-connected' : 'sm-connection-pending'} sm-account-${waiting ? 'awaiting-login' : account?.state ?? 'unknown'}`}>{waiting ? '等待登录' : ({ unknown: '账号待连接', connecting: '正在连接', 'awaiting-login': '等待登录', connected: '窗口已连接', error: '连接未完成' }[account?.state ?? 'unknown'])}</span>{waiting ? <button onClick={() => void perform(async () => { await api(`/batches/${activeBatch!.id}/continue`, {}); })} disabled={busy}>我已登录</button> : account?.state === 'awaiting-login' ? <button onClick={() => void perform(async () => { await api(`/systems/${system.id}/continue`, {}); })} disabled={busy}>我已登录</button> : <button disabled={busy || occupied} onClick={() => void perform(async () => { await api(`/systems/${system.id}/connect`, {}); })}>连接我的账号</button>}{connecting && <button className="sm-link" onClick={() => void perform(async () => { await api(`/systems/${system.id}/disconnect`, {}); })} disabled={busy}>取消连接</button>}</div>}<div className="sm-history"><strong>历史运行批次</strong><select aria-label="历史运行批次" value={coreRun ? 'core:' + coreRun.id : batch ? 'batch:' + batch.id : ''} onChange={e => selectHistory(e.target.value)} disabled={busy}><option value="">新建运行</option>{coreState?.runs.length ? <optgroup label="核心用例">{coreState.runs.map(r => <option key={r.id} value={'core:' + r.id}>{date(r.createdAt)} · {r.chains.length} 条链路 · {labels[r.phase]}</option>)}</optgroup> : null}{(['all', 'custom'] as const).map(category => <optgroup key={category} label={category === 'all' ? '全部用例' : '自选用例 / 历史范围'}>{history.filter(b => scopeForBatch(b) === category).map(b => <option key={b.id} value={'batch:' + b.id}>{date(b.createdAt)} · {b.entries.length} 个模块 · {b.entries.reduce((n, e) => n + (e.selectedCaseIds?.length ?? e.caseCount), 0)} 条 · {labels[b.phase]}</option>)}</optgroup>)}</select>{historical && <><button onClick={() => newDraft()} disabled={busy}>新建运行</button><ReportExport format={reportFormat} onFormat={setReportFormat} onDownload={() => void perform(exportReport)} disabled={busy}/></>}</div>{viewedRun && <div className="sm-history-context" aria-live="polite">正在查看 {date(viewedRun.createdAt)} · {viewedRun.environment} · {batch?.accountName ?? system?.accountProfiles?.find(a => a.id === viewedRun.profileId)?.name ?? (viewedRun.profileId === system?.profileId ? '我的账号' : '历史账号')} · {labels[viewedRun.phase]} · 范围只读，点“新建运行”重新选择。</div>}</section>
     <div className="core-execution-selector"><label htmlFor="execution-category">执行范围</label><select id="execution-category" aria-label="执行范围" value={scope} onChange={e => changeScope(e.target.value as ExecutionScope)} disabled={busy || occupied}><option value="chains">核心用例</option><option value="all">全部用例</option><option value="custom">自选用例</option></select></div>
     {coreLoadError && <p className="sm-error" role="alert">核心批次加载失败：{coreLoadError}<button onClick={() => void perform(refreshCore)} disabled={busy}>重新加载</button></p>}
     {scope === 'chains' && system && <DepartmentCoreChains systemId={system.id} occupied={!!activeBatch || connecting} state={coreState} run={coreRun} onRun={selectCore} onRefresh={refreshCore}/>}
