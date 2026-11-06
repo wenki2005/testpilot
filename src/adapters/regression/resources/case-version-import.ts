@@ -2,16 +2,18 @@ import { createHash } from 'node:crypto';
 import { unzipSync } from 'fflate';
 import { z } from 'zod';
 import { extractDocument } from '../../documents/resources/importer.js';
+import { parseCaseVersionMarkdown, type CaseVersionRow } from './case-markdown-import.js';
 import { compareProjectResources, resourceKey, validateProjectResources, type ProjectResources } from './project-resource-contract.js';
-type Row = { key: string; sourceId?: string; id?: string; title: string; expected: string; sourcePath: string[] };
+type Row = CaseVersionRow;
 const clean = (s: string) => s.trim().replace(/^[✅❌⚠️🔄\s]+/u, '').replace(/\s+P[0-3]\s*$/i, '').trim();
 /** Lossless leaf extraction for whole-file maintenance. Topic IDs survive insertion/reordering. */
 async function rows(fileName: string, bytes: Uint8Array): Promise<Row[]> {
+    if (/\.(?:md|markdown)$/i.test(fileName)) return parseCaseVersionMarkdown(fileName, bytes);
     if (/\.csv$/i.test(fileName)) {
         const doc = await extractDocument(fileName, bytes);
         return (doc.testCases ?? []).map(c => ({ key: 'csv:' + c.id, id: c.id!, title: c.title, expected: c.expected, sourcePath: c.modulePath ?? [] }));
     }
-    if (!/\.xmind$/i.test(fileName)) throw Error('请上传完整XMind或CSV；资源备份JSON使用导入。');
+    if (!/\.xmind$/i.test(fileName)) throw Error('请上传完整Markdown、XMind或CSV；资源备份JSON使用导入。');
     let entries: Record<string, Uint8Array>;
     try { entries = unzipSync(bytes, { filter: f => { if (f.originalSize > 16 * 1024 * 1024) throw Error('XMind解压内容过大。'); return f.name === 'content.json'; } }); }
     catch { throw Error('XMind文件无效或过大。'); }
@@ -45,9 +47,14 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     for (const row of imported) {
         const chosen = data.mapping[row.key];
         let matches = current.cases.filter(c => chosen ? c.moduleId === chosen.moduleId && c.id === chosen.caseId : row.id ? c.id === row.id : row.sourceId && c.sourceId === row.sourceId);
-        if (!chosen && !matches.length && !row.id) {
-            matches = current.cases.filter(c => clean(c.sourceExpected) === row.expected || clean(c.title) === row.title);
-            if (matches.length > 1) { const path = row.sourcePath.slice(1).join(' > '); matches = matches.filter(c => c.sourcePath.slice(1).join(' > ') === path); }
+        if (!chosen && !matches.length && row.sourceId) matches = current.cases.filter(c => c.sourceId === row.sourceId);
+        if (!chosen && !matches.length && (!row.id || row.structured)) {
+            matches = current.cases.filter(c => (!row.structured && clean(c.sourceExpected) === row.expected) || clean(c.title) === row.title);
+            if (matches.length > 1) {
+                const modules = current.modules.filter(m => row.sourcePath.includes(m.name));
+                if (modules.length === 1) matches = matches.filter(c => c.moduleId === modules[0]!.id);
+                else if (row.sourcePath.length) { const path = row.sourcePath.slice(1).join(' > '); matches = matches.filter(c => c.sourcePath.slice(1).join(' > ') === path); }
+            }
         }
         if (matches.length > 1) { unresolved.push({ ...row, reason: '存在多个候选，请选择原用例。' }); continue; }
         const old = matches[0];
@@ -57,11 +64,17 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
         if (!moduleId || !current.modules.some(m => m.id === moduleId)) { unresolved.push({ ...row, reason: '请选择所属模块或原用例。' }); continue; }
         const id = old?.id ?? row.id ?? 'case-' + createHash('sha256').update(row.key).digest('hex').slice(0, 20);
         const identity = resourceKey({ moduleId, id }); if (identities.has(identity)) throw Error('多条新用例映射到同一编号，请调整。'); identities.add(identity);
-        const unchanged = old && (row.id ? row.title === old.title && row.expected === old.expected : row.expected === clean(old.sourceExpected));
-        if (unchanged && row.sourceId && old.sourceId !== row.sourceId) mappingUpdates.push(identity);
+        const unchanged = old && (row.id || row.structured ? row.title === old.title && row.expected === old.expected : row.expected === clean(old.sourceExpected))
+            && (row.manualSteps === undefined || JSON.stringify(row.manualSteps) === JSON.stringify(old.manualSteps));
+        const sourceId = row.structured ? old?.sourceId ?? row.sourceId : row.sourceId ?? old?.sourceId;
+        if (unchanged && sourceId && old.sourceId !== sourceId) mappingUpdates.push(identity);
         const review = unchanged ? old.scriptReview : { status: 'pending' as const, note: old ? '原脚本保留；用例内容变化，执行前需核对。' : '新增用例，需补充脚本和前置。' };
         if (review?.status === 'pending') scriptsToReview.push(identity);
-        resources.cases.push({ id, moduleId, title: unchanged ? old.title : row.title, expected: unchanged ? old.expected : row.expected, manualSteps: old?.manualSteps ?? [], prerequisites: old?.prerequisites ?? [], ...(old?.prerequisiteReview ? { prerequisiteReview: old.prerequisiteReview } : {}), ...(review ? { scriptReview: review } : {}), ...(row.sourceId || old?.sourceId ? { sourceId: row.sourceId ?? old!.sourceId! } : {}), sourcePath: unchanged ? old.sourcePath : row.sourcePath, sourceExpected: unchanged ? old.sourceExpected : row.expected, script: old?.script ?? { caseId: id, dependsOn: [], steps: [] } });
+        if (unchanged) {
+            resources.cases.push({ ...old, ...(sourceId ? { sourceId } : {}) });
+            continue;
+        }
+        resources.cases.push({ id, moduleId, title: unchanged ? old.title : row.title, expected: unchanged ? old.expected : row.expected, manualSteps: row.manualSteps ?? old?.manualSteps ?? [], prerequisites: old?.prerequisites ?? [], ...(old?.prerequisiteReview ? { prerequisiteReview: old.prerequisiteReview } : {}), ...(review ? { scriptReview: review } : {}), ...(sourceId ? { sourceId } : {}), sourcePath: unchanged ? old.sourcePath : row.sourcePath, sourceExpected: unchanged ? old.sourceExpected : row.expected, script: old?.script ?? { caseId: id, dependsOn: [], steps: [] } });
     }
     const issues: string[] = [];
     if (unresolved.length) issues.push('还有未确认的编号或模块映射。');
@@ -72,5 +85,6 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     if (!issues.length) validateProjectResources(resources);
     const comparison = compareProjectResources(current, resources);
     const metadataOnly = comparison.changed.filter(k => mappingUpdates.includes(k));
-    return { resources, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
+    const recognized = imported.map(({ key, id, title, expected, sourcePath, manualSteps }) => ({ key, id, title, expected, sourcePath, manualSteps }));
+    return { resources, recognized, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
 }
