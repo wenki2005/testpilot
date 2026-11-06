@@ -1035,89 +1035,89 @@
       "file": "src/adapters/api/suite-workflow.ts",
       "category": "公共基础",
       "purpose": "suite workflow",
-      "lines": 260,
+      "lines": 264,
       "previousPaths": [
         "src/adapters/api-suite-workflow.ts"
       ],
       "symbols": [
         {
           "name": "ApiSuiteCandidate",
-          "line": 7,
+          "line": 8,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "createApiSuiteCandidate",
-          "line": 28,
+          "line": 29,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "updateApiSuiteCandidate",
-          "line": 41,
+          "line": 42,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "listApiSuiteCandidates",
-          "line": 65,
+          "line": 66,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "getApiSuiteCandidate",
-          "line": 82,
+          "line": 83,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "reviewApiSuiteCandidate",
-          "line": 95,
+          "line": 96,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "executeApprovedApiSuite",
-          "line": 107,
+          "line": 108,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "getApiFindingHistory",
-          "line": 148,
+          "line": 149,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "ApiFindingDiagnosis",
-          "line": 153,
+          "line": 154,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "diagnoseApiFinding",
-          "line": 175,
+          "line": 176,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "autoRunReadOnlyApiSuite",
-          "line": 203,
+          "line": 207,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "autoRunReadOnlyApiSuiteOnce",
-          "line": 213,
+          "line": 217,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "getApiRun",
-          "line": 236,
+          "line": 240,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "readApiRunArtifact",
-          "line": 246,
+          "line": 250,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "validCandidate",
-          "line": 256,
+          "line": 260,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "isUuid",
-          "line": 259,
+          "line": 263,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -12036,154 +12036,154 @@
       "file": "src/server/runtime.ts",
       "category": "服务启动与路由装配",
       "purpose": "本地测试运行时及通用执行辅助",
-      "lines": 975,
+      "lines": 995,
       "previousPaths": [
         "src/demo/runtime.ts"
       ],
       "symbols": [
         {
           "name": "configuredModel",
-          "line": 22,
+          "line": 21,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "modelConfiguration",
-          "line": 30,
+          "line": 29,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "generateGrammarPlaywrightCandidate",
-          "line": 40,
+          "line": 39,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildDocumentBrowserCaseMessages",
-          "line": 119,
+          "line": 118,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "generateDocumentBrowserCases",
-          "line": 133,
+          "line": 132,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "generateDocumentBrowserCaseBatch",
-          "line": 159,
+          "line": 158,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "DocumentStepAuthoringCase",
-          "line": 251,
+          "line": 250,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "generateDocumentCaseSteps",
-          "line": 254,
+          "line": 253,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "validateDraftLocatorsAgainstEvidence",
-          "line": 351,
+          "line": 350,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "ParsedDocumentPageEvidenceSnapshot",
-          "line": 430,
+          "line": 429,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "parsePageEvidenceSnapshots",
-          "line": 446,
+          "line": 445,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "event",
-          "line": 462,
+          "line": 461,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "parseDotPath",
-          "line": 465,
+          "line": 464,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "equalJson",
-          "line": 472,
+          "line": 471,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "jsonObject",
-          "line": 479,
+          "line": 478,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "targetUrl",
-          "line": 484,
+          "line": 483,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "combineSignal",
-          "line": 495,
+          "line": 494,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "readBody",
-          "line": 511,
+          "line": 510,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "clampActions",
-          "line": 522,
+          "line": 521,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "assertionForCheck",
-          "line": 525,
+          "line": 524,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildRequestTool",
-          "line": 550,
+          "line": 549,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildAssertTool",
-          "line": 615,
+          "line": 618,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "planTool",
-          "line": 641,
+          "line": 644,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "finalStatus",
-          "line": 675,
+          "line": 678,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "normalizeRoutes",
-          "line": 700,
+          "line": 707,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "routeCoverageLabel",
-          "line": 703,
+          "line": 710,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "registerChecksTool",
-          "line": 714,
+          "line": 721,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildOfflineScript",
-          "line": 753,
+          "line": 760,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "executeDemo",
-          "line": 779,
+          "line": 786,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -14233,14 +14233,14 @@
       "file": "tests/infrastructure/run-diagnostics.test.mjs",
       "category": "公共基础",
       "purpose": "run diagnostics.test",
-      "lines": 107,
+      "lines": 110,
       "previousPaths": [
         "tests/run-diagnostics.test.mjs"
       ],
       "symbols": [
         {
           "name": "emit",
-          "line": 71,
+          "line": 74,
           "kind": "method"
         }
       ]

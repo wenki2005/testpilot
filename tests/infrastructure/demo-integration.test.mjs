@@ -31,7 +31,7 @@ test('HTTP evidence, Pi tool loop and unchanged regression expectations form a r
     });
     child.stdout.on('data', chunk => { log += chunk.toString(); });
     child.stderr.on('data', chunk => { log += chunk.toString(); });
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 400; i++) {
       if (child.exitCode !== null) throw new Error(`Server exited: ${log}`);
       try { if ((await fetch(`${base}/api/health`)).ok) return; } catch {}
       await delay(75);
@@ -66,8 +66,8 @@ test('HTTP evidence, Pi tool loop and unchanged regression expectations form a r
     }
     throw new Error(`Run ${id} did not stop`);
   }
-  await start();
   t.after(stop);
+  await start();
   const config = (await api('/api/config')).value;
   const request = (mode, extra = {}) => ({ mode, provider: 'offline', requirements: config.defaultRequirements, maxActions: 24, target: 'sample', ...extra });
   let deterministic;

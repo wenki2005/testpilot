@@ -29,7 +29,7 @@ test('model diagnostics distinguish waiting for output, streamed output and an i
   assert.equal(demoRunTimeoutMs(request), 90_000);
   assert.equal(demoRunTimeoutMs({ ...request, mode: 'deterministic' }), 60_000);
 
-  for (const scenario of ['awaiting-output', 'streamed-output', 'http-request', 'cancelled']) {
+  for (const scenario of ['awaiting-output', 'headers-only', 'streamed-output', 'http-request', 'cancelled']) {
     await t.test(scenario, { timeout: 9_000 }, async st => {
       const controller = new AbortController();
       let sampleRequests = 0;
@@ -41,7 +41,10 @@ test('model diagnostics distinguish waiting for output, streamed output and an i
         if (scenario === 'awaiting-output' || scenario === 'cancelled') { setTimeout(abort, 30); return; }
         res.writeHead(200, { 'content-type': 'text/event-stream' });
         const send = (delta, finish_reason = null) => res.write(`data: ${JSON.stringify({ id: 'fixture', object: 'chat.completion.chunk', model: 'local-fixture-model', choices: [{ index: 0, delta, finish_reason }] })}\n\n`);
-        if (scenario === 'streamed-output') {
+        if (scenario === 'headers-only') {
+          send({ role: 'assistant', content: '' });
+          setTimeout(abort, 150);
+        } else if (scenario === 'streamed-output') {
           send({ role: 'assistant', content: 'Reading the contract.' });
           setTimeout(abort, 150);
         } else {
@@ -83,7 +86,7 @@ test('model diagnostics distinguish waiting for output, streamed output and an i
         assert.equal(run.events.filter(event => event.title === '运行超时诊断').length, 1);
         assert.match(run.summary, /未执行部分未判为通过/);
       }
-      if (scenario === 'awaiting-output') {
+      if (scenario === 'awaiting-output' || scenario === 'headers-only') {
         assert.equal(run.diagnostics.phase, 'model-request');
         assert.equal(run.diagnostics.modelResponses, 0);
         assert.match(run.summary, /等待第 1 次模型调用/);
