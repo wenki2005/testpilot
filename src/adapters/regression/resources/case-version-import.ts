@@ -65,7 +65,8 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
         const id = old?.id ?? row.id ?? 'case-' + createHash('sha256').update(row.key).digest('hex').slice(0, 20);
         const identity = resourceKey({ moduleId, id }); if (identities.has(identity)) throw Error('多条新用例映射到同一编号，请调整。'); identities.add(identity);
         const unchanged = old && (row.id || row.structured ? row.title === old.title && row.expected === old.expected : row.expected === clean(old.sourceExpected))
-            && (row.manualSteps === undefined || JSON.stringify(row.manualSteps) === JSON.stringify(old.manualSteps));
+            && (row.manualSteps === undefined || JSON.stringify(row.manualSteps) === JSON.stringify(old.manualSteps))
+            && (row.priority === undefined || row.priority === old.priority);
         const sourceId = row.structured ? old?.sourceId ?? row.sourceId : row.sourceId ?? old?.sourceId;
         if (unchanged && sourceId && old.sourceId !== sourceId) mappingUpdates.push(identity);
         const review = unchanged ? old.scriptReview : { status: 'pending' as const, note: old ? '原脚本保留；用例内容变化，执行前需核对。' : '新增用例，需补充脚本和前置。' };
@@ -74,10 +75,15 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
             resources.cases.push({ ...old, ...(sourceId ? { sourceId } : {}) });
             continue;
         }
-        resources.cases.push({ id, moduleId, title: unchanged ? old.title : row.title, expected: unchanged ? old.expected : row.expected, manualSteps: row.manualSteps ?? old?.manualSteps ?? [], prerequisites: old?.prerequisites ?? [], ...(old?.prerequisiteReview ? { prerequisiteReview: old.prerequisiteReview } : {}), ...(review ? { scriptReview: review } : {}), ...(sourceId ? { sourceId } : {}), sourcePath: unchanged ? old.sourcePath : row.sourcePath, sourceExpected: unchanged ? old.sourceExpected : row.expected, script: old?.script ?? { caseId: id, dependsOn: [], steps: [] } });
+        resources.cases.push({ ...(row.priority || old?.priority ? { priority: row.priority ?? old!.priority! } : {}), id, moduleId, title: unchanged ? old.title : row.title, expected: unchanged ? old.expected : row.expected, manualSteps: row.manualSteps ?? old?.manualSteps ?? [], prerequisites: old?.prerequisites ?? [], ...(old?.prerequisiteReview ? { prerequisiteReview: old.prerequisiteReview } : {}), ...(review ? { scriptReview: review } : {}), ...(sourceId ? { sourceId } : {}), sourcePath: unchanged ? old.sourcePath : row.sourcePath, sourceExpected: unchanged ? old.sourceExpected : row.expected, script: old?.script ?? { caseId: id, dependsOn: [], steps: [] } });
     }
     const issues: string[] = [];
-    if (unresolved.length) issues.push('还有未确认的编号或模块映射。');
+    if (unresolved.length) {
+        issues.push('还有未确认的编号或模块映射；确认完成前不判定旧用例移除。');
+        // Unresolved source rows may still refer to any old case. Do not advertise
+        // their absence as deletion or invent broken dependencies in a partial preview.
+        resources.cases.push(...current.cases.filter(c => !identities.has(resourceKey(c))).map(c => structuredClone(c)));
+    }
     const kept = new Set(resources.cases.map(resourceKey));
     for (const c of resources.cases) for (const dep of c.prerequisites) if (!kept.has(resourceKey(dep))) issues.push(c.id + '的前置' + dep.caseId + '已移除，请先调整引用。');
     for (const chain of resources.chains) for (const step of chain.steps) for (const id of step.caseIds) if (!resources.cases.some(c => c.id === id)) issues.push('核心链路' + chain.title + '仍引用' + id + '，需先调整链路定义。');
@@ -85,6 +91,6 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     if (!issues.length) validateProjectResources(resources);
     const comparison = compareProjectResources(current, resources);
     const metadataOnly = comparison.changed.filter(k => mappingUpdates.includes(k));
-    const recognized = imported.map(({ key, id, title, expected, sourcePath, manualSteps }) => ({ key, id, title, expected, sourcePath, manualSteps }));
+    const recognized = imported.map(({ key, id, title, expected, sourcePath, manualSteps, priority }) => ({ key, id, title, expected, sourcePath, manualSteps, priority }));
     return { resources, recognized, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
 }

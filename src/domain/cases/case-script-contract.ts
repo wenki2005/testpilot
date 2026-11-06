@@ -15,6 +15,7 @@ export type CaseScript = {
     steps: BrowserCheck['steps'];
 };
 export type EditableCase = {
+    priority?: BrowserCheck['priority'];
     sourceId?: string;
     scriptReview?: { status: 'pending' | 'reviewed'; note: string };
     executionSupport?: { kind: string; label: string; handler: string; source: string; nextAction: string };

@@ -36,7 +36,7 @@ export type WebModule = {
     createdAt: string;
     project: DocumentProject;
     sourceCases?: ImportedDocument['testCases'];
-    resourceSources?: Record<string, { sourcePath: string[]; sourceExpected: string; sourceId?: string }>;
+    resourceSources?: Record<string, { sourcePath: string[]; sourceExpected: string; sourceId?: string; priority?: BrowserCheck['priority'] }>;
     scriptReviews?: Record<string, { status: 'pending' | 'reviewed'; note: string }>;
     manualSteps?: Record<string, string[]>;
     prerequisiteCases?: Record<string, CaseDependency[]>;
@@ -229,7 +229,7 @@ export class DifyWebModuleStore {
         const defaults = makeDocumentProject({ name, fileName: 'project-resources.json', document, targetUrl, caseMode: 'existing' });
         const previous = new Map(source?.project.cases.map(c => [c.id, c]));
         project.id = randomUUID(); project.name = name; project.updatedAt = now(); project.targetUrl = moduleTarget(targetUrl);
-        project.cases = validateCases(cases.map((c, index) => ({ ...(previous.get(c.id) ?? defaults.cases[index]!), id: c.id, title: c.title, expected: c.expected, steps: c.script.steps, modulePath: c.sourcePath })));
+        project.cases = validateCases(cases.map((c, index) => ({ ...(previous.get(c.id) ?? defaults.cases[index]!), id: c.id, title: c.title, expected: c.expected, steps: c.script.steps, modulePath: c.sourcePath, ...(c.priority ? { priority: c.priority } : {}) })));
         for (const c of project.cases) {
             delete c.authorizedWriteOperationId;
             delete c.writeResultOperationId;
@@ -242,7 +242,7 @@ export class DifyWebModuleStore {
             prerequisiteReviews: Object.fromEntries(cases.filter(c => c.prerequisiteReview).map(c => [c.id, c.prerequisiteReview!])),
             scriptReviews: Object.fromEntries(cases.filter(c => c.scriptReview).map(c => [c.id, c.scriptReview!])),
             sourceCases: document.testCases!,
-            resourceSources: Object.fromEntries(cases.map(c => [c.id, { sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, ...(c.sourceId ? { sourceId: c.sourceId } : {}) }])),
+            resourceSources: Object.fromEntries(cases.map(c => [c.id, { sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, ...(c.priority ? { priority: c.priority } : {}), ...(c.sourceId ? { sourceId: c.sourceId } : {}) }])),
         };
         // Imported steps are explicitly authored; never generate over them later.
         value.editedSteps = Object.fromEntries(project.cases.filter(c => c.steps.length).map(c => [c.id, moduleDigest(c)]));

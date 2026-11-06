@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { parseMarkdownCaseTree } from './case-markdown-tree.js';
 
 export type CaseVersionRow = {
     key: string;
@@ -9,6 +10,7 @@ export type CaseVersionRow = {
     sourcePath: string[];
     manualSteps?: string[];
     structured?: boolean;
+    priority?: 'P0' | 'P1' | 'P2' | 'P3';
 };
 type Field = 'id' | 'title' | 'module' | 'expected' | 'steps' | 'ignored';
 const aliases: Record<Field, string[]> = {
@@ -154,6 +156,7 @@ export function parseCaseVersionMarkdown(fileName: string, bytes: Uint8Array): C
     }
     if (fence) throw Error('Markdown存在未闭合的代码块，请补齐后上传。');
     finish();
+    if (!result.length) result.push(...parseMarkdownCaseTree(text));
     if (!result.length) throw Error('未识别到完整用例。支持表格、用例标题分节或“用例名称／操作步骤／预期结果”字段列表；请保留明确的名称和预期结果。');
     const keys = new Set<string>();
     for (const row of result) { if (keys.has(row.key)) throw Error(`Markdown存在重复用例「${row.id ?? row.title}」，请补充唯一编号或模块。`); keys.add(row.key); }

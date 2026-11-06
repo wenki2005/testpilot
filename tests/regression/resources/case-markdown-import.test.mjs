@@ -20,6 +20,38 @@ test('markdown accepts exported sections and fences without treating embedded he
     assert.deepEqual(rows[0].sourcePath, ['登录模块']);
 });
 
+test('XMind-style trees in Markdown fences preserve expectations, paths and priorities without results', () => {
+    const text = '# 新版说明\n> ✅仅为作者分类，不是运行证据。\n```markdown\n- 系统\n  - 登录模块\n    - 打开页面\n      - 页面呈现\n        - ✅ P0 显示首页\n        - ⚠️❌ P1 隐藏其他用户信息\n      - // 澄清说明，不作为用例\n```\n';
+    const rows = parse(text); assert.equal(rows.length, 2);
+    assert.equal(rows[0].priority, 'P0'); assert.equal(rows[1].priority, 'P1');
+    assert.equal(rows[0].expected, '显示首页'); assert.equal(rows[1].expected, '隐藏其他用户信息');
+    assert.deepEqual(rows[0].sourcePath, ['系统', '登录模块', '打开页面', '页面呈现']);
+    assert.equal('status' in rows[0], false); assert.equal('script' in rows[0], false);
+    const reordered = parse(text.replace('        - ✅ P0 显示首页\n        - ⚠️❌ P1 隐藏其他用户信息', '        - ⚠️❌ P1 隐藏其他用户信息\n        - ✅ P0 显示首页'));
+    assert.deepEqual(rows.map(row => row.key).sort(), reordered.map(row => row.key).sort());
+    assert.throws(() => parse(text.replace('```markdown', '```javascript')), /未识别到完整用例/);
+});
+
+test('tree import can map a module without inventing scripts, and priority survives resource roundtrip', async t => {
+    const text = '```markdown\n- 系统\n  - 登录模块\n    - 测试上下文\n      - ✅ P0 显示新版首页\n```';
+    const preview = await prepareCaseVersion(baseline(), input(text));
+    assert.equal(preview.issues.length, 0); assert.equal(preview.added.length, 1);
+    const c = preview.resources.cases[0]; assert.equal(c.priority, 'P0'); assert.equal(c.scriptReview.status, 'pending'); assert.deepEqual(c.script.steps, []);
+    const { mkdtemp, rm } = await import('node:fs/promises'), { tmpdir } = await import('node:os');
+    const dir = await mkdtemp(path.join(tmpdir(), 'testpilot-tree-priority-'));
+    const load = file => import(pathToFileURL(path.join(build, file)));
+    const {DifyWebModuleStore} = await load('adapters/regression/execution/module-execution-service.js');
+    const {SystemModuleRegression} = await load('adapters/regression/catalog/module-regression-service.js');
+    const no = async () => { throw Error('Business forbidden'); }, deps = {cloud:no,inspect:no,author:no,execute:no,cancel:no,continueLogin:no,recover:async()=>undefined,saveProject:async()=>{}};
+    const store = new DifyWebModuleStore(dir, deps), catalog = new SystemModuleRegression(dir, store, deps);
+    t.after(async () => {catalog.close();store.close();await rm(dir,{recursive:true,force:true});});
+    await catalog.initializeResources(preview.resources, {targetUrl:'https://example.test',environment:'fixture'});
+    const saved = catalog.exportResources(systemId); assert.equal(saved.resources.cases[0].priority, 'P0');
+    const module = catalog.getModule(moduleId), pack = store.getModule(module.versions.at(-1).id);
+    assert.equal(pack.project.cases[0].priority, 'P0'); assert.equal(store.state().jobs.length, 0);
+    assert.equal(catalog.editorCatalog(systemId).cases[0].status, 'not_executed');
+});
+
 test('markdown accepts table aliases, line breaks and escaped pipes', () => {
     const rows = parse('# 登录模块\n| ID | 用例名称 | 测试步骤 | 期望结果 |\n| --- | --- | --- | --- |\n| xmind-1 | 登录成功 | 1. 打开页面<br>2. 输入账号 | 显示首页\\|欢迎信息 |\n');
     assert.equal(rows.length, 1); assert.equal(rows[0].expected, '显示首页|欢迎信息');
@@ -72,6 +104,8 @@ test('ambiguous Markdown names require a mapping and removals still respect core
     before.cases.push({ ...structuredClone(before.cases[0]), id: 'xmind-2', moduleId: other, sourcePath: ['另一个模块'], script: { caseId: 'xmind-2', dependsOn: [], steps: [] } });
     const ambiguous = await prepareCaseVersion(before, input('## 登录成功\n预期：显示首页'));
     assert.equal(ambiguous.unresolved.length, 1); assert.ok(ambiguous.issues.length);
+    assert.equal(ambiguous.removed.length, 0, 'unresolved rows must not advertise old cases as deleted');
+    assert.equal(ambiguous.resources.cases.length, before.cases.length);
     const resolved = await prepareCaseVersion(before, input('# 登录模块\n## 登录成功\n预期：显示首页'));
     assert.equal(resolved.unresolved.length, 0); assert.equal(resolved.resources.cases[0].id, 'xmind-1');
     before.chains = [{ id: 'core', title: '核心流程', description: '', steps: [{ id: 'step', title: '步骤', expected: '', caseIds: ['xmind-2'] }] }];
