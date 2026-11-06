@@ -26,6 +26,7 @@ test('local sample proves UI regression, API fixtures, cleanup, and fixed-versio
   await new Promise(done => portProbe.close(done));
 
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId,
     name: 'Local web regression sample',
     fileName: 'sample-requirements.md',

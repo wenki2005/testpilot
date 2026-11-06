@@ -13663,14 +13663,14 @@
       "file": "tests/documents/cases/document-no-model-step-fallback.integration.mjs",
       "category": "网页测试",
       "purpose": "document no model step fallback.integration",
-      "lines": 77,
+      "lines": 78,
       "previousPaths": [
         "tests/document-no-model-step-fallback.integration.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 69,
+          "line": 70,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13800,7 +13800,7 @@
       "file": "tests/documents/projects/document-project-update-service.test.mjs",
       "category": "网页测试",
       "purpose": "document project update service.test",
-      "lines": 73,
+      "lines": 93,
       "previousPaths": [
         "tests/document-project-update-service.test.mjs"
       ],
@@ -13830,7 +13830,7 @@
       "file": "tests/documents/projects/document-site-version.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document site version.integration.test",
-      "lines": 539,
+      "lines": 551,
       "previousPaths": [
         "tests/document-site-version.integration.test.mjs"
       ],
@@ -13880,14 +13880,14 @@
       "file": "tests/documents/runs/document-api-contract-ui.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document api contract ui.integration.test",
-      "lines": 160,
+      "lines": 175,
       "previousPaths": [
         "tests/document-api-contract-ui.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 154,
+          "line": 169,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13962,14 +13962,14 @@
       "file": "tests/documents/runs/document-post-login-generation.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document post login generation.integration.test",
-      "lines": 161,
+      "lines": 162,
       "previousPaths": [
         "tests/document-post-login-generation.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 153,
+          "line": 154,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13994,7 +13994,7 @@
       "file": "tests/documents/runs/document-regression-sample.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document regression sample.integration.test",
-      "lines": 297,
+      "lines": 298,
       "previousPaths": [
         "tests/document-regression-sample.integration.test.mjs"
       ],
@@ -14024,14 +14024,14 @@
       "file": "tests/documents/runs/document-run-crash-recovery.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document run crash recovery.integration.test",
-      "lines": 142,
+      "lines": 143,
       "previousPaths": [
         "tests/document-run-crash-recovery.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 138,
+          "line": 139,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -14093,17 +14093,17 @@
       "symbols": [
         {
           "name": "callTool",
-          "line": 106,
+          "line": 108,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "createJsonRpcClient",
-          "line": 107,
+          "line": 109,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "reservePort",
-          "line": 113,
+          "line": 115,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -14112,24 +14112,24 @@
       "file": "tests/documents/runs/document-workflow.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document workflow.integration.test",
-      "lines": 554,
+      "lines": 555,
       "previousPaths": [
         "tests/document-workflow.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "createJsonRpcClient",
-          "line": 510,
+          "line": 511,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "reservePort",
-          "line": 534,
+          "line": 535,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "completePreparationStages",
-          "line": 543,
+          "line": 544,
           "kind": "FunctionDeclaration"
         }
       ]

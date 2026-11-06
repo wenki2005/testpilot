@@ -21,6 +21,7 @@ test('empty deterministic steps get a page-grounded fallback when no model API i
   const demoPort = await reservePort();
   const demoBase = `http://127.0.0.1:${demoPort}`;
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId, name: 'No model fallback', fileName: 'fixture.md', caseMode: 'both', format: 'markdown',
     targetUrl: `http://127.0.0.1:${target.address().port}/`, sourceText: 'A visibly invalid field is shown.',
     confirmationRequired: false, reviewStatus: 'approved', reviewNotes: 'Reduced confirmation on local fixture.',

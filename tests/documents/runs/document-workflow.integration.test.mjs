@@ -70,6 +70,7 @@ test('document workflow preserves selected scope in partial report, ZIP and MCP 
   const demoBase = `http://127.0.0.1:${demoPort}`;
   const targetUrl = `http://127.0.0.1:${target.address().port}/`;
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId,
     name: 'Partial export fixture',
     fileName: 'fixture.md',

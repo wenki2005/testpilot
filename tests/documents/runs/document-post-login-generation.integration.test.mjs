@@ -78,6 +78,7 @@ test('full run observes the already-open target, authors a reusable script, and 
     selectedForRegression: true, preconditions: [], preconditionsConfirmed: true, testData: [], sideEffectRisk: 'none', cleanup: '', kind: 'visible', expected: '字段边框为红色',
   };
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId, name: 'Post login step generation fixture', fileName: 'fixture.md', sourceFiles: ['fixture.md'], caseMode: 'both', format: 'markdown', targetUrl,
     sourceText: 'The input has a visible invalid state.', confirmationRequired: false, reviewStatus: 'approved', reviewNotes: 'Reduced confirmation enabled for isolated fixture.',
     cases: [

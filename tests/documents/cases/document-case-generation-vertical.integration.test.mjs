@@ -158,9 +158,9 @@ test('case-generation agent runs through trace-preserving review, browser lanes,
   // A browser/UI edit may change reviewable case metadata, but cannot replace
   // the trusted source trace that came from the generation handoff.
   const maliciousTrace = { ...project.cases[0].caseGenerationTrace, actions: ['forged action'] };
-  const editedCase = { ...project.cases[0], sideEffectRisk: 'none', preconditionsConfirmed: true, caseGenerationTrace: maliciousTrace };
+  const editedCase = { ...project.cases[0], lifecycleStatus: 'runnable', selectedForRegression: true, sideEffectRisk: 'none', preconditionsConfirmed: true, caseGenerationTrace: maliciousTrace };
   const updateResponse = await fetch(`${demoBase}/api/document-projects/${projectId}/update`, {
-    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ cases: [editedCase] }),
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ platform: 'pc-web', cases: [editedCase] }),
   });
   const updateText = await updateResponse.text();
   assert.equal(updateResponse.status, 200, updateText);

@@ -46,6 +46,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   await new Promise(done => demoServer.close(done));
 
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId,
     name: 'Site version fixture',
     fileName: 'fixture.md',
@@ -86,6 +87,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   };
   const secondProjectId = 'second-site-session-isolation';
   const secondProject = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: secondProjectId,
     name: 'Second independent site',
     fileName: 'second-site.md',
@@ -127,6 +129,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
       ...process.env,
       PORT: String(port),
       TESTPILOT_DATA_DIR: dataDir,
+      TESTPILOT_AUTO_INITIALIZE: '0',
       TESTPILOT_BROWSER_CDP_ENDPOINT: '',
       TESTPILOT_BROWSER_HEADLESS: '1',
       TESTPILOT_BROWSER_CHANNEL: '',
@@ -190,8 +193,15 @@ test('website versions bind UI runs, reports, packages and retests to the select
   await page.goto(`${baseUrl}/?documentProject=${projectId}`, { waitUntil: 'networkidle' });
   assert.equal(await page.getByLabel('步骤 1 动作').inputValue(), 'fillByLabel', 'the saved BrowserSteps are exposed in the visual editor');
   assert.equal(await page.getByLabel('步骤 2 字段标签').inputValue(), 'Scenario marker');
+  const openVersionTools = async () => {
+    for (const selector of ['#doc-management', '.doc-daily-advanced']) {
+      const panel = page.locator(selector);
+      if (!(await panel.evaluate(element => element.open))) await panel.locator(':scope > summary').click();
+    }
+  };
+  await openVersionTools();
   await page.locator('.doc-revision-disclosure > summary').click();
-  await page.getByRole('heading', { name: '用例、步骤与资料修订' }).waitFor();
+  await page.getByRole('heading', { name: '用例、步骤、生成依据与资料修订' }).waitFor();
   await page.getByLabel('修订类型').selectOption('case');
   await page.getByLabel('修订实体 ID').fill('stable-landing');
   await page.locator('.doc-revision-list article').first().waitFor();
@@ -244,6 +254,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
   assert.equal(await caseSelection.isChecked(), false, 'review acceptance must not change the execution selection');
   assert.equal(JSON.parse(acceptImpactBody).project.cases[0].selectedForRegression, true, 'review acceptance must not persist a scope change');
   await page.reload({ waitUntil: 'networkidle' });
+  await openVersionTools();
   await page.getByRole('button', { name: '将已确认用例加入本轮范围' }).waitFor();
   assert.equal(await page.locator('.doc-impact-card').getByText('已确认', { exact: true }).count(), 1, 'the accepted review is restored from project history after a reload');
   await page.getByRole('button', { name: '将已确认用例加入本轮范围' }).click();
@@ -294,6 +305,7 @@ test('website versions bind UI runs, reports, packages and retests to the select
     throw new Error(`Run ${started.runId} did not complete after 12 seconds; server log: ${log}`);
   };
 
+  await page.locator('.doc-run-advanced-config > summary').click();
   await page.getByLabel('复用已保存的数据组').selectOption('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa');
   await page.getByLabel('参数 scenarioMarker').fill('updated synthetic input');
   const updateDataSetPromise = page.waitForResponse(response => response.url().endsWith(`/api/document-projects/${projectId}/update`) && response.request().method() === 'POST');

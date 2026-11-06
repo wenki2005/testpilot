@@ -46,6 +46,7 @@ test('a document run recovers after a service crash during login handoff and reu
   const demoPort = await reservePort();
   const demoBase = `http://127.0.0.1:${demoPort}`;
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId, name: 'Crash recovery fixture', fileName: 'fixture.md', format: 'markdown', targetUrl,
     sourceText: 'The test browser session must survive a TestPilot process restart.',
     cases: [{ id: 'session-check', title: 'Browser session remains available', source: 'fixture.md:1', requirementRefs: ['fixture.md:1'], priority: 'P0', category: 'authentication', confidence: 'high', coverageAreas: ['authentication'], selectedForRegression: true, preconditions: [], preconditionsConfirmed: true, testData: [], sideEffectRisk: 'none', cleanup: '', kind: 'visible', expected: 'Session survived restart', steps: [{ action: 'assertVisible', text: 'Session survived restart' }] }],
