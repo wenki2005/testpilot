@@ -47,6 +47,7 @@
 | [resources/project-resource-contract.ts](resources/project-resource-contract.ts) | 资源定义、差异与前置引用校验 | `projectResourceSchema`、`ProjectResources`、`ResourceCase` |
 | [resources/resource-directory.ts](resources/resource-directory.ts) | 逐条资源文件读入、摘要和目录边界校验 | `readResourceDirectory` |
 | [resources/script-coverage.ts](resources/script-coverage.ts) | script coverage | `ScriptSupport`、`scriptSupport`、`scriptCoverage` |
+| [resources/script-gap-requirements.ts](resources/script-gap-requirements.ts) | script gap requirements | `CaseSource`、`Requirement`、`scriptGapRequirement` |
 | [scenarios/application/client-validation.ts](scenarios/application/client-validation.ts) | 前端拦截、按钮与字段校验 | `ClientValidationKind`、`Result`、`clientValidationKind` |
 | [scenarios/application/excluded-customers.ts](scenarios/application/excluded-customers.ts) | excluded customers | `isExcludedCustomer`、`reviewExcludedCustomer`、`verifyExcludedCustomer` |
 | [scenarios/application/field-validation.ts](scenarios/application/field-validation.ts) | 表单字段有效性校验 | `FieldValidityKind`、`fieldValidityKind`、`reviewFieldValidity` |
