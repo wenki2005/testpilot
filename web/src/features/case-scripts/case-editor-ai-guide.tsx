@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-const instruction = '阅读接入包文档，配置 TestPilot MCP。读取当前项目和指定用例，按要求修改，先展示对比，不执行测试。';
+const instruction = '请阅读接入包中的README.md和AGENT-GUIDE.md，使用config/mcp.json连接TestPilot MCP。连接后只做读取检查：调用testpilot_cases搜索xmind-84，并返回用例标题、版本号和模块。不要修改、保存或执行测试。';
 /** Connection guidance only. No simulated MCP status or downloadable fake server. */
 export default function CaseEditorAiGuide({ open, systemId, onClose, onCopy }: {
     open: boolean;

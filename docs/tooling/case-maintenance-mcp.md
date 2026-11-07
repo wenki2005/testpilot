@@ -4,6 +4,16 @@
 
 下载包使用当前TestPilot安装目录的真实MCP服务及Node路径；无需另装大模型。编辑器提供AI，TestPilot提供项目数据、校验和版本保存。移动程序或换电脑后重新下载配置。连接是否成功以调用testpilot_cases能读到当前项目为准，网页不模拟“已连接”状态。
 
+## 新手复制给AI
+
+把下载的整个文件夹交给AI后，直接复制下面这段话：
+
+```text
+请阅读这个接入包中的README.md和AGENT-GUIDE.md，使用config/mcp.json连接TestPilot MCP。连接后只做读取检查：调用testpilot_cases搜索xmind-84，并返回用例标题、版本号和模块。不要修改、保存或执行测试。
+```
+
+连接检查成功后，再使用 `examples/prompts.md` 中的读取和修改指令。修改用例时必须先展示差异，得到明确同意后才保存；保存不会执行测试。
+
 ## 能做什么
 
 | 工具 | 用途 |
