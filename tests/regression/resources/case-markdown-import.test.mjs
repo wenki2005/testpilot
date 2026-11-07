@@ -83,6 +83,7 @@ test('markdown updates manual steps, keeps executable scripts and marks content 
     const preview = await prepareCaseVersion(before, input('# 登录模块\n## xmind-1 | 登录成功\n### 操作步骤\n1. 打开页面\n2. 输入账号\n### 预期结果\n显示首页'));
     assert.equal(preview.issues.length, 0); assert.equal(preview.changed.length, 1);
     assert.equal(preview.scriptsToReview.length, 1); assert.equal(preview.removed.length, 0);
+    assert.equal(preview.comparisonRows.length, 1); assert.equal(preview.comparisonRows[0].status, 'changed');
     const updated = preview.resources.cases[0]; assert.deepEqual(updated.script, before.cases[0].script);
     assert.equal(updated.sourceId, 'xmind:original-topic', 'switching file formats preserves the existing XMind identity');
     assert.deepEqual(updated.manualSteps, ['打开页面', '输入账号']);
@@ -105,6 +106,7 @@ test('ambiguous Markdown names require a mapping and removals still respect core
     before.cases.push({ ...structuredClone(before.cases[0]), id: 'xmind-2', moduleId: other, sourcePath: ['另一个模块'], script: { caseId: 'xmind-2', dependsOn: [], steps: [] } });
     const ambiguous = await prepareCaseVersion(before, input('## 登录成功\n预期：显示首页'));
     assert.equal(ambiguous.unresolved.length, 1); assert.ok(ambiguous.issues.length);
+    assert.equal(ambiguous.comparisonRows[0].status, 'unresolved');
     assert.equal(ambiguous.removed.length, 0, 'unresolved rows must not advertise old cases as deleted');
     assert.equal(ambiguous.resources.cases.length, before.cases.length);
     const resolved = await prepareCaseVersion(before, input('# 登录模块\n## 登录成功\n预期：显示首页'));

@@ -44,25 +44,33 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     const imported = await rows(data.fileName, bytes);
     if (!imported.length || imported.length > 2000 || new Set(imported.map(r => r.key)).size !== imported.length) throw Error('用例为空、过多或源编号重复。');
     const resources = structuredClone(current); resources.cases = [];
-    const unresolved: Array<{ key: string; title: string; sourcePath: string[]; reason: string }> = [], identities = new Set<string>(), scriptsToReview: string[] = [], mappingUpdates: string[] = [], autoMappings: Array<{ key: string; caseId?: string; moduleId: string; reason: string; confidence: 'high' | 'medium' }> = [];
+    const unresolved: Array<{ key: string; title: string; sourcePath: string[]; reason: string }> = [], identities = new Set<string>(), scriptsToReview: string[] = [], mappingUpdates: string[] = [], autoMappings: Array<{ key: string; caseId?: string; moduleId: string; reason: string; confidence: 'high' | 'medium' }> = [], comparisonRows: Array<{ key: string; title: string; expected: string; sourcePath: string[]; caseId?: string; oldTitle?: string; oldExpected?: string; moduleId: string; moduleName: string; status: 'matched' | 'changed' | 'new' | 'unresolved'; reason: string; confidence: 'high' | 'medium' | 'low' }> = [];
     for (const row of imported) {
         const chosen = data.mapping[row.key];
-        let matches = current.cases.filter(c => chosen ? c.moduleId === chosen.moduleId && c.id === chosen.caseId : row.id ? c.id === row.id : row.sourceId && c.sourceId === row.sourceId);
-        if (!chosen && !matches.length && row.sourceId) matches = current.cases.filter(c => c.sourceId === row.sourceId);
+        let matchReason = '', matches = current.cases.filter(c => chosen ? c.moduleId === chosen.moduleId && c.id === chosen.caseId : row.id ? c.id === row.id : row.sourceId && c.sourceId === row.sourceId);
+        if (matches.length) matchReason = chosen ? '人工指定' : row.id ? '编号一致' : '来源ID一致';
+        if (!chosen && !matches.length && row.sourceId) { matches = current.cases.filter(c => c.sourceId === row.sourceId); if (matches.length) matchReason = '来源ID一致'; }
         if (!chosen && !matches.length && (!row.id || row.structured)) {
             matches = current.cases.filter(c => (!row.structured && clean(c.sourceExpected) === row.expected) || clean(c.title) === row.title);
             if (matches.length > 1) {
                 const modules = current.modules.filter(m => row.sourcePath.includes(m.name));
                 if (modules.length === 1) matches = matches.filter(c => c.moduleId === modules[0]!.id);
                 else if (row.sourcePath.length) { const path = row.sourcePath.slice(1).join(' > '); matches = matches.filter(c => c.sourcePath.slice(1).join(' > ') === path); }
-            }
+                if (matches.length === 1) matchReason = '名称/预期一致';
+            } else if (matches.length === 1) matchReason = '名称/预期一致';
         }
         if (!chosen && !matches.length) {
             const automatic = matchImportedCase(row, current.cases);
-            if (automatic)
+            if (automatic) { matchReason = automatic.reason;
                 matches = [automatic.value];
+            }
         }
-        if (matches.length > 1) { unresolved.push({ ...row, reason: '存在多个候选，请选择原用例。' }); continue; }
+        if (matches.length > 1) {
+            const reason = '存在多个候选，请选择原用例。';
+            unresolved.push({ ...row, reason });
+            comparisonRows.push({ key: row.key, title: row.title, expected: row.expected, sourcePath: row.sourcePath, moduleId: '', moduleName: '待确认', status: 'unresolved', reason, confidence: 'low' });
+            continue;
+        }
         const old = matches[0];
         if (chosen?.caseId && !old) throw Error('映射的原用例不存在。');
         const candidates = resources.modules.filter(m => row.sourcePath.includes(m.name));
@@ -84,6 +92,7 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
         if (unchanged && sourceId && old.sourceId !== sourceId) mappingUpdates.push(identity);
         const review = unchanged ? old.scriptReview : { status: 'pending' as const, note: old ? '原脚本保留；用例内容变化，执行前需核对。' : '新增用例，需补充脚本和前置。' };
         if (review?.status === 'pending') scriptsToReview.push(identity);
+        comparisonRows.push({ key: row.key, title: row.title, expected: row.expected, sourcePath: row.sourcePath, ...(old ? { caseId: old.id, oldTitle: old.title, oldExpected: old.expected } : {}), moduleId, moduleName: resources.modules.find(m => m.id === moduleId)!.name, status: old ? (unchanged ? 'matched' : 'changed') : 'new', reason: old ? (matchReason || '自动对应') : '未找到旧用例，按新版新增', confidence: old ? (matchReason === '同页面预期高度相近，脚本需核对' ? 'medium' : 'high') : 'low' });
         if (unchanged) {
             resources.cases.push({ ...old, ...(sourceId ? { sourceId } : {}) });
             continue;
@@ -105,5 +114,5 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     const comparison = compareProjectResources(current, resources);
     const metadataOnly = comparison.changed.filter(k => mappingUpdates.includes(k));
     const recognized = imported.map(({ key, id, title, expected, sourcePath, manualSteps, priority }) => ({ key, id, title, expected, sourcePath, manualSteps, priority }));
-    return { resources, recognized, autoMappings, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
+    return { resources, recognized, comparisonRows, autoMappings, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
 }
