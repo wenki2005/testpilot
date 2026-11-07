@@ -113,6 +113,10 @@
 .case-script-editor .ce-switch-dialog h2{font-size:18px;margin-bottom:12px}
 .case-script-editor .ce-switch-dialog>div{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
 .case-script-editor .ce-import-comparison{margin-top:13px;border-top:1px solid #e1e8f2;padding-top:11px}
+.case-script-editor .ce-import-mode-switch{display:flex;gap:0;margin-bottom:9px;border:1px solid #d5e0ef;border-radius:4px;overflow:hidden;width:max-content}
+.case-script-editor .ce-import-mode-switch button{border:0;border-radius:0;padding:7px 12px;background:#fff;color:#526b8d;font-size:12px}
+.case-script-editor .ce-import-mode-switch button+button{border-left:1px solid #d5e0ef}
+.case-script-editor .ce-import-mode-switch button.selected{background:#e7effd;color:#1e5db7;font-weight:600}
 .case-script-editor .ce-import-comparison>summary{cursor:pointer;color:#285ea7;font-size:12px;font-weight:600}
 .case-script-editor .ce-import-review-tools{display:flex;gap:8px;margin:10px 0 5px}
 .case-script-editor .ce-import-review-tools input,.case-script-editor .ce-import-review-tools select{min-width:0;border:1px solid #d5e0ef;border-radius:4px;padding:7px 8px;background:#fff;color:#36577f;font-size:12px}

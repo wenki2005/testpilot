@@ -11,7 +11,7 @@ const { inferImportModule } = await import(pathToFileURL(path.join(build, 'adapt
 const systemId = '51000000-0000-4000-8000-000000000001', moduleId = '51000000-0000-4000-8000-000000000002';
 const parse = text => parseCaseVersionMarkdown('新版.md', Buffer.from(text));
 const baseline = () => ({ schema: 1, project: { id: systemId, name: '本机样例' }, modules: [{ id: moduleId, name: '登录模块' }], chains: [], cases: [{ id: 'xmind-1', moduleId, title: '登录成功', expected: '显示首页', sourcePath: ['旧文件', '登录模块'], sourceExpected: '显示首页', prerequisites: [], manualSteps: ['打开页面'], script: { caseId: 'xmind-1', dependsOn: [], steps: [{ action: 'assertText', text: '首页' }] } }] });
-const input = text => ({ systemId, fileName: '新版.md', bytesBase64: Buffer.from(text).toString('base64') });
+const input = (text, mode) => ({ systemId, fileName: '新版.md', bytesBase64: Buffer.from(text).toString('base64'), ...(mode ? { mode } : {}) });
 
 test('markdown accepts exported sections and fences without treating embedded headings as cases', () => {
     const rows = parse('\uFEFF# 登录模块\n## xmind-1 | 登录成功\n### 操作步骤\n1. 打开页面\n2. 输入账号\n### 固定步骤\n```json\n[{"action":"assertText","text":"忽略固定步骤更新"}]\n```\n### 预期结果\n```text\n显示首页\n## 这是原始预期内容\n```\n');
@@ -88,6 +88,15 @@ test('markdown updates manual steps, keeps executable scripts and marks content 
     assert.equal(updated.sourceId, 'xmind:original-topic', 'switching file formats preserves the existing XMind identity');
     assert.deepEqual(updated.manualSteps, ['打开页面', '输入账号']);
     assert.equal(preview.recognized[0].expected, '显示首页');
+});
+
+test('append mode keeps the first edition and merges only new or changed cases', async () => {
+    const before = baseline();
+    const preview = await prepareCaseVersion(before, input('# 登录模块\n## xmind-1 | 登录成功\n预期结果：显示新首页\n\n## 新增用例\n预期结果：显示设置页', 'append'));
+    assert.equal(preview.mode, 'append'); assert.equal(preview.removed.length, 0); assert.equal(preview.resources.cases.length, 2);
+    assert.equal(preview.resources.cases.some(c => c.id === 'xmind-1' && c.script.steps.length === 1), true);
+    assert.equal(preview.resources.cases.some(c => c.title === '新增用例' && c.scriptReview.status === 'pending'), true);
+    assert.equal(preview.issues.length, 0);
 });
 
 test('markdown can match missing IDs by unique title and bind external IDs for later renamed cases', async () => {

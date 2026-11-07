@@ -35,7 +35,7 @@ async function rows(fileName: string, bytes: Uint8Array): Promise<Row[]> {
     for (const sheet of sheets) visit(sheet.rootTopic, []);
     return result;
 }
-export const caseVersionInput = z.object({ systemId: z.uuid(), fileName: z.string().min(1).max(250), bytesBase64: z.string().min(1).max(12_000_000), mapping: z.record(z.string(), z.object({ moduleId: z.uuid(), caseId: z.string().min(1).max(80).optional() }).strict()).default({}) }).strict();
+export const caseVersionInput = z.object({ systemId: z.uuid(), fileName: z.string().min(1).max(250), bytesBase64: z.string().min(1).max(12_000_000), mode: z.enum(['replace', 'append']).default('replace'), mapping: z.record(z.string(), z.object({ moduleId: z.uuid(), caseId: z.string().min(1).max(80).optional() }).strict()).default({}) }).strict();
 /** Produces a preview only. Application uses the normal resource transaction and revision guard. */
 export async function prepareCaseVersion(current: ProjectResources, input: unknown) {
     const data = caseVersionInput.parse(input);
@@ -43,7 +43,7 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
     const bytes = Buffer.from(data.bytesBase64, 'base64'); if (bytes.length > 8 * 1024 * 1024) throw Error('文件超过8MB。');
     const imported = await rows(data.fileName, bytes);
     if (!imported.length || imported.length > 2000 || new Set(imported.map(r => r.key)).size !== imported.length) throw Error('用例为空、过多或源编号重复。');
-    const resources = structuredClone(current); resources.cases = [];
+    const resources = structuredClone(current); if (data.mode === 'replace') resources.cases = [];
     const unresolved: Array<{ key: string; title: string; sourcePath: string[]; reason: string }> = [], identities = new Set<string>(), scriptsToReview: string[] = [], mappingUpdates: string[] = [], autoMappings: Array<{ key: string; caseId?: string; moduleId: string; reason: string; confidence: 'high' | 'medium' }> = [], comparisonRows: Array<{ key: string; title: string; expected: string; sourcePath: string[]; caseId?: string; oldTitle?: string; oldExpected?: string; moduleId: string; moduleName: string; status: 'matched' | 'changed' | 'new' | 'unresolved'; reason: string; confidence: 'high' | 'medium' | 'low' }> = [];
     for (const row of imported) {
         const chosen = data.mapping[row.key];
@@ -94,25 +94,31 @@ export async function prepareCaseVersion(current: ProjectResources, input: unkno
         if (review?.status === 'pending') scriptsToReview.push(identity);
         comparisonRows.push({ key: row.key, title: row.title, expected: row.expected, sourcePath: row.sourcePath, ...(old ? { caseId: old.id, oldTitle: old.title, oldExpected: old.expected } : {}), moduleId, moduleName: resources.modules.find(m => m.id === moduleId)!.name, status: old ? (unchanged ? 'matched' : 'changed') : 'new', reason: old ? (matchReason || '自动对应') : '未找到旧用例，按新版新增', confidence: old ? (matchReason === '同页面预期高度相近，脚本需核对' ? 'medium' : 'high') : 'low' });
         if (unchanged) {
-            resources.cases.push({ ...old, ...(sourceId ? { sourceId } : {}) });
+            if (data.mode === 'replace') resources.cases.push({ ...old, ...(sourceId ? { sourceId } : {}) });
             continue;
         }
-        resources.cases.push({ ...(row.priority || old?.priority ? { priority: row.priority ?? old!.priority! } : {}), id, moduleId, title: unchanged ? old.title : row.title, expected: unchanged ? old.expected : row.expected, manualSteps: row.manualSteps ?? old?.manualSteps ?? [], prerequisites: old?.prerequisites ?? [], ...(old?.prerequisiteReview ? { prerequisiteReview: old.prerequisiteReview } : {}), ...(review ? { scriptReview: review } : {}), ...(sourceId ? { sourceId } : {}), sourcePath: unchanged ? old.sourcePath : row.sourcePath, sourceExpected: unchanged ? old.sourceExpected : row.expected, script: old?.script ?? { caseId: id, dependsOn: [], steps: [] } });
+        const nextCase = { ...(row.priority || old?.priority ? { priority: row.priority ?? old!.priority! } : {}), id, moduleId, title: unchanged ? old.title : row.title, expected: unchanged ? old.expected : row.expected, manualSteps: row.manualSteps ?? old?.manualSteps ?? [], prerequisites: old?.prerequisites ?? [], ...(old?.prerequisiteReview ? { prerequisiteReview: old.prerequisiteReview } : {}), ...(review ? { scriptReview: review } : {}), ...(sourceId ? { sourceId } : {}), sourcePath: unchanged ? old.sourcePath : row.sourcePath, sourceExpected: unchanged ? old.sourceExpected : row.expected, script: old?.script ?? { caseId: id, dependsOn: [], steps: [] } };
+        if (data.mode === 'replace') resources.cases.push(nextCase);
+        else {
+            const index = old ? resources.cases.findIndex(c => c.moduleId === old.moduleId && c.id === old.id) : -1;
+            if (index >= 0) resources.cases[index] = nextCase;
+            else resources.cases.push(nextCase);
+        }
     }
     const issues: string[] = [];
     if (unresolved.length) {
         issues.push('还有未确认的编号或模块映射；确认完成前不判定旧用例移除。');
         // Unresolved source rows may still refer to any old case. Do not advertise
         // their absence as deletion or invent broken dependencies in a partial preview.
-        resources.cases.push(...current.cases.filter(c => !identities.has(resourceKey(c))).map(c => structuredClone(c)));
+        if (data.mode === 'replace') resources.cases.push(...current.cases.filter(c => !identities.has(resourceKey(c))).map(c => structuredClone(c)));
     }
     const kept = new Set(resources.cases.map(resourceKey));
     for (const c of resources.cases) for (const dep of c.prerequisites) if (!kept.has(resourceKey(dep))) issues.push(c.id + '的前置' + dep.caseId + '已移除，请先调整引用。');
     for (const chain of resources.chains) for (const step of chain.steps) for (const id of step.caseIds) if (!resources.cases.some(c => c.id === id)) issues.push('核心链路' + chain.title + '仍引用' + id + '，需先调整链路定义。');
-    resources.modules = resources.modules.filter(m => resources.cases.some(c => c.moduleId === m.id)).map(m => ({ ...m, ...(m.coreCaseIds ? { coreCaseIds: m.coreCaseIds.filter(id => kept.has(resourceKey({ moduleId: m.id, id }))) } : {}), ...(m.starterCaseIds ? { starterCaseIds: m.starterCaseIds.filter(id => kept.has(resourceKey({ moduleId: m.id, id }))) } : {}) }));
+    if (data.mode === 'replace') resources.modules = resources.modules.filter(m => resources.cases.some(c => c.moduleId === m.id)).map(m => ({ ...m, ...(m.coreCaseIds ? { coreCaseIds: m.coreCaseIds.filter(id => kept.has(resourceKey({ moduleId: m.id, id }))) } : {}), ...(m.starterCaseIds ? { starterCaseIds: m.starterCaseIds.filter(id => kept.has(resourceKey({ moduleId: m.id, id }))) } : {}) }));
     if (!issues.length) validateProjectResources(resources);
     const comparison = compareProjectResources(current, resources);
     const metadataOnly = comparison.changed.filter(k => mappingUpdates.includes(k));
     const recognized = imported.map(({ key, id, title, expected, sourcePath, manualSteps, priority }) => ({ key, id, title, expected, sourcePath, manualSteps, priority }));
-    return { resources, recognized, comparisonRows, autoMappings, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly] };
+    return { mode: data.mode, resources, recognized, comparisonRows, autoMappings, unresolved, issues: [...new Set(issues)], scriptsToReview, mappingUpdates, total: imported.length, ...comparison, changed: comparison.changed.filter(k => !metadataOnly.includes(k)), unchanged: [...comparison.unchanged, ...metadataOnly], ...(data.mode === 'append' ? { removed: [] } : {}) };
 }
