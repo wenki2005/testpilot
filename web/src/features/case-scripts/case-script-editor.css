@@ -113,6 +113,12 @@
 .case-script-editor .ce-switch-dialog h2{font-size:18px;margin-bottom:12px}
 .case-script-editor .ce-switch-dialog>div{display:flex;gap:10px;justify-content:flex-end;margin-top:24px}
 .case-script-editor .ce-import-comparison{margin-top:13px;border-top:1px solid #e1e8f2;padding-top:11px}
+.case-script-editor .ce-import-summary>p{margin:0;color:#36577f;font-size:12px}
+.case-script-editor .ce-import-notes{margin-top:7px;color:#657995;font-size:11px}
+.case-script-editor .ce-import-notes summary,.case-script-editor .ce-import-change-list>summary{cursor:pointer;color:#526b8d}
+.case-script-editor .ce-import-notes p{margin:6px 0 0;line-height:1.65}
+.case-script-editor .ce-import-change-list{margin-top:10px;border-top:1px solid #e1e8f2;padding-top:9px;color:#526b8d;font-size:12px}
+.case-script-editor .ce-import-change-list details{margin-top:7px;padding-left:8px}
 .case-script-editor .ce-import-mode-switch{display:flex;gap:0;margin-bottom:9px;border:1px solid #d5e0ef;border-radius:4px;overflow:hidden;width:max-content}
 .case-script-editor .ce-import-mode-switch button{border:0;border-radius:0;padding:7px 12px;background:#fff;color:#526b8d;font-size:12px}
 .case-script-editor .ce-import-mode-switch button+button{border-left:1px solid #d5e0ef}
