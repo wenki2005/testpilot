@@ -40,6 +40,8 @@ export type FixedModule = {
     starterCaseIds?: string[];
     starterVersionId?: string;
     versions: ModuleVersion[];
+    /** Derived from the latest version; shown before a run so pending scripts are visible. */
+    pendingScriptReviewCount?: number;
     createdAt: string;
     updatedAt: string;
 };

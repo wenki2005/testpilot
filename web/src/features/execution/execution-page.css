@@ -17,6 +17,8 @@
 .sm-case-results .sm-heading .sm-module-counts{font-size:14px}
 .sm-scope-field{display:flex;align-items:center;gap:10px;white-space:nowrap;font-size:15px;color:var(--sm-muted)}
 .sm-workbench section[aria-label="固定模块"] th:nth-child(2),.sm-workbench section[aria-label="固定模块"] td:nth-child(2){min-width:200px}
+.sm-module-name{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.sm-script-review-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;background:var(--sm-warning-bg,#fff2df);color:var(--sm-warning,#b54708);font-size:11px;font-weight:500;white-space:nowrap}
 .sm-scope-note,.sm-batch-range{font-size:14px;line-height:1.6;color:var(--sm-muted);margin:12px 0 0}
 .sm-batch-range{margin-top:5px}
 .sm-case-maintenance{border-top:1px solid var(--sm-line);padding-top:16px}

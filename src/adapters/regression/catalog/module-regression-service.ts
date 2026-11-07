@@ -513,7 +513,12 @@ export class SystemModuleRegression {
         const old = this.store.state();
         const modules = this.list<FixedModule>('module');
         const assigned = new Set(modules.flatMap(m => m.versions.map(v => v.id)));
-        return { systems: this.list<TestedSystem>('system'), modules, batches: this.list<RegressionBatch>('batch').map(b => this.view(b)), accounts: this.accounts, legacyModules: old.modules.filter(m => !assigned.has(m.id)).map(m => ({ id: m.id, name: m.name, targetUrl: m.targetUrl, caseCount: m.caseCount })), configured: old.configured, database: { connected: mysqlBrowserStatus().connected }, notificationConfigured: this.notifier.configured() };
+        const visibleModules = modules.map(m => {
+            const latest = m.versions.at(-1);
+            const pendingScriptReviewCount = latest ? Object.values(this.store.getModule(latest.id).scriptReviews ?? {}).filter(review => review.status === 'pending').length : 0;
+            return pendingScriptReviewCount ? { ...m, pendingScriptReviewCount } : m;
+        });
+        return { systems: this.list<TestedSystem>('system'), modules: visibleModules, batches: this.list<RegressionBatch>('batch').map(b => this.view(b)), accounts: this.accounts, legacyModules: old.modules.filter(m => !assigned.has(m.id)).map(m => ({ id: m.id, name: m.name, targetUrl: m.targetUrl, caseCount: m.caseCount })), configured: old.configured, database: { connected: mysqlBrowserStatus().connected }, notificationConfigured: this.notifier.configured() };
     }
     getBatch(key: string) { return this.view(this.get<RegressionBatch>('batch', key)); }
     private view(batch: RegressionBatch): BatchView {

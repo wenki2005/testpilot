@@ -19,6 +19,10 @@
 .case-script-editor .scope-tabs button{border:0;border-radius:0;padding:9px 5px;font-size:13px;color:#47648a}
 .case-script-editor .scope-tabs button.selected{background:#2468e9;color:#fff}
 .case-script-editor .scope-tabs button span{margin-left:3px;font-size:11px}
+.case-script-editor .directory-review-tabs{display:flex;gap:4px;margin-top:8px;overflow:auto;padding-bottom:1px}
+.case-script-editor .directory-review-tabs button{border:1px solid #d7e2f0;border-radius:4px;padding:5px 8px;background:#fff;color:#536a89;font-size:11px;white-space:nowrap}
+.case-script-editor .directory-review-tabs button.selected{border-color:#2468e9;background:#e8f0ff;color:#1e5db7;font-weight:600}
+.case-script-editor .directory-review-tabs button span{margin-left:3px;color:#a3570a}
 .case-script-editor .directory-search{display:flex;gap:8px;align-items:center;margin-top:13px;padding:8px;border:1px solid #d6e1f1;border-radius:5px;background:#fff;color:#536c8b}
 .case-script-editor .directory-search input{width:100%;min-width:0;border:0;border-radius:0;padding:0;font-size:12px;background:transparent;color:#25496f}
 .case-script-editor .directory-count{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:11px;font-size:11px;color:#536a89}
@@ -36,6 +40,7 @@
 .case-script-editor button.tree-case.selected{color:#164fa8;background:#e0ecff;font-weight:600}
 .case-script-editor .tree-case .no{min-width:28px;font-size:11px;font-variant-numeric:tabular-nums;color:#526c90;padding-top:1px}
 .case-script-editor .tree-case .case-label{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.case-script-editor .tree-case .ce-pending-mark{margin-left:auto;flex:0 0 auto;padding:2px 5px;border-radius:3px;background:#fff2df;color:#9a5a08;font-size:10px;line-height:1.4;white-space:nowrap}
 .case-script-editor .case-detail,.case-script-editor .script-pane{display:flex;flex-direction:column;min-width:0;min-height:0;background:#fff}
 .case-script-editor .case-detail{border-right:1px solid var(--ce-border)}
 .case-script-editor .pane-header{display:flex;align-items:center;justify-content:space-between;gap:12px;height:51px;min-height:51px;padding:0 17px;border-bottom:1px solid #e2e9f3}
