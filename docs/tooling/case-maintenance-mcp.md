@@ -19,6 +19,7 @@
 | 工具 | 用途 |
 | --- | --- |
 | testpilot_cases | 查找编号、模块和版本 |
+| testpilot_pending_script_reviews | 批量列出脚本待核对用例、版本和脚本路径 |
 | testpilot_case | 读取完整用例、前置和脚本 |
 | testpilot_case_versions | 读取历史版本 |
 | testpilot_save_case | 按当前versionId保存单条修改 |
@@ -38,7 +39,7 @@
 
 上传预览会列“脚本待核对”；应用后打开对应单条用例，编辑区上方显示“脚本待核对”和“脚本已核对”按钮。左侧目录提供“待核对”筛选并在对应条目显示徽标；执行测试的模块列表显示该模块待核对数量。执行待核对用例或引用它的核心链路会被拒绝并提示返回核对。
 
-可以让编辑器通过testpilot_resources读取定义，筛出scriptReview.status为pending的用例，再逐条testpilot_case读取最新版并用testpilot_save_case保存修改。默认单条保存保留pending状态，不代表审核完成或测试通过；网页查看实际差异后点击“脚本已核对”，再进入执行测试。新脚本必须非空才能确认。该MCP没有专用的批量核对或执行工具，不会自动运行测试验证AI生成的步骤。
+可以让编辑器调用testpilot_pending_script_reviews一次列出所有待核对用例，再逐条testpilot_case读取最新版并用testpilot_save_case保存修改。默认单条保存保留pending状态，不代表审核完成或测试通过；网页查看实际差异后点击“脚本已核对”，再进入执行测试。新脚本必须非空才能确认。该MCP没有自动批量核对或执行工具，不会自动运行测试验证AI生成的步骤。
 
 ## 验证
 

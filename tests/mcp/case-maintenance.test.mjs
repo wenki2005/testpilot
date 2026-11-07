@@ -21,7 +21,7 @@ test('real MCP stdio handshake exposes scoped maintenance tools and saves throug
  let id=0;const rpc=(method,params)=>new Promise((resolve,reject)=>{const key=++id,timer=setTimeout(()=>reject(Error('MCP timeout '+stderr)),15000);pending.set(key,value=>{clearTimeout(timer);pending.delete(key);resolve(value);});child.stdin.write(JSON.stringify({jsonrpc:'2.0',id:key,method,params})+'\n');});
  const init=await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'fixture',version:'1'}});assert.ok(init.result.serverInfo);
  child.stdin.write('{"jsonrpc":"2.0","method":"notifications/initialized"}\n');
- const listed=await rpc('tools/list',{});assert.equal(listed.result.tools.length,7);assert.ok(listed.result.tools.every(t=>!/(execute|sql|shell|notify|browser)/.test(t.name)));
+ const listed=await rpc('tools/list',{});assert.equal(listed.result.tools.length,8);assert.ok(listed.result.tools.every(t=>!/(execute|sql|shell|notify|browser)/.test(t.name)));
  const read=await rpc('tools/call',{name:'testpilot_case',arguments:{caseId:'one'}});assert.equal(JSON.parse(read.result.content[0].text).title,'样例');
  const saved=await rpc('tools/call',{name:'testpilot_save_case',arguments:{moduleId,change:{caseId:'one'}}});assert.equal(JSON.parse(saved.result.content[0].text).changeSource,'mcp');assert.equal(saves,1);
  const wrong=await rpc('tools/call',{name:'testpilot_apply_resources',arguments:{resources:{project:{id:'other'}},baseRevision:'a'.repeat(64)}});assert.equal(wrong.result.isError,true);assert.equal(saves,1);
