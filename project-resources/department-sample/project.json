@@ -2,6 +2,6 @@
   "schema": 1,
   "id": "436847ad-f144-425f-b303-1ca9b22e0b52",
   "name": "部门申样系统",
-  "format": "testpilot-case-editor-snapshot",
-  "installableSeed": false
+  "format": "testpilot-project-resources",
+  "installableSeed": true
 }

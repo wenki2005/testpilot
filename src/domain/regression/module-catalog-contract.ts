@@ -20,6 +20,7 @@ export type TestedSystem = {
     updatedAt: string;
 };
 export type ModuleVersion = {
+    source?: 'manual' | 'mcp' | 'resources';
     id: string;
     version: number;
     digest: string;

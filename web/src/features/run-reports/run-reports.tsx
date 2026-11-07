@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import type { RunReport, RunReportCatalog, RunReportDetail, ReportMetadata, ReportCounts, ReportStatus } from '../../../../src/domain/reports/run-report-contract';
 import type { CoreRun } from '../../../../src/domain/regression/core-chain-definitions';
 import type { ReportFormat } from './report-export';
+type DownloadFormat = ReportFormat | 'archive';
 import { sidebarProjectEvents } from '../../shared/project-selection';
 import './run-reports.css';
 const root = '/api/system-module-regression', scopes = { all: '全部用例', custom: '自选用例', core: '核心用例' };
@@ -28,10 +29,10 @@ async function request<T>(path: string, data?: unknown): Promise<T> {
     return value;
 }
 function Format({ value, onChange, disabled }: {
-    value: ReportFormat;
-    onChange: (v: ReportFormat) => void;
+    value: DownloadFormat;
+    onChange: (v: DownloadFormat) => void;
     disabled: boolean;
-}) { return <select aria-label="报告格式" value={value} disabled={disabled} onChange={e => onChange(e.target.value as ReportFormat)}><option value="xlsx">Excel</option><option value="xmind">XMind</option></select>; }
+}) { return <select aria-label="报告格式" value={value} disabled={disabled} onChange={e => onChange(e.target.value as DownloadFormat)}><option value="xlsx">Excel</option><option value="xmind">XMind</option><option value="archive">离线报告包</option></select>; }
 function EditReport({ report, busy, error, onClose, onSave }: {
     report: RunReport;
     busy: boolean;
@@ -50,7 +51,7 @@ function EditReport({ report, busy, error, onClose, onSave }: {
 export default function RunReports() {
     const initial = useRef(new URLSearchParams(location.search));
     const [catalog, setCatalog] = useState<RunReportCatalog>(), [detail, setDetail] = useState<RunReportDetail>(), [selectedKey, setSelectedKey] = useState(initial.current.get('report') ?? '');
-    const [scope, setScope] = useState(''), [result, setResult] = useState(''), [period, setPeriod] = useState(''), [keyword, setKeyword] = useState(''), [importantOnly, setImportantOnly] = useState(false), [page, setPage] = useState(1), [format, setFormat] = useState<ReportFormat>('xlsx'), [chosen, setChosen] = useState<Set<string>>(new Set()), [expanded, setExpanded] = useState('');
+    const [scope, setScope] = useState(''), [result, setResult] = useState(''), [period, setPeriod] = useState(''), [keyword, setKeyword] = useState(''), [importantOnly, setImportantOnly] = useState(false), [page, setPage] = useState(1), [format, setFormat] = useState<DownloadFormat>('xlsx'), [chosen, setChosen] = useState<Set<string>>(new Set()), [expanded, setExpanded] = useState('');
     const [loading, setLoading] = useState(true), [detailLoading, setDetailLoading] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState(''), [edit, setEdit] = useState<RunReport>(), [editError, setEditError] = useState('');
     const serial = useRef(0), detailSerial = useRef(0), mounted = useRef(true), selectedRef = useRef(selectedKey), busyRef = useRef(busy);
     selectedRef.current = selectedKey;
@@ -228,7 +229,12 @@ export default function RunReports() {
                 const r = reports[i]!;
                 setNotice(`正在生成报告 ${i + 1} / ${reports.length}`);
                 let file;
-                if (r.kind === 'core') {
+                if (format === 'archive') {
+                    const response = await fetch(root + '/reports/' + r.kind + '/' + r.id + '/archive?systemId=' + encodeURIComponent(r.systemId));
+                    if (!response.ok) { const value = await response.json().catch(() => ({})); throw Error(value.error ?? '归档失败'); }
+                    file = { fileName: 'TestPilot-' + r.id + '.zip', mime: 'application/zip', bytes: new Uint8Array(await response.arrayBuffer()) };
+                }
+                else if (r.kind === 'core') {
                     const run = await request<CoreRun>('/core-chains/runs/' + r.id);
                     if (run.systemId !== r.systemId || ['queued', 'running', 'awaiting-login'].includes(run.phase))
                         throw Error('报告所属项目或执行状态已变化，请刷新。');

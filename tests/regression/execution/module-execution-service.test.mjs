@@ -124,10 +124,10 @@ test('Dify cannot replace database counts; a report retry reuses the immutable d
  let done=await wait(f.store,f.store.start({moduleId:f.imported.id,selectedCaseIds:['one'],requestId:randomUUID()},databaseContext).id);assert.equal(done.phase,'error');assert.equal(done.results[0].status,'passed');const originalDigest=done.databaseEvidenceDigest;corrupt=false;await f.store.retry(done.id);done=await wait(f.store,done.id);assert.equal(done.phase,'completed');assert.equal(reads,1);assert.equal(f.calls(),1);assert.equal(done.databaseEvidenceDigest,originalDigest);
 });
 
-test('fixed mode executes package steps without prepare or author and keeps real Dify dispatch/report',async t=>{
- const f=await fixture(t,{author:async()=>{throw Error('Fixed regression must not author steps');}});
- for(let i=0;i<2;i++){const done=await wait(f.store,f.store.start({moduleId:f.imported.id,runMode:'fixed',requestId:randomUUID()}).id);assert.equal(done.phase,'completed');assert.equal(done.runMode,'fixed');assert.deepEqual(done.difyRuns.map(r=>r.phase),['dispatch','report']);assert.equal(done.results[1].status,'failed');assert.match(done.report,/未调用模型整理/);}
- assert.equal(f.cloudCalls.filter(c=>c.kind==='prepare').length,0);assert.equal(f.calls(),2);
+test('fixed mode executes saved steps locally without cloud or author and retains real failures',async t=>{
+ const f=await fixture(t,{author:async()=>{throw Error('Fixed regression must not author steps');},cloud:async()=>{throw Error('Fixed execution must not call cloud');}});
+ for(let i=0;i<2;i++){const done=await wait(f.store,f.store.start({moduleId:f.imported.id,runMode:'fixed',requestId:randomUUID()}).id);assert.equal(done.phase,'completed');assert.equal(done.runMode,'fixed');assert.deepEqual(done.difyRuns,[]);assert.equal(done.results[1].status,'failed');assert.match(done.report,/未调用模型整理/);}
+ assert.equal(f.cloudCalls.length,0);assert.equal(f.calls(),2);
 });
 
 test('fixed mode blocks missing scripts; assist can produce a reusable source-bound script',async t=>{

@@ -8,11 +8,11 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
 import { strToU8, zipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('workbench reviews and runs a SQLite migration suite without approving stale edits', { timeout: 30_000 }, async t => {
   const port = await reservePort(); const base = `http://127.0.0.1:${port}`;
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: resolve(root, 'artifacts', 'sqlite-migration-ui', String(Date.now())), TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: resolve(root, 'artifacts', 'sqlite-migration-ui', String(Date.now())), TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let log = ''; demo.stdout.on('data', chunk => { log += chunk.toString(); }); demo.stderr.on('data', chunk => { log += chunk.toString(); });
   let browser;
   t.after(async () => { if (browser) await browser.close(); if (demo.exitCode === null) { const exited = once(demo, 'exit'); demo.kill('SIGTERM'); await exited.catch(() => undefined); } });
@@ -21,7 +21,7 @@ test('workbench reviews and runs a SQLite migration suite without approving stal
   browser = await chromium.launch({ channel: 'msedge', headless: true });
   const page = await browser.newPage();
   await page.goto(base, { waitUntil: 'networkidle' });
-  await page.getByRole('button', { name: '工具', exact: true }).click();
+  await page.getByRole('button', { name: '更多工具', exact: true }).click();
   await page.getByRole('button', { name: '数据库迁移测试' }).click();
   await page.getByRole('heading', { name: '数据库迁移测试' }).waitFor();
   await page.getByLabel('套件定义 JSON').fill(JSON.stringify({ version: 1, name: 'Workbench SQLite suite', migrations: [{ id: '001-create-example', file: 'migrations/001-create-example.sql' }], scenarios: [{ id: 'create-example-table', title: 'Create the expected table', migrations: ['001-create-example'], checks: [{ id: 'table-exists', title: 'Table exists', query: "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'sample_records'", expectedRows: [{ name: 'sample_records' }] }] }] }, null, 2));

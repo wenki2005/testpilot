@@ -118,6 +118,10 @@ export function browserRequestAllowed(method: string, requestUrl: string, contex
             return true;
         if (departmentRead && /^(?:GET|HEAD|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType))
             return true;
+        // These exceptions are scoped above. The generic sibling-site read rule
+        // must not re-admit their POST methods, other hosts or document loads.
+        if (/^\/supply-api\/(?:dept\/book\/apply|h5\/dept\/book\/order)\//.test(request.pathname))
+            return false;
         const apiRequest = /^(?:GET|HEAD|POST|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)
             && sameRegistrableSite && !mutationPath.test(request.pathname) && (apiReadPath.test(request.pathname) || knownReadRoute.test(request.pathname));
         if (apiRequest && request.protocol === "https:")

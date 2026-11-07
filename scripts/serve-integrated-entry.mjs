@@ -4,9 +4,9 @@
 import { createServer, request } from 'node:http';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
-import { runtimeRoot, workspacePorts } from './lib/integrated-workspaces.mjs';
+import { runtimeRoot, workspacePorts, entryPort } from './lib/integrated-workspaces.mjs';
 
-const host = '127.0.0.1', port = 4325, origin = `http://${host}:${port}`;
+const host = '127.0.0.1', port = entryPort, origin = `http://${host}:${port}`;
 const ownerForPage = url => ['dify-regression', 'module-regression', 'case-scripts', 'run-reports'].includes(url.searchParams.get('page')) ? 'dify' : 'web-regression';
 const prefixFor = owner => owner === 'dify' ? '/dify' : '/web';
 const pathOwner = url => /^\/dify(?:\/|$)/.test(url.pathname) ? 'dify' : /^\/web(?:\/|$)/.test(url.pathname) ? 'web-regression' : undefined;
@@ -19,7 +19,7 @@ const server = createServer((req, res) => {
   const explicitOwner = pathOwner(url);
   const upstreamPath = explicitOwner ? url.pathname.slice(prefixFor(explicitOwner).length) || '/' : url.pathname;
   if (upstreamPath === '/' && req.method === 'GET') {
-    const owner = ownerForPage(url), prefix = prefixFor(owner);
+    const owner = explicitOwner ?? ownerForPage(url), prefix = prefixFor(owner);
     if (url.pathname !== prefix + '/') { res.writeHead(302, { location: `${prefix}/${url.search}`, 'cache-control': 'no-store' }); res.end(); return; }
   }
   let refererOwner;

@@ -7,7 +7,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('document workflow MCP scopes selection without losing case data and exposes step drafting safely', { timeout: 45_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'document-mcp-authoring', String(Date.now()));
@@ -16,13 +16,13 @@ test('document workflow MCP scopes selection without losing case data and expose
     { id: 'case-alpha', title: 'Alpha remains in scope', source: 'fixture.md:1', requirementRefs: ['fixture.md:1'], priority: 'P1', category: 'functional', confidence: 'high', coverageAreas: ['functional'], selectedForRegression: true, preconditions: [], preconditionsConfirmed: true, testData: [], sideEffectRisk: 'none', cleanup: '', kind: 'visible', expected: 'Alpha visible', steps: [{ action: 'assertVisible', text: 'Alpha visible' }], coverageGap: 'Backend state not verified' },
     { id: 'case-beta', title: 'Beta can be excluded', source: 'fixture.md:2', requirementRefs: ['fixture.md:2'], priority: 'P2', category: 'navigation', confidence: 'medium', coverageAreas: ['navigation'], selectedForRegression: true, preconditions: [], preconditionsConfirmed: true, testData: [], sideEffectRisk: 'none', cleanup: '', kind: 'visible', expected: 'Beta visible', steps: [{ action: 'assertVisible', text: 'Beta visible' }] },
   ];
-  const project = { id: projectId, name: 'MCP selection fixture', fileName: 'fixture.md', sourceFiles: ['fixture.md'], caseMode: 'existing', format: 'markdown', targetUrl: 'http://127.0.0.1:9/no-target-requests', sourceText: 'MCP-only fixture; execution is intentionally not started.', cases, reviewStatus: 'approved', reviewNotes: 'Approved before scoped selection.', confirmationRequired: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  const project = { platform: { type: 'pc-web', status: 'confirmed' }, id: projectId, name: 'MCP selection fixture', fileName: 'fixture.md', sourceFiles: ['fixture.md'], caseMode: 'existing', format: 'markdown', targetUrl: 'http://127.0.0.1:9/no-target-requests', sourceText: 'MCP-only fixture; execution is intentionally not started.', cases, reviewStatus: 'approved', reviewNotes: 'Approved before scoped selection.', confirmationRequired: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
   await mkdir(resolve(dataDir, 'document-tests', 'projects'), { recursive: true });
   await writeFile(resolve(dataDir, 'document-tests', 'projects', `${projectId}.json`), JSON.stringify(project));
   const port = await reservePort();
   const base = `http://127.0.0.1:${port}`;
   const environment = { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '', TESTPILOT_BASE_URL: base };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   const mcp = spawn(process.execPath, ['dist/mcp/server.js'], { cwd: root, env: environment, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
   let demoLog = ''; let mcpLog = '';
   demo.stdout.on('data', chunk => { demoLog += chunk.toString(); }); demo.stderr.on('data', chunk => { demoLog += chunk.toString(); });
@@ -53,6 +53,8 @@ test('document workflow MCP scopes selection without losing case data and expose
   }
   const safeApiId = 'api-review-readonly';
   await writeFile(resolve(dataDir, 'document-tests', 'projects', `${safeApiId}.json`), JSON.stringify({ ...project, id: safeApiId, cases: [structuredClone(safeCase)], apiContract: { allowNetwork: false, allowMutations: false, allowConcurrency: false, mappings: [] }, reviewStatus: 'draft', confirmationRequired: false }));
+  const reviewedReadOnly = await fetch(`${base}/api/document-projects/${safeApiId}/review`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ decision: 'approve', notes: 'Reviewed local fixture before checking retained read-only approval.' }) });
+  assert.equal(reviewedReadOnly.status, 200);
   const readOnlyConfigResponse = await fetch(`${base}/api/document-projects/${safeApiId}/update`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ apiContract: { allowNetwork: false, allowMutations: false, allowConcurrency: false } }) });
   assert.equal(readOnlyConfigResponse.status, 200);
   assert.equal((await readOnlyConfigResponse.json()).reviewStatus, 'approved', 'the existing automatic policy remains available when all elevated API permissions are false');
@@ -258,5 +260,3 @@ test('MCP generation and handoff call the shared case-generator HTTP workflow wi
   assert.equal(unsafeTarget.isError, true, 'MCP refuses non-HTTP execution targets at the tool schema boundary');
   assert.equal(calls.length, 2);
 });
-
-

@@ -1,0 +1,9 @@
+.connection-settings .settings-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+.connection-settings .settings-card{margin-bottom:16px}
+.connection-settings h2{font-size:16px;margin:0 0 12px}
+.connection-settings select{width:100%;min-height:36px;padding:6px 10px;border:1px solid #d5e1f3;border-radius:4px;background:#fff;color:#17345d;font:inherit}
+.connection-settings button{min-height:32px;padding:6px 12px;border:1px solid #d0dcf0;border-radius:4px;background:#fff;color:#25569a;font-size:13px;font-weight:500;box-shadow:none}
+.connection-settings button.button-primary{background:#3f80f6;border-color:#3f80f6;color:#fff}
+.connection-settings button:disabled{opacity:.5;cursor:not-allowed}
+.connection-settings .settings-actions{justify-content:flex-start;gap:8px;flex-wrap:wrap}
+@media(max-width:900px){.connection-settings .settings-grid{grid-template-columns:1fr}}

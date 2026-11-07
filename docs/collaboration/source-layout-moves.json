@@ -1179,7 +1179,7 @@
     },
     {
       "from": "scripts/package-demo.mjs",
-      "to": "scripts/build/package-windows-demo.mjs"
+      "to": "scripts/build/package-windows.mjs"
     },
     {
       "from": "scripts/package-department-sample-suite.mjs",

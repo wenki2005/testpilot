@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { strFromU8, unzipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('API MCP workflow enforces approval and exports a reusable suite package', { timeout: 45_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'api-mcp-integration', String(Date.now()));
@@ -22,7 +22,7 @@ test('API MCP workflow enforces approval and exports a reusable suite package', 
   const port = await reservePort();
   const demoBase = `http://127.0.0.1:${port}`;
   const environment = { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let log = '';
   demo.stdout.on('data', chunk => { log += chunk.toString(); }); demo.stderr.on('data', chunk => { log += chunk.toString(); });
   const mcp = spawn(process.execPath, ['dist/mcp/server.js'], { cwd: root, env: { ...environment, TESTPILOT_BASE_URL: demoBase }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });

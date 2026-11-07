@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 import { chromium } from 'playwright';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('document project UI links only an approved API suite and saves explicit mappings with network disabled by default', { timeout: 60_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'document-api-contract-ui', String(Date.now()));
@@ -14,6 +14,7 @@ test('document project UI links only an approved API suite and saves explicit ma
   const port = await reservePort();
   const baseUrl = `http://127.0.0.1:${port}`;
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId, name: 'Document API mapping fixture', fileName: 'fixture.md', caseMode: 'existing', format: 'markdown',
     targetUrl: 'http://127.0.0.1:1/', sourceText: 'Local UI fixture.', confirmationRequired: false,
     cases: [
@@ -25,7 +26,7 @@ test('document project UI links only an approved API suite and saves explicit ma
   };
   await mkdir(resolve(dataDir, 'document-tests', 'projects'), { recursive: true });
   await writeFile(resolve(dataDir, 'document-tests', 'projects', `${projectId}.json`), JSON.stringify(project));
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' }, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let log = '';
   demo.stdout.on('data', chunk => { log += chunk.toString(); }); demo.stderr.on('data', chunk => { log += chunk.toString(); });
   let browser;
@@ -50,6 +51,11 @@ test('document project UI links only an approved API suite and saves explicit ma
   const approved = await fetch(`${baseUrl}/api/api-suites/${candidate.id}/review`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ decision: 'approve', notes: 'UI mapping fixture.' }) });
   assert.equal(approved.status, 200);
 
+  const reviewProject = async () => {
+    const response = await fetch(`${baseUrl}/api/document-projects/${projectId}/review`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ decision: 'approve', notes: 'Reviewed local PC fixture before testing retained read-only permissions.' }) });
+    assert.equal(response.status, 200);
+  };
+  await reviewProject();
   const allDisabled = await fetch(`${baseUrl}/api/document-projects/${projectId}/update`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ apiContract: { suiteId: candidate.id, mappings: [], allowNetwork: false, allowMutations: false, allowConcurrency: false } }) });
   assert.equal((await allDisabled.json()).reviewStatus, 'approved', 'reduced-confirmation mode may retain the approved read-only default');
   for (const enabled of ['allowNetwork', 'allowMutations', 'allowConcurrency']) {
@@ -59,6 +65,7 @@ test('document project UI links only an approved API suite and saves explicit ma
     const update = await fetch(`${baseUrl}/api/document-projects/${projectId}/update`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ apiContract }) });
     assert.equal((await update.json()).reviewStatus, 'draft', `${enabled} must require a fresh manual project review even when reduced-confirmation mode is enabled`);
   }
+  await reviewProject();
   const resetPermissions = await fetch(`${baseUrl}/api/document-projects/${projectId}/update`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ apiContract: { mappings: [], allowNetwork: false, allowMutations: false, allowConcurrency: false } }) });
   assert.equal((await resetPermissions.json()).reviewStatus, 'approved');
   const finalReview = await fetch(`${baseUrl}/api/document-projects/${projectId}/review`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ decision: 'approve', notes: 'Reviewed API authorization and mappings.' }) });
@@ -66,9 +73,15 @@ test('document project UI links only an approved API suite and saves explicit ma
 
   browser = await chromium.launch({ channel: 'msedge', headless: true });
   const page = await browser.newPage();
+  const reveal = async control => {
+    for (const panel of await control.locator('xpath=ancestor::details').all()) {
+      if (!(await panel.evaluate(element => element.open))) await panel.locator(':scope > summary').click();
+    }
+  };
   await page.goto(`${baseUrl}/?documentProject=${projectId}`, { waitUntil: 'networkidle' });
+  await page.locator('#doc-management > summary').click();
   const modulePicker = page.locator('.doc-module-picker').filter({ has: page.getByText('按模块选择', { exact: true }) });
-  await modulePicker.locator('summary').click();
+  if (!(await modulePicker.evaluate(element => element.open))) await modulePicker.locator('summary').click();
   const moduleOptions = modulePicker.locator('.doc-module-picker-list label');
   let permissionModule;
   for (let index = 0; index < await moduleOptions.count(); index++) {
@@ -127,6 +140,7 @@ test('document project UI links only an approved API suite and saves explicit ma
   const loginCase = page.locator('.doc-case').filter({ has: page.getByLabel('用例状态 doc-login') });
   const lifecycle = page.getByLabel('用例状态 doc-login');
   const runCheckbox = loginCase.locator('.doc-case-select input');
+  await reveal(lifecycle);
   await lifecycle.selectOption('draft');
   assert.equal(await runCheckbox.isDisabled(), true, 'draft cases cannot be included in the run scope');
   assert.equal(await runCheckbox.isChecked(), false, 'moving a case to draft clears its run selection');
@@ -135,6 +149,7 @@ test('document project UI links only an approved API suite and saves explicit ma
   assert.equal(await runCheckbox.isChecked(), false, 'promoting a draft does not silently expand this run scope');
   await runCheckbox.check();
   assert.equal(await runCheckbox.isChecked(), true);
+  await reveal(lifecycle);
   await lifecycle.selectOption('disabled');
   assert.equal(await runCheckbox.isDisabled(), true, 'disabled cases are not selectable');
   assert.equal(await runCheckbox.isChecked(), false, 'disabling a case removes it from the run scope');

@@ -9,7 +9,7 @@ import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { strFromU8, strToU8, unzipSync, zipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 const baselineMarker = 'HELD_OUT_BASELINE_MUST_NOT_LEAK_TO_GENERATION';
 
 test('case-generation agent runs through trace-preserving review, browser lanes, report and verifiable package', { timeout: 180_000 }, async t => {
@@ -95,7 +95,7 @@ test('case-generation agent runs through trace-preserving review, browser lanes,
     TESTPILOT_BROWSER_KEEP_EDGE_ON_SHUTDOWN: '0',
     TESTPILOT_DISABLE_PUBLIC_SEARCH: '1',
   };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let demoLog = '';
   demo.stdout.on('data', chunk => { demoLog += chunk.toString(); });
   demo.stderr.on('data', chunk => { demoLog += chunk.toString(); });
@@ -158,9 +158,9 @@ test('case-generation agent runs through trace-preserving review, browser lanes,
   // A browser/UI edit may change reviewable case metadata, but cannot replace
   // the trusted source trace that came from the generation handoff.
   const maliciousTrace = { ...project.cases[0].caseGenerationTrace, actions: ['forged action'] };
-  const editedCase = { ...project.cases[0], sideEffectRisk: 'none', preconditionsConfirmed: true, caseGenerationTrace: maliciousTrace };
+  const editedCase = { ...project.cases[0], lifecycleStatus: 'runnable', selectedForRegression: true, sideEffectRisk: 'none', preconditionsConfirmed: true, caseGenerationTrace: maliciousTrace };
   const updateResponse = await fetch(`${demoBase}/api/document-projects/${projectId}/update`, {
-    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ cases: [editedCase] }),
+    method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ platform: 'pc-web', cases: [editedCase] }),
   });
   const updateText = await updateResponse.text();
   assert.equal(updateResponse.status, 200, updateText);

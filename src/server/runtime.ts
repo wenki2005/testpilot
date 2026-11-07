@@ -14,11 +14,10 @@ import { caseCategories, confidenceFromExpectation, inferCaseCategory } from "..
 import { resolveModelSettings } from "../adapters/ai/model-settings.js";
 import { completeChat } from "../adapters/ai/compatible-chat.js";
 import { planDocumentGenerationBatches } from "../adapters/documents/cases/generation-batches.js";
+import { demoRunTimeoutMs, markDemoTimedOut, updateDemoProgress } from "./run-diagnostics.js";
 const DEFAULT_MODEL = "gpt-4.1-mini";
 const MAX_ACTION_LIMIT = 40;
 const REQUEST_TIMEOUT_MS = 10000;
-const RUN_TIMEOUT_MS = 60000;
-const MODEL_TIMEOUT_MS = 120000;
 function configuredModel(): {
     key?: string;
     baseUrl: string;
@@ -581,6 +580,7 @@ function buildRequestTool(context: RunContext, actionState: {
             const start = Date.now();
             const abort = combineSignal(context.signal, REQUEST_TIMEOUT_MS);
             try {
+                updateDemoProgress(context, "http-request");
                 const headers = { ...(check.headers ?? {}) };
                 const init: RequestInit = { method, headers, signal: abort.signal };
                 if (check.body !== undefined) {
@@ -589,6 +589,9 @@ function buildRequestTool(context: RunContext, actionState: {
                 }
                 const response = await fetch(url, { ...init, redirect: "error" });
                 const body = await readBody(response);
+                if (context.signal.aborted)
+                    throw new Error("Run cancelled before response collection completed.");
+                updateDemoProgress(context, "http-response");
                 const evidence: DemoEvidence = {
                     id: `e${++actionState.evidenceIndex}`,
                     method,
@@ -679,8 +682,12 @@ function finalStatus(context: RunContext, completed: boolean): void {
     const hasFailed = run.assertions.some((assertion) => assertion.status === "failed");
     if (context.signal.aborted) {
         const timedOut = /time.*limit|deadline|timed out/i.test(String(context.signal.reason?.message ?? ""));
-        run.status = timedOut ? "blocked" : "cancelled";
-        run.summary = timedOut ? "运行达到时间上限；已保留证据，未执行部分未判为通过。" : "运行已取消；已保留取消前收集的证据与断言。";
+        if (timedOut)
+            markDemoTimedOut(context);
+        else {
+            run.status = "cancelled";
+            run.summary = "运行已取消；已保留取消前收集的证据与断言。";
+        }
     }
     else if (hasFailed) {
         run.status = "failed";
@@ -783,9 +790,10 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
     run.maxActions = limit;
     run.actionCount = 0;
     run.provider = effectiveProvider;
+    run.diagnostics = { phase: "starting", modelRequests: 0, modelResponses: 0, toolCalls: 0, updatedAt: new Date().toISOString() };
     run.coverage.available = normalizeRoutes();
     const started = Date.now();
-    const timeoutMs = effectiveProvider === "model" ? MODEL_TIMEOUT_MS : RUN_TIMEOUT_MS;
+    const timeoutMs = demoRunTimeoutMs(request);
     const runAbort = new AbortController();
     const onCancel = () => runAbort.abort(context.signal.reason);
     if (context.signal.aborted)
@@ -870,7 +878,11 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
                 models: [model as Model<"openai-completions">],
                 api: openAICompletionsApi(),
             }));
-            streamFn = models.streamSimple.bind(models);
+            streamFn = (...args) => {
+                updateDemoProgress(abortContext, "model-request", { modelRequests: (run.diagnostics?.modelRequests ?? 0) + 1 });
+                event(abortContext, "info", "模型调用开始", `第 ${run.diagnostics!.modelRequests} 次模型调用`);
+                return models.streamSimple(...args);
+            };
             apiKey = config.key;
             run.limitations.push("模型模式使用 pi-ai OpenAI Chat Completions API；TESTPILOT_BASE_URL 须兼容 OpenAI Chat Completions 与工具调用。");
         }
@@ -892,8 +904,10 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
                 }
                 return undefined;
             },
-            beforeToolCall: async () => {
+            beforeToolCall: async ({ toolCall }) => {
                 toolCalls += 1;
+                if (!runAbort.signal.aborted)
+                    updateDemoProgress(abortContext, "tool", { toolCalls, currentTool: toolCall.name });
                 if (toolCalls > 100) {
                     loopBudgetHit = true;
                     return { block: true, terminate: true, reason: "Agent tool call budget exhausted (100)." };
@@ -910,6 +924,12 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
                     content?: unknown[];
                 };
             };
+            if (!runAbort.signal.aborted && effectiveProvider === "model" && item.type === "message_update" && item.message?.role === "assistant"
+                && item.message.content?.some(part => {
+                    const content = part as { text?: string; thinking?: string; name?: string };
+                    return Boolean(content.text || content.thinking || content.name);
+                }) && (run.diagnostics?.modelResponses ?? 0) < (run.diagnostics?.modelRequests ?? 0))
+                updateDemoProgress(abortContext, "model-response", { modelResponses: run.diagnostics!.modelResponses + 1 });
             if (item.type === "agent_end")
                 return;
             if (item.type === "error")
@@ -960,7 +980,7 @@ export async function executeDemo(context: RunContext, request: DemoRequest, che
         run.limitations.push("Agent 执行在完成全部检查前退出。");
         event(context, "error", "Demo 执行错误", message);
         finalStatus(abortContext, false);
-        if (run.status !== "cancelled" && run.status !== "failed")
+        if (!runAbort.signal.aborted && run.status !== "cancelled" && run.status !== "failed")
             run.status = "error";
     }
     finally {

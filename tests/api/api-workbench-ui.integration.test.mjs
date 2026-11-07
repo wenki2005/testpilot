@@ -7,7 +7,7 @@ import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('main workbench creates and automatically executes an approved read-only API suite', { timeout: 60_000 }, async t => {
   const dataDir = resolve(root, 'artifacts', 'api-workbench-ui', String(Date.now()));
@@ -32,7 +32,7 @@ test('main workbench creates and automatically executes an approved read-only AP
   model.listen(0, '127.0.0.1'); await once(model, 'listening');
   const port = await reservePort(); const baseUrl = `http://127.0.0.1:${port}`;
   const environment = { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_API_KEY: 'local-ui-key', OPENAI_API_KEY: '', TESTPILOT_BASE_URL: `http://127.0.0.1:${model.address().port}/v1`, TESTPILOT_MODEL: 'local-ui-fixture', TESTPILOT_DISABLE_PUBLIC_SEARCH: '1', TESTPILOT_BROWSER_CDP_ENDPOINT: '' };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let log = ''; demo.stdout.on('data', chunk => { log += chunk.toString(); }); demo.stderr.on('data', chunk => { log += chunk.toString(); });
   let browser;
   t.after(async () => {
@@ -149,7 +149,7 @@ test('main workbench creates and automatically executes an approved read-only AP
   assert.equal(retargetedRerun.status, 409, 'a targeted rerun cannot move an approved case to another host');
   assert.equal(targetHits, 2, 'invalid reruns must not reach the target');
 
-  await page.getByRole('button', { name: '工具', exact: true }).click();
+  await page.getByRole('button', { name: '更多工具', exact: true }).click();
   await page.getByRole('button', { name: 'API 测试套件' }).click();
   await page.getByRole('heading', { name: 'API 测试套件' }).waitFor();
   await page.getByRole('button', { name: /Workbench health checks/ }).waitFor();

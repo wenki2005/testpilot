@@ -14,6 +14,7 @@
 - [execution](execution/)
 - [exports](exports/)
 - [notifications](notifications/)
+- [resources](resources/)
 - [scenarios](scenarios/)
 
 ## 文件职责
@@ -42,6 +43,11 @@
 | [exports/export-policy.ts](exports/export-policy.ts) | 导出材料中的凭据与敏感字段检查 | `assertDifyExportSafe` |
 | [exports/script-package.ts](exports/script-package.ts) | 逐模块脚本包组装 | `ScriptPackageContext`、`DifyScriptModuleInput`、`difyPortableRunner` |
 | [notifications/batch-notifier.ts](notifications/batch-notifier.ts) | 批次通知、通知重试和失败信息 | `Payload`、`Transport`、`difyNotificationWebhook` |
+| [resources/case-version-import.ts](resources/case-version-import.ts) | case version import | `Row`、`rows`、`caseVersionInput` |
+| [resources/project-resource-contract.ts](resources/project-resource-contract.ts) | 资源定义、差异与前置引用校验 | `projectResourceSchema`、`ProjectResources`、`ResourceCase` |
+| [resources/resource-directory.ts](resources/resource-directory.ts) | 逐条资源文件读入、摘要和目录边界校验 | `readResourceDirectory` |
+| [resources/script-coverage.ts](resources/script-coverage.ts) | script coverage | `ScriptSupport`、`scriptSupport`、`scriptCoverage` |
+| [resources/script-gap-requirements.ts](resources/script-gap-requirements.ts) | script gap requirements | `CaseSource`、`Requirement`、`scriptGapRequirement` |
 | [scenarios/application/client-validation.ts](scenarios/application/client-validation.ts) | 前端拦截、按钮与字段校验 | `ClientValidationKind`、`Result`、`clientValidationKind` |
 | [scenarios/application/excluded-customers.ts](scenarios/application/excluded-customers.ts) | excluded customers | `isExcludedCustomer`、`reviewExcludedCustomer`、`verifyExcludedCustomer` |
 | [scenarios/application/field-validation.ts](scenarios/application/field-validation.ts) | 表单字段有效性校验 | `FieldValidityKind`、`fieldValidityKind`、`reviewFieldValidity` |
@@ -54,6 +60,7 @@
 | [scenarios/clients/device-layout.ts](scenarios/clients/device-layout.ts) | device layout | `DifyDeviceKind`、`difyDeviceKind`、`reviewDifyDevice` |
 | [scenarios/connected-systems.ts](scenarios/connected-systems.ts) | 上游调用、通知与下游系统关联核验 | `Row`、`Result`、`reviewConnectedEvidence` |
 | [scenarios/identity/applicant-identity.ts](scenarios/identity/applicant-identity.ts) | 申请人身份与账号范围 | `Result`、`isApplicantIdentity`、`reviewApplicantIdentity` |
+| [scenarios/orders/admin-filter-contract.ts](scenarios/orders/admin-filter-contract.ts) | admin filter contract | `Row`、`AdminFilterKind`、`auditAdminFilters` |
 | [scenarios/orders/admin-order-records.ts](scenarios/orders/admin-order-records.ts) | 管理订单数据读回及关联 | `Row`、`Result`、`AdminRecordKind` |
 | [scenarios/orders/my-orders.ts](scenarios/orders/my-orders.ts) | 本人订单查询和归属核验 | `Row`、`Result`、`OwnedOrderKind` |
 | [scenarios/orders/order-creation-readback.ts](scenarios/orders/order-creation-readback.ts) | 下单结果与申请、订单引用关联核验 | `Row`、`departmentMinute`、`assertCreationTimes` |

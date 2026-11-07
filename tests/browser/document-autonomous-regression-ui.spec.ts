@@ -18,7 +18,7 @@ test.beforeAll(async () => {
   await new Promise<void>(resolve => probe.close(() => resolve()));
   base = `http://127.0.0.1:${port}`;
   dataDir = await mkdtemp(path.join(tmpdir(), 'testpilot-autonomous-impact-ui-'));
-  child = spawn(process.execPath, ['dist/demo/server.js'], {
+  child = spawn(process.execPath, ['dist/server/http-server.js'], {
     cwd: process.cwd(),
     env: {
       ...process.env,

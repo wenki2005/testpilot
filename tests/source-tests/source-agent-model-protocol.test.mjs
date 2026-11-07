@@ -29,7 +29,7 @@ test('actual Pi transport tolerates finely chunked streams and ends immediately 
   });
   server.listen(0,'127.0.0.1');await once(server,'listening');
   t.after(async()=>{server.closeAllConnections();await new Promise(r=>server.close(r));await rm(folder,{recursive:true,force:true,maxRetries:5,retryDelay:100});});
-  const run=await executeCommand({id:'protocol',title:'Pi source agent actual protocol',command:{bin:process.execPath,args:['dist/cli.js','test-agent','--source-root',source,'--goal','Protocol fixture, submit assessment once.','--mode','plan','--timeout-ms','20000','--out',out],cleanEnvironment:true,timeoutMs:25000,env:{TESTPILOT_DATA_DIR:path.join(folder,'data'),TESTPILOT_API_KEY:'local-fixture-key',TESTPILOT_BASE_URL:`http://127.0.0.1:${server.address().port}/v1`,TESTPILOT_MODEL:'fixture'}}},path.resolve(import.meta.dirname,'..'));
+  const run=await executeCommand({id:'protocol',title:'Pi source agent actual protocol',command:{bin:process.execPath,args:['dist/cli.js','test-agent','--source-root',source,'--goal','Protocol fixture, submit assessment once.','--mode','plan','--timeout-ms','20000','--out',out],cleanEnvironment:true,timeoutMs:25000,env:{TESTPILOT_DATA_DIR:path.join(folder,'data'),TESTPILOT_API_KEY:'local-fixture-key',TESTPILOT_BASE_URL:`http://127.0.0.1:${server.address().port}/v1`,TESTPILOT_MODEL:'fixture'}}},path.resolve(import.meta.dirname,'../..'));
   assert.equal(run.status,'passed',JSON.stringify(run));
   const ids=await readdir(out);assert.equal(ids.length,1);
   const result=JSON.parse(await readFile(path.join(out,ids[0],'run.json'),'utf8'));

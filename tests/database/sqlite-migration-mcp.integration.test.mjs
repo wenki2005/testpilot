@@ -7,12 +7,12 @@ import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { strFromU8, unzipSync } from 'fflate';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('SQLite migration MCP tools enforce review and deliver reusable evidence', { timeout: 30_000 }, async t => {
   const port = await reservePort(); const base = `http://127.0.0.1:${port}`;
   const environment = { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: resolve(root, 'artifacts', 'sqlite-migration-mcp', String(Date.now())), TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_BROWSER_CDP_ENDPOINT: '' };
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], { cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
   let demoLog = ''; demo.stdout.on('data', chunk => { demoLog += chunk.toString(); }); demo.stderr.on('data', chunk => { demoLog += chunk.toString(); });
   const mcp = spawn(process.execPath, ['dist/mcp/server.js'], { cwd: root, env: { ...environment, TESTPILOT_BASE_URL: base }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
   let mcpLog = ''; mcp.stderr.on('data', chunk => { mcpLog += chunk.toString(); });

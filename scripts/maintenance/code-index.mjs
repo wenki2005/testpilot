@@ -10,7 +10,7 @@ import ts from 'typescript';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const slash=p=>p.replaceAll('\\','/');
-const scan=directory=>fs.readdirSync(directory,{withFileTypes:true}).filter(e=>!e.isSymbolicLink()).flatMap(e=>e.isDirectory()?scan(path.join(directory,e.name)):e.isFile()?[path.join(directory,e.name)]:[]);
+const scan=directory=>fs.readdirSync(directory,{withFileTypes:true}).filter(e=>!e.isSymbolicLink()).flatMap(e=>{const file=path.join(directory,e.name),relative=slash(path.relative(root,file));if(e.isDirectory()&&(['node_modules','dist','.git','.cache','test-artifacts','runtime-data'].includes(e.name)||e.name==='artifacts'&&relative!=='src/application/artifacts'))return[];return e.isDirectory()?scan(file):e.isFile()?[file]:[];});
 const category=p=>p.startsWith('web/src/app/')?'工作台与侧栏':p.includes('/features/')?({execution:'执行测试', 'case-scripts':'用例与脚本','run-reports':'运行报告',settings:'系统设置','case-assistance':'用例辅助整理','document-tests':'网页测试','api-tests':'接口测试',database:'数据库工具','source-tests':'源码测试','case-generation':'用例生成','regression-library':'回归用例库'}[p.split('/features/')[1].split('/')[0]]??'页面功能'):p.includes('/regression/')?'申样回归执行':p.includes('/reports/')?'运行报告':p.includes('/database/')?'数据库':p.includes('/source-tests/')?'源码测试':p.includes('/integrations/dify/')?'工作流连接':p.includes('/browser/')?'浏览器执行':p.includes('/ai/')?'模型适配':p.includes('/documents/')||p.includes('/document-')?'网页测试':p.includes('/http/')?'HTTP 接口':p.startsWith('scripts/')?'开发维护工具':p.startsWith('src/domain/')?'规则与数据契约':p.startsWith('src/application/')?'应用流程':p.startsWith('src/server/')?'服务启动与路由装配':'公共基础';
 const specific={
  'execution-page':'执行测试主页面：范围、模块、批次和执行结果',
@@ -21,7 +21,7 @@ const specific={
  'case-script-editor':'用例和脚本编辑、前置关系、保存及版本',
  'case-editor-diff':'用例与脚本修改对比',
  'case-editor-columns':'用例和脚本之间的列宽拖动',
- 'case-editor-ai-guide':'AI 接入说明；维护接口仍待完成',
+ 'case-editor-ai-guide':'AI编辑器MCP接入说明及本机连接包下载',
  'run-reports':'运行报告列表、筛选、详情、名称备注和重要标记',
  'report-export':'Excel、XMind 报告导出及截图装配',
  'report-template':'部门申样报告的表格模板',
@@ -74,6 +74,10 @@ const specific={
  'sqlite-migration-adapter':'SQLite 迁移场景执行',
  'sqlite-migration-worker':'SQLite 隔离执行子进程',
  'export-project-resources':'只读导出当前用例、脚本、前置和核心链路',
+ 'project-resource-contract':'资源定义、差异与前置引用校验',
+ 'resource-directory':'逐条资源文件读入、摘要和目录边界校验',
+ 'sync-project-resources':'资源文件预览和版本冲突校验后同步',
+ 'case-editor-resources':'网页资源导出、导入预览和新版本应用',
  'package-windows-demo':'Windows 演示包构建、允许清单及摘要',
  'start-integrated-workspaces':'已有工作区的启动与进程复用',
  'stop-integrated-workspaces':'校验实例身份及活动任务后停止服务',

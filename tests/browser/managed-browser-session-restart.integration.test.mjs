@@ -6,7 +6,7 @@ import { once } from 'node:events';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('the default managed Edge session and login storage survive a TestPilot process restart', { timeout: 90_000 }, async t => {
   if (process.platform !== 'win32') { t.skip('the default managed Edge launcher is Windows-specific'); return; }

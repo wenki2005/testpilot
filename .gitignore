@@ -52,6 +52,7 @@ Thumbs.db
 /outputs/
 /backups/
 /.cache/
+/runtime/
 /browser-profiles/
 *.sqlite
 *.sqlite3
