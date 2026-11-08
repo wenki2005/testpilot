@@ -379,7 +379,10 @@ export class DifyWebModuleStore {
         }
         const module = this.getModule(data.moduleId);
         const selected = data.selectedCaseIds ?? module.project.cases.map(c => c.id);
-        if (selected.some(c => module.scriptReviews?.[c]?.status === 'pending')) throw Error('用例已更新，脚本待核对；请在用例与脚本确认后执行。');
+        // A pending script review is recorded on each result, but it must not
+        // prevent a full run from producing evidence. The run itself decides
+        // whether the saved steps are executable; cases without reliable steps
+        // are recorded as blocked instead of being silently skipped.
         const known = new Set(module.project.cases.map(c => c.id));
         if (new Set(selected).size !== selected.length || selected.some(c => !known.has(c)) || data.confirmedCaseIds.some(c => !selected.includes(c)))
             throw new Error('选择范围包含重复或不属于当前模块的用例。');
@@ -760,7 +763,7 @@ export class DifyWebModuleStore {
                 job.documentRunId = randomUUID();
                 job.executionStarted = true;
                 this.event(job, 'executing', `正在测试 ${runnable.length} 条用例。`);
-                const result = await this.deps.execute(execution, job.documentRunId, runnable.map(c => c.id), stage => {
+                const executionPromise = this.deps.execute(execution, job.documentRunId, runnable.map(c => c.id), stage => {
                     if (stage === 'awaiting-login')
                         this.event(job, 'awaiting-login', '测试窗口需要重新登录，请登录后继续。');
                     else if (job.phase === 'awaiting-login')
@@ -777,7 +780,20 @@ export class DifyWebModuleStore {
                         this.save('job', job);
                     }
                 });
-                this.capture(job, result);
+                // A browser adapter must never hold an entire multi-module
+                // regression forever. Release the document run after a bounded
+                // window, retain any per-case results already recorded, and let
+                // the batch continue to the next module with an explicit error.
+                const laneResult = await new Promise<Awaited<typeof executionPromise>>((resolve, reject) => {
+                    const timer = setTimeout(() => {
+                        void Promise.race([
+                            this.deps.cancel(job.snapshot.id, job.documentRunId).catch(() => undefined),
+                            new Promise<void>(done => setTimeout(done, 5000)),
+                        ]).finally(() => reject(new Error('网页执行超过 2 分钟，已停止当前模块并保留已记录结果。')));
+                    }, 120_000);
+                    executionPromise.then(value => { clearTimeout(timer); resolve(value); }, error => { clearTimeout(timer); reject(error); });
+                });
+                this.capture(job, laneResult);
             }
             else {
                 job.executionFinished = true;
