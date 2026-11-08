@@ -20,7 +20,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { collectDepartmentDatabaseEvidence } from '../../database/regression-readback.js';
 import { acquireDocumentPageLease, executeDocumentRun, cancelDocumentRun, getDocumentRun, saveDocumentProject, draftGroundedReadOnlyBrowserSteps } from '../../documents/execution/workflow-facade.js';
 import { launchPersistentTestPage, navigatePersistentPage, getExistingPersistentTestPage } from '../../browser/browser-runtime.js';
-import { allowBrowserRequest, waitForUserLogin, isLoginPage, isAuthenticationRoute, clearLoginHandoff, requestLoginContinue } from '../../browser/login-handoff.js';
+import { allowBrowserRequest, bringBrowserToFront, waitForUserLogin, isLoginPage, isAuthenticationRoute, clearLoginHandoff, requestLoginContinue } from '../../browser/login-handoff.js';
 import { generateDocumentCaseSteps } from '../../../server/runtime.js';
 import { callDifyWorkflow } from '../../integrations/dify/workflow-client.js';
 import type { WebModuleDependencies } from '../execution/module-execution-service.js';
@@ -200,6 +200,11 @@ export function webModuleDependencies(dataRoot: string): WebModuleDependencies {
                 // Inspect a fresh document, retaining the current isolated login.
                 await session.page.goto('about:blank');
                 await navigatePersistentPage(session.page, project.targetUrl);
+                // Connecting can finish without waiting for a login page. Make
+                // the managed Edge window visible in that path too; otherwise
+                // the account is connected in the background and the user sees
+                // no page after clicking “连接我的账号”.
+                await bringBrowserToFront(session.browser, session.page);
                 if (await isLoginPage(session.page))
                     await waitForUserLogin(project.id, job.id, project.targetUrl, session.browser, session.page, async (waiting) => onLogin(waiting));
                 await waitForDepartmentFormBaseline(session.page, project.targetUrl);

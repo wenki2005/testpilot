@@ -293,7 +293,11 @@ export function allowBrowserRequest(method: string, requestUrl: string, projectI
         authOrigins: handoff?.authOrigins ?? [],
     });
 }
-async function bringBrowserToFront(browser: Browser, page: Page): Promise<void> {
+/** Bring a managed test tab to the foreground after an explicit user action.
+ * The connection flow can complete without a login handoff; in that case the
+ * browser page still needs to be visible so the user can see the session that
+ * will be reused by the next run. */
+export async function bringBrowserToFront(browser: Browser, page: Page): Promise<void> {
     await page.bringToFront().catch(() => undefined);
     if (process.platform !== "win32")
         return;
