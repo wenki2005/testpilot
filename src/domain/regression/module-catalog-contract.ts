@@ -42,6 +42,8 @@ export type FixedModule = {
     versions: ModuleVersion[];
     /** Derived from the latest version; shown before a run so pending scripts are visible. */
     pendingScriptReviewCount?: number;
+    /** Derived from the latest version; these cases need steps edited before they can run. */
+    missingScriptCount?: number;
     createdAt: string;
     updatedAt: string;
 };

@@ -242,7 +242,7 @@ export class SystemModuleRegression {
             return { systems: [], systemId: '', modules: [], cases: [], chains: [] };
         const modules = this.list<FixedModule>('module').filter(m => m.systemId === system.id && !m.archived).reverse();
         const cases = modules.flatMap(m => this.editorCases(m, undefined, system));
-        const short = ['审批通过与建单', '审批驳回与再次申请', '库存不足与重试锁单', '订单详情与物流'];
+        const short = ['申请提交与申请记录', '申请撤销与订单取消', '库存不足与定时补锁', '企微通知与后台追踪'];
         const chains = departmentCoreChains.map((c, i) => ({ id: c.id, title: short[i]!, caseKeys: [...new Set(c.steps.flatMap(s => s.caseIds))].flatMap(id => cases.filter(v => v.id === id).map(v => v.moduleId + ':' + id)) })).filter(c => c.caseKeys.length);
         return { systems: systems.map(s => ({ id: s.id, name: s.name })), systemId: system.id, modules: modules.map(m => ({ id: m.id, name: m.name, caseKeys: cases.filter(c => c.moduleId === m.id).map(c => c.moduleId + ':' + c.id) })), cases, chains };
     }
@@ -515,8 +515,10 @@ export class SystemModuleRegression {
         const assigned = new Set(modules.flatMap(m => m.versions.map(v => v.id)));
         const visibleModules = modules.map(m => {
             const latest = m.versions.at(-1);
-            const pendingScriptReviewCount = latest ? Object.values(this.store.getModule(latest.id).scriptReviews ?? {}).filter(review => review.status === 'pending').length : 0;
-            return pendingScriptReviewCount ? { ...m, pendingScriptReviewCount } : m;
+            const latestCases = latest ? this.editorCatalog(m.systemId).cases.filter(c => c.moduleId === m.id) : [];
+            const pendingScriptReviewCount = latestCases.filter(c => c.scriptReview?.status === 'pending' && c.script.steps.length > 0).length;
+            const missingScriptCount = latestCases.filter(c => c.script.steps.length === 0).length;
+            return pendingScriptReviewCount || missingScriptCount ? { ...m, ...(pendingScriptReviewCount ? { pendingScriptReviewCount } : {}), ...(missingScriptCount ? { missingScriptCount } : {}) } : m;
         });
         return { systems: this.list<TestedSystem>('system'), modules: visibleModules, batches: this.list<RegressionBatch>('batch').map(b => this.view(b)), accounts: this.accounts, legacyModules: old.modules.filter(m => !assigned.has(m.id)).map(m => ({ id: m.id, name: m.name, targetUrl: m.targetUrl, caseCount: m.caseCount })), configured: old.configured, database: { connected: mysqlBrowserStatus().connected }, notificationConfigured: this.notifier.configured() };
     }

@@ -57,8 +57,11 @@ export class DepartmentCoreChainStore {
         if (this.activeForSystem(s.id) || state.batches.some(b => b.systemId === s.id && ['queued', 'running'].includes(b.phase)) || ['connecting', 'awaiting-login'].includes(state.accounts[s.id]?.state ?? ''))
             throw Error('该系统正在运行或连接账号，请先结束已有任务。');
         const modules = state.modules.filter(m => m.systemId === s.id && !m.archived), sources = modules.flatMap(m => { const p = this.catalog.cases(m.id); return p.cases.map(c => ({ caseId: c.id, moduleId: m.id, versionId: p.version.id, title: c.title, expected: c.expected, source: c.source })); });
-        const selectedIds = new Set(departmentCoreChains.filter(c => data.chainIds.includes(c.id as typeof data.chainIds[number])).flatMap(c => c.steps.flatMap(s => s.caseIds)));
-        if (this.catalog.editorCatalog?.(s.id)?.cases.some(c => selectedIds.has(c.id) && c.scriptReview?.status === 'pending')) throw Error('核心链路引用的用例已更新，脚本待核对。');
+        // Script review is an advisory marker, not a second approval gate. A
+        // linked v2 case may be run when it has executable steps; cases with
+        // no steps or missing evidence are still blocked by the executor and
+        // recorded as such. This keeps chain selection usable without making
+        // the user click through every imported case first.
         const chains: CoreChainResult[] = departmentCoreChains.filter(c => data.chainIds.includes(c.id as typeof data.chainIds[number])).map(c => ({ ...structuredClone(c), references: [], steps: c.steps.map(step => {
                 const refs = step.caseIds.map(id => {
                     const match = sources.filter(c => c.caseId === id);
