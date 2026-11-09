@@ -706,6 +706,7 @@ export class SystemModuleRegression {
         const system = this.getSystem(parent.systemId);
         if (!this.hasProfile(system, parent.profileId))
             throw Error('系统环境已变更，请恢复原环境后重测。');
+        this.assertScriptReviewsResolved([{ moduleId: entry.moduleId, versionId: entry.versionId, selectedCaseIds: [data.caseId] }]);
         const { jobId, ...snapshot } = entry;
         return this.create({ ...system, profileId: parent.profileId, name: parent.systemName, environment: parent.environment, targetUrl: parent.targetUrl, ...{ databaseBinding: parent.databaseBinding } }, [{ ...snapshot, selectedCaseIds: [data.caseId], confirmedCaseIds: [data.caseId] }], data.requestId, fingerprint, parent.id, { runMode: parent.runMode ?? 'assist', scope: parent.scope ?? 'all', ...(parent.accountName ? { accountName: parent.accountName } : {}) });
     }
