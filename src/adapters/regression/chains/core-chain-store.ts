@@ -8,7 +8,7 @@ import { departmentCoreChains, type CoreRun, type CoreState, type CoreChainResul
 import type { SystemModuleRegression } from '../catalog/module-regression-service.js';
 import type { WebModuleDependencies } from '../execution/module-execution-service.js';
 import { departmentCoreChainBrowser, type CoreChainExecutor } from './core-chain-browser.js';
-import { checkDispatch, resultCounts, type ExecutionManifest } from '../execution/execution-manifest-store.js';
+
 const hash = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex'), now = () => new Date().toISOString();
 /** Separate result store: core journeys do not add/rename original modules or
  * overwrite the original 131 case verdicts. Restart never replays a journey. */
@@ -57,6 +57,11 @@ export class DepartmentCoreChainStore {
         if (this.activeForSystem(s.id) || state.batches.some(b => b.systemId === s.id && ['queued', 'running'].includes(b.phase)) || ['connecting', 'awaiting-login'].includes(state.accounts[s.id]?.state ?? ''))
             throw Error('该系统正在运行或连接账号，请先结束已有任务。');
         const modules = state.modules.filter(m => m.systemId === s.id && !m.archived), sources = modules.flatMap(m => { const p = this.catalog.cases(m.id); return p.cases.map(c => ({ caseId: c.id, moduleId: m.id, versionId: p.version.id, title: c.title, expected: c.expected, source: c.source })); });
+        // Script review is an advisory marker, not a second approval gate. A
+        // linked v2 case may be run when it has executable steps; cases with
+        // no steps or missing evidence are still blocked by the executor and
+        // recorded as such. This keeps chain selection usable without making
+        // the user click through every imported case first.
         const chains: CoreChainResult[] = departmentCoreChains.filter(c => data.chainIds.includes(c.id as typeof data.chainIds[number])).map(c => ({ ...structuredClone(c), references: [], steps: c.steps.map(step => {
                 const refs = step.caseIds.map(id => {
                     const match = sources.filter(c => c.caseId === id);
@@ -90,12 +95,8 @@ export class DepartmentCoreChainStore {
                 signal.throwIfAborted();
                 run.message = '正在执行：' + chain.title;
                 this.save(run);
-                const moduleId = randomUUID(), manifest: ExecutionManifest = { schema: 1, run_id: run.id, module_id: moduleId, plan_digest: run.definitionDigest, suite_digest: hash({ id: chain.id, steps: chain.steps.map(s => ({ id: s.id, expected: s.expected, sources: s.sources })) }), case_ids: chain.steps.map(s => s.id) };
                 try {
-                    const r = await this.deps.cloud('execution', { execution_json: JSON.stringify({ ...manifest, phase: 'dispatch' }) }, 'core-' + run.id, signal);
-                    checkDispatch(r.output, manifest);
-                    run.difyRuns.push({ chainId: chain.id, phase: 'dispatch', id: r.workflowRunId, status: 'succeeded' });
-                    this.save(run);
+
                     await this.executor(run, chain, (id, patch) => {
                         const row = chain.steps.find(s => s.id === id);
                         if (!row)
@@ -113,26 +114,8 @@ export class DepartmentCoreChainStore {
                             row.detail = '该链路未完成：' + (e instanceof Error ? e.message : '当前证据不可用');
                             row.finishedAt = now();
                         }
-                    if (!run.difyRuns.some(r => r.chainId === chain.id && r.phase === 'dispatch'))
-                        run.difyRuns.push({ chainId: chain.id, phase: 'dispatch', id: '', status: 'failed' });
                     this.save(run);
                 }
-                if (run.difyRuns.some(r => r.chainId === chain.id && r.phase === 'dispatch' && r.status === 'succeeded'))
-                    try {
-                        const results = chain.steps.map(s => ({ case_id: s.id, status: s.status })), r = await this.deps.cloud('execution', { execution_json: JSON.stringify({ ...manifest, phase: 'report', results }) }, 'core-' + run.id, signal), output = r.output as any;
-                        for (const k of ['schema', 'run_id', 'module_id', 'plan_digest', 'suite_digest', 'case_ids'] as const)
-                            if (JSON.stringify(output?.[k]) !== JSON.stringify(manifest[k]))
-                                throw Error('Dify汇总清单不一致');
-                        const counts = resultCounts(results);
-                        if (output.phase !== 'report' || output.results !== undefined && JSON.stringify(output.results) !== JSON.stringify(results) || Object.entries(counts).some(([k, v]) => output.counts?.[k] !== v))
-                            throw Error('Dify汇总不能改变真实步骤结果');
-                        run.difyRuns.push({ chainId: chain.id, phase: 'report', id: r.workflowRunId, status: 'succeeded' });
-                    }
-                    catch {
-                        if (signal.aborted)
-                            signal.throwIfAborted();
-                        run.difyRuns.push({ chainId: chain.id, phase: 'report', id: '', status: 'failed' });
-                    }
                 this.save(run);
             }
             run.phase = 'completed';

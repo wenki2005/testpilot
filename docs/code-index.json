@@ -13,62 +13,27 @@
       "symbols": []
     },
     {
-      "file": "scripts/build/package-windows-demo.mjs",
+      "file": "scripts/build/package-windows.mjs",
       "category": "开发维护工具",
-      "purpose": "Windows 演示包构建、允许清单及摘要",
-      "lines": 182,
+      "purpose": "package windows",
+      "lines": 65,
       "previousPaths": [
         "scripts/package-demo.mjs"
       ],
       "symbols": [
         {
-          "name": "parseArgs",
-          "line": 33,
+          "name": "copyTree",
+          "line": 20,
           "kind": "FunctionDeclaration"
         },
         {
-          "name": "listFiles",
-          "line": 50,
+          "name": "license",
+          "line": 43,
           "kind": "FunctionDeclaration"
         },
         {
-          "name": "assertLauncherEncoding",
-          "line": 66,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "sha256",
-          "line": 97,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "writeManifest",
-          "line": 101,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "buildZip",
-          "line": 112,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "totalSize",
-          "line": 122,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "assemblePackage",
-          "line": 126,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "assertCleanContents",
-          "line": 151,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "main",
-          "line": 167,
+          "name": "list",
+          "line": 54,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -95,6 +60,20 @@
         {
           "name": "walk",
           "line": 30,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "scripts/data/relocate-workspace.mjs",
+      "category": "开发维护工具",
+      "purpose": "relocate workspace",
+      "lines": 71,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "inventory",
+          "line": 20,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -147,40 +126,64 @@
       ]
     },
     {
+      "file": "scripts/lib/data-directory.mjs",
+      "category": "开发维护工具",
+      "purpose": "data directory",
+      "lines": 19,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "resolveDataDirectories",
+          "line": 5,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "scripts/lib/integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "integrated workspaces",
-      "lines": 15,
+      "lines": 20,
       "previousPaths": [],
       "symbols": [
         {
           "name": "repoRoot",
-          "line": 4,
-          "kind": "exported value"
-        },
-        {
-          "name": "runtimeRoot",
           "line": 5,
           "kind": "exported value"
         },
         {
-          "name": "workspaceNames",
+          "name": "runtimeRoot",
           "line": 6,
           "kind": "exported value"
         },
         {
-          "name": "workspacePorts",
+          "name": "legacyRuntimeRoot",
           "line": 7,
           "kind": "exported value"
         },
         {
-          "name": "workspacePaths",
+          "name": "workspaceNames",
           "line": 8,
+          "kind": "exported value"
+        },
+        {
+          "name": "workspacePorts",
+          "line": 10,
+          "kind": "exported value"
+        },
+        {
+          "name": "entryPort",
+          "line": 11,
+          "kind": "exported value"
+        },
+        {
+          "name": "workspacePaths",
+          "line": 13,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "argument",
-          "line": 14,
+          "line": 19,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -308,17 +311,17 @@
       "file": "scripts/maintenance/code-index.mjs",
       "category": "开发维护工具",
       "purpose": "生成代码导航及按功能、旧名称、用例编号定位代码",
-      "lines": 130,
+      "lines": 134,
       "previousPaths": [],
       "symbols": [
         {
           "name": "purpose",
-          "line": 83,
+          "line": 87,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "visit",
-          "line": 90,
+          "line": 94,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -352,6 +355,14 @@
           "kind": "FunctionDeclaration"
         }
       ]
+    },
+    {
+      "file": "scripts/resources/audit-script-coverage.mjs",
+      "category": "开发维护工具",
+      "purpose": "audit script coverage",
+      "lines": 14,
+      "previousPaths": [],
+      "symbols": []
     },
     {
       "file": "scripts/resources/build-dify-workflow.mjs",
@@ -398,7 +409,7 @@
       "file": "scripts/resources/export-project-resources.mjs",
       "category": "开发维护工具",
       "purpose": "只读导出当前用例、脚本、前置和核心链路",
-      "lines": 64,
+      "lines": 66,
       "previousPaths": [
         "scripts/export-project-resources.mjs"
       ],
@@ -462,6 +473,20 @@
       "symbols": []
     },
     {
+      "file": "scripts/resources/sync-project-resources.mjs",
+      "category": "开发维护工具",
+      "purpose": "资源文件预览和版本冲突校验后同步",
+      "lines": 14,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "post",
+          "line": 10,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "scripts/serve-integrated-entry.mjs",
       "category": "开发维护工具",
       "purpose": "4325 入口路由转发与工作区隔离",
@@ -473,7 +498,7 @@
       "file": "scripts/start-integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "已有工作区的启动与进程复用",
-      "lines": 87,
+      "lines": 94,
       "previousPaths": [],
       "symbols": []
     },
@@ -481,7 +506,7 @@
       "file": "scripts/stop-integrated-workspaces.mjs",
       "category": "开发维护工具",
       "purpose": "校验实例身份及活动任务后停止服务",
-      "lines": 55,
+      "lines": 68,
       "previousPaths": [],
       "symbols": []
     },
@@ -1010,89 +1035,89 @@
       "file": "src/adapters/api/suite-workflow.ts",
       "category": "公共基础",
       "purpose": "suite workflow",
-      "lines": 260,
+      "lines": 264,
       "previousPaths": [
         "src/adapters/api-suite-workflow.ts"
       ],
       "symbols": [
         {
           "name": "ApiSuiteCandidate",
-          "line": 7,
+          "line": 8,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "createApiSuiteCandidate",
-          "line": 28,
+          "line": 29,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "updateApiSuiteCandidate",
-          "line": 41,
+          "line": 42,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "listApiSuiteCandidates",
-          "line": 65,
+          "line": 66,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "getApiSuiteCandidate",
-          "line": 82,
+          "line": 83,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "reviewApiSuiteCandidate",
-          "line": 95,
+          "line": 96,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "executeApprovedApiSuite",
-          "line": 107,
+          "line": 108,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "getApiFindingHistory",
-          "line": 148,
+          "line": 149,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "ApiFindingDiagnosis",
-          "line": 153,
+          "line": 154,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "diagnoseApiFinding",
-          "line": 175,
+          "line": 176,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "autoRunReadOnlyApiSuite",
-          "line": 203,
+          "line": 207,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "autoRunReadOnlyApiSuiteOnce",
-          "line": 213,
+          "line": 217,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "getApiRun",
-          "line": 236,
+          "line": 240,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "readApiRunArtifact",
-          "line": 246,
+          "line": 250,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "validCandidate",
-          "line": 256,
+          "line": 260,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "isUuid",
-          "line": 259,
+          "line": 263,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -1756,7 +1781,7 @@
       "file": "src/adapters/browser/login-handoff.ts",
       "category": "浏览器执行",
       "purpose": "login handoff",
-      "lines": 327,
+      "lines": 331,
       "previousPaths": [
         "src/adapters/login-handoff.ts"
       ],
@@ -1793,42 +1818,42 @@
         },
         {
           "name": "waitForUserLogin",
-          "line": 169,
+          "line": 173,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "requestLoginContinue",
-          "line": 227,
+          "line": 231,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "clearLoginHandoff",
-          "line": 237,
+          "line": 241,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "isLoginPage",
-          "line": 238,
+          "line": 242,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "browserRequestPolicySource",
-          "line": 273,
+          "line": 277,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "allowBrowserRequest",
-          "line": 274,
+          "line": 278,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "bringBrowserToFront",
-          "line": 292,
+          "line": 296,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "isAuthenticationRoute",
-          "line": 316,
+          "line": 320,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -3931,249 +3956,279 @@
       "file": "src/adapters/regression/catalog/module-regression-service.ts",
       "category": "申样回归执行",
       "purpose": "系统、模块、用例编辑、前置校验和批次调度",
-      "lines": 850,
+      "lines": 957,
       "previousPaths": [
         "src/adapters/system-module-regression.ts"
       ],
       "symbols": [
         {
           "name": "SystemModuleRegression",
-          "line": 23,
+          "line": 25,
           "kind": "ClassDeclaration"
         },
         {
           "name": "SystemModuleRegression.list",
-          "line": 61,
+          "line": 63,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.save",
-          "line": 62,
+          "line": 64,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.get",
-          "line": 70,
+          "line": 72,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.getSystem",
-          "line": 77,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.getModule",
-          "line": 78,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.occupied",
           "line": 79,
           "kind": "method"
         },
         {
-          "name": "SystemModuleRegression.saveSystem",
+          "name": "SystemModuleRegression.getModule",
           "line": 80,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.connectionSettings",
+          "line": 81,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.occupied",
+          "line": 84,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.saveSystem",
+          "line": 85,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.accountProfile",
-          "line": 111,
+          "line": 116,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.addAccount",
-          "line": 112,
+          "line": 117,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.selectAccount",
-          "line": 126,
+          "line": 131,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.hasProfile",
-          "line": 138,
+          "line": 143,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.saveSelection",
-          "line": 139,
+          "line": 144,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.importModule",
-          "line": 153,
+          "line": 158,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.attachLegacy",
-          "line": 165,
+          "line": 170,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.attach",
-          "line": 172,
+          "line": 177,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.archiveModule",
-          "line": 191,
+          "line": 196,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.saveCore",
-          "line": 204,
+          "line": 209,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.markdown",
-          "line": 226,
+          "line": 231,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.cases",
-          "line": 227,
+          "line": 232,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorCatalog",
-          "line": 234,
+          "line": 239,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.editorRevision",
+          "line": 249,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorCases",
-          "line": 244,
+          "line": 253,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorHistory",
-          "line": 271,
+          "line": 280,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.initializeResources",
+          "line": 282,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.exportResources",
+          "line": 306,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.previewResources",
+          "line": 321,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.applyResources",
+          "line": 336,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.editorScript",
-          "line": 272,
+          "line": 378,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.savePrerequisitePlan",
-          "line": 278,
+          "line": 384,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.saveEditorCase",
-          "line": 341,
+          "line": 447,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.assertEditorPrerequisites",
-          "line": 389,
+          "line": 496,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.state",
-          "line": 405,
+          "line": 512,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.getBatch",
-          "line": 411,
+          "line": 518,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.view",
-          "line": 412,
+          "line": 519,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.start",
-          "line": 434,
+          "line": 541,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.retest",
-          "line": 476,
+          "line": 583,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.replay",
-          "line": 514,
+          "line": 621,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.confirmCase",
-          "line": 522,
+          "line": 629,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.create",
-          "line": 542,
+          "line": 649,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.run",
-          "line": 566,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.cancel",
-          "line": 608,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.continueBatch",
-          "line": 623,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.connect",
-          "line": 631,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.continueConnection",
-          "line": 665,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.cancelConnection",
-          "line": 672,
-          "kind": "method"
-        },
-        {
-          "name": "SystemModuleRegression.retryReports",
           "line": 673,
           "kind": "method"
         },
         {
+          "name": "SystemModuleRegression.cancel",
+          "line": 715,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.continueBatch",
+          "line": 730,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.connect",
+          "line": 738,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.continueConnection",
+          "line": 772,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.cancelConnection",
+          "line": 779,
+          "kind": "method"
+        },
+        {
+          "name": "SystemModuleRegression.retryReports",
+          "line": 780,
+          "kind": "method"
+        },
+        {
           "name": "SystemModuleRegression.notify",
-          "line": 718,
+          "line": 825,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.retryNotification",
-          "line": 739,
+          "line": 846,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.scripts",
-          "line": 759,
+          "line": 866,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.selectionScripts",
-          "line": 765,
+          "line": 872,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.report",
-          "line": 830,
+          "line": 937,
           "kind": "method"
         },
         {
           "name": "SystemModuleRegression.close",
-          "line": 831,
+          "line": 938,
           "kind": "method"
         }
       ]
@@ -4218,7 +4273,7 @@
       "file": "src/adapters/regression/chains/core-chain-store.ts",
       "category": "申样回归执行",
       "purpose": "核心链路任务调度、恢复、结果与截图存储",
-      "lines": 175,
+      "lines": 155,
       "previousPaths": [
         "src/adapters/department-core-chain-store.ts"
       ],
@@ -4265,27 +4320,27 @@
         },
         {
           "name": "DepartmentCoreChainStore.execute",
-          "line": 85,
+          "line": 87,
           "kind": "method"
         },
         {
           "name": "DepartmentCoreChainStore.cancel",
-          "line": 148,
+          "line": 128,
           "kind": "method"
         },
         {
           "name": "DepartmentCoreChainStore.continue",
-          "line": 156,
+          "line": 136,
           "kind": "method"
         },
         {
           "name": "DepartmentCoreChainStore.evidence",
-          "line": 163,
+          "line": 143,
           "kind": "method"
         },
         {
           "name": "DepartmentCoreChainStore.close",
-          "line": 169,
+          "line": 149,
           "kind": "method"
         }
       ]
@@ -4419,14 +4474,14 @@
       "file": "src/adapters/regression/evidence/evidence-paths.ts",
       "category": "申样回归执行",
       "purpose": "evidence paths",
-      "lines": 15,
+      "lines": 14,
       "previousPaths": [
         "src/adapters/dify-module-evidence-path.ts"
       ],
       "symbols": [
         {
           "name": "difyModuleEvidencePath",
-          "line": 6,
+          "line": 5,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -4623,199 +4678,209 @@
       "file": "src/adapters/regression/execution/module-execution-service.ts",
       "category": "申样回归执行",
       "purpose": "模块版本、执行任务、步骤准备和结果汇总",
-      "lines": 764,
+      "lines": 809,
       "previousPaths": [
         "src/adapters/dify-web-modules.ts"
       ],
       "symbols": [
         {
           "name": "moduleDigest",
-          "line": 25,
+          "line": 26,
           "kind": "exported value"
         },
         {
           "name": "Outcome",
-          "line": 29,
-          "kind": "TypeAliasDeclaration"
-        },
-        {
-          "name": "WebModule",
           "line": 30,
           "kind": "TypeAliasDeclaration"
         },
         {
+          "name": "WebModule",
+          "line": 31,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
           "name": "WebModuleResult",
-          "line": 48,
+          "line": 51,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "moduleOutcome",
-          "line": 70,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "independentRecordScope",
-          "line": 71,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "jobOutcome",
-          "line": 72,
-          "kind": "FunctionDeclaration"
-        },
-        {
-          "name": "executionDigest",
           "line": 73,
           "kind": "FunctionDeclaration"
         },
         {
-          "name": "Phase",
+          "name": "independentRecordScope",
           "line": 74,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "jobOutcome",
+          "line": 75,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "executionDigest",
+          "line": 76,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "Phase",
+          "line": 77,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "WebModuleJob",
-          "line": 75,
+          "line": 78,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "WebModuleDependencies",
-          "line": 118,
+          "line": 121,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "moduleTarget",
-          "line": 147,
+          "line": 150,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "checkModulePlan",
-          "line": 158,
+          "line": 161,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "DifyWebModuleStore",
-          "line": 176,
+          "line": 179,
           "kind": "ClassDeclaration"
         },
         {
           "name": "DifyWebModuleStore.close",
-          "line": 192,
+          "line": 195,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.list",
-          "line": 204,
+          "line": 207,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.save",
-          "line": 205,
+          "line": 208,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.get",
-          "line": 212,
+          "line": 215,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.state",
-          "line": 218,
-          "kind": "method"
-        },
-        {
-          "name": "DifyWebModuleStore.getModule",
-          "line": 219,
-          "kind": "method"
-        },
-        {
-          "name": "DifyWebModuleStore.getJob",
-          "line": 220,
-          "kind": "method"
-        },
-        {
-          "name": "DifyWebModuleStore.revisePrerequisites",
           "line": 221,
           "kind": "method"
         },
         {
+          "name": "DifyWebModuleStore.getModule",
+          "line": 222,
+          "kind": "method"
+        },
+        {
+          "name": "DifyWebModuleStore.getJob",
+          "line": 223,
+          "kind": "method"
+        },
+        {
+          "name": "DifyWebModuleStore.prepareResourceModule",
+          "line": 225,
+          "kind": "method"
+        },
+        {
+          "name": "DifyWebModuleStore.commitResourceModule",
+          "line": 252,
+          "kind": "method"
+        },
+        {
+          "name": "DifyWebModuleStore.revisePrerequisites",
+          "line": 256,
+          "kind": "method"
+        },
+        {
           "name": "DifyWebModuleStore.reviseCase",
-          "line": 244,
+          "line": 279,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.import",
-          "line": 284,
+          "line": 319,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.start",
-          "line": 326,
+          "line": 361,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.markdown",
-          "line": 389,
+          "line": 425,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.reportForExport",
-          "line": 399,
+          "line": 435,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.readiness",
-          "line": 400,
+          "line": 436,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.event",
-          "line": 412,
+          "line": 448,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.launch",
-          "line": 413,
+          "line": 449,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.cancel",
-          "line": 414,
+          "line": 450,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.continue",
-          "line": 423,
+          "line": 459,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.retry",
-          "line": 430,
-          "kind": "method"
-        },
-        {
-          "name": "DifyWebModuleStore.cloud",
-          "line": 445,
-          "kind": "method"
-        },
-        {
-          "name": "DifyWebModuleStore.capture",
           "line": 466,
           "kind": "method"
         },
         {
+          "name": "DifyWebModuleStore.cloud",
+          "line": 481,
+          "kind": "method"
+        },
+        {
+          "name": "DifyWebModuleStore.capture",
+          "line": 502,
+          "kind": "method"
+        },
+        {
           "name": "DifyWebModuleStore.report",
-          "line": 483,
+          "line": 519,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.renderReport",
-          "line": 512,
+          "line": 557,
           "kind": "method"
         },
         {
           "name": "DifyWebModuleStore.run",
-          "line": 513,
+          "line": 558,
           "kind": "method"
         }
       ]
@@ -4930,6 +4995,141 @@
           "name": "DifyBatchNotifier.deliverNow",
           "line": 87,
           "kind": "method"
+        }
+      ]
+    },
+    {
+      "file": "src/adapters/regression/resources/case-version-import.ts",
+      "category": "申样回归执行",
+      "purpose": "case version import",
+      "lines": 77,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "Row",
+          "line": 6,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "rows",
+          "line": 9,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "caseVersionInput",
+          "line": 35,
+          "kind": "exported value"
+        },
+        {
+          "name": "prepareCaseVersion",
+          "line": 37,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/adapters/regression/resources/project-resource-contract.ts",
+      "category": "申样回归执行",
+      "purpose": "资源定义、差异与前置引用校验",
+      "lines": 83,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "projectResourceSchema",
+          "line": 22,
+          "kind": "exported value"
+        },
+        {
+          "name": "ProjectResources",
+          "line": 29,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "ResourceCase",
+          "line": 30,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "resourceKey",
+          "line": 31,
+          "kind": "exported value"
+        },
+        {
+          "name": "resourceDigest",
+          "line": 32,
+          "kind": "exported value"
+        },
+        {
+          "name": "validateProjectResources",
+          "line": 35,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "compareProjectResources",
+          "line": 74,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/adapters/regression/resources/resource-directory.ts",
+      "category": "申样回归执行",
+      "purpose": "逐条资源文件读入、摘要和目录边界校验",
+      "lines": 44,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "readResourceDirectory",
+          "line": 7,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/adapters/regression/resources/script-coverage.ts",
+      "category": "申样回归执行",
+      "purpose": "script coverage",
+      "lines": 26,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "ScriptSupport",
+          "line": 4,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "scriptSupport",
+          "line": 6,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "scriptCoverage",
+          "line": 22,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/adapters/regression/resources/script-gap-requirements.ts",
+      "category": "申样回归执行",
+      "purpose": "script gap requirements",
+      "lines": 36,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "CaseSource",
+          "line": 1,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "Requirement",
+          "line": 2,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "scriptGapRequirement",
+          "line": 24,
+          "kind": "FunctionDeclaration"
         }
       ]
     },
@@ -5436,37 +5636,61 @@
       ]
     },
     {
+      "file": "src/adapters/regression/scenarios/orders/admin-filter-contract.ts",
+      "category": "申样回归执行",
+      "purpose": "admin filter contract",
+      "lines": 25,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "Row",
+          "line": 1,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "AdminFilterKind",
+          "line": 2,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "auditAdminFilters",
+          "line": 4,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "src/adapters/regression/scenarios/orders/admin-order-records.ts",
       "category": "申样回归执行",
       "purpose": "管理订单数据读回及关联",
-      "lines": 85,
+      "lines": 96,
       "previousPaths": [
         "src/adapters/dify-admin-order-records.ts"
       ],
       "symbols": [
         {
           "name": "Row",
-          "line": 5,
-          "kind": "TypeAliasDeclaration"
-        },
-        {
-          "name": "Result",
           "line": 6,
           "kind": "TypeAliasDeclaration"
         },
         {
+          "name": "Result",
+          "line": 7,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
           "name": "AdminRecordKind",
-          "line": 10,
+          "line": 11,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "isAdminRecordKind",
-          "line": 11,
+          "line": 12,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "verifyAdminOrderRecords",
-          "line": 12,
+          "line": 13,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -5769,6 +5993,20 @@
         {
           "name": "verifyDepartmentReadOnlyResult",
           "line": 274,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/adapters/reports/report-archive.ts",
+      "category": "运行报告",
+      "purpose": "report archive",
+      "lines": 39,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "buildReportArchive",
+          "line": 9,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -8249,6 +8487,20 @@
       ]
     },
     {
+      "file": "src/bootstrap/data-environment.ts",
+      "category": "公共基础",
+      "purpose": "data environment",
+      "lines": 11,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "configureDataEnvironment",
+          "line": 5,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "src/bootstrap/document-application-services.ts",
       "category": "网页测试",
       "purpose": "document application services",
@@ -8312,6 +8564,25 @@
         {
           "name": "createProjectProfileRunRuntime",
           "line": 11,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/bootstrap/resource-initialization.ts",
+      "category": "公共基础",
+      "purpose": "resource initialization",
+      "lines": 21,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "ResourceInitialization",
+          "line": 6,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "initializeBundledResources",
+          "line": 9,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -8399,7 +8670,7 @@
       "file": "src/demo/server.ts",
       "category": "公共基础",
       "purpose": "server",
-      "lines": 3,
+      "lines": 5,
       "previousPaths": [],
       "symbols": []
     },
@@ -8407,7 +8678,7 @@
       "file": "src/domain/cases/case-script-contract.ts",
       "category": "规则与数据契约",
       "purpose": "case script contract",
-      "lines": 52,
+      "lines": 56,
       "previousPaths": [
         "src/domain/case-script-editor-contract.ts"
       ],
@@ -8434,7 +8705,7 @@
         },
         {
           "name": "CaseEditorCatalog",
-          "line": 34,
+          "line": 38,
           "kind": "TypeAliasDeclaration"
         }
       ]
@@ -9756,7 +10027,7 @@
       "file": "src/domain/regression/connected-evidence-contract.ts",
       "category": "申样回归执行",
       "purpose": "connected evidence contract",
-      "lines": 85,
+      "lines": 91,
       "previousPaths": [
         "src/domain/dify-connected-contract.ts"
       ],
@@ -9843,7 +10114,7 @@
       "file": "src/domain/regression/module-catalog-contract.ts",
       "category": "申样回归执行",
       "purpose": "module catalog contract",
-      "lines": 109,
+      "lines": 110,
       "previousPaths": [
         "src/domain/system-module-contract.ts"
       ],
@@ -9860,32 +10131,32 @@
         },
         {
           "name": "FixedModule",
-          "line": 32,
+          "line": 33,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "BatchEntry",
-          "line": 45,
+          "line": 46,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "RegressionBatch",
-          "line": 56,
+          "line": 57,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "BatchView",
-          "line": 78,
+          "line": 79,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "AccountView",
-          "line": 82,
+          "line": 83,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "SystemModuleState",
-          "line": 89,
+          "line": 90,
           "kind": "TypeAliasDeclaration"
         }
       ]
@@ -10075,7 +10346,7 @@
       "file": "src/domain/testing/local-test-contracts.ts",
       "category": "规则与数据契约",
       "purpose": "local test contracts",
-      "lines": 117,
+      "lines": 118,
       "previousPaths": [
         "src/domain/demo-contracts.ts"
       ],
@@ -10127,7 +10398,7 @@
         },
         {
           "name": "RunContext",
-          "line": 111,
+          "line": 112,
           "kind": "InterfaceDeclaration"
         }
       ]
@@ -11179,14 +11450,14 @@
       "file": "src/interfaces/http/regression/regression-routes.ts",
       "category": "申样回归执行",
       "purpose": "执行测试、用例编辑、核心链路及脚本下载 HTTP 接口",
-      "lines": 403,
+      "lines": 479,
       "previousPaths": [
         "src/interfaces/http/dify-regression-routes.ts"
       ],
       "symbols": [
         {
           "name": "createDifyRegressionRoutes",
-          "line": 17,
+          "line": 21,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -11195,14 +11466,14 @@
       "file": "src/interfaces/http/reports/run-report-routes.ts",
       "category": "运行报告",
       "purpose": "报告列表、详情和报告元数据修改 HTTP 接口",
-      "lines": 18,
+      "lines": 32,
       "previousPaths": [
         "src/interfaces/http/run-report-routes.ts"
       ],
       "symbols": [
         {
           "name": "createRunReportRoutes",
-          "line": 6,
+          "line": 10,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -11362,6 +11633,34 @@
       ]
     },
     {
+      "file": "src/interfaces/mcp/case-maintenance-tools.ts",
+      "category": "公共基础",
+      "purpose": "case maintenance tools",
+      "lines": 21,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "registerCaseMaintenanceTools",
+          "line": 4,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "src/interfaces/mcp/connection-package.ts",
+      "category": "公共基础",
+      "purpose": "connection package",
+      "lines": 12,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "caseMaintenancePackage",
+          "line": 5,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "src/interfaces/mcp/document-test-tools.ts",
       "category": "网页测试",
       "purpose": "document test tools",
@@ -11471,6 +11770,14 @@
           "kind": "FunctionDeclaration"
         }
       ]
+    },
+    {
+      "file": "src/mcp/maintenance-server.ts",
+      "category": "公共基础",
+      "purpose": "maintenance server",
+      "lines": 16,
+      "previousPaths": [],
+      "symbols": []
     },
     {
       "file": "src/mcp/server.ts",
@@ -11625,7 +11932,7 @@
       "file": "src/server/http-server.ts",
       "category": "服务启动与路由装配",
       "purpose": "本地 HTTP 服务启动、依赖装配和路由挂载",
-      "lines": 703,
+      "lines": 704,
       "previousPaths": [
         "src/demo/server.ts"
       ],
@@ -11652,32 +11959,32 @@
         },
         {
           "name": "collectDocumentPageEvidence",
-          "line": 238,
+          "line": 239,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "validRequest",
-          "line": 244,
+          "line": 245,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "persistRegressions",
-          "line": 252,
+          "line": 253,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "persistProjectRun",
-          "line": 255,
+          "line": 256,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "readProjectRunFiles",
-          "line": 258,
+          "line": 259,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "handle",
-          "line": 262,
+          "line": 263,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -11753,154 +12060,154 @@
       "file": "src/server/runtime.ts",
       "category": "服务启动与路由装配",
       "purpose": "本地测试运行时及通用执行辅助",
-      "lines": 975,
+      "lines": 995,
       "previousPaths": [
         "src/demo/runtime.ts"
       ],
       "symbols": [
         {
           "name": "configuredModel",
-          "line": 22,
+          "line": 21,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "modelConfiguration",
-          "line": 30,
+          "line": 29,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "generateGrammarPlaywrightCandidate",
-          "line": 40,
+          "line": 39,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildDocumentBrowserCaseMessages",
-          "line": 119,
+          "line": 118,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "generateDocumentBrowserCases",
-          "line": 133,
+          "line": 132,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "generateDocumentBrowserCaseBatch",
-          "line": 159,
+          "line": 158,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "DocumentStepAuthoringCase",
-          "line": 251,
+          "line": 250,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "generateDocumentCaseSteps",
-          "line": 254,
+          "line": 253,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "validateDraftLocatorsAgainstEvidence",
-          "line": 351,
+          "line": 350,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "ParsedDocumentPageEvidenceSnapshot",
-          "line": 430,
+          "line": 429,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "parsePageEvidenceSnapshots",
-          "line": 446,
+          "line": 445,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "event",
-          "line": 462,
+          "line": 461,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "parseDotPath",
-          "line": 465,
+          "line": 464,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "equalJson",
-          "line": 472,
+          "line": 471,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "jsonObject",
-          "line": 479,
+          "line": 478,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "targetUrl",
-          "line": 484,
+          "line": 483,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "combineSignal",
-          "line": 495,
+          "line": 494,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "readBody",
-          "line": 511,
+          "line": 510,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "clampActions",
-          "line": 522,
+          "line": 521,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "assertionForCheck",
-          "line": 525,
+          "line": 524,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildRequestTool",
-          "line": 550,
+          "line": 549,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildAssertTool",
-          "line": 615,
+          "line": 618,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "planTool",
-          "line": 641,
+          "line": 644,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "finalStatus",
-          "line": 675,
+          "line": 678,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "normalizeRoutes",
-          "line": 700,
+          "line": 707,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "routeCoverageLabel",
-          "line": 703,
+          "line": 710,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "registerChecksTool",
-          "line": 714,
+          "line": 721,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "buildOfflineScript",
-          "line": 753,
+          "line": 760,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "executeDemo",
-          "line": 779,
+          "line": 786,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13380,14 +13687,14 @@
       "file": "tests/documents/cases/document-no-model-step-fallback.integration.mjs",
       "category": "网页测试",
       "purpose": "document no model step fallback.integration",
-      "lines": 77,
+      "lines": 78,
       "previousPaths": [
         "tests/document-no-model-step-fallback.integration.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 69,
+          "line": 70,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13517,7 +13824,7 @@
       "file": "tests/documents/projects/document-project-update-service.test.mjs",
       "category": "网页测试",
       "purpose": "document project update service.test",
-      "lines": 73,
+      "lines": 93,
       "previousPaths": [
         "tests/document-project-update-service.test.mjs"
       ],
@@ -13547,7 +13854,7 @@
       "file": "tests/documents/projects/document-site-version.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document site version.integration.test",
-      "lines": 539,
+      "lines": 551,
       "previousPaths": [
         "tests/document-site-version.integration.test.mjs"
       ],
@@ -13597,14 +13904,14 @@
       "file": "tests/documents/runs/document-api-contract-ui.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document api contract ui.integration.test",
-      "lines": 160,
+      "lines": 175,
       "previousPaths": [
         "tests/document-api-contract-ui.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 154,
+          "line": 169,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13679,14 +13986,14 @@
       "file": "tests/documents/runs/document-post-login-generation.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document post login generation.integration.test",
-      "lines": 161,
+      "lines": 162,
       "previousPaths": [
         "tests/document-post-login-generation.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 153,
+          "line": 154,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13711,7 +14018,7 @@
       "file": "tests/documents/runs/document-regression-sample.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document regression sample.integration.test",
-      "lines": 297,
+      "lines": 298,
       "previousPaths": [
         "tests/document-regression-sample.integration.test.mjs"
       ],
@@ -13741,14 +14048,14 @@
       "file": "tests/documents/runs/document-run-crash-recovery.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document run crash recovery.integration.test",
-      "lines": 142,
+      "lines": 143,
       "previousPaths": [
         "tests/document-run-crash-recovery.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "reservePort",
-          "line": 138,
+          "line": 139,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13810,17 +14117,17 @@
       "symbols": [
         {
           "name": "callTool",
-          "line": 106,
+          "line": 108,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "createJsonRpcClient",
-          "line": 107,
+          "line": 109,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "reservePort",
-          "line": 113,
+          "line": 115,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13829,24 +14136,24 @@
       "file": "tests/documents/runs/document-workflow.integration.test.mjs",
       "category": "网页测试",
       "purpose": "document workflow.integration.test",
-      "lines": 554,
+      "lines": 555,
       "previousPaths": [
         "tests/document-workflow.integration.test.mjs"
       ],
       "symbols": [
         {
           "name": "createJsonRpcClient",
-          "line": 510,
+          "line": 511,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "reservePort",
-          "line": 534,
+          "line": 535,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "completePreparationStages",
-          "line": 543,
+          "line": 544,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -13950,14 +14257,14 @@
       "file": "tests/infrastructure/run-diagnostics.test.mjs",
       "category": "公共基础",
       "purpose": "run diagnostics.test",
-      "lines": 107,
+      "lines": 110,
       "previousPaths": [
         "tests/run-diagnostics.test.mjs"
       ],
       "symbols": [
         {
           "name": "emit",
-          "line": 71,
+          "line": 74,
           "kind": "method"
         }
       ]
@@ -13970,6 +14277,14 @@
       "previousPaths": [
         "tests/test-runner-ownership.test.mjs"
       ],
+      "symbols": []
+    },
+    {
+      "file": "tests/mcp/case-maintenance.test.mjs",
+      "category": "公共基础",
+      "purpose": "case maintenance.test",
+      "lines": 41,
+      "previousPaths": [],
       "symbols": []
     },
     {
@@ -14239,7 +14554,7 @@
       "file": "tests/regression/chains/core-chain-store.test.mjs",
       "category": "申样回归执行",
       "purpose": "core chain store.test",
-      "lines": 29,
+      "lines": 30,
       "previousPaths": [
         "tests/department-core-chain-store.test.mjs"
       ],
@@ -14363,6 +14678,58 @@
           "kind": "FunctionDeclaration"
         }
       ]
+    },
+    {
+      "file": "tests/regression/resources/case-version-import.test.mjs",
+      "category": "申样回归执行",
+      "purpose": "case version import.test",
+      "lines": 36,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/regression/resources/project-resources.test.mjs",
+      "category": "申样回归执行",
+      "purpose": "project resources.test",
+      "lines": 56,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "fixture",
+          "line": 11,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "tests/regression/resources/resource-initialization.test.mjs",
+      "category": "申样回归执行",
+      "purpose": "resource initialization.test",
+      "lines": 25,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "fixture",
+          "line": 10,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "tests/regression/resources/script-coverage.test.mjs",
+      "category": "申样回归执行",
+      "purpose": "script coverage.test",
+      "lines": 34,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "tests/regression/scenarios/admin-filter-contract.test.mjs",
+      "category": "申样回归执行",
+      "purpose": "admin filter contract.test",
+      "lines": 15,
+      "previousPaths": [],
+      "symbols": []
     },
     {
       "file": "tests/regression/scenarios/application/client-validation.test.mjs",
@@ -14578,6 +14945,14 @@
       "symbols": []
     },
     {
+      "file": "tests/reports/report-archive.test.mjs",
+      "category": "运行报告",
+      "purpose": "report archive.test",
+      "lines": 22,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
       "file": "tests/source-tests/agent-evidence.test.mjs",
       "category": "源码测试",
       "purpose": "agent evidence.test",
@@ -14765,6 +15140,14 @@
           "kind": "FunctionDeclaration"
         }
       ]
+    },
+    {
+      "file": "tests/storage/workspace-relocation.test.mjs",
+      "category": "公共基础",
+      "purpose": "workspace relocation.test",
+      "lines": 33,
+      "previousPaths": [],
+      "symbols": []
     },
     {
       "file": "web/src/app/routes.ts",
@@ -15248,8 +15631,8 @@
     {
       "file": "web/src/features/case-scripts/case-editor-ai-guide.tsx",
       "category": "用例与脚本",
-      "purpose": "AI 接入说明；维护接口仍待完成",
-      "lines": 34,
+      "purpose": "AI编辑器MCP接入说明及本机连接包下载",
+      "lines": 35,
       "previousPaths": [],
       "symbols": [
         {
@@ -15338,6 +15721,35 @@
       ]
     },
     {
+      "file": "web/src/features/case-scripts/case-editor-resources.tsx",
+      "category": "用例与脚本",
+      "purpose": "网页资源导出、导入预览和新版本应用",
+      "lines": 46,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "ResourceFile",
+          "line": 2,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "Preview",
+          "line": 4,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "request",
+          "line": 6,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "CaseEditorResources",
+          "line": 12,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
       "file": "web/src/features/case-scripts/case-editor-review.css",
       "category": "用例与脚本",
       "purpose": "case editor review（页面样式）",
@@ -15357,37 +15769,61 @@
       "file": "web/src/features/case-scripts/case-script-editor.tsx",
       "category": "用例与脚本",
       "purpose": "用例和脚本编辑、前置关系、保存及版本",
-      "lines": 258,
+      "lines": 288,
       "previousPaths": [],
       "symbols": [
         {
           "name": "CaseResultStatus",
-          "line": 16,
+          "line": 18,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Fields",
-          "line": 19,
+          "line": 21,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "HistoryEntry",
-          "line": 20,
+          "line": 22,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "request",
-          "line": 26,
+          "line": 28,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Chevron",
-          "line": 33,
+          "line": 35,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "CaseScriptEditor",
-          "line": 34,
+          "line": 36,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "web/src/features/case-scripts/case-version-import.tsx",
+      "category": "用例与脚本",
+      "purpose": "case version import",
+      "lines": 29,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "Preview",
+          "line": 3,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "Upload",
+          "line": 4,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "CaseVersionImport",
+          "line": 5,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -17824,47 +18260,94 @@
       "file": "web/src/features/run-reports/run-reports.tsx",
       "category": "运行报告",
       "purpose": "运行报告列表、筛选、详情、名称备注和重要标记",
-      "lines": 313,
+      "lines": 319,
       "previousPaths": [],
       "symbols": [
         {
+          "name": "DownloadFormat",
+          "line": 5,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
           "name": "Icon",
-          "line": 13,
+          "line": 14,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Badge",
-          "line": 16,
+          "line": 17,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Counts",
-          "line": 20,
+          "line": 21,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "request",
-          "line": 23,
+          "line": 24,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "Format",
-          "line": 30,
+          "line": 31,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "EditReport",
-          "line": 35,
+          "line": 36,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "RunReports",
-          "line": 50,
+          "line": 51,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "GroupRows",
-          "line": 301,
+          "line": 307,
+          "kind": "FunctionDeclaration"
+        }
+      ]
+    },
+    {
+      "file": "web/src/features/settings/connection-settings.css",
+      "category": "系统设置",
+      "purpose": "connection settings（页面样式）",
+      "lines": 10,
+      "previousPaths": [],
+      "symbols": []
+    },
+    {
+      "file": "web/src/features/settings/connection-settings.tsx",
+      "category": "系统设置",
+      "purpose": "connection settings",
+      "lines": 36,
+      "previousPaths": [],
+      "symbols": [
+        {
+          "name": "System",
+          "line": 4,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "Connections",
+          "line": 5,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "Database",
+          "line": 6,
+          "kind": "TypeAliasDeclaration"
+        },
+        {
+          "name": "api",
+          "line": 8,
+          "kind": "FunctionDeclaration"
+        },
+        {
+          "name": "ConnectionSettings",
+          "line": 9,
           "kind": "FunctionDeclaration"
         }
       ]
@@ -17873,29 +18356,29 @@
       "file": "web/src/features/settings/settings-page.tsx",
       "category": "系统设置",
       "purpose": "settings page",
-      "lines": 170,
+      "lines": 173,
       "previousPaths": [
         "web/src/settings-page.tsx"
       ],
       "symbols": [
         {
           "name": "Settings",
-          "line": 2,
+          "line": 3,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "BrowserStatus",
-          "line": 17,
+          "line": 18,
           "kind": "TypeAliasDeclaration"
         },
         {
           "name": "request",
-          "line": 27,
+          "line": 28,
           "kind": "FunctionDeclaration"
         },
         {
           "name": "SettingsPage",
-          "line": 34,
+          "line": 35,
           "kind": "FunctionDeclaration"
         }
       ]

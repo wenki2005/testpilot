@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { calculateOpenApiCoverage, parseApiSuite, type ApiOpenApiOperationFact, type ApiTestSuite } from "../../storage/api-tests/api-suite-loader.js";
 import { runApiSuite } from "./test-adapter.js";
+import { conflictingReadOnlyExpectations } from "./expectation-review.js";
 import { listApiFindingUpdates, recordApiFindings, type ApiFinding, type ApiFindingStore } from "./finding-tracker.js";
 export type ApiSuiteCandidate = {
     id: string;
@@ -196,6 +197,9 @@ export async function diagnoseApiFinding(suiteId: string, findingId: string): Pr
     const sameApprovedVersion = candidate.status === "approved" && finding.suiteDigest === candidate.digest && Array.isArray(rawRun?.scope) && rawRun.scope.includes(approvedVersion);
     const failedCase = result && ["failed", "error"].includes(result.status);
     if (sameApprovedVersion && failedCase && finding.caseId) {
+        const conflicts = conflictingReadOnlyExpectations(candidate.suite, finding.caseId);
+        if (conflicts.length > 0)
+            return { findingId, state: finding.state, source: "deterministic-evidence", classification: "manual-review", summary: `同一只读请求存在冲突预期：${conflicts.map(item => `${item.caseId} 预期 ${item.expectedStatus}`).join("；")}。原始失败结果保留，须先核对预期。`, evidence, recommendation: { action: "human-review", summary: "先确认请求身份及契约预期；需要修改时创建并审核新候选，当前不建议重复执行。", canRun: false } };
         return { findingId, state: finding.state, source: "deterministic-evidence", classification: "assertion-failure", summary: observedStatuses.length ? `关联用例最近一次执行未通过；观测到 HTTP ${observedStatuses.join(", ")}。` : "关联用例最近一次执行失败或发生运行错误。", evidence, recommendation: { action: "rerun-case", summary: "可仅重测此失败用例。重测仍使用同一审核版本、目标和现有安全门禁；点击按钮即表示你批准本次重测。", canRun: true, caseId: finding.caseId, parentRunId: finding.lastRunId } };
     }
     return { findingId, state: finding.state, source: "deterministic-evidence", classification: "blocked-or-stale", summary: "没有找到同一已审核版本下可复核的失败用例证据，不能据此推荐自动重测。", evidence, recommendation: { action: "human-review", summary: "请先查看关联运行记录与套件版本；如果用例或目标已变化，修订并重新审核后再运行。", canRun: false } };

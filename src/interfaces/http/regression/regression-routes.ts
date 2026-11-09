@@ -13,11 +13,16 @@ import { webModuleDependencies } from "../../../adapters/regression/browser/modu
 import { getDocumentProject, getDocumentRunProgress } from '../../../adapters/documents/execution/run-executor.js';
 import { json, fail, bodyJson, documentBody } from '../shared/http-utils.js';
 import { createRunReportRoutes } from '../reports/run-report-routes.js';
+import { initializeBundledResources } from '../../../bootstrap/resource-initialization.js';
+import { caseMaintenancePackage } from '../../mcp/connection-package.js';
+import { prepareCaseVersion } from '../../../adapters/regression/resources/case-version-import.js';
+import { scriptCoverage } from '../../../adapters/regression/resources/script-coverage.js';
 /** Owns the Dify endpoints; the shared server only mounts this handler. */
-export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
+export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceDirectory }: {
     artifactsDir: string;
     host: string;
     port: number;
+    resourceDirectory?: string;
 }) {
     const difyRegression = new DifyRegressionStore(path.join(artifactsDir, "dify-regression"));
     const moduleRegression = new ModuleRegressionStore(artifactsDir);
@@ -25,6 +30,7 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
     const systemModules = new SystemModuleRegression(artifactsDir, difyWebModules, webModuleDependencies(artifactsDir));
     const coreChains = new DepartmentCoreChainStore(artifactsDir, systemModules, webModuleDependencies(artifactsDir));
     const reportRoutes = createRunReportRoutes(artifactsDir, systemModules, coreChains);
+    const resourcesReady = initializeBundledResources(systemModules, resourceDirectory);
     // Many open workbench tabs poll the same multi-megabyte history. Serialize it
     // once per second so status polling does not starve browser protocol messages.
     let systemModuleStateCache: {
@@ -34,6 +40,7 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
     return async function handleDifyRegressionRoutes(req: IncomingMessage, res: ServerResponse, url: URL): Promise<boolean> {
         if (!['/api/system-module-regression', '/api/dify-web-modules', '/api/module-regression', '/api/dify-regression'].some(prefix => url.pathname === prefix || url.pathname.startsWith(prefix + '/')))
             return false;
+        const initialization = await resourcesReady;
         await (async () => {
             if (await reportRoutes(req, res, url))
                 return;
@@ -45,7 +52,76 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port }: {
                 try {
                     const root = '/api/system-module-regression';
                     const route = url.pathname.slice(root.length);
+                    if (route === '/script-coverage' && req.method === 'GET') { json(res, 200, scriptCoverage(systemModules.exportResources(url.searchParams.get('systemId') || '').resources.cases)); return; }
+                    if (route === '/connections' && req.method === 'GET') { json(res, 200, systemModules.connectionSettings()); return; }
+                    if (route === '/resources/cases/preview' && req.method === 'POST') {
+                        const data = await documentBody(req), current = systemModules.exportResources(data.systemId);
+                        json(res, 200, { ...await prepareCaseVersion(current.resources, data), revision: current.revision }); return;
+                    }
+                    if (route === '/case-editor/review-script' && req.method === 'POST') {
+                        const data = await bodyJson(req), module = systemModules.getModule(data.moduleId);
+                        if (module.versions.at(-1)?.id !== data.versionId) throw Error('版本已更新，请刷新后核对。');
+                        if (coreChains.activeForSystem(module.systemId)) throw Error('核心链路正在运行。');
+                        const current = systemModules.exportResources(module.systemId), c = current.resources.cases.find(c => c.moduleId === data.moduleId && c.id === data.caseId);
+                        if (!c || c.scriptReview?.status !== 'pending') throw Error('当前用例没有待核对脚本。');
+                        if (!c.script.steps.length) throw Error('请先补充脚本，再核对。');
+                        c.scriptReview = { status: 'reviewed', note: '已在用例与脚本核对，保存为新版本；执行结果仍以真实运行证据为准。' };
+                        json(res, 200, await systemModules.applyResources({ resources: current.resources, baseRevision: current.revision })); return;
+                    }
+                    if (route === '/maintenance/package' && req.method === 'GET') {
+                        const id = url.searchParams.get('systemId') || '';
+                        systemModules.getSystem(id);
+                        const entryPort = process.env.TESTPILOT_ENTRY_PORT || '4325';
+                        const localPort = Number(entryPort);
+                        if (!Number.isInteger(localPort) || localPort < 1024 || localPort > 65535) throw Error('本机入口端口无效。');
+                        let base = `http://127.0.0.1:${localPort}/dify/`;
+                        if (req.headers.referer) {
+                            const from = new URL(req.headers.referer);
+                            if (from.protocol === 'http:' && ['127.0.0.1', 'localhost'].includes(from.hostname) && [String(port), String(localPort)].includes(from.port)) base = from.origin + (from.pathname.startsWith('/dify/') ? '/dify/' : '/');
+                        }
+                        const bytes = caseMaintenancePackage(id, base);
+                        res.writeHead(200, { 'content-type': 'application/zip', 'content-disposition': 'attachment; filename="TestPilot-MCP.zip"', 'content-length': bytes.length, 'cache-control': 'no-store' }); res.end(bytes); return;
+                    }
+                    if (route === '/maintenance/revision' && req.method === 'GET') {
+                        const id = url.searchParams.get('systemId') || ''; systemModules.getSystem(id);
+                        json(res, 200, { revision: systemModules.editorRevision(id) }); return;
+                    }
+                    if (route === '/maintenance/save' && req.method === 'POST') {
+                        const data = await documentBody(req);
+                        if (systemModules.getModule(data.moduleId).systemId !== data.systemId) throw Error('模块不属于当前项目。');
+                        if (coreChains.activeForSystem(data.systemId)) throw Error('核心链路正在运行。');
+                        json(res, 200, await systemModules.saveEditorCase(data.moduleId, data.change, 'mcp')); return;
+                    }
+                    if (route === '/maintenance/resources' && req.method === 'POST') {
+                        const data = await documentBody(req);
+                        if (coreChains.activeForSystem(data.resources?.project?.id)) throw Error('核心链路正在运行。');
+                        json(res, 200, await systemModules.applyResources(data, 'mcp')); return;
+                    }
+                    if (route === '/resources/initialization' && req.method === 'GET') {
+                        json(res, 200, initialization);
+                        return;
+                    }
+                    if (route === '/resources' && req.method === 'GET') {
+                        json(res, 200, systemModules.exportResources(url.searchParams.get('systemId') || ''));
+                        return;
+                    }
+                    if (route === '/resources/preview' && req.method === 'POST') {
+                        json(res, 200, systemModules.previewResources(await documentBody(req)));
+                        return;
+                    }
+                    if (route === '/resources/apply' && req.method === 'POST') {
+                        const data = await documentBody(req);
+                        const project = data.resources as { project?: { id?: string } } | undefined;
+                        if (project?.project?.id && coreChains.activeForSystem(project.project.id)) throw Error('核心链路正在运行，请结束后更新资源。');
+                        try { json(res, 200, await systemModules.applyResources(data)); }
+                        catch (error) { const message = error instanceof Error ? error.message : '资源更新失败。'; fail(res, /版本冲突|状态已变化/.test(message) ? 409 : 400, message); }
+                        return;
+                    }
                     if (route === '/case-editor' && req.method === 'GET') {
+                        if (['error', 'missing'].includes(initialization.status) && !systemModules.state().systems.length) {
+                            fail(res, 503, initialization.message);
+                            return;
+                        }
                         json(res, 200, systemModules.editorCatalog(url.searchParams.get('systemId') || undefined));
                         return;
                     }

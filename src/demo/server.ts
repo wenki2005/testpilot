@@ -1,2 +1,4 @@
-/** Legacy launch path kept for existing start commands and process ownership checks. */
-import "../server/http-server.js";
+/** Keep the launch path while configuring user data before adapter initialization. */
+import { configureDataEnvironment } from '../bootstrap/data-environment.js';
+configureDataEnvironment();
+await import('../server/http-server.js');

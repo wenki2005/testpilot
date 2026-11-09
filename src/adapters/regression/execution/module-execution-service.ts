@@ -21,6 +21,7 @@ import { departmentBlockerDiagnostic } from '../evidence/blocker-diagnostics.js'
 import { setTimeout as delay } from 'node:timers/promises';
 import type { CaseDependency, PrerequisiteReview } from '../../../domain/cases/case-script-contract.js';
 import type { RegressionDatabaseBinding, RegressionDatabaseEvidence } from '../../../domain/database/regression-database-contract.js';
+import type { ResourceCase } from '../resources/project-resource-contract.js';
 import { supportsDepartmentDatabase } from '../../../domain/database/regression-database-contract.js';
 export const moduleDigest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const now = () => new Date().toISOString();
@@ -35,6 +36,8 @@ export type WebModule = {
     createdAt: string;
     project: DocumentProject;
     sourceCases?: ImportedDocument['testCases'];
+    resourceSources?: Record<string, { sourcePath: string[]; sourceExpected: string; sourceId?: string; priority?: BrowserCheck['priority'] }>;
+    scriptReviews?: Record<string, { status: 'pending' | 'reviewed'; note: string }>;
     manualSteps?: Record<string, string[]>;
     prerequisiteCases?: Record<string, CaseDependency[]>;
     prerequisiteReviews?: Record<string, PrerequisiteReview>;
@@ -117,6 +120,8 @@ export type WebModuleJob = {
 };
 export type WebModuleDependencies = {
     cloud: typeof callDifyWorkflow;
+    /** Read an existing local browser only; never launch or execute a test. */
+    savedSessionStatus?: (project: DocumentProject) => Promise<'connected' | 'expired' | 'unavailable'>;
     authorizedWrites?: (project: DocumentProject, jobId: string, checks: BrowserCheck[], signal: AbortSignal, progress: (message: string) => void) => Promise<Array<{
         caseId: string;
         status: 'passed' | 'failed' | 'blocked';
@@ -218,6 +223,38 @@ export class DifyWebModuleStore {
     state() { return { modules: this.list<WebModule>('module').map(({ project, cachedSteps, sourceCases, ...m }) => ({ ...m, targetUrl: project.targetUrl, caseCount: project.cases.length })), jobs: this.list<WebModuleJob>('job').map(({ snapshot, executionProject, ...j }) => j), configured: { prepare: !!process.env.TESTPILOT_DIFY_API_KEY, execution: !!process.env.TESTPILOT_DIFY_EXECUTION_API_KEY } }; }
     getModule(key: string) { return this.get<WebModule>('module', id.parse(key)); }
     getJob(key: string) { return this.get<WebModuleJob>('job', id.parse(key)); }
+    /** Prepare without persisting: all modules must validate before pointers change. */
+    prepareResourceModule(sourceId: string | undefined, name: string, targetUrl: string, cases: ResourceCase[]): WebModule {
+        const source = sourceId ? this.getModule(sourceId) : undefined;
+        const document: ImportedDocument = { format: 'markdown', text: cases.map(c => c.title + '\n' + c.expected).join('\n'), testCases: cases.map(c => ({ id: c.id, title: c.title, source: c.sourcePath.join(' > ') || c.id, expected: c.expected })) };
+        const project = source ? structuredClone(source.project) : makeDocumentProject({ name, fileName: 'project-resources.json', document, targetUrl, caseMode: 'existing' });
+        const defaults = makeDocumentProject({ name, fileName: 'project-resources.json', document, targetUrl, caseMode: 'existing' });
+        const previous = new Map(source?.project.cases.map(c => [c.id, c]));
+        project.id = randomUUID(); project.name = name; project.updatedAt = now(); project.targetUrl = moduleTarget(targetUrl);
+        project.cases = validateCases(cases.map((c, index) => ({ ...(previous.get(c.id) ?? defaults.cases[index]!), id: c.id, title: c.title, expected: c.expected, steps: c.script.steps, modulePath: c.sourcePath, ...(c.priority ? { priority: c.priority } : {}) })));
+        for (const c of project.cases) {
+            delete c.authorizedWriteOperationId;
+            delete c.writeResultOperationId;
+            delete c.writeResultSourceRunId;
+        }
+        const value: WebModule = {
+            id: randomUUID(), name, fileName: 'project-resources.json', digest: '', createdAt: now(), project,
+            manualSteps: Object.fromEntries(cases.map(c => [c.id, c.manualSteps])),
+            prerequisiteCases: Object.fromEntries(cases.map(c => [c.id, c.prerequisites])),
+            prerequisiteReviews: Object.fromEntries(cases.filter(c => c.prerequisiteReview).map(c => [c.id, c.prerequisiteReview!])),
+            scriptReviews: Object.fromEntries(cases.filter(c => c.scriptReview).map(c => [c.id, c.scriptReview!])),
+            sourceCases: document.testCases!,
+            resourceSources: Object.fromEntries(cases.map(c => [c.id, { sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, ...(c.priority ? { priority: c.priority } : {}), ...(c.sourceId ? { sourceId: c.sourceId } : {}) }])),
+        };
+        // Imported steps are explicitly authored; never generate over them later.
+        value.editedSteps = Object.fromEntries(project.cases.filter(c => c.steps.length).map(c => [c.id, moduleDigest(c)]));
+        value.digest = moduleDigest({ project: value.project, manualSteps: value.manualSteps, prerequisites: value.prerequisiteCases });
+        return value;
+    }
+    async commitResourceModule(value: WebModule) {
+        await this.deps.saveProject(value.project);
+        return this.save('module', value);
+    }
     revisePrerequisites(key: string, changes: Array<{
         caseId: string;
         prerequisites: CaseDependency[];
@@ -344,6 +381,10 @@ export class DifyWebModuleStore {
         }
         const module = this.getModule(data.moduleId);
         const selected = data.selectedCaseIds ?? module.project.cases.map(c => c.id);
+        // A pending script review is recorded on each result, but it must not
+        // prevent a full run from producing evidence. The run itself decides
+        // whether the saved steps are executable; cases without reliable steps
+        // are recorded as blocked instead of being silently skipped.
         const known = new Set(module.project.cases.map(c => c.id));
         if (new Set(selected).size !== selected.length || selected.some(c => !known.has(c)) || data.confirmedCaseIds.some(c => !selected.includes(c)))
             throw new Error('选择范围包含重复或不属于当前模块的用例。');
@@ -481,6 +522,15 @@ export class DifyWebModuleStore {
         this.save('job', job);
     }
     private async report(job: WebModuleJob, signal: AbortSignal) {
+        if (job.runMode === 'fixed') {
+            signal.throwIfAborted();
+            checkModulePlan(job);
+            if (job.databaseEvidence && moduleDigest(job.databaseEvidence) !== job.databaseEvidenceDigest) throw Error('数据库证据指纹不一致，未完成汇总。');
+            this.event(job, 'reporting', '正在本机汇总真实执行结果。');
+            job.outcome = jobOutcome(job); job.report = this.renderReport(job);
+            this.event(job, 'completed', job.outcome === 'passed' ? '本轮实际执行全部通过。' : job.outcome === 'failed' ? '本轮发现失败，请查看证据。' : '本轮存在阻塞或未执行项。');
+            return;
+        }
         this.event(job, 'reporting', 'Dify 正在汇总真实执行结果。');
         if (job.databaseEvidence) {
             if (moduleDigest(job.databaseEvidence) !== job.databaseEvidenceDigest)
@@ -543,7 +593,7 @@ export class DifyWebModuleStore {
             const inputFor = (batch: BrowserCheck[]) => JSON.stringify({ baseline_sha256: sha, cases: sourcesFor(batch), page_capabilities: capabilities, ...(job.databaseEvidence ? { database_context: job.databaseEvidence, database_context_sha256: job.databaseEvidenceDigest } : {}) });
             const batches: BrowserCheck[][] = [];
             let pending: BrowserCheck[] = [];
-            for (const item of selected) {
+            for (const item of job.runMode === 'fixed' ? [] : selected) {
                 if (pending.length && (pending.length >= 6 || inputFor([...pending, item]).length > 59000)) {
                     batches.push(pending);
                     pending = [];
@@ -571,7 +621,7 @@ export class DifyWebModuleStore {
                 }
             }
             else
-                this.event(job, 'preparing', '固定回归：使用原包或已保存步骤，未调用 AI 整理；Dify 派发和汇总仍实际执行。');
+                this.event(job, 'preparing', '使用已保存脚本，本机校验、执行与汇总。');
             const execution = structuredClone(job.snapshot);
             execution.reviewStatus = 'approved';
             execution.confirmationRequired = false;
@@ -704,8 +754,8 @@ export class DifyWebModuleStore {
             checkModulePlan(job);
             const runnable = execution.cases.filter(c => job.selectedCaseIds.includes(c.id) && c.lifecycleStatus === 'runnable' && c.selectedForRegression);
             if (runnable.length) {
-                this.event(job, 'dispatching', `Dify 正在派发 ${runnable.length} 条可执行用例。`);
-                for (let offset = 0; offset < runnable.length; offset += 20) {
+                this.event(job, 'dispatching', job.runMode === 'fixed' ? `本机派发 ${runnable.length} 条可执行用例。` : `Dify 正在派发 ${runnable.length} 条可执行用例。`);
+                for (let offset = 0; job.runMode !== 'fixed' && offset < runnable.length; offset += 20) {
                     const manifest: ExecutionManifest = { schema: 1, run_id: job.id, module_id: job.moduleId, plan_digest: job.planDigest!, suite_digest: job.moduleDigest, case_ids: runnable.slice(offset, offset + 20).map(c => c.id) };
                     checkDispatch(await this.cloud(job, 'dispatch', offset / 20, { execution_json: JSON.stringify({ ...manifest, phase: 'dispatch' }) }, manifest.case_ids, signal, 'execution'), manifest);
                 }
@@ -715,7 +765,8 @@ export class DifyWebModuleStore {
                 job.documentRunId = randomUUID();
                 job.executionStarted = true;
                 this.event(job, 'executing', `正在测试 ${runnable.length} 条用例。`);
-                const result = await this.deps.execute(execution, job.documentRunId, runnable.map(c => c.id), stage => {
+                let refreshExecutionWatchdog = () => { };
+                const executionPromise = this.deps.execute(execution, job.documentRunId, runnable.map(c => c.id), stage => {
                     if (stage === 'awaiting-login')
                         this.event(job, 'awaiting-login', '测试窗口需要重新登录，请登录后继续。');
                     else if (job.phase === 'awaiting-login')
@@ -730,9 +781,36 @@ export class DifyWebModuleStore {
                         row.evidenceNote = actual.evidenceNote;
                         job.updatedAt = now();
                         this.save('job', job);
+                        refreshExecutionWatchdog();
                     }
                 });
-                this.capture(job, result);
+                // A browser adapter must never hold an entire multi-module
+                // regression forever. Reset the idle deadline after each result
+                // so large modules can finish; retain completed results and let
+                // the batch continue to the next module with an explicit error.
+                const laneResult = await new Promise<Awaited<typeof executionPromise>>((resolve, reject) => {
+                    let timer: ReturnType<typeof setTimeout>;
+                    const stalled = () => {
+                        refreshExecutionWatchdog = () => { };
+                        void Promise.race([
+                            this.deps.cancel(job.snapshot.id, job.documentRunId).catch(() => undefined),
+                            new Promise<void>(done => setTimeout(done, 5000)),
+                        ]).finally(() => {
+                            for (const row of job.results) {
+                                if (job.selectedCaseIds.includes(row.caseId) && row.status === 'not_executed') {
+                                    row.status = 'blocked';
+                                    row.detail = '网页执行连续 2 分钟没有返回单条结果；本条未完成实际操作，已停止当前模块并记录为阻塞。';
+                                }
+                            }
+                            this.save('job', job);
+                            reject(new Error('网页执行连续 2 分钟没有返回单条结果，已停止当前模块并保留已记录结果。'));
+                        });
+                    };
+                    refreshExecutionWatchdog = () => { clearTimeout(timer); timer = setTimeout(stalled, 120_000); };
+                    refreshExecutionWatchdog();
+                    executionPromise.then(value => { clearTimeout(timer); refreshExecutionWatchdog = () => { }; resolve(value); }, error => { clearTimeout(timer); refreshExecutionWatchdog = () => { }; reject(error); });
+                });
+                this.capture(job, laneResult);
             }
             else {
                 job.executionFinished = true;

@@ -118,6 +118,10 @@ export function browserRequestAllowed(method: string, requestUrl: string, contex
             return true;
         if (departmentRead && /^(?:GET|HEAD|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType))
             return true;
+        // These exceptions are scoped above. The generic sibling-site read rule
+        // must not re-admit their POST methods, other hosts or document loads.
+        if (/^\/supply-api\/(?:dept\/book\/apply|h5\/dept\/book\/order)\//.test(request.pathname))
+            return false;
         const apiRequest = /^(?:GET|HEAD|POST|OPTIONS)$/i.test(method) && /^(?:fetch|xhr)$/i.test(context.resourceType)
             && sameRegistrableSite && !mutationPath.test(request.pathname) && (apiReadPath.test(request.pathname) || knownReadRoute.test(request.pathname));
         if (apiRequest && request.protocol === "https:")
@@ -208,10 +212,22 @@ export async function waitForUserLogin(projectId: string, runId: string, targetU
     }
     await bringBrowserToFront(browser, page);
     const deadline = Date.now() + 10 * 60000;
+    let nextAutomaticCheck = 0;
     while (Date.now() < deadline) {
         const current = handoffs.get(projectId);
         if (!current || current.runId !== runId)
             throw new Error("登录接力已取消，请重新运行测试。");
+        // Completing a QR login in the same owned target tab is enough; the
+        // user need not click a second confirmation in TestPilot. A blank page
+        // or a redirect is never mistaken for successful authentication.
+        if (current.status === 'waiting_for_user' && Date.now() >= nextAutomaticCheck) {
+            nextAutomaticCheck = Date.now() + 2000;
+            try {
+                if (new URL(page.url()).origin === targetOrigin && !await isLoginPage(page)
+                    && await page.locator('body').innerText().then(text => text.trim().length > 0))
+                    current.status = 'ready_to_continue';
+            } catch { /* Still loading or waiting for the human login. */ }
+        }
         if (current.status === "ready_to_continue") {
             handoffs.delete(projectId);
             await onLoginWait?.(false);
@@ -285,11 +301,16 @@ export function allowBrowserRequest(method: string, requestUrl: string, projectI
         resourceType: context?.resourceType ?? "document",
         ...(context?.isNavigationRequest !== undefined ? { isNavigationRequest: context.isNavigationRequest } : {}),
         ...(context?.isMainFrameNavigation !== undefined ? { isMainFrameNavigation: context.isMainFrameNavigation } : {}),
+        ...(context?.authenticationPage !== undefined ? { authenticationPage: context.authenticationPage } : {}),
         loginHandoffActive: handoff?.status === "waiting_for_user",
         authOrigins: handoff?.authOrigins ?? [],
     });
 }
-async function bringBrowserToFront(browser: Browser, page: Page): Promise<void> {
+/** Bring a managed test tab to the foreground after an explicit user action.
+ * The connection flow can complete without a login handoff; in that case the
+ * browser page still needs to be visible so the user can see the session that
+ * will be reused by the next run. */
+export async function bringBrowserToFront(browser: Browser, page: Page): Promise<void> {
     await page.bringToFront().catch(() => undefined);
     if (process.platform !== "win32")
         return;

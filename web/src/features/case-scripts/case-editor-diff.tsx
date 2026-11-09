@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { CaseDependency, EditableCase } from '../../../../src/domain/cases/case-script-contract';
+import { caseDisplayNumber } from './case-display-number';
 export type CaseEditorFields = {
     title: string;
     expected: string;
@@ -83,9 +84,9 @@ export default function CaseEditorDiff({ before, after, current, cases, tab, onT
     const fieldCount = (['title', 'prerequisites', 'manual', 'expected'] as const).filter(changed).length;
     const byKey = useMemo(() => new Map(cases.map(c => [c.moduleId + ':' + c.id, c])), [cases]);
     const fields = [{ key: 'title', label: '名称' }, { key: 'prerequisites', label: '前置用例' }, { key: 'manual', label: '步骤' }, { key: 'expected', label: '预期' }] as const;
-    const dependencies = (refs: CaseDependency[]) => !refs.length ? <span className="ce-diff-empty">无前置用例</span> : <table className="prerequisite-table"><thead><tr><th>编号</th><th>内容</th><th>状态</th></tr></thead><tbody>{refs.map(d => { const c = byKey.get(refKey(d)), status = c?.status ?? 'not_executed', style = status === 'error' ? 'failed' : status === 'not_executed' ? 'not-executed' : status; return <tr key={refKey(d)}><td>{d.caseId}</td><td>{c?.title ?? '用例已归档或移除'}</td><td><span className={'ce-result-status sm-badge sm-' + style}>{statuses[status] ?? '未执行'}</span></td></tr>; })}</tbody></table>;
+    const dependencies = (refs: CaseDependency[]) => !refs.length ? <span className="ce-diff-empty">无前置用例</span> : <table className="prerequisite-table"><thead><tr><th>编号</th><th>内容</th><th>状态</th></tr></thead><tbody>{refs.map(d => { const c = byKey.get(refKey(d)), status = c?.status ?? 'not_executed', style = status === 'error' ? 'failed' : status === 'not_executed' ? 'not-executed' : status; return <tr key={refKey(d)}><td title={d.caseId}>{c ? caseDisplayNumber(c.id, cases) : '—'}</td><td>{c?.title ?? '用例已归档或移除'}</td><td><span className={'ce-result-status sm-badge sm-' + style}>{statuses[status] ?? '未执行'}</span></td></tr>; })}</tbody></table>;
     return <section className="ce-review-pane" aria-label="修改对比">
-  <header className="ce-review-heading"><h2>{current.id} · {current.title}</h2><span>{fieldCount || changed('script') ? origin : '暂无修改'}</span></header>
+  <header className="ce-review-heading"><h2 title={current.id}>用例 {caseDisplayNumber(current.id, cases)} · {current.title}</h2><span>{fieldCount || changed('script') ? origin : '暂无修改'}</span></header>
   <div className="ce-review-tabs" role="tablist" aria-label="对比内容">{(['case', 'script'] as const).map(t => <button key={t} id={'ce-diff-tab-' + t} type="button" role="tab" aria-selected={tab === t} aria-controls={'ce-diff-panel-' + t} className={tab === t ? 'selected' : ''} onClick={() => onTab(t)} onKeyDown={e => {
                 if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
                     e.preventDefault();

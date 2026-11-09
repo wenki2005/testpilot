@@ -28,23 +28,23 @@ export function createProjectTargetPagePreparer(deps: ProjectTargetPageDependenc
                 isMainFrameNavigation: mainFrameNavigation,
                 authenticationPage: isAuthenticationRoute(page.url()),
             })) {
-                await route.abort("blockedbyclient");
+                await route.abort("blockedbyclient").catch(() => undefined);
                 return;
             }
             if (mainFrameNavigation) {
                 try {
                     const requested = new URL(request.url());
                     if (requested.origin !== allowedOrigin && !/(?:login|signin|sso|auth|accounts|passport)/i.test(`${requested.hostname}${requested.pathname}`)) {
-                        await route.abort("blockedbyclient");
+                        await route.abort("blockedbyclient").catch(() => undefined);
                         return;
                     }
                 }
                 catch {
-                    await route.abort("blockedbyclient");
+                    await route.abort("blockedbyclient").catch(() => undefined);
                     return;
                 }
             }
-            await route.continue();
+            await route.continue().catch(() => undefined);
         });
         const target = new URL(targetUrl);
         let current: URL | undefined;

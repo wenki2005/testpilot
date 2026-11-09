@@ -17,7 +17,7 @@
 | tests | 工具自身测试 |
 | docs | 当前说明、规范与后续实施计划 |
 
-启动用根目录 **启动测试工作台.cmd**。`node_modules`、`dist`、`runtime-data`、`artifacts` 仍是本机依赖、构建与运行目录，本轮没有移动正在使用的数据。
+启动用根目录 **启动测试工作台.cmd**，关闭用 **停止测试工作台.cmd**。程序与本机数据分开保存，默认数据位置为 `%LOCALAPPDATA%/TestPilot/workspaces/dify`。
 
 当前主要页面：
 
@@ -30,9 +30,9 @@
 ## 运行条件
 
 - Windows、Microsoft Edge，Node.js 22.19 或更高版本。
-- 首次安装依赖需要 npm 及相应网络访问。
+- 源码版首次安装依赖需要 npm 及相应网络访问；完整Windows包已带Node.js和依赖。
 - 能访问被测系统，准备自己的测试账号；所选用例需要的数据库、审批、库存及下游服务条件另行配置。
-- 源码启动需要本机工作区数据。完整安装包及首次自动装载业务资源尚未完成，不能保证新拉取仓库直接具有当前开发机的数据。
+- 首次启动自动加载内置资源，在自己的数据区建立项目。完整包解压后双击启动，详见[运行包说明](packaging/windows/README.md)。
 
 ## 运行说明
 
@@ -59,7 +59,7 @@ npm run workbench:start
 | 启动、构建、导出、打包 | `scripts/`，按用途分类；不保存历史转发副本 |
 | 当前业务定义快照 | `project-resources/department-sample/` |
 | 原始用例来源及前置编号 | `regression/packs/`、`regression/plans/`，原始文件用于追溯预期 |
-| 本机运行数据、截图与私有配置 | `runtime-data/`、`artifacts/`，不提交 Git |
+| 本机运行数据、截图与私有配置 | `%LOCALAPPDATA%/TestPilot/workspaces/dify`，不提交 Git；旧数据迁移保留回退副本 |
 | 详细规范 | [目录规范](docs/project-layout.md)、[命名规范](docs/naming-conventions.md) |
 
 ## 测试说明
@@ -76,9 +76,13 @@ Node.js / TypeScript 服务端，React / Vite 网页端，Playwright 浏览器�
 
 源码、业务资源、发行产物、本机数据分别管理。源码不重复维护多份；发行包应包含程序、全部用例和已有脚本，不包含使用者的历史记录、截图、密钥或登录态。
 
-本次业务资源是从当前网页只读导出的逐条定义快照，未改动正在使用的模块版本。当前仍以网页中的有效版本及缓存为准，直接修改快照不会自动更新网页。
+业务资源按用例ID逐条保存。当前以网页有效版本及缓存执行；可在“用例与脚本 → 资源”导出和预览导入，或用npm run resources:sync同步文件目录。直接修改文件不会静默覆盖网页，详见[资源同步](docs/tooling/project-resources.md)。
 
-**待完善**：资源文件与网页的导入同步、首次安装初始化、完整发行包装配、MCP 用例维护接入。页面中的接入说明不代表该功能已经完成。
+首次启动应有131条定义和已有脚本，全部未执行，报告为空。重复启动保留本机编辑，详见[首次启动](docs/tooling/first-run.md)。
+
+新版整份用例使用[更新用例](docs/tooling/case-version-updates.md)，AI编辑器使用[MCP维护](docs/tooling/case-maintenance-mcp.md)，账号和数据库见[连接设置](docs/tooling/connections.md)。报告支持[离线归档](docs/tooling/report-archives.md)。57份空步骤的逐条执行方式和未完成断言见[覆盖清单](docs/planning/script-coverage.md)，不代表全部用例已通过。
+
+源码版也使用外部数据目录。迁移和升级规则见[本机数据](docs/tooling/local-data.md)。后续MCP等功能进度见[模块交付计划](docs/planning/delivery-plan.md)。
 
 源码提交和发行包的内容边界见 [上传与分发](docs/publishing.md)。
 

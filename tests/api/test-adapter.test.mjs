@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('declarative HTTP API suites stay on target, record scrubbed evidence, and gate mutations', async t => {
   const dataDir = resolve(root, 'artifacts', 'api-adapter-fixture', String(Date.now()));

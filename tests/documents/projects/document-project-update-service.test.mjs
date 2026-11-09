@@ -1,6 +1,26 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+test('confirming a PC fixture applies its template and still requires case review', async () => {
+  const { createDocumentProjectUpdateService } = await import('../../../dist/application/projects/document-project-update-service.js');
+  let saves = 0;
+  const service = createDocumentProjectUpdateService({
+    projects: { saveProject: async () => { saves++; } }, validateTarget: value => value,
+    validateCases: value => value, containsCredentialLikeValue: () => false,
+    requiresManualReview: () => false, hasAutoRunnableSelectedCase: () => true,
+    now: () => '2026-11-06T00:00:00.000Z',
+  });
+  const project = { id: 'explicit-pc', targetUrl: 'http://127.0.0.1:1/', platform: { type: 'unknown', status: 'needs-confirmation' }, reviewStatus: 'approved', cases: [{ id: 'ready', lifecycleStatus: 'runnable', selectedForRegression: true }] };
+  await assert.rejects(service.update(structuredClone(project), { platform: 'unknown' }), /明确选择/);
+  assert.equal(saves, 0);
+  const updated = await service.update(project, { platform: 'pc-web' });
+  assert.equal(updated.platform.type, 'pc-web');
+  assert.equal(updated.platform.status, 'confirmed');
+  assert.deepEqual(updated.executionConfig, { viewport: { width: 1440, height: 900 }, browser: 'chromium', entryUrl: project.targetUrl });
+  assert.equal(updated.reviewStatus, 'draft', 'platform confirmation never substitutes for case review');
+  assert.equal(saves, 1);
+});
+
 test('case order conflicts fail before saving or replacing the existing case array',async()=>{
  const {createDocumentProjectUpdateService}=await import('../../../dist/application/projects/document-project-update-service.js');
  let saves=0;

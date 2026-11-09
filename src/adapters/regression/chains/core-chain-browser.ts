@@ -310,6 +310,8 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
                 }
                 if (id === 'refresh')
                     return { status: 'blocked', detail: '页面只读GET不含上游来源和最近拉取执行时间；现有通用任务日志不能关联本订单并证明每10分钟执行，未把浏览器刷新冒充后台物流任务。' };
+                if (['h5-application', 'pc-application', 'application-records', 'order-detail', 'scheduled-retry', 'wecom-notifications', 'service-defenses', 'audit', 'admin-tracking'].includes(id))
+                    return { status: 'blocked', detail: '该新版链路步骤已挂入目录，但对应的专用只读执行器尚未接入；本轮未提交申请、审批、下单、取消或通知，也未用旧步骤冒充新版结果。' };
                 throw Error('未知核心步骤。');
             };
             for (const step of chain.steps) {

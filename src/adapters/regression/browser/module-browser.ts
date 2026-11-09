@@ -3,6 +3,7 @@ import { loadDifyCustomerFixtures } from '../config/test-fixtures.js';
 import { loadDifyBookFixtures, observeDifyBookResponses, verifyDifyBookResult, difyBookKind } from '../scenarios/books/book-search.js';
 import { verifyDifyDeviceResult, waitForDifyDeviceBaseline } from '../scenarios/clients/device-layout.js';
 import { verifyDifyListResult } from '../scenarios/records/application-list.js';
+import { verifyEmployeeApplicationReadOnly } from '../scenarios/records/employee-application-readonly.js';
 import { verifyDifyRecordResult, difyRecordKind } from '../scenarios/records/application-detail.js';
 import { verifyConnectedEvidence } from '../scenarios/connected-systems.js';
 import { connectedEvidenceKind } from '../evidence/connected-evidence-contract.js';
@@ -20,7 +21,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { collectDepartmentDatabaseEvidence } from '../../database/regression-readback.js';
 import { acquireDocumentPageLease, executeDocumentRun, cancelDocumentRun, getDocumentRun, saveDocumentProject, draftGroundedReadOnlyBrowserSteps } from '../../documents/execution/workflow-facade.js';
 import { launchPersistentTestPage, navigatePersistentPage, getExistingPersistentTestPage } from '../../browser/browser-runtime.js';
-import { allowBrowserRequest, waitForUserLogin, isLoginPage, isAuthenticationRoute, clearLoginHandoff, requestLoginContinue } from '../../browser/login-handoff.js';
+import { allowBrowserRequest, bringBrowserToFront, waitForUserLogin, isLoginPage, isAuthenticationRoute, clearLoginHandoff, requestLoginContinue } from '../../browser/login-handoff.js';
 import { generateDocumentCaseSteps } from '../../../server/runtime.js';
 import { callDifyWorkflow } from '../../integrations/dify/workflow-client.js';
 import type { WebModuleDependencies } from '../execution/module-execution-service.js';
@@ -121,8 +122,8 @@ export async function captureDifyBlockedEvidence(dataRoot: string, project: impo
         if (department) {
             const url = new URL(project.targetUrl);
             url.hash = route;
-            await page.goto('about:blank');
-            await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 15000 });
+            if (page.url() !== url.href)
+                await navigatePersistentPage(page, url.href, 15000);
             await page.locator(route === '/apply' ? '.pc-page-apply' : route === '/logistics' ? '.pc-page-logistics' : '.pc-page-home').waitFor({ state: 'visible', timeout: 10000 });
         }
         if (await isLoginPage(page))
@@ -145,8 +146,7 @@ export async function captureDifyBlockedEvidence(dataRoot: string, project: impo
         await style?.evaluate(el => el.parentNode?.removeChild(el)).catch(() => { });
         await client?.detach().catch(() => { });
         if (page.url() !== original) {
-            await page.goto('about:blank').catch(() => { });
-            await page.goto(original, { waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => { });
+            await navigatePersistentPage(page, original, 15000).catch(() => { });
         }
         await page.unroute('**/*', policy).catch(() => { });
         release();
@@ -184,22 +184,55 @@ export function webModuleDependencies(dataRoot: string): WebModuleDependencies {
         captureBlockedEvidence: (project, jobId, item, signal) => captureDifyBlockedEvidence(dataRoot, project, jobId, item, signal),
         saveProject: saveDocumentProject,
         recover: getDocumentRun,
+        async savedSessionStatus(project) {
+            const profilePath = path.join(dataRoot, 'document-tests', 'browser-profiles', `isolated-${project.id}`);
+            const existing = await getExistingPersistentTestPage(profilePath, { isolated: true });
+            if (!existing) return 'unavailable';
+            const session = await launchPersistentTestPage(profilePath, { isolated: true, targetUrl: project.targetUrl });
+            if (new URL(session.page.url()).origin !== new URL(project.targetUrl).origin) return 'unavailable';
+            if (await isLoginPage(session.page)) return 'expired';
+            // Do not expose the token or personal fields to HTTP responses/logs.
+            // The live server, rather than the mere presence of storage, decides
+            // whether the remembered login is still valid.
+            if (new URL(project.targetUrl).origin !== 'https://cdn.yibentushu.com') return 'unavailable';
+            return session.page.evaluate(async () => {
+                let token = localStorage.getItem('sample-apply-token');
+                try { token = JSON.parse(token ?? 'null'); } catch { /* raw string */ }
+                if (typeof token !== 'string' || !token) return 'expired' as const;
+                try {
+                    const r = await fetch('https://testapi.yibentushu.com/supply-api/getInfo', { headers: { Authorization: 'Bearer ' + token }, signal: AbortSignal.timeout(8000) });
+                    const data = await r.json();
+                    return r.ok && data.code === 200 && data.user?.userId ? 'connected' as const : r.status === 401 || data.code === 401 ? 'expired' as const : 'unavailable' as const;
+                } catch { return 'unavailable' as const; }
+            });
+        },
         async inspect(project, job, signal, onLogin) {
             const release = acquireDocumentPageLease(project.id);
             if (!release)
                 throw new Error('这个模块的测试窗口正在被其他操作占用。');
-            const profilePath = path.join(dataRoot, 'document-tests', 'browser-profiles', project.browserProfileIsolation ? `isolated-${project.id}` : project.id), profileOptions = { isolated: project.browserProfileIsolation === true };
-            const session = await (async () => { const existing = await getExistingPersistentTestPage(profilePath, profileOptions); return existing ?? await launchPersistentTestPage(profilePath, profileOptions); })().catch(error => { release(); throw error; });
+            const profilePath = path.join(dataRoot, 'document-tests', 'browser-profiles', project.browserProfileIsolation ? `isolated-${project.id}` : project.id), profileOptions = { isolated: project.browserProfileIsolation === true, targetUrl: project.targetUrl };
+            const session = await launchPersistentTestPage(profilePath, profileOptions).catch(error => { release(); throw error; });
             const policy = async (route: import('playwright').Route) => { const request = route.request(); const allowed = allowBrowserRequest(request.method(), request.url(), project.id, { targetOrigin: new URL(project.targetUrl).origin, resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame() === session.page.mainFrame(), authenticationPage: isAuthenticationRoute(session.page.url()) }); await (allowed ? route.continue() : route.abort('blockedbyclient')).catch(() => { }); };
             const abort = () => clearLoginHandoff(project.id);
             signal.addEventListener('abort', abort, { once: true });
             try {
                 await session.page.route('**/*', policy);
                 signal.throwIfAborted();
-                // A completed case can leave extra unsaved rows on the same URL.
-                // Inspect a fresh document, retaining the current isolated login.
-                await session.page.goto('about:blank');
-                await navigatePersistentPage(session.page, project.targetUrl);
+                // Opening/connecting must retain the authenticated document.
+                // Per-case form reset belongs to the execution baseline, not
+                // login: navigating through about:blank can strand the window
+                // if the next navigation fails and loses in-memory app state.
+                const navigationResult = await navigatePersistentPage(session.page, project.targetUrl);
+                // A failed SPA bootstrap can leave the correct URL with an
+                // empty shell. Retry that document once, not via a blank tab.
+                if (navigationResult === 'reused' && !await session.page.locator('body').evaluate(el => !!el.textContent?.trim() || !!el.querySelector('iframe,input,button'))) {
+                    await session.page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+                }
+                // Connecting can finish without waiting for a login page. Make
+                // the managed Edge window visible in that path too; otherwise
+                // the account is connected in the background and the user sees
+                // no page after clicking “连接我的账号”.
+                await bringBrowserToFront(session.browser, session.page);
                 if (await isLoginPage(session.page))
                     await waitForUserLogin(project.id, job.id, project.targetUrl, session.browser, session.page, async (waiting) => onLogin(waiting));
                 await waitForDepartmentFormBaseline(session.page, project.targetUrl);
@@ -284,6 +317,8 @@ export function webModuleDependencies(dataRoot: string): WebModuleDependencies {
                             await verifyDifyDeviceResult(session.page, source, result, project.targetUrl, saveEvidence);
                         if (source && session)
                             await verifyDifyListResult(session.page, source, result, project.targetUrl, saveEvidence);
+                        if (source && session)
+                            await verifyEmployeeApplicationReadOnly(session.page, source, result, project.targetUrl, saveEvidence);
                         if (source && session)
                             await verifyDifyRecordResult(session.page, source, result, project.targetUrl, saveEvidence);
                         if (source && session)

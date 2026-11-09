@@ -9,7 +9,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { loadProjectProfile } from '../../dist/storage/local-tests/suite-loader.js';
 import { prepareProfile } from '../../dist/adapters/projects/project-profile-adapter.js';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../..');
 
 test('Demo Hub registered profile tests SQLite migration and backup isolation through the workbench', { timeout: 30000 }, async t => {
   const profile = await loadProjectProfile(resolve(root, 'examples', 'profiles', 'demo-hub.json'));
@@ -30,7 +30,7 @@ test('Demo Hub registered profile tests SQLite migration and backup isolation th
   const dataDir = resolve(root, 'artifacts', 'integration', `demo-hub-${Date.now()}`);
   await mkdir(dataDir, { recursive: true });
   const base = `http://127.0.0.1:${port}`;
-  const child = spawn(process.execPath, ['dist/demo/server.js'], {
+  const child = spawn(process.execPath, ['dist/server/http-server.js'], {
     cwd: root,
     env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, OPENAI_API_KEY: '' },
     stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true,

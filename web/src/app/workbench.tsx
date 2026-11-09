@@ -14,6 +14,7 @@ import { resolveWorkbenchPage, type WorkbenchPage as Page } from './routes';
 import { useSidebarProjects, selectSidebarProject } from '../shared/project-selection';
 import CaseScriptEditor from '../features/case-scripts/case-script-editor';
 import RunReports from '../features/run-reports/run-reports';
+import ProjectStatusPage from '../features/project-status/project-status-page';
 type Notice = {
     kind: 'error' | 'success' | 'info';
     text: string;
@@ -202,7 +203,7 @@ export default function App() {
     const [moreOpen, setMoreOpen] = useState(false);
     const sidebarProjects = useSidebarProjects();
     const executionPage = page === 'dify-regression' || page === 'module-regression';
-    const projectPage = executionPage || page === 'case-scripts' || page === 'run-reports';
+    const projectPage = page === 'workbench' || executionPage || page === 'case-scripts' || page === 'run-reports' || page === 'settings' && config?.workspaces?.current === 'dify';
     const selectedRun = useMemo(() => runs.find((r) => r.id === selectedId) ?? null, [runs, selectedId]);
     const activeRun = runs.find((r) => r.status === 'queued' || r.status === 'running');
     const refresh = useCallback(async () => {
@@ -387,7 +388,7 @@ export default function App() {
     };
     const navigate = (destination: Page) => {
         const workspaces = config?.workspaces;
-        const owner = destination === 'dify-regression' || destination === 'module-regression' || destination === 'case-scripts' || destination === 'run-reports' ? 'dify' : 'web-regression';
+        const owner = ['settings', 'mysql-browser', 'architecture'].includes(destination) ? workspaces?.current : destination === 'dify-regression' || destination === 'module-regression' || destination === 'case-scripts' || destination === 'run-reports' ? 'dify' : 'web-regression';
         if (owner && workspaces && owner !== workspaces.current) {
             const target = new URL(owner === 'dify' ? workspaces.difyUrl : workspaces.webUrl);
             target.searchParams.set('page', destination);
@@ -510,7 +511,7 @@ export default function App() {
       <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>QUALITY WORKBENCH</span></div></div>
       <div className="sidebar-project"><label htmlFor="sidebar-project">当前测试项目</label><select id="sidebar-project" aria-label="当前测试项目" value={projectPage ? sidebarProjects?.systemId ?? '' : ''} disabled={!projectPage || !sidebarProjects?.systems.length || sidebarProjects.disabled} onChange={e => selectSidebarProject(e.target.value)}>{projectPage && sidebarProjects?.systems.length ? sidebarProjects.systems.map(s => <option key={s.id} value={s.id}>{s.name}</option>) : <option value="">{projectPage ? '正在读取项目…' : '本地工作区'}</option>}</select><p>项目独立维护用例与运行记录</p></div>
       <nav aria-label="主导航" className="main-nav">
-        <NavItem active={page === 'workbench'} icon="folder" label="项目概览" onClick={() => { navigate('workbench'); setMoreOpen(false); }}/>
+        <NavItem active={page === 'workbench'} icon="folder" label={config?.workspaces?.current === 'dify' ? '项目状态' : '新建测试'} onClick={() => { navigate('workbench'); setMoreOpen(false); }}/>
         <NavItem active={page === 'case-scripts'} icon="list" label="用例与脚本" onClick={() => { navigate('case-scripts'); setMoreOpen(false); }}/>
         <NavItem active={executionPage} icon="play" label="执行测试" onClick={() => { navigate('dify-regression'); setMoreOpen(false); }}/>
         <NavItem active={page === 'run-reports'} icon="file" label="运行报告" onClick={() => { navigate('run-reports'); setMoreOpen(false); }}/>
@@ -540,9 +541,10 @@ export default function App() {
 
     <main className="workspace" id="workspace-main">
       {config?.workspaces?.current === 'web-regression' && config.workspaces.dataStatus === 'awaiting-source' && <p className="integration-source-status" role="status">原网页回归项目与运行记录尚未迁入。</p>}
-      <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/><strong>{pageTitle(page)}</strong></div><div className="topbar-meta">{page === 'workbench' && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}<span className="environment-pill"><span className="status-dot"/>{config?.modelAvailable ? `模型已连接 · ${config.modelLabel}` : '本地测试 Agent'}</span><span className="divider"/><button className="top-settings" onClick={() => navigate('settings')} aria-label="打开设置"><Icon name="settings" size={16}/></button></div></header>
+      <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/><strong>{page === 'workbench' && config?.workspaces?.current === 'dify' ? '项目状态' : pageTitle(page)}</strong></div><div className="topbar-meta">{page === 'workbench' && config?.workspaces?.current !== 'dify' && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}<span className="environment-pill"><span className="status-dot"/>{config?.modelAvailable ? `模型已连接 · ${config.modelLabel}` : '本地测试 Agent'}</span><span className="divider"/><button className="top-settings" onClick={() => navigate('settings')} aria-label="打开设置"><Icon name="settings" size={16}/></button></div></header>
       {notice && <div className={`notice notice-${notice.kind}`} role="status"><span>{notice.text}</span><button aria-label="关闭提示" onClick={() => setNotice(null)}>×</button></div>}
-      {page === 'workbench' && <div className={`agent-home ${activeDocumentProjectId || activeApiSuiteId ? 'agent-home-active' : ''}`}>
+      {page === 'workbench' && config?.workspaces?.current === 'dify' && <ProjectStatusPage systemId={sidebarProjects?.systemId} storage={config.storage} onNavigate={navigate}/>}
+      {page === 'workbench' && config?.workspaces?.current !== 'dify' && <div className={`agent-home ${activeDocumentProjectId || activeApiSuiteId ? 'agent-home-active' : ''}`}>
         {!activeDocumentProjectId && !activeApiSuiteId ? <section className="agent-conversation">
           <div className="agent-welcome"><h1>开始一次新的测试</h1><p>提供测试目标与需求资料，让 Agent 整理范围、准备测试并保留证据。</p></div>
           <div className="test-start-layout"><div className="test-start-main">
@@ -592,7 +594,7 @@ export default function App() {
       {page === 'sqlite-migrations' && <SqliteMigrationPage />}
       {page === 'mysql-browser' && <MysqlExplorerPage />}
       {page === 'source-tests' && <SourceTestsPage onOpenScriptReview={() => setPage('project-tests')}/>}
-      {page === 'settings' && <SettingsPage onSaved={refresh}/>}
+      {page === 'settings' && <SettingsPage workspace={config?.workspaces?.current} onSaved={refresh}/>}
     </main>
   </div>;
 }

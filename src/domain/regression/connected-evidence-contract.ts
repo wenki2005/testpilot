@@ -1,7 +1,7 @@
 import { approvedChainKind, type ApprovedChainKind } from './approval-order-contract.js';
 import type { BrowserCheck } from '../documents/shared/test-model.js';
 export type WelfareKind = 'welfare-permission' | 'welfare-migration-totals' | 'welfare-filter' | 'welfare-history-fields';
-export type ConnectedKind = ApprovedChainKind | 'admin-order-gating' | 'admin-order-columns' | 'product-outbound-route' | 'product-outbound-count' | 'available-state-detail-entry' | 'approved-appearance' | 'rejected-appearance' | 'owned-order-list-fields' | 'owned-order-detail-navigation' | 'owned-order-details-complete' | WelfareKind | 'publisher-unavailable' | 'nonowner-detail' | 'owner-detail-access' | 'employee-login-fields' | 'stored-application-fields' | 'stored-recipient-fields' | 'copy-identifiers' | 'marketing-remark' | 'product-remark' | 'oa-template-config' | 'marketing-expense' | 'product-expense' | 'approval-readback' | 'customer-category-contract' | 'warehouse-config' | 'shop-config' | 'submit-notification' | 'lock-notification' | 'cancel-notification';
+export type ConnectedKind = 'admin-filter-usage' | 'admin-filter-customer' | 'admin-filter-delivery' | 'admin-filter-identifiers' | ApprovedChainKind | 'admin-order-gating' | 'admin-order-columns' | 'product-outbound-route' | 'product-outbound-count' | 'available-state-detail-entry' | 'approved-appearance' | 'rejected-appearance' | 'owned-order-list-fields' | 'owned-order-detail-navigation' | 'owned-order-details-complete' | WelfareKind | 'publisher-unavailable' | 'nonowner-detail' | 'owner-detail-access' | 'employee-login-fields' | 'stored-application-fields' | 'stored-recipient-fields' | 'copy-identifiers' | 'marketing-remark' | 'product-remark' | 'oa-template-config' | 'marketing-expense' | 'product-expense' | 'approval-readback' | 'customer-category-contract' | 'warehouse-config' | 'shop-config' | 'submit-notification' | 'lock-notification' | 'cancel-notification';
 /** Exact source bindings authorize bounded, read-only scenario assertions;
  * they never authorize a submission or relax the original expected result. */
 export function connectedEvidenceKind(c: Pick<BrowserCheck, 'expected' | 'source'>): ConnectedKind | undefined {
@@ -9,6 +9,12 @@ export function connectedEvidenceKind(c: Pick<BrowserCheck, 'expected' | 'source
     if (chain)
         return chain;
     const e = c.expected, s = c.source ?? '';
+    if (s.includes('管理端后台') && s.includes('部门用书订单')) {
+        if (e === '用书类型筛选（全部/营销用书/产品用书）生效') return 'admin-filter-usage';
+        if (e === '划归客户支持下拉筛选与模糊搜索') return 'admin-filter-customer';
+        if (e === '发货方式（全部/快递仓发货/物流仓发货）筛选生效') return 'admin-filter-delivery';
+        if (e === '物流单号/企微审批单号支持模糊与精准搜索') return 'admin-filter-identifiers';
+    }
     if (s.includes('选择产品用书') && e === '推送至旺店通「部门用书店铺」→ 易诚通其他出库单分类=「赠送出库」')
         return 'product-outbound-route';
     if (s.includes('选择产品用书') && e === '产品用书不论本数（3本/5本）均归为赠送出库类型')

@@ -9,7 +9,7 @@ import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { createWebRegressionSampleServer } from '../../../examples/web-regression-sample/server.mjs';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('local sample proves UI regression, API fixtures, cleanup, and fixed-version recovery', { timeout: 180_000 }, async t => {
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-regression-sample-'));
@@ -26,6 +26,7 @@ test('local sample proves UI regression, API fixtures, cleanup, and fixed-versio
   await new Promise(done => portProbe.close(done));
 
   const project = {
+    platform: { type: 'pc-web', status: 'confirmed' },
     id: projectId,
     name: 'Local web regression sample',
     fileName: 'sample-requirements.md',
@@ -104,7 +105,7 @@ test('local sample proves UI regression, API fixtures, cleanup, and fixed-versio
   await mkdir(join(dataDir, 'document-tests', 'projects'), { recursive: true });
   await writeFile(join(dataDir, 'document-tests', 'projects', `${projectId}.json`), JSON.stringify(project));
 
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], {
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], {
     cwd: root,
     env: {
       ...process.env,

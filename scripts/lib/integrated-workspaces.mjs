@@ -1,10 +1,15 @@
 // Shared local paths for independently owned Dify and web-regression workspaces.
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveDataDirectories } from './data-directory.mjs';
 export const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-export const runtimeRoot = path.join(repoRoot, 'runtime-data');
+export const runtimeRoot = resolveDataDirectories().workspacesRoot;
+export const legacyRuntimeRoot = path.join(repoRoot, 'runtime-data');
 export const workspaceNames = ['dify', 'web-regression'];
-export const workspacePorts = { dify: 4323, 'web-regression': 4324 };
+const localPort = (value, fallback) => { const port = value ? Number(value) : fallback; if (!Number.isInteger(port) || port < 1024 || port > 65535) throw Error('Invalid local TestPilot port.'); return port; };
+export const workspacePorts = { dify: localPort(process.env.TESTPILOT_DIFY_PORT, 4323), 'web-regression': localPort(process.env.TESTPILOT_WEB_PORT, 4324) };
+export const entryPort = localPort(process.env.TESTPILOT_ENTRY_PORT, 4325);
+if (new Set([...Object.values(workspacePorts), entryPort]).size !== 3) throw Error('TestPilot ports must be distinct.');
 export function workspacePaths(owner) {
     if (!workspaceNames.includes(owner))
         throw Error('workspace must be dify or web-regression');

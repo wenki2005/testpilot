@@ -2,13 +2,14 @@ import type { Page } from 'playwright';
 import { readDepartmentAdminFilterEvidence } from '../../../database/mysql-browser.js';
 import type { DepartmentCreationBaseline } from '../application/submission-receipts.js';
 import { verifyObservedOrderCreation } from './order-creation-readback.js';
+import { auditAdminFilters, type AdminFilterKind } from './admin-filter-contract.js';
 type Row = Record<string, any>;
 type Result = {
     status: string;
     detail: string;
 };
-export type AdminRecordKind = 'admin-order-gating' | 'admin-order-columns' | 'product-outbound-route' | 'product-outbound-count';
-export function isAdminRecordKind(kind: unknown): kind is AdminRecordKind { return ['admin-order-gating', 'admin-order-columns', 'product-outbound-route', 'product-outbound-count'].includes(String(kind)); }
+export type AdminRecordKind = AdminFilterKind | 'admin-order-gating' | 'admin-order-columns' | 'product-outbound-route' | 'product-outbound-count';
+export function isAdminRecordKind(kind: unknown): kind is AdminRecordKind { return ['admin-filter-usage', 'admin-filter-customer', 'admin-filter-delivery', 'admin-filter-identifiers', 'admin-order-gating', 'admin-order-columns', 'product-outbound-route', 'product-outbound-count'].includes(String(kind)); }
 export async function verifyAdminOrderRecords(page: Page, kind: AdminRecordKind, result: Result, database = readDepartmentAdminFilterEvidence, baselines: DepartmentCreationBaseline[] = []) {
     const read = async (path: string) => page.evaluate(async (p) => {
         let token = localStorage.getItem('sample-apply-token');
@@ -51,6 +52,16 @@ export async function verifyAdminOrderRecords(page: Page, kind: AdminRecordKind,
             amountMatches++;
     }
     const fieldNames = ['costClientName', 'bookUsage', 'deliveryWay', 'logisticsNo', 'spId', 'remark'], presence = fieldNames.map(k => ({ field: k, rows: rows.filter((r: Row) => Object.hasOwn(r, k)).length }));
+    if (kind.startsWith('admin-filter-')) {
+        const doc = await read('v3/api-docs'); if (doc.http !== 200) throw Error('Blocked: 本轮OpenAPI不可读。'); const spec = doc.body;
+        const operation = spec.paths?.['/dept/book/manage/orderList']?.get;
+        const parameters = (operation?.parameters ?? []).filter((p: any) => p.in === 'query').map((p: any) => p.name);
+        const checked = await auditAdminFilters(kind as AdminFilterKind, rows, parameters, query => ok('dept/book/manage/orderList?' + query));
+        const final = await ok('dept/book/manage/orderList?pageNum=1&pageSize=100');
+        if (JSON.stringify(final.rows) !== JSON.stringify(rows) || Number(final.total) !== rows.length) throw Error('Blocked: 筛选期间基线变化，未判产品缺陷。');
+        if (checked.mismatches.length) throw Error('Failed: 后台接口筛选与稳定订单集合不一致：' + [...new Set(checked.mismatches)].join('、'));
+        result.status = 'blocked'; result.detail = checked.detail + ' API子检查完成；原用例的后台控件、下拉/模糊搜索及多角色页面验证尚未执行，不能把接口子检查算整条通过。'; return;
+    }
     let extra = '';
     if (kind === 'admin-order-columns') {
         const doc = await read('v3/api-docs');

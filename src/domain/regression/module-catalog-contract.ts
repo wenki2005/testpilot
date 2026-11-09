@@ -20,6 +20,7 @@ export type TestedSystem = {
     updatedAt: string;
 };
 export type ModuleVersion = {
+    source?: 'manual' | 'mcp' | 'resources';
     id: string;
     version: number;
     digest: string;
@@ -39,6 +40,10 @@ export type FixedModule = {
     starterCaseIds?: string[];
     starterVersionId?: string;
     versions: ModuleVersion[];
+    /** Derived from the latest version; shown before a run so pending scripts are visible. */
+    pendingScriptReviewCount?: number;
+    /** Derived from the latest version; these cases need steps edited before they can run. */
+    missingScriptCount?: number;
     createdAt: string;
     updatedAt: string;
 };
@@ -80,7 +85,7 @@ export type BatchView = RegressionBatch & {
     counts: Record<'passed' | 'failed' | 'blocked' | 'error' | 'not_executed' | 'outside', number>;
 };
 export type AccountView = {
-    state: 'unknown' | 'connecting' | 'awaiting-login' | 'connected' | 'error';
+    state: 'unknown' | 'saved' | 'connecting' | 'awaiting-login' | 'connected' | 'error';
     message: string;
     profileId?: string;
     checkedAt?: string;

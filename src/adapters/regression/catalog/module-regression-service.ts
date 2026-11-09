@@ -1,3 +1,4 @@
+import { scriptSupport } from '../resources/script-coverage.js';
 import { randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
@@ -15,6 +16,7 @@ import { difyBlocker } from '../authoring/case-readiness.js';
 import { DifyBatchNotifier } from '../notifications/batch-notifier.js';
 import type { CaseDependency, CaseEditorCatalog, EditableCase } from '../../../domain/cases/case-script-contract.js';
 import { departmentCoreChains } from '../../../domain/regression/core-chain-definitions.js';
+import { validateProjectResources, compareProjectResources, resourceDigest, resourceKey, type ProjectResources } from '../resources/project-resource-contract.js';
 const uuid = z.string().uuid();
 const terminal = new Set(['completed', 'error', 'blocked', 'cancelled', 'interrupted']);
 const now = () => new Date().toISOString();
@@ -57,6 +59,10 @@ export class SystemModuleRegression {
                     }
                 this.save('batch', batch);
             }
+        // Login storage lives in the local browser profile, never in bundled
+        // resources. Restore metadata immediately, then verify only a live tab.
+        for (const system of this.list<TestedSystem>('system'))
+            this.restoreAccount(system);
     }
     private list<T>(kind: string): T[] { return this.db.prepare('SELECT payload FROM records WHERE kind=? ORDER BY rowid DESC').all(kind).map(r => JSON.parse(String(r.payload))); }
     private save<T extends {
@@ -75,7 +81,31 @@ export class SystemModuleRegression {
         return JSON.parse(String(row.payload));
     }
     getSystem(key: string) { return this.get<TestedSystem>('system', key); }
+    private rememberAccount(system: TestedSystem, account: AccountView) {
+        this.accounts[system.id] = account;
+        this.save('account-session', { id: 'account-session:' + system.id + ':' + account.profileId,
+            profileId: account.profileId, targetUrl: system.targetUrl, environment: system.environment, checkedAt: account.checkedAt });
+    }
+    private restoreAccount(system: TestedSystem) {
+        const profileId = this.accountProfile(system).id;
+        const row = this.db.prepare('SELECT payload FROM records WHERE kind=? AND id=?').get('account-session', 'account-session:' + system.id + ':' + profileId);
+        const saved = row ? JSON.parse(String(row.payload)) : undefined;
+        if (saved?.targetUrl === system.targetUrl && saved.environment === system.environment)
+            this.accounts[system.id] = { state: 'saved', message: '本机登录信息已保存；打开时自动复用并检查有效性。', profileId, checkedAt: saved.checkedAt };
+        if (!this.deps.savedSessionStatus) return;
+        const project = { id: profileId, name: system.name, targetUrl: system.targetUrl, browserProfileIsolation: true } as DocumentProject;
+        void this.deps.savedSessionStatus(project).then(status => {
+            if (this.closed || this.occupied(system.id) || this.accountProfile(this.getSystem(system.id)).id !== profileId) return;
+            if (status === 'connected')
+                this.rememberAccount(system, { state: 'connected', message: '已复用本机登录会话；无需重复扫码。', profileId, checkedAt: now() });
+            else if (status === 'expired')
+                this.accounts[system.id] = { state: 'unknown', message: '登录已失效，请打开被测系统重新登录。', profileId };
+        }).catch(() => { /* Preserve saved status; a temporary CDP failure is not logout. */ });
+    }
     getModule(key: string) { return this.get<FixedModule>('module', key); }
+    connectionSettings() {
+        return { systems: this.list<TestedSystem>('system').map(s => ({ id: s.id, name: s.name, environment: s.environment, targetUrl: s.targetUrl, profileId: s.profileId, activeAccountId: s.activeAccountId ?? s.profileId, accountProfiles: s.accountProfiles ?? [], ...(s.databaseBinding ? { databaseBinding: s.databaseBinding } : {}), account: this.accounts[s.id] ?? { state: 'unknown', message: '尚未检查当前账号。' } })), services: { fixedExecution: 'local', aiAuthoringConfigured: !!process.env.TESTPILOT_DIFY_API_KEY, aiExecutionConfigured: !!process.env.TESTPILOT_DIFY_EXECUTION_API_KEY } };
+    }
     private occupied(systemId: string) { return [...this.active.keys()].some(key => this.get<RegressionBatch>('batch', key).systemId === systemId) || this.connections.has(systemId); }
     saveSystem(input: unknown) {
         const data = systemInput.parse(input);
@@ -133,7 +163,9 @@ export class SystemModuleRegression {
         s.activeAccountId = accountId;
         s.updatedAt = now();
         delete this.accounts[key];
-        return this.save('system', s);
+        const updated = this.save('system', s);
+        this.restoreAccount(updated);
+        return updated;
     }
     private hasProfile(system: TestedSystem, profileId: string) { return system.profileId === profileId || system.accountProfiles?.some(a => a.id === profileId); }
     saveSelection(systemId: string, input: unknown) {
@@ -237,9 +269,13 @@ export class SystemModuleRegression {
             return { systems: [], systemId: '', modules: [], cases: [], chains: [] };
         const modules = this.list<FixedModule>('module').filter(m => m.systemId === system.id && !m.archived).reverse();
         const cases = modules.flatMap(m => this.editorCases(m, undefined, system));
-        const short = ['审批通过与建单', '审批驳回与再次申请', '库存不足与重试锁单', '订单详情与物流'];
+        const short = ['申请提交与申请记录', '申请撤销与订单取消', '库存不足与定时补锁', '企微通知与后台追踪'];
         const chains = departmentCoreChains.map((c, i) => ({ id: c.id, title: short[i]!, caseKeys: [...new Set(c.steps.flatMap(s => s.caseIds))].flatMap(id => cases.filter(v => v.id === id).map(v => v.moduleId + ':' + id)) })).filter(c => c.caseKeys.length);
         return { systems: systems.map(s => ({ id: s.id, name: s.name })), systemId: system.id, modules: modules.map(m => ({ id: m.id, name: m.name, caseKeys: cases.filter(c => c.moduleId === m.id).map(c => c.moduleId + ':' + c.id) })), cases, chains };
+    }
+    editorRevision(systemId: string) {
+        this.getSystem(systemId);
+        return this.list<FixedModule>('module').filter(m => m.systemId === systemId && !m.archived).map(m => m.id + ':' + m.versions.at(-1)?.id).sort().join('|');
     }
     private editorCases(m: FixedModule, versionId?: string, system = this.getSystem(m.systemId)): EditableCase[] {
         const v = versionId ? m.versions.find(v => v.id === versionId) : m.versions.at(-1);
@@ -265,10 +301,107 @@ export class SystemModuleRegression {
                 break;
             }
             const prerequisites = pack.prerequisiteCases?.[c.id] ?? [];
-            return { moduleId: m.id, versionId: v.id, version: v.version, id: c.id, title: c.title, expected: c.expected, manualSteps: pack.manualSteps?.[c.id] ?? [], prerequisites, ...(pack.prerequisiteReviews?.[c.id] ? { prerequisiteReview: pack.prerequisiteReviews[c.id] } : {}), script: { caseId: c.id, dependsOn: prerequisites.map(d => ({ ...d, requiredStatus: 'passed' as const })), steps }, sourcePath: c.modulePath ?? [], sourceExpected: original.project.cases.find(v => v.id === c.id)?.expected ?? c.expected, scriptPath: `/api/system-module-regression/case-editor/${m.id}/${c.id}/script?version=${v.id}`, status, ...(resultAt ? { resultAt } : {}) };
+            return { ...(pack.resourceSources?.[c.id]?.priority ? { priority: pack.resourceSources[c.id]!.priority } : {}), executionSupport: scriptSupport({ title: c.title, expected: c.expected, sourcePath: pack.resourceSources?.[c.id]?.sourcePath ?? c.modulePath ?? [], script: { caseId: c.id, dependsOn: prerequisites.map(d => ({ ...d, requiredStatus: 'passed' as const })), steps } }), ...(pack.resourceSources?.[c.id]?.sourceId ? { sourceId: pack.resourceSources[c.id]!.sourceId } : {}), ...(pack.scriptReviews?.[c.id] ? { scriptReview: pack.scriptReviews[c.id] } : {}), ...(v.source ? { changeSource: v.source } : {}), moduleId: m.id, versionId: v.id, version: v.version, id: c.id, title: c.title, expected: c.expected, manualSteps: pack.manualSteps?.[c.id] ?? [], prerequisites, ...(pack.prerequisiteReviews?.[c.id] ? { prerequisiteReview: pack.prerequisiteReviews[c.id] } : {}), script: { caseId: c.id, dependsOn: prerequisites.map(d => ({ ...d, requiredStatus: 'passed' as const })), steps }, sourcePath: pack.resourceSources?.[c.id]?.sourcePath ?? c.modulePath ?? [], sourceExpected: pack.resourceSources?.[c.id]?.sourceExpected ?? original.project.cases.find(v => v.id === c.id)?.expected ?? c.expected, scriptPath: `/api/system-module-regression/case-editor/${m.id}/${c.id}/script?version=${v.id}`, status, ...(resultAt ? { resultAt } : {}) };
         });
     }
     editorHistory(moduleId: string, caseId: string) { const m = this.getModule(moduleId); return m.versions.map(v => ({ version: v.version, createdAt: v.createdAt, data: this.editorCases(m, v.id).find(c => c.id === caseId) })).filter(v => v.data).reverse(); }
+    /** New-machine initialization imports definitions only, never another user's data. */
+    async initializeResources(input: unknown, configuration: { targetUrl: string; environment: string }) {
+        const resources = validateProjectResources(input);
+        const existing = this.list<TestedSystem>('system').find(s => s.id === resources.project.id);
+        if (existing) return { initialized: false, systemId: existing.id, reason: 'existing' as const };
+        const targetUrl = moduleTarget(configuration.targetUrl), environment = z.string().trim().min(1).max(80).parse(configuration.environment);
+        for (const m of resources.modules) if (this.db.prepare('SELECT id FROM records WHERE id=?').get(m.id)) throw Error('初始化模块编号与本机已有记录冲突。');
+        const supportedChains = departmentCoreChains.filter(c => c.steps.every(s => s.caseIds.every(id => resources.cases.some(c => c.id === id)))).map(c => ({ id: c.id, title: c.title, description: c.description, steps: c.steps.map(s => ({ id: s.id, title: s.title, expected: s.expected, caseIds: s.caseIds })) }));
+        if (resourceDigest(resources.chains) !== resourceDigest(supportedChains)) throw Error('资源的核心链路模板与当前工具版本不兼容。');
+        const packs = resources.modules.map(m => ({ module: m, pack: this.store.prepareResourceModule(undefined, m.name, targetUrl, resources.cases.filter(c => c.moduleId === m.id)) }));
+        for (const p of packs) await this.store.commitResourceModule(p.pack);
+        if (this.list<TestedSystem>('system').some(s => s.id === resources.project.id)) return { initialized: false, systemId: resources.project.id, reason: 'existing' as const };
+        const system: TestedSystem = { id: resources.project.id, name: resources.project.name, environment, targetUrl, profileId: randomUUID(), selectedModuleIds: resources.modules.map(m => m.id), createdAt: now(), updatedAt: now(), notifyFailures: false, notifyScreenshots: false };
+        if (supportsDepartmentDatabase(targetUrl)) system.databaseBinding = 'department-supply-readonly';
+        this.db.exec('BEGIN IMMEDIATE');
+        try {
+            this.save('system', system);
+            for (const { module: m, pack } of packs) {
+                const value: FixedModule = { id: m.id, systemId: system.id, name: m.name, archived: false, versions: [{ id: pack.id, version: 1, digest: pack.digest, caseCount: pack.project.cases.length, createdAt: now(), added: pack.project.cases.length, removed: 0, changed: 0 }], createdAt: now(), updatedAt: now(), ...(m.coreCaseIds ? { coreCaseIds: m.coreCaseIds, coreVersionId: pack.id } : {}), ...(m.starterCaseIds ? { starterCaseIds: m.starterCaseIds, starterVersionId: pack.id } : {}) };
+                this.save('module', value);
+            }
+            this.db.exec('COMMIT');
+        } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+        return { initialized: true, systemId: system.id, modules: packs.length, cases: resources.cases.length, chains: resources.chains.length, resourceRevision: resourceDigest(resources) };
+    }
+    exportResources(systemId: string) {
+        const catalog = this.editorCatalog(systemId);
+        const resources: ProjectResources = {
+            schema: 1, project: { id: catalog.systemId, name: this.getSystem(systemId).name },
+            modules: catalog.modules.map(m => {
+                const module = this.getModule(m.id);
+                return { id: m.id, name: m.name, ...(module.coreCaseIds ? { coreCaseIds: module.coreCaseIds } : {}), ...(module.starterCaseIds ? { starterCaseIds: module.starterCaseIds } : {}) };
+            }),
+            cases: catalog.cases.map(c => ({ ...(c.priority ? { priority: c.priority } : {}), ...(c.sourceId ? { sourceId: c.sourceId } : {}), ...(c.scriptReview ? { scriptReview: c.scriptReview } : {}), id: c.id, moduleId: c.moduleId, title: c.title, expected: c.expected, manualSteps: c.manualSteps, prerequisites: c.prerequisites, ...(c.prerequisiteReview ? { prerequisiteReview: c.prerequisiteReview } : {}), sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, script: c.script })),
+            chains: departmentCoreChains.filter(chain => chain.steps.every(s => s.caseIds.every(id => catalog.cases.some(c => c.id === id)))).map(c => ({ id: c.id, title: c.title, description: c.description, steps: c.steps.map(s => ({ id: s.id, title: s.title, expected: s.expected, caseIds: s.caseIds })) })),
+        };
+        const checked = validateProjectResources(resources);
+        const versionSelections = Object.fromEntries(catalog.modules.map(m => [m.id, this.getModule(m.id).versions.at(-1)!.id]));
+        return { resources: checked, revision: resourceDigest({ resources: checked, versionSelections }), versionSelections };
+    }
+    previewResources(input: unknown) {
+        const resources = validateProjectResources(input), current = this.exportResources(resources.project.id);
+        for (const m of resources.modules) {
+            const existing = this.list<FixedModule>('module').find(v => v.id === m.id);
+            if (existing && existing.systemId !== resources.project.id) throw Error('模块编号已属于其他项目。');
+            if (existing?.archived) throw Error('该模块编号已归档，请先恢复模块或使用新的模块编号。');
+        }
+        if (resourceDigest(resources.chains) !== resourceDigest(current.resources.chains)) throw Error('核心链路执行模板由程序维护，本次资源更新不能改写链路定义。');
+        // Validate executable steps now, before a preview can be accepted.
+        for (const m of resources.modules) {
+            const source = current.versionSelections[m.id];
+            this.store.prepareResourceModule(source, m.name, this.getSystem(resources.project.id).targetUrl, resources.cases.filter(c => c.moduleId === m.id));
+        }
+        return { revision: current.revision, definitionRevision: resourceDigest(current.resources), incomingRevision: resourceDigest(resources), ...compareProjectResources(current.resources, resources), modulesAdded: resources.modules.filter(m => !current.resources.modules.some(v => v.id === m.id)).map(m => m.id), modulesRemoved: current.resources.modules.filter(m => !resources.modules.some(v => v.id === m.id)).map(m => m.id) };
+    }
+    async applyResources(input: unknown, source: 'resources' | 'mcp' = 'resources') {
+        const data = z.object({ resources: z.unknown(), baseRevision: z.string().regex(/^[a-f0-9]{64}$/) }).strict().parse(input);
+        const resources = validateProjectResources(data.resources), system = this.getSystem(resources.project.id);
+        if (this.occupied(system.id)) throw Error('项目正在运行或连接，请结束后更新资源。');
+        const preview = this.previewResources(resources);
+        if (preview.revision !== data.baseRevision) throw Error('资源版本冲突，请重新预览后保存。');
+        if (preview.incomingRevision === preview.definitionRevision) return { ...preview, applied: false };
+        const before = this.exportResources(system.id);
+        const prepared = resources.modules.map(m => {
+            const old = before.resources.modules.find(v => v.id === m.id);
+            const oldCases = before.resources.cases.filter(c => c.moduleId === m.id), cases = resources.cases.filter(c => c.moduleId === m.id);
+            return { module: m, old, changed: !old || resourceDigest({ module: old, cases: oldCases }) !== resourceDigest({ module: m, cases }), pack: this.store.prepareResourceModule(before.versionSelections[m.id], m.name, system.targetUrl, cases) };
+        });
+        for (const p of prepared) if (p.changed) await this.store.commitResourceModule(p.pack);
+        if (this.exportResources(system.id).revision !== data.baseRevision || this.occupied(system.id)) throw Error('导入期间项目状态已变化，未切换资源版本，请重新预览。');
+        this.db.exec('BEGIN IMMEDIATE');
+        try {
+            for (const p of prepared) {
+                const old = p.old ? structuredClone(this.getModule(p.module.id)) : undefined;
+                let saved: FixedModule;
+                if (p.changed) {
+                    const pack = p.pack, previous = old?.versions.at(-1);
+                    const rows = resources.cases.filter(c => c.moduleId === p.module.id);
+                    saved = old ?? { id: p.module.id, systemId: system.id, name: p.module.name, archived: false, versions: [], createdAt: now(), updatedAt: now() };
+                    saved.name = p.module.name; saved.archived = false; saved.updatedAt = now();
+                    saved.versions.push({ source, id: pack.id, version: (previous?.version ?? 0) + 1, digest: pack.digest, caseCount: rows.length, createdAt: now(), added: preview.added.filter(k => k.startsWith(p.module.id + ':')).length, removed: preview.removed.filter(k => k.startsWith(p.module.id + ':')).length, changed: preview.changed.filter(k => k.startsWith(p.module.id + ':')).length });
+                } else saved = old!;
+                const versionId = saved.versions.at(-1)!.id;
+                if (p.module.coreCaseIds) { saved.coreCaseIds = p.module.coreCaseIds; saved.coreVersionId = versionId; } else { delete saved.coreCaseIds; delete saved.coreVersionId; }
+                if (p.module.starterCaseIds) { saved.starterCaseIds = p.module.starterCaseIds; saved.starterVersionId = versionId; } else { delete saved.starterCaseIds; delete saved.starterVersionId; }
+                this.save('module', saved);
+            }
+            for (const id of preview.modulesRemoved) {
+                const m = this.getModule(id); m.archived = true; m.updatedAt = now(); this.save('module', m);
+            }
+            system.name = resources.project.name;
+            system.selectedModuleIds = system.selectedModuleIds.filter(id => resources.modules.some(m => m.id === id));
+            system.updatedAt = now(); this.save('system', system);
+            this.db.exec('COMMIT');
+        } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+        return { ...preview, applied: true, revision: this.exportResources(system.id).revision };
+    }
     editorScript(moduleId: string, caseId: string, versionId?: string) {
         const value = this.editorCases(this.getModule(moduleId), versionId).find(c => c.id === caseId);
         if (!value)
@@ -338,7 +471,7 @@ export class SystemModuleRegression {
         }
         return { systemId: data.systemId, cases: rows.size, withPrerequisites: data.cases.filter(c => c.prerequisites.length).length, pending: data.cases.filter(c => c.review.status === 'pending').length, versions: updates.map(m => ({ moduleId: m.id, versionId: m.versions.at(-1)!.id, version: m.versions.at(-1)!.version })) };
     }
-    async saveEditorCase(moduleId: string, input: unknown) {
+    async saveEditorCase(moduleId: string, input: unknown, source: 'manual' | 'mcp' = 'manual') {
         const dep = z.object({ moduleId: uuid, caseId: z.string().min(1).max(80) }).strict();
         const data = z.object({ versionId: uuid, caseId: z.string().min(1).max(80), title: z.string().trim().min(1).max(500), expected: z.string().trim().min(1).max(2000), manualSteps: z.array(z.string().max(2000)).max(100), prerequisites: z.array(dep).max(30), script: z.object({ caseId: z.string(), dependsOn: z.array(dep.extend({ requiredStatus: z.literal('passed') })).max(30), steps: z.array(z.unknown()).max(100) }).strict() }).strict().parse(input);
         const m = this.getModule(moduleId);
@@ -379,6 +512,7 @@ export class SystemModuleRegression {
         if (fresh.versions.at(-1)?.id !== data.versionId || this.occupied(m.systemId))
             throw Error('保存期间模块状态发生变化，请刷新重试。');
         const saved = this.attach(m.systemId, fresh, revised.id, m.name);
+        saved.versions.at(-1)!.source = source;
         if (saved.coreVersionId === data.versionId)
             saved.coreVersionId = revised.id;
         if (saved.starterVersionId === data.versionId)
@@ -406,7 +540,18 @@ export class SystemModuleRegression {
         const old = this.store.state();
         const modules = this.list<FixedModule>('module');
         const assigned = new Set(modules.flatMap(m => m.versions.map(v => v.id)));
-        return { systems: this.list<TestedSystem>('system'), modules, batches: this.list<RegressionBatch>('batch').map(b => this.view(b)), accounts: this.accounts, legacyModules: old.modules.filter(m => !assigned.has(m.id)).map(m => ({ id: m.id, name: m.name, targetUrl: m.targetUrl, caseCount: m.caseCount })), configured: old.configured, database: { connected: mysqlBrowserStatus().connected }, notificationConfigured: this.notifier.configured() };
+        const visibleModules = modules.map(m => {
+            const latest = m.versions.at(-1);
+            // Polling must not rebuild editorCatalog and scan every historical
+            // job for every module: that blocks the event loop and starves CDP.
+            const pack = latest ? this.store.getModule(latest.id) : undefined;
+            const latestCases = pack?.project.cases ?? [];
+            const hasSteps = (c: typeof latestCases[number]) => c.steps.length > 0 || !!(pack?.cachedSteps?.[c.id]?.steps.length && pack.cachedSteps[c.id]!.sourceDigest === moduleDigest(c));
+            const pendingScriptReviewCount = latestCases.filter(c => pack?.scriptReviews?.[c.id]?.status === 'pending' && hasSteps(c)).length;
+            const missingScriptCount = latestCases.filter(c => !hasSteps(c)).length;
+            return pendingScriptReviewCount || missingScriptCount ? { ...m, ...(pendingScriptReviewCount ? { pendingScriptReviewCount } : {}), ...(missingScriptCount ? { missingScriptCount } : {}) } : m;
+        });
+        return { systems: this.list<TestedSystem>('system'), modules: visibleModules, batches: this.list<RegressionBatch>('batch').map(b => this.view(b)), accounts: this.accounts, legacyModules: old.modules.filter(m => !assigned.has(m.id)).map(m => ({ id: m.id, name: m.name, targetUrl: m.targetUrl, caseCount: m.caseCount })), configured: old.configured, database: { connected: mysqlBrowserStatus().connected }, notificationConfigured: this.notifier.configured() };
     }
     getBatch(key: string) { return this.view(this.get<RegressionBatch>('batch', key)); }
     private view(batch: RegressionBatch): BatchView {
@@ -474,7 +619,7 @@ export class SystemModuleRegression {
         return batch;
     }
     retest(key: string, input: unknown) {
-        const data = z.object({ requestId: uuid, mode: z.enum(['failed', 'unfinished', 'all', 'selected', 'pending']).default('failed'), moduleId: uuid.optional(), caseIds: z.array(z.string()).min(1).max(200).optional() }).parse(input);
+        const data = z.object({ requestId: uuid, mode: z.enum(['failed', 'unfinished', 'all', 'selected', 'pending', 'checkpoint']).default('failed'), moduleId: uuid.optional(), caseIds: z.array(z.string()).min(1).max(200).optional() }).parse(input);
         const fingerprint = moduleDigest({ parent: key, ...data });
         const replay = this.replay(data.requestId, fingerprint);
         if (replay)
@@ -500,8 +645,8 @@ export class SystemModuleRegression {
                 return [{ ...snapshot, selectedCaseIds: data.caseIds!, confirmedCaseIds: (e.confirmedCaseIds ?? []).filter(id => data.caseIds!.includes(id)) }];
             }
             if (!j)
-                return ['unfinished', 'pending'].includes(data.mode) ? [snapshot] : [];
-            const ids = j.results.filter(r => !r.outOfScope && (data.mode === 'failed' ? r.status === 'failed' : data.mode === 'pending' ? r.status === 'not_executed' : ['blocked', 'error', 'not_executed'].includes(r.status))).map(r => r.caseId);
+                return ['unfinished', 'pending', 'checkpoint'].includes(data.mode) ? [snapshot] : [];
+            const ids = j.results.filter(r => !r.outOfScope && (data.mode === 'failed' ? r.status === 'failed' : ['pending', 'checkpoint'].includes(data.mode) ? r.status === 'not_executed' : ['blocked', 'error', 'not_executed'].includes(r.status))).map(r => r.caseId);
             return ids.length ? [{ ...snapshot, selectedCaseIds: ids, confirmedCaseIds: (e.confirmedCaseIds ?? []).filter(id => ids.includes(id)) }] : [];
         });
         if (!entries.length)
@@ -655,10 +800,10 @@ export class SystemModuleRegression {
                 databaseEvidence ??= { binding: system.databaseBinding, capturedAt: now(), status: 'blocked', checks: [{ id: 'connection', title: '测试库准备', status: 'blocked', detail: '未完成本机只读核验；不会将未检查的数据当成已准备。' }] };
             }
             if (!this.closed && !controller.signal.aborted)
-                this.accounts[key] = { state: 'connected', message: '测试窗口已连接；权限以各用例实际结果为准。', profileId: profile.id, checkedAt: now(), ...(databaseEvidence ? { databaseEvidence } : {}) };
-        }, () => {
+                this.rememberAccount(system, { state: 'connected', message: '已登录；本机自动保存并复用登录信息。', profileId: profile.id, checkedAt: now(), ...(databaseEvidence ? { databaseEvidence } : {}) });
+        }, (error: unknown) => {
             if (!this.closed && !controller.signal.aborted)
-                this.accounts[key] = { state: 'error', message: '未完成账号连接，请重新连接并在测试窗口登录。', profileId: profile.id };
+                this.accounts[key] = { state: 'error', message: error instanceof Error ? error.message : '未完成窗口连接；本机已保存的登录信息仍保留。', profileId: profile.id };
         }).finally(() => this.connections.delete(key));
         return this.accounts[key];
     }

@@ -15,6 +15,11 @@ export type CaseScript = {
     steps: BrowserCheck['steps'];
 };
 export type EditableCase = {
+    priority?: BrowserCheck['priority'];
+    sourceId?: string;
+    scriptReview?: { status: 'pending' | 'reviewed'; note: string };
+    executionSupport?: { kind: string; label: string; handler: string; source: string; nextAction: string };
+    changeSource?: 'manual' | 'mcp' | 'resources';
     moduleId: string;
     versionId: string;
     version: number;

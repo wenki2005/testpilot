@@ -206,7 +206,13 @@ async function createPersistentTestPage(userDataDir: string, projectId: string, 
                 if (reconnected)
                     return reconnected;
             }
-            catch { /* stale endpoint: launch one replacement on this project's profile */ }
+            catch (error) {
+                // A live Edge already owns this profile. A slow/failed CDP
+                // attach is not permission to launch another copy of it.
+                const live = await fetch(`${saved.cdpEndpoint}/json/version`, { signal: AbortSignal.timeout(2000) }).then(r => r.ok).catch(() => false);
+                if (live)
+                    throw new Error('原测试浏览器仍在运行，但连接尚未完成；已保留登录窗口，请稍后重新打开。', { cause: error });
+            }
         }
         const managed = await launchManagedEdge(userDataDir, projectId, headless);
         if (managed)
@@ -239,6 +245,7 @@ async function createPersistentTestPage(userDataDir: string, projectId: string, 
 export async function launchPersistentTestPage(userDataDir: string, options: {
     browser?: 'chromium' | 'edge';
     isolated?: boolean;
+    targetUrl?: string;
 } = {}) {
     const key = resolvePersistentProfileDirectory(userDataDir, options.browser);
     const configuredEndpoint = options.isolated ? "" : resolveModelSettings().browserCdpEndpoint ?? "";
@@ -248,8 +255,11 @@ export async function launchPersistentTestPage(userDataDir: string, options: {
     const current = persistentSessions.get(key);
     if (current) {
         const session = await current.catch(() => undefined);
-        if (session && !session.page.isClosed() && session.endpoint === configuredEndpoint && session.browserChoice === options.browser && (session.isolated === true) === (options.isolated === true))
+        if (session && session.browser.isConnected() && !session.page.isClosed() && session.endpoint === configuredEndpoint && session.browserChoice === options.browser && (session.isolated === true) === (options.isolated === true)) {
+            if (options.targetUrl && options.isolated)
+                await reuseTargetTab(key, projectIdForProfile(userDataDir), session, options.targetUrl);
             return session;
+        }
         if (session)
             await session.close().catch(() => undefined);
         persistentSessions.delete(key);
@@ -258,13 +268,43 @@ export async function launchPersistentTestPage(userDataDir: string, options: {
     const creating: Promise<PersistentSession> = createPersistentTestPage(key, projectId, options.browser, options.isolated).then(session => ({ ...session, isolated: options.isolated, endpoint: configuredEndpoint, ...(options.browser ? { browserChoice: options.browser } : {}) }));
     persistentSessions.set(key, creating);
     try {
-        return await creating;
+        const session = await creating;
+        if (options.targetUrl && options.isolated)
+            await reuseTargetTab(key, projectId, session, options.targetUrl);
+        return session;
     }
     catch (error) {
         if (persistentSessions.get(key) === creating)
             persistentSessions.delete(key);
         throw error;
     }
+}
+function projectIdForProfile(userDataDir: string) { return path.basename(path.resolve(userDataDir)); }
+/** Only an isolated profile can reuse another tab, and only for the exact
+ * application origin/path. Never navigate or close an unrelated user tab. */
+async function reuseTargetTab(userDataDir: string, projectId: string, session: ManagedPageSession, targetUrl: string): Promise<void> {
+    const target = new URL(targetUrl);
+    const matchesApp = (page: Page) => {
+        if (page.isClosed()) return false;
+        try {
+            const url = new URL(page.url());
+            return url.origin === target.origin && url.pathname === target.pathname && url.search === target.search
+                && !/(?:^|[#/])(?:login|signin|auth|sso)(?:[/?#]|$)/i.test(url.hash);
+        } catch { return false; }
+    };
+    const hasContent = (page: Page) => page.locator('body').innerText({ timeout: 2000 }).then(text => !!text.trim()).catch(() => false);
+    if (matchesApp(session.page) && await hasContent(session.page)) return;
+    let existing: Page | undefined;
+    for (const page of session.context.pages()) {
+        if (page !== session.page && matchesApp(page) && await hasContent(page)) { existing = page; break; }
+    }
+    if (!existing) return;
+    const saved = await readSavedSession(projectSessionFile(userDataDir, projectId), projectId);
+    await saveProjectSession(projectSessionFile(userDataDir, projectId), {
+        version: saved?.version ?? 2, projectId, targetId: await pageTargetId(session.context, existing),
+        ...(saved?.cdpEndpoint ? { cdpEndpoint: saved.cdpEndpoint } : {}), ...(saved?.pid ? { pid: saved.pid } : {}),
+    });
+    session.page = existing;
 }
 /** Promote a clean same-context page and refresh Edge/CDP target identity. */
 export async function promotePersistentTestPage(userDataDir: string, page: Page, options: {
@@ -346,7 +386,7 @@ export async function getExistingPersistentTestPage(userDataDir: string, options
     if (!current)
         return undefined;
     const session = await current.catch(() => undefined);
-    if (!session || session.page.isClosed() || session.endpoint !== (options.isolated ? "" : resolveModelSettings().browserCdpEndpoint ?? "") || (session.isolated === true) !== (options.isolated === true))
+    if (!session || !session.browser.isConnected() || session.page.isClosed() || session.endpoint !== (options.isolated ? "" : resolveModelSettings().browserCdpEndpoint ?? "") || (session.isolated === true) !== (options.isolated === true))
         return undefined;
     return session;
 }

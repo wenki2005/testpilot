@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 
-const root = resolve(import.meta.dirname, '..');
+const root = resolve(import.meta.dirname, '../../..');
 
 test('project revision API lists, verifies and isolates immutable revision snapshots', { timeout: 35_000 }, async t => {
   const dataDir = await mkdtemp(join(tmpdir(), 'testpilot-revision-api-'));
@@ -31,7 +31,7 @@ test('project revision API lists, verifies and isolates immutable revision snaps
   await mkdir(projectDir, { recursive: true });
   await writeFile(join(projectDir, `${projectId}.json`), JSON.stringify(original));
 
-  const demo = spawn(process.execPath, ['dist/demo/server.js'], {
+  const demo = spawn(process.execPath, ['dist/server/http-server.js'], {
     cwd: root,
     env: { ...process.env, PORT: String(port), TESTPILOT_DATA_DIR: dataDir, TESTPILOT_BROWSER_CDP_ENDPOINT: '', TESTPILOT_BROWSER_HEADLESS: '1', TESTPILOT_BROWSER_CHANNEL: '', TESTPILOT_BROWSER_KEEP_EDGE_ON_SHUTDOWN: '0', TESTPILOT_API_KEY: '', OPENAI_API_KEY: '' },
     stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true,
