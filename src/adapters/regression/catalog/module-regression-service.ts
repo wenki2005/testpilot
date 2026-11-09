@@ -576,6 +576,29 @@ export class SystemModuleRegression {
         }
         return { ...batch, jobs, counts };
     }
+    /**
+     * Documented contract: a case whose script is still marked "pending review"
+     * must not be executed. Cases without saved steps are left to the executor,
+     * which already reports them as "待补脚本" instead of running them.
+     */
+    private assertScriptReviewsResolved(entries: Array<{ moduleId: string; versionId: string; selectedCaseIds?: string[] }>) {
+        const blocked: string[] = [];
+        for (const entry of entries) {
+            const module = this.store.getModule(entry.versionId);
+            const reviews = module.scriptReviews ?? {};
+            const ids = entry.selectedCaseIds ?? module.project.cases.map(c => c.id);
+            for (const id of ids) {
+                if (reviews[id]?.status !== 'pending')
+                    continue;
+                const steps = module.project.cases.find(c => c.id === id)?.steps ?? [];
+                if (!steps.length)
+                    continue;
+                blocked.push(id);
+            }
+        }
+        if (blocked.length)
+            throw Error('脚本待核对：' + blocked.length + ' 条用例的脚本尚未核对，请先在“用例与脚本”中核对脚本后再执行（' + blocked.slice(0, 5).join('、') + (blocked.length > 5 ? ' 等' : '') + '）。');
+    }
     start(input: unknown) {
         const data = z.object({ systemId: uuid, moduleIds: z.array(uuid).min(1).max(100), requestId: uuid, runMode: z.enum(['fixed', 'assist']).optional(), scope: z.enum(['core', 'all', 'custom', 'starter']).optional(), caseSelections: z.record(z.string(), z.array(z.string()).min(1).max(200)).optional(), versionSelections: z.record(z.string(), uuid).optional() }).parse(input);
         const fingerprint = moduleDigest(data);
@@ -613,6 +636,7 @@ export class SystemModuleRegression {
                 Object.assign(entry, { selectedCaseIds: cases.filter(c => chosen.includes(c.id)).map(c => c.id) });
             }
         }
+        this.assertScriptReviewsResolved(entries);
         const account = this.accountProfile(system);
         const batch = this.create({ ...system, profileId: account.id }, entries, data.requestId, fingerprint, undefined, { runMode: data.runMode ?? 'assist', scope: data.scope ?? 'all', accountName: account.name });
         this.saveSelection(system.id, data.moduleIds);
@@ -651,6 +675,7 @@ export class SystemModuleRegression {
         });
         if (!entries.length)
             throw Error('没有符合条件的模块。');
+        this.assertScriptReviewsResolved(entries);
         const system = this.getSystem(parent.systemId);
         if (!this.hasProfile(system, parent.profileId))
             throw Error('系统环境已变更；请恢复原环境后重测历史批次，或在新环境新建回归。');
@@ -681,6 +706,7 @@ export class SystemModuleRegression {
         const system = this.getSystem(parent.systemId);
         if (!this.hasProfile(system, parent.profileId))
             throw Error('系统环境已变更，请恢复原环境后重测。');
+        this.assertScriptReviewsResolved([{ moduleId: entry.moduleId, versionId: entry.versionId, selectedCaseIds: [data.caseId] }]);
         const { jobId, ...snapshot } = entry;
         return this.create({ ...system, profileId: parent.profileId, name: parent.systemName, environment: parent.environment, targetUrl: parent.targetUrl, ...{ databaseBinding: parent.databaseBinding } }, [{ ...snapshot, selectedCaseIds: [data.caseId], confirmedCaseIds: [data.caseId] }], data.requestId, fingerprint, parent.id, { runMode: parent.runMode ?? 'assist', scope: parent.scope ?? 'all', ...(parent.accountName ? { accountName: parent.accountName } : {}) });
     }
