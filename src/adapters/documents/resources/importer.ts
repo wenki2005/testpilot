@@ -69,7 +69,7 @@ function extractCaseCsv(bytes: Uint8Array): ImportedDocument {
     };
   });
   if (!cases.length) throw new Error("CSV 中没有可导入的测试用例。");
-  if (cases.length > 200) throw new Error(`CSV 包含 ${cases.length} 条用例，单项目最多 200 条；请按模块拆分上传。`);
+  if (cases.length > 1000) throw new Error(`CSV 包含 ${cases.length} 条用例，单项目最多 1000 条；请按模块拆分上传。`);
   return { format: "markdown", text: cases.map(item => `- ${item.title}\n  预期：${item.expected}`).join("\n"), testCases: cases };
 }
 
