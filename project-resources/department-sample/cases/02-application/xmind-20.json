@@ -1,8 +1,8 @@
 {
   "id": "xmind-20",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
-  "version": 20,
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
   "title": "待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
   "expected": "[需澄清] 待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
   "manualSteps": [],

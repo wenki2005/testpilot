@@ -1,8 +1,8 @@
 {
   "id": "xmind-33",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
-  "version": 20,
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
   "title": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
   "expected": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
   "manualSteps": [],

@@ -1,9 +1,31 @@
 {
   "caseId": "case-134e82ecc4891c040e0a",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
-  "version": 20,
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
   "dependsOn": [],
-  "hasSteps": false,
-  "steps": []
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "clickExactText",
+      "text": "继续添加样书"
+    },
+    {
+      "action": "fillByLabel",
+      "label": "数量（册）",
+      "value": "1000",
+      "rowIndex": 0
+    },
+    {
+      "action": "blurByLabel",
+      "label": "数量（册）",
+      "rowIndex": 0
+    },
+    {
+      "action": "assertValue",
+      "label": "数量（册）",
+      "value": "999",
+      "rowIndex": 0
+    }
+  ]
 }

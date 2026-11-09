@@ -1,8 +1,8 @@
 {
   "id": "xmind-28",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
-  "version": 20,
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
   "title": "待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
   "expected": "[需澄清] 待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
   "manualSteps": [],

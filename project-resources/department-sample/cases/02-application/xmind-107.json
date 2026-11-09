@@ -1,8 +1,8 @@
 {
   "id": "xmind-107",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
-  "version": 20,
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
   "title": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
   "expected": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
   "manualSteps": [],
