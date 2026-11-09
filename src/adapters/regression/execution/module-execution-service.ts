@@ -765,6 +765,7 @@ export class DifyWebModuleStore {
                 job.documentRunId = randomUUID();
                 job.executionStarted = true;
                 this.event(job, 'executing', `正在测试 ${runnable.length} 条用例。`);
+                let refreshExecutionWatchdog = () => { };
                 const executionPromise = this.deps.execute(execution, job.documentRunId, runnable.map(c => c.id), stage => {
                     if (stage === 'awaiting-login')
                         this.event(job, 'awaiting-login', '测试窗口需要重新登录，请登录后继续。');
@@ -780,14 +781,17 @@ export class DifyWebModuleStore {
                         row.evidenceNote = actual.evidenceNote;
                         job.updatedAt = now();
                         this.save('job', job);
+                        refreshExecutionWatchdog();
                     }
                 });
                 // A browser adapter must never hold an entire multi-module
-                // regression forever. Release the document run after a bounded
-                // window, retain any per-case results already recorded, and let
+                // regression forever. Reset the idle deadline after each result
+                // so large modules can finish; retain completed results and let
                 // the batch continue to the next module with an explicit error.
                 const laneResult = await new Promise<Awaited<typeof executionPromise>>((resolve, reject) => {
-                    const timer = setTimeout(() => {
+                    let timer: ReturnType<typeof setTimeout>;
+                    const stalled = () => {
+                        refreshExecutionWatchdog = () => { };
                         void Promise.race([
                             this.deps.cancel(job.snapshot.id, job.documentRunId).catch(() => undefined),
                             new Promise<void>(done => setTimeout(done, 5000)),
@@ -795,14 +799,16 @@ export class DifyWebModuleStore {
                             for (const row of job.results) {
                                 if (job.selectedCaseIds.includes(row.caseId) && row.status === 'not_executed') {
                                     row.status = 'blocked';
-                                    row.detail = '网页执行超过 2 分钟；本条未完成实际操作，已停止当前模块并记录为阻塞，不再另开补跑批次。';
+                                    row.detail = '网页执行连续 2 分钟没有返回单条结果；本条未完成实际操作，已停止当前模块并记录为阻塞。';
                                 }
                             }
                             this.save('job', job);
-                            reject(new Error('网页执行超过 2 分钟，已停止当前模块并保留已记录结果。'));
+                            reject(new Error('网页执行连续 2 分钟没有返回单条结果，已停止当前模块并保留已记录结果。'));
                         });
-                    }, 120_000);
-                    executionPromise.then(value => { clearTimeout(timer); resolve(value); }, error => { clearTimeout(timer); reject(error); });
+                    };
+                    refreshExecutionWatchdog = () => { clearTimeout(timer); timer = setTimeout(stalled, 120_000); };
+                    refreshExecutionWatchdog();
+                    executionPromise.then(value => { clearTimeout(timer); refreshExecutionWatchdog = () => { }; resolve(value); }, error => { clearTimeout(timer); refreshExecutionWatchdog = () => { }; reject(error); });
                 });
                 this.capture(job, laneResult);
             }

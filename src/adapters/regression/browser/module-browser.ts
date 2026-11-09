@@ -3,6 +3,7 @@ import { loadDifyCustomerFixtures } from '../config/test-fixtures.js';
 import { loadDifyBookFixtures, observeDifyBookResponses, verifyDifyBookResult, difyBookKind } from '../scenarios/books/book-search.js';
 import { verifyDifyDeviceResult, waitForDifyDeviceBaseline } from '../scenarios/clients/device-layout.js';
 import { verifyDifyListResult } from '../scenarios/records/application-list.js';
+import { verifyEmployeeApplicationReadOnly } from '../scenarios/records/employee-application-readonly.js';
 import { verifyDifyRecordResult, difyRecordKind } from '../scenarios/records/application-detail.js';
 import { verifyConnectedEvidence } from '../scenarios/connected-systems.js';
 import { connectedEvidenceKind } from '../evidence/connected-evidence-contract.js';
@@ -121,8 +122,8 @@ export async function captureDifyBlockedEvidence(dataRoot: string, project: impo
         if (department) {
             const url = new URL(project.targetUrl);
             url.hash = route;
-            await page.goto('about:blank');
-            await page.goto(url.href, { waitUntil: 'domcontentloaded', timeout: 15000 });
+            if (page.url() !== url.href)
+                await navigatePersistentPage(page, url.href, 15000);
             await page.locator(route === '/apply' ? '.pc-page-apply' : route === '/logistics' ? '.pc-page-logistics' : '.pc-page-home').waitFor({ state: 'visible', timeout: 10000 });
         }
         if (await isLoginPage(page))
@@ -145,8 +146,7 @@ export async function captureDifyBlockedEvidence(dataRoot: string, project: impo
         await style?.evaluate(el => el.parentNode?.removeChild(el)).catch(() => { });
         await client?.detach().catch(() => { });
         if (page.url() !== original) {
-            await page.goto('about:blank').catch(() => { });
-            await page.goto(original, { waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => { });
+            await navigatePersistentPage(page, original, 15000).catch(() => { });
         }
         await page.unroute('**/*', policy).catch(() => { });
         release();
@@ -317,6 +317,8 @@ export function webModuleDependencies(dataRoot: string): WebModuleDependencies {
                             await verifyDifyDeviceResult(session.page, source, result, project.targetUrl, saveEvidence);
                         if (source && session)
                             await verifyDifyListResult(session.page, source, result, project.targetUrl, saveEvidence);
+                        if (source && session)
+                            await verifyEmployeeApplicationReadOnly(session.page, source, result, project.targetUrl, saveEvidence);
                         if (source && session)
                             await verifyDifyRecordResult(session.page, source, result, project.targetUrl, saveEvidence);
                         if (source && session)

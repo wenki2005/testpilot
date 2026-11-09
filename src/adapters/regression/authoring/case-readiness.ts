@@ -12,7 +12,8 @@ import { reviewClientValidation, type ClientValidationKind } from '../scenarios/
 import { reviewApplicantIdentity } from '../scenarios/identity/applicant-identity.js';
 import { reviewConnectedEvidence } from '../scenarios/connected-systems.js';
 import type { ConnectedKind } from '../evidence/connected-evidence-contract.js';
-export type DifyReviewKind = 'required-empty-disabled' | DepartmentReadOnlyKind | DifyBookKind | DifyDeviceKind | DifyListKind | FieldValidityKind | DifyRecordKind | InvalidBookKind | 'excluded-customer' | ClientValidationKind | 'applicant-identity' | ConnectedKind;
+import { reviewEmployeeApplicationReadOnly } from '../scenarios/records/employee-application-readonly.js';
+export type DifyReviewKind = 'required-empty-disabled' | 'employee-application-readonly' | DepartmentReadOnlyKind | DifyBookKind | DifyDeviceKind | DifyListKind | FieldValidityKind | DifyRecordKind | InvalidBookKind | 'excluded-customer' | ClientValidationKind | 'applicant-identity' | ConnectedKind;
 export type DifyBlockerCode = 'write-required' | 'business-clarification' | 'identity-evidence' | 'fixture-required' | 'assertion-incomplete' | 'steps-missing' | 'legacy-review' | 'prerequisite-required';
 export function difyBlocker(check: BrowserCheck, reason: string): {
     blockerCode: DifyBlockerCode;
@@ -68,6 +69,9 @@ export function reviewedDifyReadOnlyPlan(check: BrowserCheck, evidence: string, 
     executionData?: string[];
 } | undefined {
     check = { ...check, source: check.source ?? '' };
+    const v11 = reviewEmployeeApplicationReadOnly(check, evidence, targetUrl);
+    if (v11)
+        return v11;
     const connected = reviewConnectedEvidence(check, evidence, targetUrl);
     if (connected)
         return connected;
