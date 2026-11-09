@@ -1,0 +1,22 @@
+{
+  "caseId": "case-dcb8dae296ef7d98dc1f",
+  "moduleId": "d293ef3e-482d-4048-aa90-94260ef47596",
+  "versionId": "e94a0e66-2e25-43c6-ba06-39010c41cae6",
+  "version": 3,
+  "dependsOn": [],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "assertExactVisible",
+      "text": "已取消"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "已撤销"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "通过后撤销"
+    }
+  ]
+}

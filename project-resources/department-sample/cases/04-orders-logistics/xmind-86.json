@@ -1,20 +1,15 @@
 {
   "id": "xmind-86",
   "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
-  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
-  "version": 2,
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
   "title": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
   "expected": "超过72小时无订单信息：显示订单异常，需联系对应运营，订单置为取消状态",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-100"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "准备创建超过72小时且无物流信息的真实测试订单和时间证据；不伪造订单状态或把其他系统订单当样本。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

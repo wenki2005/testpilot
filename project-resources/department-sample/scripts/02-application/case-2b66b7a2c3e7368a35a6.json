@@ -1,0 +1,14 @@
+{
+  "caseId": "case-2b66b7a2c3e7368a35a6",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
+  "dependsOn": [],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "assertExactVisible",
+      "text": "已取消"
+    }
+  ]
+}

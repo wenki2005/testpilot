@@ -1,20 +1,15 @@
 {
   "id": "xmind-33",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
   "expected": "新增一行含物流编码、图书数量、图书名称、出版社、定价字段",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-      "caseId": "xmind-1"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "在申请表单点击继续添加样书，作为多行输入和删除操作的起点。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

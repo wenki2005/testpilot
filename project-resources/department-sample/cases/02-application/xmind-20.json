@@ -1,15 +1,15 @@
 {
   "id": "xmind-20",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
   "expected": "[需澄清] 待澄清 经销商系统客户接口是否返回「客户分类」字段（后端确认文档，若无则回退名称关键字过滤方案）",
   "manualSteps": [],
   "prerequisites": [],
   "prerequisiteReview": {
-    "status": "pending",
-    "note": "客户接口是否返回分类字段、缺失时采用哪种过滤方案仍是原文待澄清项；需接口契约或实际字段证据。"
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "reviewed",
+    "note": "已在用例与脚本核对，保存为新版本；执行结果仍以真实运行证据为准。"
+  },
+  "id": "case-210bd718b380491949b9",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
+  "title": "展示筛选项 — 不出现「已撤销」「通过后撤销」等OA侧状态文案",
+  "expected": "不出现「已撤销」「通过后撤销」等OA侧状态文案",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端-我的申请列表",
+    "审批状态筛选",
+    "展开审批状态筛选",
+    "展示筛选项"
+  ],
+  "sourceExpected": "不出现「已撤销」「通过后撤销」等OA侧状态文案"
+}

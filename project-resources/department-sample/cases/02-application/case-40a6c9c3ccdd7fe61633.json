@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-40a6c9c3ccdd7fe61633",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
+  "title": "服务端状态守卫 — cancelType=2 但订单已发货：拒绝并提示「订单已进入发货流程，无法取消」",
+  "expected": "cancelType=2 但订单已发货：拒绝并提示「订单已进入发货流程，无法取消」",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "服务端防线与存量影响（代码扫描补充）",
+    "取消接口鉴权与参数校验",
+    "伪造取消类型",
+    "服务端状态守卫"
+  ],
+  "sourceExpected": "cancelType=2 但订单已发货：拒绝并提示「订单已进入发货流程，无法取消」"
+}

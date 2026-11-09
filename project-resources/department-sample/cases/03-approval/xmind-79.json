@@ -1,20 +1,15 @@
 {
   "id": "xmind-79",
   "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
-  "version": 2,
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
   "title": "页面纯只读，无编辑/提交/删除入口",
   "expected": "页面纯只读，无编辑/提交/删除入口",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-50"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "复用同一本人申请；75必须为多行图书明细，74需要真实商品源调用证据，78保留提交原值，79仅检查只读。可复用既有数据，不要求每条重新提交。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

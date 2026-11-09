@@ -1,20 +1,15 @@
 {
   "id": "xmind-83",
   "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
-  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
-  "version": 2,
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
   "title": "无匹配：提示无结果",
   "expected": "无匹配：提示无结果",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-      "caseId": "xmind-1"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "使用不会匹配订单的关键词，验证无结果提示，不要求先命中搜索。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

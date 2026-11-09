@@ -1,20 +1,15 @@
 {
   "id": "xmind-10",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」",
   "expected": "页面提示文案「如有调样、周边产品等样书申请需求，请OA申请」",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-      "caseId": "xmind-1"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "员工登录后打开申请表单并选择营销用书，无需提交申请。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

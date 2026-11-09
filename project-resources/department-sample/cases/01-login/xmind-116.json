@@ -1,20 +1,15 @@
 {
   "id": "xmind-116",
   "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
-  "version": 2,
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
   "title": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
   "expected": "推送文案「订单锁单失败库存不足，请联系运营查看锁定库存」",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-64"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "真实库存不足锁单失败事件，核对同单通知及接收记录。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

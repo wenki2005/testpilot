@@ -1,41 +1,15 @@
 {
   "id": "stock-retry",
-  "title": "审批通过 → 库存不足 → 重试锁单",
-  "description": "依次检查天津回退、两仓不足及重试分支；成功订单不重复锁单。",
+  "title": "库存不足与定时补锁",
+  "description": "聚合库存不足、补锁任务和重试分支；只挂入用例，不自动触发补锁或业务写入。",
   "steps": [
     {
-      "id": "approved",
-      "title": "库存场景申请审批通过",
-      "expected": "指定库存场景申请已通过，进度和数据库一致。",
+      "id": "scheduled-retry",
+      "title": "定时补锁任务",
+      "expected": "新版补锁任务的触发条件、幂等性、库存判断和结果记录可按用例核验。",
       "caseIds": [
-        "xmind-119"
-      ]
-    },
-    {
-      "id": "warehouse",
-      "title": "按仓库优先级检查库存",
-      "expected": "取得同笔长沙库存查询及必要时天津回退、实际锁定仓库证据。",
-      "caseIds": [
-        "xmind-62",
-        "xmind-63",
-        "xmind-124"
-      ]
-    },
-    {
-      "id": "shortage",
-      "title": "库存不足与失败提示",
-      "expected": "真实两仓无货或部分不足时，页面显示锁单失败及协调库存提示。",
-      "caseIds": [
-        "xmind-64"
-      ]
-    },
-    {
-      "id": "retry",
-      "title": "协调后重试",
-      "expected": "在真实失败申请上重试，有货建单、仍缺货保持失败且不重复订单。",
-      "caseIds": [
-        "xmind-66",
-        "xmind-67"
+        "case-f797e666e74d4e06340d",
+        "case-4130330de7ed13c22d12"
       ]
     }
   ]

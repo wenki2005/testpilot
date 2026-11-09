@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-49fecdc4c1ec0331d119",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
+  "title": "回调处理 — 已取消申请收到审批通过、驳回或撤销回调时系统状态不变，仅留痕日志",
+  "expected": "已取消申请收到审批通过、驳回或撤销回调时系统状态不变，仅留痕日志",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "服务端防线与存量影响（代码扫描补充）",
+    "已取消免疫",
+    "取消后企微迟到回调",
+    "回调处理"
+  ],
+  "sourceExpected": "已取消申请收到审批通过、驳回或撤销回调时系统状态不变，仅留痕日志"
+}

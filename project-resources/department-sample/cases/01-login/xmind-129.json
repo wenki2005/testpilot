@@ -1,15 +1,15 @@
 {
   "id": "xmind-129",
   "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
-  "version": 2,
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
   "title": "快递仓仓库ID配置正确（长沙仓/天津仓）",
   "expected": "快递仓仓库ID配置正确（长沙仓/天津仓）",
   "manualSteps": [],
   "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "配置核验起点：取得长沙、天津仓库ID及对应名称基线，使用数据库、配置接口或授权配置资料核对。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

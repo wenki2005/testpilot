@@ -32,7 +32,7 @@ export function readResourceDirectory(directory: string, allowEdits = false): { 
             const c = parse('cases/' + m.directory + '/' + id + '.json');
             const script = parse('scripts/' + m.directory + '/' + id + '.json');
             if (c.moduleId !== m.id || script.moduleId !== m.id || c.id !== id || script.caseId !== id || c.versionId !== script.versionId) throw Error('用例、脚本与版本索引不一致。');
-            cases.push({ ...(c.sourceId ? { sourceId: c.sourceId } : {}), ...(c.scriptReview ? { scriptReview: c.scriptReview } : {}), id: c.id, moduleId: c.moduleId, title: c.title, expected: c.expected, manualSteps: c.manualSteps, prerequisites: c.prerequisites, ...(c.prerequisiteReview ? { prerequisiteReview: c.prerequisiteReview } : {}), sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, script: { caseId: script.caseId, dependsOn: script.dependsOn, steps: script.steps } });
+            cases.push({ ...(c.priority ? { priority: c.priority } : {}), ...(c.sourceId ? { sourceId: c.sourceId } : {}), ...(c.scriptReview ? { scriptReview: c.scriptReview } : {}), id: c.id, moduleId: c.moduleId, title: c.title, expected: c.expected, manualSteps: c.manualSteps, prerequisites: c.prerequisites, ...(c.prerequisiteReview ? { prerequisiteReview: c.prerequisiteReview } : {}), sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, script: { caseId: script.caseId, dependsOn: script.dependsOn, steps: script.steps } });
         }
     }
     const chains = manifest.files.filter(f => /^chains\/[A-Za-z0-9_-]+\.json$/.test(f.file)).map(f => parse(f.file));

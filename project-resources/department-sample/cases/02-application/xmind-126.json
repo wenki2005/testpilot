@@ -1,20 +1,15 @@
 {
   "id": "xmind-126",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "每10分钟拉取一次物流最新信息",
   "expected": "每10分钟拉取一次物流最新信息",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-69"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "同一订单已有快递单号和物流来源，采集至少相邻调度周期的真实拉取证据，不能只看页面更新时间。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

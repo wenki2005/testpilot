@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-24065a13a64d25da55b4",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "title": "处理分支 — 已取消申请若被扫到也不得执行锁单",
+  "expected": "已取消申请若被扫到也不得执行锁单",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "定时补锁任务",
+    "触发扫描",
+    "补锁结果处理",
+    "处理分支"
+  ],
+  "sourceExpected": "已取消申请若被扫到也不得执行锁单"
+}

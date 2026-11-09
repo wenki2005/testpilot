@@ -1,32 +1,27 @@
 {
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "原脚本保留；用例内容变化，执行前需核对。"
+  },
   "id": "xmind-32",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
-  "title": "P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交",
-  "expected": "P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交",
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
+  "title": "拦截提示沿用V1.0规则 — 预估总重超过19公斤提示「已超重请修改数量或使用OA申请」且禁止提交",
+  "expected": "预估总重超过19公斤提示「已超重请修改数量或使用OA申请」且禁止提交",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-25"
-    },
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-29"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "以有效重量和正确合计为基础，准备总重超过19kg的表单；仅验证拦截，不提交超重单。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
-    "部门申样书_V1.0_测试用例.xmind",
-    "员工端-样书申请表单页",
-    "样书明细区",
-    "输入图书数量",
-    "自动计算小计、总计与预估总重",
-    "⚠️❌ P0 所有样书预估总重"
+    "部门用书系统V1.1.0",
+    "员工端H5-用书申请页",
+    "收件信息与明细区（V1.0回归）",
+    "提交超重或数量越界数据",
+    "拦截提示沿用V1.0规则"
   ],
-  "sourceExpected": "P0 所有样书预估总重>19公斤：弹出toast「已超重请修改数量或使用OA申请」，禁止提交"
+  "sourceExpected": "预估总重超过19公斤提示「已超重请修改数量或使用OA申请」且禁止提交"
 }

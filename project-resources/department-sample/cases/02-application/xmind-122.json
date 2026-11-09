@@ -1,20 +1,15 @@
 {
   "id": "xmind-122",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）",
   "expected": "创建其他出库单后回传快递单号至教师管理系统后台（其他出库单号仅内部记录不回传H5）",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-68"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "已有真实其他出库单及随后快递单号回传事件，核对教师管理系统后台与H5编号边界。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

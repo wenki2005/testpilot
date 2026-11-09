@@ -1,0 +1,34 @@
+{
+  "caseId": "case-322ab00b2955af001697",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
+  "dependsOn": [],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "clickExactText",
+      "text": "历史申请记录"
+    },
+    {
+      "action": "assertVisible",
+      "text": "全部"
+    },
+    {
+      "action": "assertVisible",
+      "text": "待审批"
+    },
+    {
+      "action": "assertVisible",
+      "text": "已通过"
+    },
+    {
+      "action": "assertVisible",
+      "text": "已驳回"
+    },
+    {
+      "action": "assertVisible",
+      "text": "已取消"
+    }
+  ]
+}

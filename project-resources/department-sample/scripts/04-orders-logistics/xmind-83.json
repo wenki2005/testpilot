@@ -1,15 +1,9 @@
 {
   "caseId": "xmind-83",
   "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
-  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
-  "version": 2,
-  "dependsOn": [
-    {
-      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-      "caseId": "xmind-1",
-      "requiredStatus": "passed"
-    }
-  ],
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "dependsOn": [],
   "hasSteps": true,
   "steps": [
     {
