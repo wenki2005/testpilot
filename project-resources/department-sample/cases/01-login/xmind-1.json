@@ -1,15 +1,15 @@
 {
   "id": "xmind-1",
   "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
-  "version": 2,
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
   "title": "在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门",
   "expected": "在企微架构内的在职员工：直接授权登录，进入申请表单页，自动带出姓名/所属公司/部门",
   "manualSteps": [],
   "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "流程起点：使用企微架构内的在职员工账号完成授权，保留当前登录人与公司、部门信息。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

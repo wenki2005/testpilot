@@ -1,24 +1,15 @@
 {
   "id": "xmind-111",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确",
   "expected": "迁移后按原有筛选项（订单号/客户/状态等）查询结果正确",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-108"
-    },
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-109"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "新系统可访问且迁移数据基线可比；111查询已知历史订单，112逐字段对照历史明细、物流和备注。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

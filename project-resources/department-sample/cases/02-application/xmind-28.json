@@ -1,15 +1,15 @@
 {
   "id": "xmind-28",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
   "expected": "[需澄清] 待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
   "manualSteps": [],
   "prerequisites": [],
   "prerequisiteReview": {
-    "status": "pending",
-    "note": "图书接口单本重量字段的契约仍待澄清，需独立接口或字段证据，不把商品表字段存在当作接口已回传。"
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

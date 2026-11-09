@@ -1,49 +1,55 @@
 {
   "id": "order-logistics",
-  "title": "查找订单 → 订单详情 → 物流状态",
-  "description": "复用本人已存在订单，检查查询、逐行明细与后续物流。",
+  "title": "企微通知与后台追踪",
+  "description": "覆盖企微通知、服务端防线、数据审计和管理端后台；需要相应角色或只读数据时再执行。",
   "steps": [
     {
-      "id": "search",
-      "title": "查找本人订单",
-      "expected": "通过订单号关键词搜索，结果包含对应本人订单。",
+      "id": "wecom-notifications",
+      "title": "企微消息通知",
+      "expected": "新版申请、审批、订单和异常节点的通知内容、接收人及关联编号符合用例预期。",
       "caseIds": [
-        "xmind-82"
+        "case-15958fa8d319efe7fe64",
+        "case-35ac55aaee12d9e6cebf",
+        "case-f71714b2fecdc677a34a",
+        "case-56b6c188bd98e8a4fac4",
+        "case-731e893dbff37e2e20a0",
+        "case-e70b89c79b53b4729c29",
+        "case-76c223427f2bab07b3e4"
       ]
     },
     {
-      "id": "detail",
-      "title": "查看订单明细与金额",
-      "expected": "实际打开同一订单，收件信息、商品、小计和总价与申请数据库一致。",
+      "id": "service-defenses",
+      "title": "服务端防线",
+      "expected": "服务端校验、存量影响和异常分支符合新版规则，不绕过业务校验。",
       "caseIds": [
-        "xmind-84",
-        "xmind-85"
+        "case-5a9c8926188223badc30",
+        "case-a80a1a15132393a3b509",
+        "case-40a6c9c3ccdd7fe61633",
+        "case-49fecdc4c1ec0331d119",
+        "case-a1a32521395daa0e5e80",
+        "case-c4579af860b2d23ced9a"
       ]
     },
     {
-      "id": "status",
-      "title": "核对当前订单状态",
-      "expected": "页面状态名称、时间、说明与同一订单实时接口一致。",
+      "id": "audit",
+      "title": "数据与审计",
+      "expected": "关键状态、字段变更和审计记录可以按新版要求追溯，不能用伪造数据代替。",
       "caseIds": [
-        "xmind-85"
+        "case-94ed352a5bc97e2d00ac",
+        "case-6be9465557e89b1761ba",
+        "case-dcb8dae296ef7d98dc1f",
+        "case-e0ae8650a2e8e65c97b1",
+        "case-18d1e5ac0d5e2332076b"
       ]
     },
     {
-      "id": "tracking",
-      "title": "查看快递单号与物流轨迹",
-      "expected": "真实快递单号回传，轨迹内容一致且最新记录置顶。",
+      "id": "admin-tracking",
+      "title": "后台订单追踪",
+      "expected": "管理端订单查询、筛选和追踪结果符合新版后台用例，执行前需要管理员角色。",
       "caseIds": [
-        "xmind-69",
-        "xmind-85"
-      ]
-    },
-    {
-      "id": "refresh",
-      "title": "核验物流刷新",
-      "expected": "取得同一订单上游物流来源与每10分钟实际拉取执行证据。",
-      "caseIds": [
-        "xmind-85",
-        "xmind-126"
+        "case-80f6ab8bc32e518ea034",
+        "case-b87cb60edfeb6b4a3e95",
+        "case-45bee02dd0ac75843900"
       ]
     }
   ]

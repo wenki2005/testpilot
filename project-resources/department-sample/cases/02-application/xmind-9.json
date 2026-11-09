@@ -1,24 +1,15 @@
 {
   "id": "xmind-9",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "审批流=企微架构直属上级单级审批",
   "expected": "审批流=企微架构直属上级单级审批",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-50"
-    },
-    {
-      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-      "caseId": "xmind-128"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "营销用书申请创建成功，并有当前企微架构及实际审批节点证据；保留原单级审批预期，不以实际多级流程改写预期。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

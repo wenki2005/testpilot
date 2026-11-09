@@ -28,14 +28,14 @@ const systemId=values['--system'],query='?systemId='+encodeURIComponent(systemId
 const [catalog,core]=await Promise.all([get('/case-editor'+query),get('/core-chains'+query)]);
 const project=catalog.systems.find(s=>s.id===systemId);
 if(!project||catalog.systemId!==systemId)throw Error('Requested project was not returned.');
-const slugs=['01-login','02-application','03-approval','04-orders-logistics','05-clients'];
-const names=['登录入口与公共基础','申样申请与经销商数据','申请记录与审批详情','订单与物流','PC/H5 横向适配'];
+const slugs=['01-login','02-application','03-approval','04-orders-logistics','05-clients','06-audit'];
+const names=['登录入口与公共基础','申样申请与经销商数据','申请记录与审批详情','订单与物流','PC/H5 横向适配','数据与审计'];
 const modulePath=new Map(catalog.modules.map(m=>{const i=names.indexOf(m.name);return [m.id,i<0?'module-'+m.id:slugs[i]];}));
 const readScopes=async()=>{const state=await get('');return catalog.modules.map(m=>{const live=state.modules.find(v=>v.id===m.id),version=catalog.cases.find(c=>c.moduleId===m.id)?.versionId;return {id:m.id,...(live?.coreVersionId===version&&live?.coreCaseIds?{coreCaseIds:live.coreCaseIds}:{}),...(live?.starterVersionId===version&&live?.starterCaseIds?{starterCaseIds:live.starterCaseIds}:{})};});};
 const scopes=await readScopes();
 const seen=new Set();
 for(const c of catalog.cases){const key=c.moduleId+':'+c.id;if(!modulePath.has(c.moduleId)||!/^[-a-zA-Z0-9_]{1,80}$/.test(c.id)||seen.has(key))throw Error('Invalid or duplicate case reference.');seen.add(key);}
-const caseDefinition=c=>({...(c.sourceId?{sourceId:c.sourceId}:{}),...(c.scriptReview?{scriptReview:c.scriptReview}:{}),id:c.id,moduleId:c.moduleId,versionId:c.versionId,version:c.version,title:c.title,expected:c.expected,manualSteps:c.manualSteps,prerequisites:c.prerequisites,...(c.prerequisiteReview?{prerequisiteReview:c.prerequisiteReview}:{}),sourcePath:c.sourcePath,sourceExpected:c.sourceExpected});
+const caseDefinition=c=>({...(c.sourceId?{sourceId:c.sourceId}:{}),...(c.priority?{priority:c.priority}:{}),...(c.scriptReview?{scriptReview:c.scriptReview}:{}),id:c.id,moduleId:c.moduleId,versionId:c.versionId,version:c.version,title:c.title,expected:c.expected,manualSteps:c.manualSteps,prerequisites:c.prerequisites,...(c.prerequisiteReview?{prerequisiteReview:c.prerequisiteReview}:{}),sourcePath:c.sourcePath,sourceExpected:c.sourceExpected});
 const scriptDefinition=c=>({caseId:c.id,moduleId:c.moduleId,versionId:c.versionId,version:c.version,dependsOn:c.script.dependsOn,hasSteps:c.script.steps.length>0,steps:c.script.steps});
 const definitions=(core.definitions??[]).map(c=>({id:c.id,title:c.title,description:c.description,steps:c.steps.map(s=>({id:s.id,title:s.title,expected:s.expected,caseIds:s.caseIds}))}));
 const files=new Map();

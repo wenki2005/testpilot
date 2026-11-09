@@ -1,48 +1,39 @@
 {
   "id": "reject-reapply",
-  "title": "提交申请 → 审批驳回 → 再次申请",
-  "description": "复用已驳回申请，检查理由、无订单及重新申请入口。",
+  "title": "申请撤销与订单取消",
+  "description": "只覆盖新版 P0 的申请详情和订单详情，核对撤销、取消及状态回传。",
   "steps": [
     {
-      "id": "submitted",
-      "title": "核对原申请提交",
-      "expected": "真实提交凭证对应本人已存在的申请。",
+      "id": "application-detail",
+      "title": "申请详情与撤销",
+      "expected": "申请详情页能够展示新版字段，并按状态提供撤销或后续处理入口。",
       "caseIds": [
-        "xmind-50"
+        "case-029ae95a0a4b9e5b5021",
+        "case-9a134e661a6001ac08ed",
+        "case-c09a0a51491c9ca0bccd",
+        "case-7898f6cb2210d0023c7a",
+        "case-a37ebc23b1a322666ac2",
+        "case-e80db17a4c90b0fc64cd",
+        "case-44a77f19a03f7fe08842",
+        "case-15b844e0ce5e282dcd26",
+        "case-dfdf16adf2561c28c635",
+        "case-d2af15b8f26359753a0a",
+        "case-c3b46b53d51da22f3452",
+        "case-53399d0dc0703a29daf5",
+        "case-5462d257f9a46dafdcd3",
+        "case-7f4ca87c1b4f85b1cc9d",
+        "case-e89e22e33c4698d9234c"
       ]
     },
     {
-      "id": "rejected",
-      "title": "驳回与理由回传",
-      "expected": "同一申请已驳回，页面展示数据库保存的真实驳回理由。",
+      "id": "order-detail",
+      "title": "订单详情与取消",
+      "expected": "订单详情页能够展示新版订单信息、物流状态和取消限制。",
       "caseIds": [
-        "xmind-55",
-        "xmind-119"
-      ]
-    },
-    {
-      "id": "no-order",
-      "title": "确认未锁单、未建单",
-      "expected": "被驳回申请未锁单、无订单，管理订单列表中无该申请。",
-      "caseIds": [
-        "xmind-100"
-      ]
-    },
-    {
-      "id": "reapply-entry",
-      "title": "检查重新申请或联系入口",
-      "expected": "驳回详情存在重新申请或联系审批人的可用入口。",
-      "caseIds": [
-        "xmind-55"
-      ]
-    },
-    {
-      "id": "new-application",
-      "title": "再次申请与新编号",
-      "expected": "由重新申请流程产生可关联的新申请编号，不覆盖旧驳回申请。",
-      "caseIds": [
-        "xmind-50",
-        "xmind-55"
+        "case-3bd62acc9c8862c0bb5e",
+        "case-8e771391bfdf943546d0",
+        "case-e248710ad10255fa93bd",
+        "case-ee8781981280a9abf3ad"
       ]
     }
   ]

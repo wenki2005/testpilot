@@ -1,28 +1,15 @@
 {
   "id": "xmind-107",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
   "expected": "展示划归客户、用书类型、发货方式、物流单号、关联企微审批单号、易诚通其他出库单号、备注",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-100"
-    },
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-68"
-    },
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-69"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "同一管理端订单、审批号、实际出库单和快递单号可关联；最终备注必须读取发送记录或最终字段。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

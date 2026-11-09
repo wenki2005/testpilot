@@ -1,40 +1,15 @@
 {
   "id": "xmind-56",
   "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
-  "version": 2,
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
   "title": "全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口",
   "expected": "全部审批状态（待审批/已通过/已驳回/锁单失败/已下单/已发货/已签收/已取消）均展示「查看明细」入口",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-50"
-    },
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-119"
-    },
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-64"
-    },
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-100"
-    },
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-69"
-    },
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-101"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "分别准备待审、通过、驳回、锁单失败、已下单、发货、签收、取消样本；这些不是同一申请同时满足的状态。发货/签收仍需真实外部回执，不因前置编号通过就认定所有样本齐全。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

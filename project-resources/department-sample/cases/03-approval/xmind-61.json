@@ -1,20 +1,15 @@
 {
   "id": "xmind-61",
   "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
-  "version": 2,
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
   "title": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
   "expected": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-73"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "先实际进入同一申请的只读明细页，再返回对应审批详情，核对时间轴与状态。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

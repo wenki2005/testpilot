@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-cd3fe1342e3fd1e8e02b",
+  "moduleId": "d293ef3e-482d-4048-aa90-94260ef47596",
+  "versionId": "e94a0e66-2e25-43c6-ba06-39010c41cae6",
+  "version": 3,
+  "title": "落库字段校验 — 取消记录不单独落库「请求唯一标识」，以已取消幂等返回 + Redis 取消锁 `dept_book_cancel:{申请编号}`（TTL 5 分钟）保证同一申请不重复执行下游",
+  "expected": "取消记录不单独落库「请求唯一标识」，以已取消幂等返回 + Redis 取消锁 `dept_book_cancel:{申请编号}`（TTL 5 分钟）保证同一申请不重复执行下游",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "数据与审计",
+    "取消留痕",
+    "查询已取消申请记录",
+    "落库字段校验"
+  ],
+  "sourceExpected": "取消记录不单独落库「请求唯一标识」，以已取消幂等返回 + Redis 取消锁 `dept_book_cancel:{申请编号}`（TTL 5 分钟）保证同一申请不重复执行下游"
+}

@@ -1,20 +1,18 @@
 {
   "caseId": "xmind-85",
   "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
-  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
-  "version": 2,
-  "dependsOn": [
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "dependsOn": [],
+  "hasSteps": true,
+  "steps": [
     {
-      "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
-      "caseId": "xmind-84",
-      "requiredStatus": "passed"
+      "action": "blurByLabel",
+      "label": "收件人"
     },
     {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-69",
-      "requiredStatus": "passed"
+      "action": "assertExactVisible",
+      "text": "收货信息"
     }
-  ],
-  "hasSteps": false,
-  "steps": []
+  ]
 }

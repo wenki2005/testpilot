@@ -1,20 +1,15 @@
 {
   "id": "xmind-80",
   "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
-  "versionId": "7f929adc-59df-427a-9bea-6aac3a2159fc",
-  "version": 2,
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
   "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
   "expected": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-100"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "复用本人已建订单；80分页需要足够订单或真实总数，82使用已知订单关键词，84实际点击同一订单详情。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

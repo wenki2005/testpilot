@@ -1,20 +1,15 @@
 {
   "id": "xmind-92",
   "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-  "versionId": "e919c3e9-2b7a-4f96-95f3-9737d40e19d0",
-  "version": 2,
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
   "title": "关联企微认证信息正确展示",
   "expected": "关联企微认证信息正确展示",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
-      "caseId": "xmind-1"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "读取当前企微认证用户信息并与本人核对。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

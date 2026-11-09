@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-5462d257f9a46dafdcd3",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
+  "title": "处理结果 — 已取消后不再展示「再次尝试锁单」入口，接口拒绝再次锁单",
+  "expected": "已取消后不再展示「再次尝试锁单」入口，接口拒绝再次锁单",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端-申请详情页",
+    "审批通过锁单失败撤销",
+    "点击撤销并确认",
+    "处理结果"
+  ],
+  "sourceExpected": "已取消后不再展示「再次尝试锁单」入口，接口拒绝再次锁单"
+}

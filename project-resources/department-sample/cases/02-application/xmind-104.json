@@ -1,20 +1,15 @@
 {
   "id": "xmind-104",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "划归客户支持下拉筛选与模糊搜索",
   "expected": "划归客户支持下拉筛选与模糊搜索",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-100"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "管理端会话及可对照订单数据已准备；103含两种用途，104含客户数据，105如缺物流仓样本须保留分支缺口，不伪造物流仓订单。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "reviewed",
+    "note": "已在用例与脚本核对，保存为新版本；执行结果仍以真实运行证据为准。"
+  },
+  "id": "case-cefbc9ba6ebd4ef2e460",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
+  "title": "页面表单渲染完成 — 页面不再出现「本人申请/代人申请」切换控件",
+  "expected": "页面不再出现「本人申请/代人申请」切换控件",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端H5-用书申请页",
+    "申请表单区",
+    "打开用书申请页",
+    "页面表单渲染完成"
+  ],
+  "sourceExpected": "页面不再出现「本人申请/代人申请」切换控件"
+}

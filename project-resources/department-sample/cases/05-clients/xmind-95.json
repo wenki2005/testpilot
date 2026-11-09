@@ -1,15 +1,15 @@
 {
   "id": "xmind-95",
   "moduleId": "a1288838-bcb7-43a2-b79c-179e54132ebb",
-  "versionId": "e99540bb-31c0-41c6-b205-0092b640fdcc",
-  "version": 2,
+  "versionId": "8d086a57-a12d-4ab9-a0f4-a926d1fc8738",
+  "version": 3,
   "title": "// 本期不做统计看板，待后续需求提出时再实现",
   "expected": "// 本期不做统计看板，待后续需求提出时再实现",
   "manualSteps": [],
   "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "原文明确本期不做统计看板，保留范围外说明，不填虚构前置编号。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

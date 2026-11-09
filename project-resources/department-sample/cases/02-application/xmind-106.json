@@ -1,24 +1,15 @@
 {
   "id": "xmind-106",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "物流单号/企微审批单号支持模糊与精准搜索",
   "expected": "物流单号/企微审批单号支持模糊与精准搜索",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-100"
-    },
-    {
-      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-      "caseId": "xmind-69"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "已有审批编号和实际快递单号的同一订单，核对模糊/精确搜索；不能用内部其他出库单号替代物流单号。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

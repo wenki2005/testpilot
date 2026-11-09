@@ -1,20 +1,15 @@
 {
   "id": "xmind-65",
   "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
-  "versionId": "ad205898-8719-462d-8e95-c5050811a846",
-  "version": 2,
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
   "title": "开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）",
   "expected": "开单接口返回错误：前端toast展示错误原因（网络问题/数据格式错误等）",
   "manualSteps": [],
-  "prerequisites": [
-    {
-      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-      "caseId": "xmind-119"
-    }
-  ],
+  "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "审批通过后进入锁单：62为长沙有货、63为长沙无货天津有货、64为两仓无货/部分不足、65为开单错误。四者是独立分支，不能互为必须通过的前置。库存和错误均需当前同单证据。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

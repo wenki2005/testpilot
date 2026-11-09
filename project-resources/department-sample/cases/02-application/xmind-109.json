@@ -1,15 +1,15 @@
 {
   "id": "xmind-109",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "4972970a-cd3a-41da-9ccc-bef1a7e332e4",
-  "version": 2,
+  "versionId": "d4acd1a4-58cc-4d86-ba88-b3ebddb72041",
+  "version": 20,
   "title": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）",
   "expected": "迁移后订单数据完整，订单总数、金额、状态与迁移前一致（数据一致性比对）",
   "manualSteps": [],
   "prerequisites": [],
   "prerequisiteReview": {
     "status": "reviewed",
-    "note": "准备迁移前基线与迁移后数据库的同范围快照，核总数、金额、状态；数据库可读即可核对，不把缺后台界面当唯一阻塞。"
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
   },
   "sourcePath": [
     "部门申样书_V1.0_测试用例.xmind",

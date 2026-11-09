@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-c191ba20e32819f08835",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "title": "按钮与时间轴 — 已发货、已签收沿用原物流时间轴展示",
+  "expected": "已发货、已签收沿用原物流时间轴展示",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端-订单详情页",
+    "不可取消订单",
+    "打开已发货、已签收或已取消订单",
+    "按钮与时间轴"
+  ],
+  "sourceExpected": "已发货、已签收沿用原物流时间轴展示"
+}

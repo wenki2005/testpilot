@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-f797e666e74d4e06340d",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "title": "扫描范围与批量 — 仅扫描审批通过且锁单失败原因为库存不足、未删除的申请单",
+  "expected": "仅扫描审批通过且锁单失败原因为库存不足、未删除的申请单",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "定时补锁任务",
+    "触发扫描",
+    "到达配置时间点（12:00/18:00/20:00）",
+    "扫描范围与批量"
+  ],
+  "sourceExpected": "仅扫描审批通过且锁单失败原因为库存不足、未删除的申请单"
+}

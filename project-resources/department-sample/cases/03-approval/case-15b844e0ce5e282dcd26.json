@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "case-15b844e0ce5e282dcd26",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
+  "title": "弹窗与下游处理 — 弹窗文案「您是否确认取消该订单并撤销用书申请」",
+  "expected": "弹窗文案「您是否确认取消该订单并撤销用书申请」",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端-申请详情页",
+    "审批通过待发货订单取消",
+    "点击并确认取消",
+    "弹窗与下游处理"
+  ],
+  "sourceExpected": "弹窗文案「您是否确认取消该订单并撤销用书申请」"
+}
