@@ -49,7 +49,9 @@ for (const workspace of selected) {
     closeSync(log);
     writeFileSync(workspace.processFile, JSON.stringify({ pid: child.pid, workspace: workspace.owner, port: workspace.port, url, code, dataDir: workspace.root, startedAt: new Date().toISOString() }, null, 2));
     let ready = false;
-    for (let n = 0; n < 60; n++) {
+    // 首次启动要从 project-resources 导入全部用例并建版本，冷盘时可能超过 15 秒；
+    // 健康即返回，所以放宽窗口不会拖慢正常启动。
+    for (let n = 0; n < 240; n++) {
         try {
             ready = (await fetch(url + '/api/health', { signal: AbortSignal.timeout(1000) })).ok;
         }
@@ -59,7 +61,7 @@ for (const workspace of selected) {
         await new Promise(resolve => setTimeout(resolve, 250));
     }
     if (!ready)
-        throw Error(workspace.owner + ' did not become ready. See its server.log.');
+        throw Error(workspace.owner + ' did not become ready after 60s. See its server.log.');
     if (existsSync(path.join(workspace.privateDir, 'mysql-connection.xml'))) {
         const connection = spawnSync(process.execPath, [path.join(repoRoot, "scripts/data/connect-workspace-database.mjs"), '--workspace', workspace.owner], { cwd: repoRoot, windowsHide: true, encoding: 'utf8', timeout: 35000 });
         console.log(connection.status === 0 ? workspace.owner + ': database connection restored.' : workspace.owner + ': reconnect the database in its panel.');
