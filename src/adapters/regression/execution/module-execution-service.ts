@@ -789,7 +789,16 @@ export class DifyWebModuleStore {
                         void Promise.race([
                             this.deps.cancel(job.snapshot.id, job.documentRunId).catch(() => undefined),
                             new Promise<void>(done => setTimeout(done, 5000)),
-                        ]).finally(() => reject(new Error('网页执行超过 2 分钟，已停止当前模块并保留已记录结果。')));
+                        ]).finally(() => {
+                            for (const row of job.results) {
+                                if (job.selectedCaseIds.includes(row.caseId) && row.status === 'not_executed') {
+                                    row.status = 'blocked';
+                                    row.detail = '网页执行超过 2 分钟；本条未完成实际操作，已停止当前模块并记录为阻塞，不再另开补跑批次。';
+                                }
+                            }
+                            this.save('job', job);
+                            reject(new Error('网页执行超过 2 分钟，已停止当前模块并保留已记录结果。'));
+                        });
                     }, 120_000);
                     executionPromise.then(value => { clearTimeout(timer); resolve(value); }, error => { clearTimeout(timer); reject(error); });
                 });
