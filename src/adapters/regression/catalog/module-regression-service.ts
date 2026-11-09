@@ -619,7 +619,7 @@ export class SystemModuleRegression {
         return batch;
     }
     retest(key: string, input: unknown) {
-        const data = z.object({ requestId: uuid, mode: z.enum(['failed', 'unfinished', 'all', 'selected', 'pending']).default('failed'), moduleId: uuid.optional(), caseIds: z.array(z.string()).min(1).max(200).optional() }).parse(input);
+        const data = z.object({ requestId: uuid, mode: z.enum(['failed', 'unfinished', 'all', 'selected', 'pending', 'checkpoint']).default('failed'), moduleId: uuid.optional(), caseIds: z.array(z.string()).min(1).max(200).optional() }).parse(input);
         const fingerprint = moduleDigest({ parent: key, ...data });
         const replay = this.replay(data.requestId, fingerprint);
         if (replay)
@@ -645,8 +645,8 @@ export class SystemModuleRegression {
                 return [{ ...snapshot, selectedCaseIds: data.caseIds!, confirmedCaseIds: (e.confirmedCaseIds ?? []).filter(id => data.caseIds!.includes(id)) }];
             }
             if (!j)
-                return ['unfinished', 'pending'].includes(data.mode) ? [snapshot] : [];
-            const ids = j.results.filter(r => !r.outOfScope && (data.mode === 'failed' ? r.status === 'failed' : data.mode === 'pending' ? r.status === 'not_executed' : ['blocked', 'error', 'not_executed'].includes(r.status))).map(r => r.caseId);
+                return ['unfinished', 'pending', 'checkpoint'].includes(data.mode) ? [snapshot] : [];
+            const ids = j.results.filter(r => !r.outOfScope && (data.mode === 'failed' ? r.status === 'failed' : ['pending', 'checkpoint'].includes(data.mode) ? r.status === 'not_executed' : ['blocked', 'error', 'not_executed'].includes(r.status))).map(r => r.caseId);
             return ids.length ? [{ ...snapshot, selectedCaseIds: ids, confirmedCaseIds: (e.confirmedCaseIds ?? []).filter(id => ids.includes(id)) }] : [];
         });
         if (!entries.length)
