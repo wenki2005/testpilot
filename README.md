@@ -66,7 +66,7 @@ npm run workbench:start
 
 - 用例及链路持续维护，以当前网页加载的版本为准。前置用例需要执行通过，脚本存在不等于通过。
 - 结果按实际证据区分通过、失败、阻塞和未执行，历史报告保留对应版本与结果。
-- 本次整理的资源快照包括 131 条定义、5 个模块、4 条核心链路；131 份对应脚本中 74 条含步骤、57 条尚无步骤。未完成项保留，不视为全部实现或通过。
+- 本次整理的资源快照包括 253 条定义、6 个模块、4 条核心链路；253 份对应脚本中 136 条含步骤、117 条尚无步骤。未完成项保留，不视为全部实现或通过。
 - 提交、撤销、审批和下单需使用约定测试数据及已授权环境；结果未知时先查询，避免同一操作意外重放。
 - 工具自身测试位于 `tests/`，与部门申样业务回归分开。目录整理没有触发业务测试或目标数据库写入。
 
@@ -78,7 +78,7 @@ Node.js / TypeScript 服务端，React / Vite 网页端，Playwright 浏览器�
 
 业务资源按用例ID逐条保存。当前以网页有效版本及缓存执行；可在“用例与脚本 → 资源”导出和预览导入，或用npm run resources:sync同步文件目录。直接修改文件不会静默覆盖网页，详见[资源同步](docs/tooling/project-resources.md)。
 
-首次启动应有131条定义和已有脚本，全部未执行，报告为空。重复启动保留本机编辑，详见[首次启动](docs/tooling/first-run.md)。
+首次启动应有253条定义和已有脚本，全部未执行，报告为空。重复启动保留本机编辑，详见[首次启动](docs/tooling/first-run.md)。
 
 新版整份用例使用[更新用例](docs/tooling/case-version-updates.md)，AI编辑器使用[MCP维护](docs/tooling/case-maintenance-mcp.md)，账号和数据库见[连接设置](docs/tooling/connections.md)。报告支持[离线归档](docs/tooling/report-archives.md)。57份空步骤的逐条执行方式和未完成断言见[覆盖清单](docs/planning/script-coverage.md)，不代表全部用例已通过。
 
