@@ -21,4 +21,4 @@
 
 ## 运行数据
 
-当前记录、截图、配置和登录态仍在原 runtime-data、artifacts 数据区。路径和历史引用未改动，不提交 Git。代码归类不等于已实现数据库物理迁移或完整新安装初始化。
+当前记录、截图、配置和登录态在本机数据目录 `%LOCALAPPDATA%\TestPilot\workspaces\dify`（可用 `TESTPILOT_DATA_HOME` / `TESTPILOT_DATA_DIR` 改位置），`/api/config` 的 `storage.external` 为 `true`。不提交 Git。旧 `runtime-data`、`artifacts` 只作回退保留，不再是当前数据区。首次安装初始化已实现：干净数据区启动会从 `project-resources/department-sample` 建项目。

@@ -75,7 +75,7 @@ npm run workbench:start
 
 需要一次加很多条时，导出当前资源 → 编辑 `cases` 数组 → 导入 → 预览 → 应用。
 
-一条新用例的最小结构：
+一条新用例的完整结构（`sourcePath`、`sourceExpected` 是必填，缺了会 HTTP 422）：
 
 ```json
 {
@@ -85,9 +85,14 @@ npm run workbench:start
   "expected": "每页 20 条，翻页后编号不重复",
   "manualSteps": [],
   "prerequisites": [],
+  "prerequisiteReview": { "status": "reviewed", "note": "已按最小依赖原则清理。" },
+  "sourcePath": ["订单与物流", "订单详情"],
+  "sourceExpected": "每页 20 条，翻页后编号不重复",
   "script": { "caseId": "xmind-322", "dependsOn": [], "steps": [] }
 }
 ```
+
+最省事的做法是**直接复制同模块一条现有用例再改**，这样必填字段一个都不会漏。
 
 规则：
 

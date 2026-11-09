@@ -64,7 +64,7 @@ export default function CaseEditorResources({ systemId, disabled, onApplied, onB
                     });
                 }} />
                 {error && <p role="alert">{error}</p>}
-                {creating && <section aria-label="新增用例">
+                {creating && <section className="ce-new-case" aria-label="新增用例">
                     <p>新增一条用例。脚本留空，保存后标记“待补脚本”，不会被执行。</p>
                     <label>所属模块<select value={form.moduleId} disabled={busy} onChange={e => setForm({ ...form, moduleId: e.target.value })}>{modules.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></label>
                     <label>用例编号<input value={form.id} disabled={busy} placeholder="如 xmind-322" onChange={e => setForm({ ...form, id: e.target.value })} /></label>
