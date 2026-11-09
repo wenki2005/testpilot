@@ -85,7 +85,7 @@ export type BatchView = RegressionBatch & {
     counts: Record<'passed' | 'failed' | 'blocked' | 'error' | 'not_executed' | 'outside', number>;
 };
 export type AccountView = {
-    state: 'unknown' | 'connecting' | 'awaiting-login' | 'connected' | 'error';
+    state: 'unknown' | 'saved' | 'connecting' | 'awaiting-login' | 'connected' | 'error';
     message: string;
     profileId?: string;
     checkedAt?: string;

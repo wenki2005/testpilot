@@ -59,6 +59,10 @@ export class SystemModuleRegression {
                     }
                 this.save('batch', batch);
             }
+        // Login storage lives in the local browser profile, never in bundled
+        // resources. Restore metadata immediately, then verify only a live tab.
+        for (const system of this.list<TestedSystem>('system'))
+            this.restoreAccount(system);
     }
     private list<T>(kind: string): T[] { return this.db.prepare('SELECT payload FROM records WHERE kind=? ORDER BY rowid DESC').all(kind).map(r => JSON.parse(String(r.payload))); }
     private save<T extends {
@@ -77,6 +81,27 @@ export class SystemModuleRegression {
         return JSON.parse(String(row.payload));
     }
     getSystem(key: string) { return this.get<TestedSystem>('system', key); }
+    private rememberAccount(system: TestedSystem, account: AccountView) {
+        this.accounts[system.id] = account;
+        this.save('account-session', { id: 'account-session:' + system.id + ':' + account.profileId,
+            profileId: account.profileId, targetUrl: system.targetUrl, environment: system.environment, checkedAt: account.checkedAt });
+    }
+    private restoreAccount(system: TestedSystem) {
+        const profileId = this.accountProfile(system).id;
+        const row = this.db.prepare('SELECT payload FROM records WHERE kind=? AND id=?').get('account-session', 'account-session:' + system.id + ':' + profileId);
+        const saved = row ? JSON.parse(String(row.payload)) : undefined;
+        if (saved?.targetUrl === system.targetUrl && saved.environment === system.environment)
+            this.accounts[system.id] = { state: 'saved', message: '本机登录信息已保存；打开时自动复用并检查有效性。', profileId, checkedAt: saved.checkedAt };
+        if (!this.deps.savedSessionStatus) return;
+        const project = { id: profileId, name: system.name, targetUrl: system.targetUrl, browserProfileIsolation: true } as DocumentProject;
+        void this.deps.savedSessionStatus(project).then(status => {
+            if (this.closed || this.occupied(system.id) || this.accountProfile(this.getSystem(system.id)).id !== profileId) return;
+            if (status === 'connected')
+                this.rememberAccount(system, { state: 'connected', message: '已复用本机登录会话；无需重复扫码。', profileId, checkedAt: now() });
+            else if (status === 'expired')
+                this.accounts[system.id] = { state: 'unknown', message: '登录已失效，请打开被测系统重新登录。', profileId };
+        }).catch(() => { /* Preserve saved status; a temporary CDP failure is not logout. */ });
+    }
     getModule(key: string) { return this.get<FixedModule>('module', key); }
     connectionSettings() {
         return { systems: this.list<TestedSystem>('system').map(s => ({ id: s.id, name: s.name, environment: s.environment, targetUrl: s.targetUrl, profileId: s.profileId, activeAccountId: s.activeAccountId ?? s.profileId, accountProfiles: s.accountProfiles ?? [], ...(s.databaseBinding ? { databaseBinding: s.databaseBinding } : {}), account: this.accounts[s.id] ?? { state: 'unknown', message: '尚未检查当前账号。' } })), services: { fixedExecution: 'local', aiAuthoringConfigured: !!process.env.TESTPILOT_DIFY_API_KEY, aiExecutionConfigured: !!process.env.TESTPILOT_DIFY_EXECUTION_API_KEY } };
@@ -138,7 +163,9 @@ export class SystemModuleRegression {
         s.activeAccountId = accountId;
         s.updatedAt = now();
         delete this.accounts[key];
-        return this.save('system', s);
+        const updated = this.save('system', s);
+        this.restoreAccount(updated);
+        return updated;
     }
     private hasProfile(system: TestedSystem, profileId: string) { return system.profileId === profileId || system.accountProfiles?.some(a => a.id === profileId); }
     saveSelection(systemId: string, input: unknown) {
@@ -515,9 +542,13 @@ export class SystemModuleRegression {
         const assigned = new Set(modules.flatMap(m => m.versions.map(v => v.id)));
         const visibleModules = modules.map(m => {
             const latest = m.versions.at(-1);
-            const latestCases = latest ? this.editorCatalog(m.systemId).cases.filter(c => c.moduleId === m.id) : [];
-            const pendingScriptReviewCount = latestCases.filter(c => c.scriptReview?.status === 'pending' && c.script.steps.length > 0).length;
-            const missingScriptCount = latestCases.filter(c => c.script.steps.length === 0).length;
+            // Polling must not rebuild editorCatalog and scan every historical
+            // job for every module: that blocks the event loop and starves CDP.
+            const pack = latest ? this.store.getModule(latest.id) : undefined;
+            const latestCases = pack?.project.cases ?? [];
+            const hasSteps = (c: typeof latestCases[number]) => c.steps.length > 0 || !!(pack?.cachedSteps?.[c.id]?.steps.length && pack.cachedSteps[c.id]!.sourceDigest === moduleDigest(c));
+            const pendingScriptReviewCount = latestCases.filter(c => pack?.scriptReviews?.[c.id]?.status === 'pending' && hasSteps(c)).length;
+            const missingScriptCount = latestCases.filter(c => !hasSteps(c)).length;
             return pendingScriptReviewCount || missingScriptCount ? { ...m, ...(pendingScriptReviewCount ? { pendingScriptReviewCount } : {}), ...(missingScriptCount ? { missingScriptCount } : {}) } : m;
         });
         return { systems: this.list<TestedSystem>('system'), modules: visibleModules, batches: this.list<RegressionBatch>('batch').map(b => this.view(b)), accounts: this.accounts, legacyModules: old.modules.filter(m => !assigned.has(m.id)).map(m => ({ id: m.id, name: m.name, targetUrl: m.targetUrl, caseCount: m.caseCount })), configured: old.configured, database: { connected: mysqlBrowserStatus().connected }, notificationConfigured: this.notifier.configured() };
@@ -769,10 +800,10 @@ export class SystemModuleRegression {
                 databaseEvidence ??= { binding: system.databaseBinding, capturedAt: now(), status: 'blocked', checks: [{ id: 'connection', title: '测试库准备', status: 'blocked', detail: '未完成本机只读核验；不会将未检查的数据当成已准备。' }] };
             }
             if (!this.closed && !controller.signal.aborted)
-                this.accounts[key] = { state: 'connected', message: '测试窗口已连接；权限以各用例实际结果为准。', profileId: profile.id, checkedAt: now(), ...(databaseEvidence ? { databaseEvidence } : {}) };
-        }, () => {
+                this.rememberAccount(system, { state: 'connected', message: '已登录；本机自动保存并复用登录信息。', profileId: profile.id, checkedAt: now(), ...(databaseEvidence ? { databaseEvidence } : {}) });
+        }, (error: unknown) => {
             if (!this.closed && !controller.signal.aborted)
-                this.accounts[key] = { state: 'error', message: '未完成账号连接，请重新连接并在测试窗口登录。', profileId: profile.id };
+                this.accounts[key] = { state: 'error', message: error instanceof Error ? error.message : '未完成窗口连接；本机已保存的登录信息仍保留。', profileId: profile.id };
         }).finally(() => this.connections.delete(key));
         return this.accounts[key];
     }

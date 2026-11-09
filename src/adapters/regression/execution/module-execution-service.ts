@@ -120,6 +120,8 @@ export type WebModuleJob = {
 };
 export type WebModuleDependencies = {
     cloud: typeof callDifyWorkflow;
+    /** Read an existing local browser only; never launch or execute a test. */
+    savedSessionStatus?: (project: DocumentProject) => Promise<'connected' | 'expired' | 'unavailable'>;
     authorizedWrites?: (project: DocumentProject, jobId: string, checks: BrowserCheck[], signal: AbortSignal, progress: (message: string) => void) => Promise<Array<{
         caseId: string;
         status: 'passed' | 'failed' | 'blocked';
