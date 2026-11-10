@@ -1,0 +1,65 @@
+name: 企微推送通知
+
+# 只在 main 有新提交时通知；通知失败不影响代码本身
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 组装并发送企微消息
+        # 没配置 secret 时直接跳过，不会让流水线变红（secrets 只在步骤级可用）
+        if: ${{ secrets.WECOM_WEBHOOK != '' }}
+        env:
+          WEBHOOK: ${{ secrets.WECOM_WEBHOOK }}
+          REPO: ${{ github.repository }}
+          SERVER: ${{ github.server_url }}
+          BRANCH: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          PUSHER: ${{ github.event.pusher.name }}
+        run: |
+          set -euo pipefail
+
+          # 从事件里取字段，避免把提交信息直接拼进 shell
+          author=$(jq -r '.head_commit.author.name // .pusher.name // "未知"' "$GITHUB_EVENT_PATH")
+          title=$(jq -r '(.head_commit.message // "（无提交信息）") | split("\n")[0]' "$GITHUB_EVENT_PATH")
+          added=$(jq -r '(.head_commit.added // []) | length' "$GITHUB_EVENT_PATH")
+          modified=$(jq -r '(.head_commit.modified // []) | length' "$GITHUB_EVENT_PATH")
+          removed=$(jq -r '(.head_commit.removed // []) | length' "$GITHUB_EVENT_PATH")
+          total=$((added + modified + removed))
+          short=${SHA:0:7}
+          commit_url="${SERVER}/${REPO}/commit/${SHA}"
+          repo_url="${SERVER}/${REPO}"
+
+          content=$(printf '%s\n' \
+            '**TestPilot 代码已更新**' \
+            "> 分支：${BRANCH}" \
+            "> 提交人：${author}" \
+            "> 提交：${short} ${title}" \
+            "> 变更：新增 ${added} · 修改 ${modified} · 删除 ${removed}（共 ${total} 个文件）" \
+            '' \
+            "[查看这次提交](${commit_url})　[仓库](${repo_url})")
+
+          # 用 jq 生成 payload，提交信息里的引号/换行不会破坏 JSON
+          jq -n --arg c "$content" '{msgtype:"markdown", markdown:{content:$c}}' > payload.json
+
+          # 企微限制 4096 字节，超了截断，避免整条发不出去
+          size=$(wc -c < payload.json)
+          if [ "$size" -gt 4000 ]; then
+            echo "payload 过大（${size} 字节），截断后发送"
+            printf '%s\n' '**TestPilot 代码已更新**' "> 分支：${BRANCH}" "> 提交人：${author}" "> 提交：${short}" "[查看这次提交](${commit_url})" \
+              | jq -R -s '{msgtype:"markdown", markdown:{content:.}}' > payload.json
+          fi
+
+          http=$(curl -sS -o resp.json -w '%{http_code}' -X POST "$WEBHOOK" \
+            -H 'Content-Type: application/json' --data @payload.json)
+          cat resp.json
+          if [ "$http" != "200" ] || [ "$(jq -r '.errcode' resp.json)" != "0" ]; then
+            echo "企微返回异常（HTTP ${http}），不影响代码合并"
+            exit 0
+          fi
