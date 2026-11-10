@@ -6,6 +6,43 @@
 
 ---
 
+## 〇、环境准备（新机器先做这步）
+
+把这一节连同仓库地址一起交给 AI，它就能自己把依赖装好，不需要使用者手动折腾。
+
+| 依赖 | 检查命令 | 通过标准 | 缺了怎么装 |
+| --- | --- | --- | --- |
+| Git | `git --version` | 有版本号 | `winget install --id Git.Git -e --source winget` |
+| Node.js | `node -v` | **≥ 22.19** | `winget install --id OpenJS.NodeJS.LTS -e --source winget` |
+| npm | `npm -v` | 随 Node 一起安装 | 同上 |
+| Edge | 能打开 `msedge` | 有浏览器 | `winget install --id Microsoft.Edge -e --source winget` |
+
+三条 winget 的包 ID 已在 2026-11-10 于本机用 `winget show` 验证可识别。
+
+安装完成后必须**新开一个终端**（PATH 才会刷新），再重新执行上面的检查命令。
+
+只在这两种情况下需要配代理（先直连试，失败再配）：
+
+```powershell
+# git 走本地代理（端口按实际改）
+git config --global http.proxy  http://127.0.0.1:<端口>
+git config --global https.proxy http://127.0.0.1:<端口>
+
+# npm 走同一代理
+npm config set proxy       http://127.0.0.1:<端口>
+npm config set https-proxy http://127.0.0.1:<端口>
+```
+
+网络恢复后撤销：`git config --global --unset http.proxy`、`npm config delete proxy`（https 同理）。
+
+注意事项：
+
+- `winget` 安装可能需要管理员权限；公司策略禁止安装时，让使用者手动装并记录；
+- 不要为“能跑”去改系统级安全设置；
+- 装完先跑一遍第一节的四条命令，失败再排查，不要靠猜。
+
+---
+
 ## 一、另一台电脑从零启动
 
 ### 前提
