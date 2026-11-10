@@ -40,9 +40,12 @@ for (const workspace of selected) {
     mkdirSync(workspace.root, { recursive: true });
     const config = path.join(workspace.privateDir, 'instance.env');
     const settings = existsSync(config) ? Object.fromEntries(Object.entries(parseEnv(readFileSync(config, 'utf8'))).filter(([key]) => /^(?:TESTPILOT_|OPENAI_)/.test(key))) : {};
+    // 迁移回执（data-migration.json）只有 migrate 脚本会写；用 relocate 搬过来的数据
+    // 没有它，但库文件已经在位，不能因此判成“尚未迁入”。
+    const dataStatus = existsSync(workspace.manifest) || existsSync(path.join(workspace.root, 'system-module-regression', 'catalog.sqlite')) ? 'migrated' : 'awaiting-source';
     const env = { ...process.env, TESTPILOT_API_KEY: '', OPENAI_API_KEY: '', TESTPILOT_DIFY_API_KEY: '', TESTPILOT_DIFY_EXECUTION_API_KEY: '', TESTPILOT_DIFY_WECOM_WEBHOOK: '', ...settings,
         PORT: String(workspace.port), TESTPILOT_DATA_DIR: workspace.root, TESTPILOT_ARTIFACTS_DIR: path.join(workspace.root, 'document-tests'), TESTPILOT_BROWSER_CDP_ENDPOINT: '',
-        TESTPILOT_WORKSPACE: workspace.owner, TESTPILOT_WORKSPACE_DATA_STATUS: existsSync(workspace.manifest) ? 'migrated' : 'awaiting-source', TESTPILOT_DIFY_WORKSPACE_URL: `http://127.0.0.1:${workspacePorts.dify}`, TESTPILOT_WEB_WORKSPACE_URL: `http://127.0.0.1:${workspacePorts['web-regression']}` };
+        TESTPILOT_WORKSPACE: workspace.owner, TESTPILOT_WORKSPACE_DATA_STATUS: dataStatus, TESTPILOT_DIFY_WORKSPACE_URL: `http://127.0.0.1:${workspacePorts.dify}`, TESTPILOT_WEB_WORKSPACE_URL: `http://127.0.0.1:${workspacePorts['web-regression']}` };
     const log = openSync(path.join(workspace.root, 'server.log'), 'a');
     const child = spawn(process.execPath, [code], { cwd: repoRoot, env, windowsHide: true, detached: true, stdio: ['ignore', log, log] });
     child.unref();
