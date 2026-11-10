@@ -23,6 +23,8 @@ export default function ProjectStatusPage({ systemId, storage, onNavigate }: { s
     const modules = state?.modules.filter(item => item.systemId === activeSystemId && !item.archived) ?? [];
     const cases = catalog?.cases ?? [];
     const pending = cases.filter(item => item.scriptReview?.status === 'pending').length;
+    // 待核对里还有一部分是空脚本，它们不是“核对后能跑”，而是根本没有步骤可执行
+    const pendingEmpty = cases.filter(item => item.scriptReview?.status === 'pending' && !(item.script?.steps?.length)).length;
     const latestVersion = Math.max(0, ...modules.flatMap(item => item.versions.map(version => version.version)));
     const latestRun = useMemo(() => state?.batches.filter(item => item.systemId === activeSystemId).sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))[0], [state, activeSystemId]);
     const latestRunCount = latestRun?.entries.reduce((total, entry) => total + (entry.selectedCaseIds?.length ?? entry.caseCount), 0) ?? 0;
@@ -45,6 +47,9 @@ export default function ProjectStatusPage({ systemId, storage, onNavigate }: { s
     const latest = useMemo(() => {
         const tally = { passed: 0, failed: 0, blocked: 0, not_executed: 0, never: 0, at: 0 };
         const classify = (status: string) => status === 'passed' ? 'passed' : status === 'failed' || status === 'error' ? 'failed' : status === 'blocked' ? 'blocked' : 'not_executed';
+        // 用用例列表里模块首次出现的顺序，module 数组自身顺序不是业务顺序
+        const position = new Map<string, number>();
+        for (const item of cases) if (!position.has(item.moduleId)) position.set(item.moduleId, position.size);
         const rows = modules.map(module => {
             const own = cases.filter(item => item.moduleId === module.id);
             const row = { id: module.id, name: module.name, total: own.length, passed: 0, failed: 0, blocked: 0, not_executed: 0, never: 0 };
@@ -56,7 +61,7 @@ export default function ProjectStatusPage({ systemId, storage, onNavigate }: { s
                 if (hit && hit.at > tally.at) tally.at = hit.at;
             }
             return row;
-        }).filter(row => row.total > 0);
+        }).filter(row => row.total > 0).sort((a, b) => (position.get(a.id) ?? 0) - (position.get(b.id) ?? 0));
         return { ...tally, rows, covered: cases.length - tally.not_executed - tally.never };
     }, [cases, modules, latestByCase]);
     const statusSegments = [
@@ -94,7 +99,7 @@ export default function ProjectStatusPage({ systemId, storage, onNavigate }: { s
           </tr>)}</tbody>
         </table>}
       </section>
-      <div className="project-status-columns"><section className="project-status-panel"><h3>项目资源</h3><div className="project-status-list"><div><div><b>被测网址</b><small>{system?.environment ?? '—'} · {system?.targetUrl ?? '未配置'}</small></div><em className="ok">已配置</em></div><div><div><b>用例版本</b><small>当前版本 v{latestVersion || '—'} · {cases.length || 0} 条</small></div><em className="ok">已写入</em></div><div><div><b>脚本状态</b><small>{pending ? `${pending} 条需要核对后才能执行` : '当前没有待核对脚本'}</small></div><em className={pending ? 'warn' : 'ok'}>{pending ? '待核对' : '可执行'}</em></div><div><div><b>运行数据</b><small>{storage?.dataDirectory ? '保存在本机，不随项目资源分发' : '与项目资源分开保存'}</small></div><em className="ok">已分离</em></div></div><div className="project-status-links"><button type="button" className="project-status-primary" onClick={() => onNavigate('case-scripts')}>查看用例与脚本</button><button type="button" onClick={() => onNavigate('dify-regression')}>选择执行范围</button></div></section>
+      <div className="project-status-columns"><section className="project-status-panel"><h3>项目资源</h3><div className="project-status-list"><div><div><b>被测网址</b><small>{system?.environment ?? '—'} · {system?.targetUrl ?? '未配置'}</small></div><em className="ok">已配置</em></div><div><div><b>用例版本</b><small>当前版本 v{latestVersion || '—'} · {cases.length || 0} 条</small></div><em className="ok">已写入</em></div><div><div><b>脚本状态</b><small>{pending ? `${pending} 条脚本待补或待核对${pendingEmpty ? `（其中 ${pendingEmpty} 条为空脚本，暂不可执行）` : ''}` : '当前没有待核对脚本'}</small></div><em className={pending ? 'warn' : 'ok'}>{pending ? '待核对' : '可执行'}</em></div><div><div><b>运行数据</b><small>{storage?.dataDirectory ? '保存在本机，不随项目资源分发' : '与项目资源分开保存'}</small></div><em className="ok">已分离</em></div></div><div className="project-status-links"><button type="button" className="project-status-primary" onClick={() => onNavigate('case-scripts')}>查看用例与脚本</button><button type="button" onClick={() => onNavigate('dify-regression')}>选择执行范围</button></div></section>
         <section className="project-status-panel"><h3>最近运行</h3>{latestRun ? <div className="project-status-run"><span className={latestRun.phase === 'completed' ? 'passed' : 'neutral'}>{latestRun.phase === 'completed' ? '✓' : '—'}</span><div><b>{latestRun.scope === 'core' ? '核心链路' : latestRun.scope === 'custom' ? '自选用例' : '全部用例'} · {latestRunCount} 条</b><small>{new Date(latestRun.createdAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })} · {phaseNames[latestRun.phase] ?? latestRun.phase}</small></div></div> : <p className="project-status-muted">暂无运行记录</p>}<div className="project-status-links"><button type="button" className="project-status-primary" onClick={() => onNavigate('run-reports')}>打开运行报告</button></div></section>
       </div>
       <div className="project-status-note"><b>说明：</b>用例、脚本和链路属于项目资源；运行记录、截图、账号状态和数据库连接保存在本机。</div><p className="project-status-foot">当前页面只展示状态，不会自动执行测试。</p>
