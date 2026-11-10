@@ -8,7 +8,8 @@
     "node": ">=22.19"
   },
   "scripts": {
-    "workbench:start": "node scripts/start-integrated-workspaces.mjs --workspace dify",
+    "workbench:start": "node scripts/start-integrated-workspaces.mjs",
+    "workbench:start:dify": "node scripts/start-integrated-workspaces.mjs --workspace dify",
     "resources:export": "node scripts/resources/export-project-resources.mjs",
     "resources:sync": "node scripts/resources/sync-project-resources.mjs",
     "data:relocate": "node scripts/data/relocate-workspace.mjs",

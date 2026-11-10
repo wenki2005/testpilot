@@ -1,4 +1,4 @@
-﻿param([switch]$Stop,[switch]$NoBrowser)
+param([switch]$Stop,[switch]$NoBrowser)
 $ErrorActionPreference='Stop'
 $packageRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..'))
 $node=Join-Path $packageRoot 'runtime\node.exe'
@@ -15,10 +15,12 @@ $env:PATH=(Split-Path -Parent $node)+';'+$env:PATH
 Push-Location $packageRoot
 try{
     if($Stop){
-        & $node (Join-Path $packageRoot 'scripts\stop-integrated-workspaces.mjs') --workspace dify
+        # 不带 --workspace 会同时停止 dify 与 web-regression 两个工作区
+        & $node (Join-Path $packageRoot 'scripts\stop-integrated-workspaces.mjs')
         if($LASTEXITCODE -eq 0){ & $node (Join-Path $packageRoot 'scripts\stop-integrated-workspaces.mjs') --entry-only }
     }else{
-        & $node (Join-Path $packageRoot 'scripts\start-integrated-workspaces.mjs') --workspace dify
+        # 不带 --workspace 会同时启动两个工作区，侧栏入口才不会出现 502
+        & $node (Join-Path $packageRoot 'scripts\start-integrated-workspaces.mjs')
         if($LASTEXITCODE -eq 0 -and -not $NoBrowser){
             $entryPort=if($env:TESTPILOT_ENTRY_PORT){$env:TESTPILOT_ENTRY_PORT}else{'4325'}
             Start-Process "http://127.0.0.1:$entryPort/dify/?page=dify-regression"
