@@ -391,7 +391,9 @@ export default function App() {
     };
     const navigate = (destination: Page) => {
         const workspaces = config?.workspaces;
-        const owner = ['settings', 'mysql-browser', 'architecture'].includes(destination) ? workspaces?.current : destination === 'dify-regression' || destination === 'module-regression' || destination === 'case-scripts' || destination === 'run-reports' ? 'dify' : 'web-regression';
+        // workbench 是各工作区自己的首页：dify 下是“项目状态”，web-regression 下是“新建测试”。
+        // 它必须留在当前工作区，否则点“项目状态”会被当成 web-regression 的页面而跳转过去。
+        const owner = ['settings', 'mysql-browser', 'architecture', 'workbench'].includes(destination) ? workspaces?.current : destination === 'dify-regression' || destination === 'module-regression' || destination === 'case-scripts' || destination === 'run-reports' ? 'dify' : 'web-regression';
         if (owner && workspaces && owner !== workspaces.current) {
             const target = new URL(owner === 'dify' ? workspaces.difyUrl : workspaces.webUrl);
             target.searchParams.set('page', destination);
