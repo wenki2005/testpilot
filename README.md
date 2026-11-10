@@ -45,7 +45,7 @@
 | npm | `npm -v` | 随 Node 一起安装 |
 | Edge | 能打开 `msedge` | `winget install --id Microsoft.Edge -e --source winget` |
 
-装完请**新开一个终端**（PATH 才会刷新）再继续。仅在直连 GitHub 失败时才配 git/npm 代理，撤销命令和更多细节见[用例迭代与 AI 接入指南](docs/tooling/case-iteration-guide.md)的第〇节。
+装完请**新开一个终端**（PATH 才会刷新）再继续。仅在直连 GitHub 失败时才配 git/npm 代理，撤销命令和更多细节见[使用指南](使用指南.md)的第〇节。
 
 ## 运行说明
 
@@ -95,7 +95,7 @@ Node.js / TypeScript 服务端，React / Vite 网页端，Playwright 浏览器�
 
 新版整份用例使用[更新用例](docs/tooling/case-version-updates.md)，AI编辑器使用[MCP维护](docs/tooling/case-maintenance-mcp.md)，账号和数据库见[连接设置](docs/tooling/connections.md)。报告支持[离线归档](docs/tooling/report-archives.md)。117份空步骤的逐条执行方式和未完成断言见[覆盖清单](docs/planning/script-coverage.md)，不代表全部用例已通过。
 
-新人从零接手、修改用例、新增用例以及接到自己的 AI 工具，见[用例迭代与 AI 接入指南](docs/tooling/case-iteration-guide.md)；让 AI 写脚本要用的动作清单见[脚本步骤 DSL](docs/tooling/case-step-dsl.md)。
+新人从零接手、修改用例、新增用例以及接到自己的 AI 工具，见[使用指南](使用指南.md)；让 AI 写脚本要用的动作清单见[脚本步骤 DSL](docs/tooling/case-step-dsl.md)。
 
 源码版也使用外部数据目录。迁移和升级规则见[本机数据](docs/tooling/local-data.md)。后续MCP等功能进度见[模块交付计划](docs/planning/delivery-plan.md)。
 
