@@ -34,6 +34,19 @@
 - 能访问被测系统，准备自己的测试账号；所选用例需要的数据库、审批、库存及下游服务条件另行配置。
 - 首次启动自动加载内置资源，在自己的数据区建立项目。完整包解压后双击启动，详见[运行包说明](packaging/windows/README.md)。
 
+### 环境准备（新机器先做这步）
+
+把下面这张表连同仓库地址交给 AI，它就能自己判断缺什么并装好，不需要先手工折腾。
+
+| 依赖 | 检查 | 缺了怎么装 |
+| --- | --- | --- |
+| Git | `git --version` | `winget install --id Git.Git -e --source winget` |
+| Node.js ≥ 22.19 | `node -v` | `winget install --id OpenJS.NodeJS.LTS -e --source winget` |
+| npm | `npm -v` | 随 Node 一起安装 |
+| Edge | 能打开 `msedge` | `winget install --id Microsoft.Edge -e --source winget` |
+
+装完请**新开一个终端**（PATH 才会刷新）再继续。仅在直连 GitHub 失败时才配 git/npm 代理，撤销命令和更多细节见[用例迭代与 AI 接入指南](docs/tooling/case-iteration-guide.md)的第〇节。
+
 ## 运行说明
 
 ### 当前开发环境
