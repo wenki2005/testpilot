@@ -159,7 +159,9 @@ export default function SystemModuleWorkbench() {
     const current = activeBatch?.jobs.find(j => activeJob(j) && j.phase !== 'queued') ?? activeBatch?.jobs.find(activeJob);
     const runLabel = waiting ? '等待登录' : activeBatch?.phase === 'queued' ? '等待开始' : '正在运行';
     const finishedModules = activeBatch?.jobs.filter(j => !activeJob(j)).length ?? 0;
-    const canRun = !!state?.configured.execution;
+    // 固定脚本执行走本地浏览器，不依赖 Dify；只有 AI 辅助（assist）才需要 Dify 工作流。
+    // 这里不能再拿 configured.execution 当开关，否则没配 Dify 的机器连固定脚本都跑不了。
+    const canRun = !!state;
     useEffect(() => {
         const publish = () => {
             if (!state)
@@ -484,7 +486,7 @@ export default function SystemModuleWorkbench() {
             })}>{activeBatch ? runLabel : batch ? '按此范围重新运行' : '开始测试'}</button></div></div>
 
       {scope === 'custom' && selected.some(m => !scopeCount(m)) && <p className="sm-scope-note">请为已勾选模块选择用例，或取消勾选该模块。</p>}
-      {state && !state.configured.execution && <div className="sm-error">Dify执行工作流尚未配置，请先在设置中配置。</div>}
+      {state && !state.configured.execution && <div className="sm-hint">固定脚本执行不需要 Dify；未配置 Dify 只影响「AI 辅助整理」。</div>}
     </section>
 
 
@@ -508,7 +510,8 @@ export default function SystemModuleWorkbench() {
       <div className="sm-case-toolbar"><label><input type="checkbox" aria-label="全选当前用例" disabled={!!batch || busy || !pack.cases.some(c => priority === 'all' || c.priority === priority)} checked={pack.cases.some(c => priority === 'all' || c.priority === priority) && pack.cases.filter(c => priority === 'all' || c.priority === priority).every(c => caseIds.includes(c.id))} onChange={e => { const visible = pack.cases.filter(c => priority === 'all' || c.priority === priority).map(c => c.id); setCaseIds(ids => e.target.checked ? [...new Set([...ids, ...visible])] : ids.filter(id => !visible.includes(id))); }}/>全选</label><select aria-label="筛选优先级" value={priority} onChange={e => setPriority(e.target.value)}><option value="all">全部优先级</option>{['P0', 'P1', 'P2', 'P3'].map(p => <option key={p}>{p}</option>)}</select><a href={`${root}/modules/${pack.module.id}/markdown?version=${versionId}`} onClick={e => { e.preventDefault(); void perform(() => download(`/modules/${pack.module.id}/markdown?version=${versionId}`, 'module-cases.md')); }}>导出 MD</a></div>
       <div className="sm-pack-cases">{pack.cases.filter(c => priority === 'all' || c.priority === priority).map(c => { const readiness = pack.readiness?.find(r => r.caseId === c.id); return <div className="sm-pack-row" key={c.id}><input type="checkbox" aria-label={`选择用例 ${c.id}`} disabled={!!batch} checked={caseIds.includes(c.id)} onChange={e => setCaseIds(ids => e.target.checked ? [...ids, c.id] : ids.filter(id => id !== c.id))}/><details><summary><span className="sm-priority">{c.priority}</span>{c.title}</summary><h4>原始预期</h4><p>{c.expected}</p><h4>执行准备</h4><p>{readiness?.detail ?? readiness?.coverageGap ?? (readiness?.hasFixedSteps ? '已有固定步骤，登录和前置条件以本轮实际检查为准。' : '尚无固定步骤，请使用 AI 辅助整理。')}</p>{readiness?.nextAction && <p>{readiness.nextAction}</p>}<h4>来源</h4><p>{c.source || c.id}</p></details><button className="sm-link" disabled={!!batch || busy || occupied || !canRun || pack.version.id !== latest(pack.module).id} onClick={() => void perform(() => runCases([c.id]))}>运行</button></div>; })}</div>
       {!batch && <footer className="sm-case-footer"><span>已选 {caseIds.length} / {pack.cases.length} 条</span><button className="sm-primary" disabled={busy || occupied || pack.version.id !== latest(pack.module).id} onClick={applyCustom}>应用自选</button></footer>}
-      {!batch && <details className="sm-case-maintenance"><summary>用例维护</summary><p>Dify辅助整理会提出建议并执行所选用例，另存为新批次。</p><div className="sm-maintenance-actions"><button disabled={busy || occupied || !canRun || !state?.configured.prepare || !caseIds.length || pack.version.id !== latest(pack.module).id} onClick={() => void perform(() => runCases(caseIds, 'assist'))}>Dify辅助整理并运行所选</button></div></details>}
+      {/* AI 辅助整理只在真的配了 Dify prepare 工作流时才出现；固定脚本执行不需要它 */}
+      {!batch && !!state?.configured.prepare && <details className="sm-case-maintenance"><summary>用例维护（AI 辅助）</summary><p>用 Dify 对所选用例提出步骤建议并运行，另存为新批次。</p><div className="sm-maintenance-actions"><button disabled={busy || occupied || !canRun || !caseIds.length || pack.version.id !== latest(pack.module).id} onClick={() => void perform(() => runCases(caseIds, 'assist'))}>Dify 辅助整理并运行所选</button></div></details>}
     </Modal>}
   </div>;
 }
