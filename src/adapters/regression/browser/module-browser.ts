@@ -1,3 +1,4 @@
+import { takeFailureScreenshot } from '../../documents/execution/browser-lane.js';
 import path from 'node:path';
 import { loadDifyCustomerFixtures } from '../config/test-fixtures.js';
 import { loadDifyBookFixtures, observeDifyBookResponses, verifyDifyBookResult, difyBookKind } from '../scenarios/books/book-search.js';
@@ -284,7 +285,15 @@ export function webModuleDependencies(dataRoot: string): WebModuleDependencies {
             // Own evidence capture after all adapter assertions. The shared pre-hook
             // page.screenshot can stall a Windows compositor and block later checks.
             try {
-                        return await executeDocumentRun(project, { runId, runMode: 'regression', selectedCaseIds: selected, scopePlan: { mode: selected.length === 1 ? 'single' : 'custom', targetCaseIds: selected, impactCaseIds: [] }, captureEvidence: false, onStage: async (stage) => onStage?.(stage), onCasePrepared: async () => { }, onCaseResult: async (result) => {
+                        return await executeDocumentRun(project, { runId, runMode: 'regression', selectedCaseIds: selected, scopePlan: { mode: selected.length === 1 ? 'single' : 'custom', targetCaseIds: selected, impactCaseIds: [] }, captureEvidence: true, onStage: async (stage) => onStage?.(stage), onCasePrepared: async () => { }, onCaseResult: async (result) => {
+                        if (result.status !== 'passed' && !result.evidence) {
+                            try {
+                                const shot = takeFailureScreenshot(runId, result.id) ?? (session?.page ? await session.page.screenshot({ timeout: 8000 }) : undefined);
+                                if (shot)
+                                    result.evidence = await saveEvidenceFor(result.id, shot);
+                            }
+                            catch { /* 截图失败不影响判定 */ }
+                        }
                         // Dify 时代的专项复核已移除：用例结果完全由 steps 的断言决定。
                         const source = project.cases.find(c => c.id === result.id);
                         if (!source)

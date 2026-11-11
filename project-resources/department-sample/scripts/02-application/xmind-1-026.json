@@ -7,8 +7,10 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "assertExactVisible",
-      "text": "自编码"
+      "action": "fillByLabel",
+      "label": "自编码",
+      "value": "999999",
+      "rowIndex": 0
     },
     {
       "action": "blurByLabel",

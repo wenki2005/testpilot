@@ -21,6 +21,13 @@ interface DocumentBrowserLaneHelpers {
     unsupportedWeChatClientGateMessage(text: string): string | undefined;
 }
 /** Create the browser lane executor with its concrete UI controls injected. */
+const failureShots = new Map<string, Buffer>();
+export function takeFailureScreenshot(runId: string, caseId: string): Buffer | undefined {
+    const key = runId + ":" + caseId;
+    const value = failureShots.get(key);
+    failureShots.delete(key);
+    return value;
+}
 export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHelpers) {
     const { resolveDocumentField, selectDocumentOption, selectDocumentOptionByPlaceholder, selectDocumentOptionByRoleIndex, unsupportedWeChatClientGateMessage } = helpers;
     return async function runLane(url: string, cases: BrowserCheck[], label: string, projectId: string, runId: string, page: Page, _onLoginWait?: (waiting: boolean) => Promise<void>, onCaseResult?: (result: CaseResult) => Promise<void>, onCaseStart?: (item: BrowserCheck) => Promise<void>, signal?: AbortSignal, onStep?: (item: BrowserCheck, stepIndex: number, phase: "before" | "passed" | "failed", detail?: string) => Promise<void>, onEvidence?: (item: BrowserCheck, stepIndex: number | undefined, reason: string) => Promise<void>, viewport?: {
@@ -606,6 +613,12 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 throw error;
                             const message = error instanceof Error ? error.message : String(error);
                             failedStepIndex ??= stepIndex;
+                            try {
+                                const key = runId + ":" + item.id;
+                                if (!failureShots.has(key))
+                                    failureShots.set(key, await page.screenshot({ timeout: 5000 }));
+                            }
+                            catch { }
                             await onStep?.(item, stepIndex, "failed", message);
                             if (message.startsWith("断言失败：")) {
                                 assertionFailures.push(message);

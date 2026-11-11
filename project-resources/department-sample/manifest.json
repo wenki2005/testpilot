@@ -2,7 +2,7 @@
   "schema": 1,
   "kind": "testpilot-project-resources",
   "projectId": "436847ad-f144-425f-b303-1ca9b22e0b52",
-  "exportedAt": "2026-11-11T07:02:26.976Z",
+  "exportedAt": "2026-11-11T07:27:13.142Z",
   "installableSeed": true,
   "historyIncluded": false,
   "credentialsIncluded": false,
@@ -583,7 +583,7 @@
     },
     {
       "file": "scripts/02-application/xmind-1-026.json",
-      "sha256": "b39744eda458c1e371a8271987a4bc5a28fbc7837192d787c8fda9863b3911e3"
+      "sha256": "02999b8988670260b2a0663a0bdf0c6c196489410bc819b67fc8d7bfaf84f363"
     },
     {
       "file": "scripts/02-application/xmind-1-027.json",
