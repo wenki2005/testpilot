@@ -1,5 +1,5 @@
 {
-  "caseId": "xmind-1-004",
+  "caseId": "xmind-2-123",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
   "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
   "version": 27,
@@ -7,8 +7,12 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "clickExactText",
-      "text": "本人申领"
+      "action": "assertNotVisible",
+      "text": "本人申请"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "代人申请"
     },
     {
       "action": "assertExactVisible",

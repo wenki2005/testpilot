@@ -47,7 +47,7 @@
     "name": "申样申请与经销商数据",
     "directory": "02-application",
     "caseKeys": [
-      "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-004",
+      "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-2-123",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-005",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-006",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-007",
@@ -166,7 +166,7 @@
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-2-023"
     ],
     "coreCaseIds": [
-      "xmind-1-004",
+      "xmind-2-123",
       "xmind-1-010",
       "xmind-1-017",
       "xmind-1-018",
@@ -206,7 +206,7 @@
       "xmind-1-019",
       "xmind-1-032",
       "xmind-1-051",
-      "xmind-1-004",
+      "xmind-2-123",
       "xmind-1-010",
       "xmind-1-027",
       "xmind-1-031"
@@ -237,14 +237,14 @@
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-070",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-071",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-072",
-      "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-073",
+      "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-2-124",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-074",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-075",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-076",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-077",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-078",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-079",
-      "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-087",
+      "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-2-125",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-088",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-089",
       "50defb76-157a-4ed1-9f91-10a8ba991e0c:xmind-1-090",
@@ -295,17 +295,17 @@
       "xmind-1-056",
       "xmind-1-057",
       "xmind-1-061",
-      "xmind-1-073",
+      "xmind-2-124",
       "xmind-1-074",
       "xmind-1-075",
       "xmind-1-078",
       "xmind-1-079",
-      "xmind-1-087"
+      "xmind-2-125"
     ],
     "starterCaseIds": [
       "xmind-1-091",
       "xmind-1-079",
-      "xmind-1-087",
+      "xmind-2-125",
       "xmind-1-061",
       "xmind-1-053"
     ]
