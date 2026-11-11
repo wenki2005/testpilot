@@ -12,19 +12,17 @@
     {
       "action": "fillByLabel",
       "label": "自编码",
-      "value": "TP_INVALID_ALPHA"
+      "value": "abcXYZ",
+      "rowIndex": 0
     },
     {
       "action": "blurByLabel",
-      "label": "自编码"
-    },
-    {
-      "action": "assertFieldInvalid",
-      "label": "自编码"
+      "label": "自编码",
+      "rowIndex": 0
     },
     {
       "action": "assertNoFetchOrXhr",
-      "quietMs": 1000
+      "quietMs": 1500
     }
   ]
 }

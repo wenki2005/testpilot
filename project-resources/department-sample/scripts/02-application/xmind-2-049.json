@@ -7,6 +7,17 @@
   "hasSteps": true,
   "steps": [
     {
+      "action": "fillByLabel",
+      "label": "自编码",
+      "value": "999999",
+      "rowIndex": 0
+    },
+    {
+      "action": "blurByLabel",
+      "label": "自编码",
+      "rowIndex": 0
+    },
+    {
       "action": "assertExactVisible",
       "text": "该图书不存在或尚未入库"
     }

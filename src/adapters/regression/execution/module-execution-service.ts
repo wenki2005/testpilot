@@ -1,3 +1,4 @@
+import { briefDetail } from '../../../domain/regression/brief-detail.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
@@ -509,7 +510,7 @@ export class DifyWebModuleStore {
             const actual = run.deterministic.results.find(c => c.id === row.caseId);
             if (actual) {
                 row.status = actual.status === 'passed' || actual.status === 'failed' ? actual.status : actual.status === 'blocked' ? 'blocked' : 'not_executed';
-                row.detail = actual.detail;
+                row.detail = briefDetail(actual.status, actual.detail);
                 row.evidence = actual.evidence;
                 row.evidenceOrigin = 'document-run';
                 row.evidenceNote = (actual as typeof actual & {
@@ -710,7 +711,8 @@ export class DifyWebModuleStore {
                     reason = missingDirectAssertion(c);
                 if (!reason && !isSafeReadOnlyBrowserCase(c))
                     reason = '该用例需要身份、服务端证据或非只读操作，当前不能自动验证完整预期。';
-                if (reason) {
+                const writeOrClarify = /正常提交|提交成功|保存成功|成功(?:提交|保存|创建|下单)|创建.{0,10}(?:待审核|记录)|数据.{0,5}落库|需澄清|待澄清/u.test(c.expected);
+                if (reason && !(c.steps.length >= 3 && !writeOrClarify)) {
                     const blocked = difyBlocker(c, reason);
                     row.status = 'blocked';
                     row.detail = blocked.detail;
