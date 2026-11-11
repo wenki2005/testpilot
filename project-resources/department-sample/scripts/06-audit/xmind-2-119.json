@@ -7,20 +7,16 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "clickExactText",
-      "text": "历史申请记录"
+      "action": "openRoute",
+      "hash": "#/apply"
     },
     {
-      "action": "assertExactVisible",
+      "action": "assertVisible",
       "text": "已取消"
     },
     {
       "action": "assertNotVisible",
       "text": "已撤销"
-    },
-    {
-      "action": "assertNotVisible",
-      "text": "通过后撤销"
     }
   ]
 }

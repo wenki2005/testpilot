@@ -290,6 +290,12 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                     throw new Error(`占位符「${step.placeholder}」匹配 ${await field.count()} 个控件；需要唯一匹配才能安全填写。`);
                                 await field.fill(step.value);
                             }
+                            else if (step.action === "openRoute") {
+                                const base = new URL(url);
+                                base.hash = step.hash;
+                                await page.goto(base.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
+                                await page.waitForTimeout(2000);
+                            }
                             else if (step.action === "fillByRoleIndex") {
                                 const fields = page.getByRole(step.role);
                                 if (step.index >= await fields.count())

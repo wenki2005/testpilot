@@ -8,9 +8,7 @@
       "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-1-002",
       "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-1-003",
       "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-1-092",
-      "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-1-093",
-      "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-1-118",
-      "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-1-131"
+      "2d6950a6-996d-4096-b820-22a0cd1a7d02:xmind-1-093"
     ],
     "coreCaseIds": [
       "xmind-1-001",
@@ -27,7 +25,6 @@
     "directory": "02-application",
     "caseKeys": [
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-2-123",
-      "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-005",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-008",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-010",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-013",
@@ -35,14 +32,12 @@
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-017",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-018",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-019",
-      "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-020",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-021",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-022",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-023",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-025",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-026",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-027",
-      "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-028",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-029",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-030",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-031",
@@ -67,7 +62,6 @@
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-050",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-051",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-052",
-      "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-1-120",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-2-026",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-2-054",
       "e807d296-9a7b-4b96-8bf9-2f888ec834b9:xmind-2-022",

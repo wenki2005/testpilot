@@ -7,8 +7,16 @@
   "hasSteps": true,
   "steps": [
     {
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611040149"
+    },
+    {
+      "action": "clickExactText",
+      "text": "撤回用书申请"
+    },
+    {
       "action": "assertExactVisible",
-      "text": "收货信息"
+      "text": "您是否确认撤销该用书申请"
     }
   ]
 }

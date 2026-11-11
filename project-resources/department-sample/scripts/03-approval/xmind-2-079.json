@@ -7,12 +7,16 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "clickExactText",
-      "text": "历史申请记录"
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611030186"
     },
     {
-      "action": "assertExactVisible",
-      "text": "收货信息"
+      "action": "assertNotVisible",
+      "text": "库存不足"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "再次尝试锁单"
     }
   ]
 }

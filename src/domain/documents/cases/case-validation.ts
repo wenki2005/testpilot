@@ -34,7 +34,12 @@ export function validateCases(value: unknown): BrowserCheck[] {
                     throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 value 无效。`);
                 return { action: step.action, placeholder: step.placeholder, value: step.value };
             }
-            if (step.action === "fillByRoleIndex") {
+            if (step.action === "openRoute") {
+            if (typeof step.hash !== "string" || !step.hash.startsWith("#/") || step.hash.length > 200)
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 hash 无效。`);
+            return { action: step.action, hash: step.hash };
+        }
+        if (step.action === "fillByRoleIndex") {
                 if (step.role !== "combobox" || !Number.isInteger(step.index) || step.index < 0 || step.index > 20 || typeof step.value !== "string" || step.value.length > 500)
                     throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 role/index/value 无效。`);
                 return { action: step.action, role: step.role, index: step.index, value: step.value };
@@ -128,6 +133,11 @@ export function validateCases(value: unknown): BrowserCheck[] {
                 if (step.rowIndex !== undefined && (!Number.isInteger(step.rowIndex) || step.rowIndex < 0 || step.rowIndex > 9))
                     throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 rowIndex 无效。`);
                 return { action: step.action, label: step.label, ...(step.rowIndex === undefined ? {} : { rowIndex: step.rowIndex }) };
+            }
+            if (step.action === "openRoute") {
+                if (typeof step.hash !== "string" || !step.hash.startsWith("#/") || step.hash.length > 200)
+                    throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 hash 无效。`);
+                return { action: step.action, hash: step.hash };
             }
             if (step.action === "captureCurrentUrl" || step.action === "assertCurrentUrlUnchanged")
                 return { action: step.action };

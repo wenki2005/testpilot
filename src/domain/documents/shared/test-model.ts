@@ -93,7 +93,8 @@ export type BrowserStep = {
     rowIndex?: number;
 } | {
     action: "captureCurrentUrl";
-} | {
+}
+    | { action: "openRoute"; hash: string } | {
     action: "assertCurrentUrlUnchanged";
 } | {
     action: "assertRoleDisabled";

@@ -7,8 +7,8 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "clickExactText",
-      "text": "历史申请记录"
+      "action": "openRoute",
+      "hash": "#/apply"
     },
     {
       "action": "assertNotVisible",

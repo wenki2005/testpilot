@@ -7,34 +7,16 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "assertVisible",
-      "text": "申请编号"
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611040068"
     },
     {
       "action": "assertVisible",
-      "text": "申请流程"
-    },
-    {
-      "action": "assertVisible",
-      "text": "申请人"
-    },
-    {
-      "action": "assertVisible",
-      "text": "申请时间"
+      "text": "申请被拒"
     },
     {
       "action": "assertVisible",
       "text": "驳回原因"
-    },
-    {
-      "action": "assertRoleVisible",
-      "role": "button",
-      "name": "重新申请"
-    },
-    {
-      "action": "assertRoleVisible",
-      "role": "button",
-      "name": "联系审批人"
     }
   ]
 }

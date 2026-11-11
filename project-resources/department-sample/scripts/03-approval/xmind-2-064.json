@@ -7,8 +7,20 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "assertExactVisible",
-      "text": "收货信息"
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611040149"
+    },
+    {
+      "action": "clickExactText",
+      "text": "撤回用书申请"
+    },
+    {
+      "action": "clickExactText",
+      "text": "暂不取消"
+    },
+    {
+      "action": "assertVisible",
+      "text": "撤回用书申请"
     }
   ]
 }
