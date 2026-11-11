@@ -1,0 +1,21 @@
+{
+  "id": "xmind-1-125",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "库存查询失败：进入锁单失败分支",
+  "expected": "库存查询失败：进入锁单失败分支",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "数据接口层",
+    "旺店通发货/数量接口",
+    "按仓库优先级查询库存与发货"
+  ],
+  "sourceExpected": "库存查询失败：进入锁单失败分支"
+}

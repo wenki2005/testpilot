@@ -1,0 +1,14 @@
+{
+  "caseId": "xmind-1-096",
+  "moduleId": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+  "versionId": "8d086a57-a12d-4ab9-a0f4-a926d1fc8738",
+  "version": 3,
+  "dependsOn": [],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "assertVisible",
+      "text": "订单明细"
+    }
+  ]
+}

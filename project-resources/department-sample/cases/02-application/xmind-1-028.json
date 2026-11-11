@@ -1,0 +1,22 @@
+{
+  "id": "xmind-1-028",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
+  "expected": "[需澄清] 待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "样书明细区",
+    "输入物流编码（自编码/erp编码）",
+    "调用易诚通图书信息接口校验编码"
+  ],
+  "sourceExpected": "[需澄清] 待澄清 易诚通回传字段是否含图书单本重量（彭玲玲质疑bic_book_info表无重量字段，需查接口文档，若无则向易诚通提需求补字段）"
+}

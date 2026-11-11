@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-007",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
+  "title": "推送企微应用消息 — 同一申请单仅发送一次，重复补锁不重复通知",
+  "expected": "同一申请单仅发送一次，重复补锁不重复通知",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "企微消息通知",
+    "定时补锁成功通知",
+    "定时任务补锁成功生成订单",
+    "推送企微应用消息"
+  ],
+  "sourceExpected": "同一申请单仅发送一次，重复补锁不重复通知"
+}

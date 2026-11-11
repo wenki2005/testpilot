@@ -8,10 +8,10 @@
       "title": "H5 申请入口",
       "expected": "新版 H5 用书申请页面的表单、身份和商品信息符合用例预期。",
       "caseIds": [
-        "case-3e754e26155c5930e5a1",
-        "case-cefbc9ba6ebd4ef2e460",
-        "case-3409bfaf862376586052",
-        "case-1fe3e5498b666b83042a"
+        "xmind-2-026",
+        "xmind-2-054",
+        "xmind-2-022",
+        "xmind-2-020"
       ]
     },
     {
@@ -19,7 +19,7 @@
       "title": "PC 申请入口",
       "expected": "新版 PC 用书申请页面与 H5 入口保持同一申请规则。",
       "caseIds": [
-        "case-672965b9f3b8c00ff73b"
+        "xmind-2-038"
       ]
     },
     {
@@ -27,8 +27,8 @@
       "title": "我的申请列表",
       "expected": "提交后的申请可以在我的申请列表中按新版筛选、状态和详情规则查询。",
       "caseIds": [
-        "case-322ab00b2955af001697",
-        "case-f4a334f27361aed0a094"
+        "xmind-2-061",
+        "xmind-2-092"
       ]
     }
   ]

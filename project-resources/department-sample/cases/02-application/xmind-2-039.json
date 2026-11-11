@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-039",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "页面渲染 — PC与H5共用同一提交接口与字段口径，提交结果一致",
+  "expected": "PC与H5共用同一提交接口与字段口径，提交结果一致",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端PC-用书申请页",
+    "申请表单",
+    "打开PC用书申请页",
+    "页面渲染"
+  ],
+  "sourceExpected": "PC与H5共用同一提交接口与字段口径，提交结果一致"
+}

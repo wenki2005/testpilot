@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "原脚本保留；用例内容变化，执行前需核对。"
+  },
+  "id": "xmind-1-032",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "拦截提示沿用V1.0规则 — 预估总重超过19公斤提示「已超重请修改数量或使用OA申请」且禁止提交",
+  "expected": "预估总重超过19公斤提示「已超重请修改数量或使用OA申请」且禁止提交",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端H5-用书申请页",
+    "收件信息与明细区（V1.0回归）",
+    "提交超重或数量越界数据",
+    "拦截提示沿用V1.0规则"
+  ],
+  "sourceExpected": "预估总重超过19公斤提示「已超重请修改数量或使用OA申请」且禁止提交"
+}

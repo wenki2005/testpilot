@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-096",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "title": "调度容错 — 任务初始为暂停状态（status=1），需在后台手动启用后开始执行（纳入上线检查项）",
+  "expected": "任务初始为暂停状态（status=1），需在后台手动启用后开始执行（纳入上线检查项）",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "定时补锁任务",
+    "任务调度与异常",
+    "任务并发或下游异常",
+    "调度容错"
+  ],
+  "sourceExpected": "任务初始为暂停状态（status=1），需在后台手动启用后开始执行（纳入上线检查项）"
+}

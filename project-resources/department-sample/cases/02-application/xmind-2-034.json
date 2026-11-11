@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-034",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "服务端校验 — 非本人调用返回无权限，不暴露申请单号是否存在",
+  "expected": "非本人调用返回无权限，不暴露申请单号是否存在",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "服务端防线与存量影响（代码扫描补充）",
+    "取消接口鉴权与参数校验",
+    "使用他人申请单号调用取消接口",
+    "服务端校验"
+  ],
+  "sourceExpected": "非本人调用返回无权限，不暴露申请单号是否存在"
+}

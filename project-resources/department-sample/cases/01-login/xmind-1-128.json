@@ -1,0 +1,21 @@
+{
+  "id": "xmind-1-128",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
+  "title": "企微OA审批模板ID配置正确",
+  "expected": "企微OA审批模板ID配置正确",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "系统配置依赖",
+    "关键配置项就绪校验",
+    "上线前配置参数完整性"
+  ],
+  "sourceExpected": "企微OA审批模板ID配置正确"
+}

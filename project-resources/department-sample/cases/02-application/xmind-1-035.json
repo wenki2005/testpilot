@@ -1,0 +1,22 @@
+{
+  "id": "xmind-1-035",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增）",
+  "expected": "每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增）",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "样书明细区",
+    "点击「继续添加样书」按钮",
+    "向下复制空白图书明细行"
+  ],
+  "sourceExpected": "每行提供删除按钮，可删除误加的样书行（H5设计稿已确认新增）"
+}

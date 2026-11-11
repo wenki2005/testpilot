@@ -8,21 +8,21 @@
       "title": "申请详情与撤销",
       "expected": "申请详情页能够展示新版字段，并按状态提供撤销或后续处理入口。",
       "caseIds": [
-        "case-029ae95a0a4b9e5b5021",
-        "case-9a134e661a6001ac08ed",
-        "case-c09a0a51491c9ca0bccd",
-        "case-7898f6cb2210d0023c7a",
-        "case-a37ebc23b1a322666ac2",
-        "case-e80db17a4c90b0fc64cd",
-        "case-44a77f19a03f7fe08842",
-        "case-15b844e0ce5e282dcd26",
-        "case-dfdf16adf2561c28c635",
-        "case-d2af15b8f26359753a0a",
-        "case-c3b46b53d51da22f3452",
-        "case-53399d0dc0703a29daf5",
-        "case-5462d257f9a46dafdcd3",
-        "case-7f4ca87c1b4f85b1cc9d",
-        "case-e89e22e33c4698d9234c"
+        "xmind-2-057",
+        "xmind-2-080",
+        "xmind-2-085",
+        "xmind-2-074",
+        "xmind-2-081",
+        "xmind-2-090",
+        "xmind-2-067",
+        "xmind-2-059",
+        "xmind-2-088",
+        "xmind-2-087",
+        "xmind-2-086",
+        "xmind-2-069",
+        "xmind-2-071",
+        "xmind-2-075",
+        "xmind-2-091"
       ]
     },
     {
@@ -30,10 +30,10 @@
       "title": "订单详情与取消",
       "expected": "订单详情页能够展示新版订单信息、物流状态和取消限制。",
       "caseIds": [
-        "case-3bd62acc9c8862c0bb5e",
-        "case-8e771391bfdf943546d0",
-        "case-e248710ad10255fa93bd",
-        "case-ee8781981280a9abf3ad"
+        "xmind-2-097",
+        "xmind-2-103",
+        "xmind-2-106",
+        "xmind-2-107"
       ]
     }
   ]

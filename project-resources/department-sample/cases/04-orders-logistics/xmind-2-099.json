@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-099",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "title": "配置生效验证 — 执行时间点由后台定时任务 cron 表达式维护（默认 `0 0 12,18,20 * * ?`），不提供字典配置入口；修改后下一轮按新时间点触发",
+  "expected": "执行时间点由后台定时任务 cron 表达式维护（默认 `0 0 12,18,20 * * ?`），不提供字典配置入口；修改后下一轮按新时间点触发",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "定时补锁任务",
+    "时间点配置",
+    "调整执行时间点",
+    "配置生效验证"
+  ],
+  "sourceExpected": "执行时间点由后台定时任务 cron 表达式维护（默认 `0 0 12,18,20 * * ?`），不提供字典配置入口；修改后下一轮按新时间点触发"
+}

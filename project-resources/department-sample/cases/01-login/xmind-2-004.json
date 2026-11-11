@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-004",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
+  "title": "跳转结果 — 申请已取消时仍可正常打开详情并展示「已取消」",
+  "expected": "申请已取消时仍可正常打开详情并展示「已取消」",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "企微消息通知",
+    "消息跳转落点",
+    "点击消息卡片「前往查看」",
+    "跳转结果"
+  ],
+  "sourceExpected": "申请已取消时仍可正常打开详情并展示「已取消」"
+}

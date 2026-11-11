@@ -1,0 +1,30 @@
+{
+  "caseId": "xmind-1-027",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "dependsOn": [],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "startFetchOrXhrCapture"
+    },
+    {
+      "action": "fillByLabel",
+      "label": "自编码",
+      "value": "TP_INVALID_ALPHA"
+    },
+    {
+      "action": "blurByLabel",
+      "label": "自编码"
+    },
+    {
+      "action": "assertFieldInvalid",
+      "label": "自编码"
+    },
+    {
+      "action": "assertNoFetchOrXhr",
+      "quietMs": 1000
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "priority": "P0",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-114",
+  "moduleId": "d293ef3e-482d-4048-aa90-94260ef47596",
+  "versionId": "e94a0e66-2e25-43c6-ba06-39010c41cae6",
+  "version": 3,
+  "title": "落库字段校验 — 记录取消前状态（cancel_before_status）用于时间轴还原",
+  "expected": "记录取消前状态（cancel_before_status）用于时间轴还原",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "数据与审计",
+    "取消留痕",
+    "查询已取消申请记录",
+    "落库字段校验"
+  ],
+  "sourceExpected": "记录取消前状态（cancel_before_status）用于时间轴还原"
+}

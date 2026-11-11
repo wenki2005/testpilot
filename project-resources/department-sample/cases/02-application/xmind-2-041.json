@@ -1,0 +1,27 @@
+{
+  "priority": "P1",
+  "scriptReview": {
+    "status": "pending",
+    "note": "新增用例，需补充脚本和前置。"
+  },
+  "id": "xmind-2-041",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "提交成功跳转申请详情页 — 申请类型落库值恒为 1（本人申请）",
+  "expected": "申请类型落库值恒为 1（本人申请）",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门用书系统V1.1.0",
+    "员工端H5-用书申请页",
+    "申请表单区",
+    "填写完整表单并提交",
+    "提交成功跳转申请详情页"
+  ],
+  "sourceExpected": "申请类型落库值恒为 1（本人申请）"
+}

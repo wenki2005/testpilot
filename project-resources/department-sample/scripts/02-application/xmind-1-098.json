@@ -1,0 +1,14 @@
+{
+  "caseId": "xmind-1-098",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "dependsOn": [],
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "assertExactVisible",
+      "text": "内部订单管理"
+    }
+  ]
+}

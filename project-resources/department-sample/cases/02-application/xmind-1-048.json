@@ -1,0 +1,21 @@
+{
+  "id": "xmind-1-048",
+  "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
+  "version": 27,
+  "title": "手动输入≤20字：通过",
+  "expected": "手动输入≤20字：通过",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-样书申请表单页",
+    "收件信息",
+    "填写详细地址"
+  ],
+  "sourceExpected": "手动输入≤20字：通过"
+}

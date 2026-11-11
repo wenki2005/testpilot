@@ -1,0 +1,21 @@
+{
+  "id": "xmind-1-083",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "title": "无匹配：提示无结果",
+  "expected": "无匹配：提示无结果",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-订单列表页",
+    "关键字搜索订单",
+    "输入订单编号/订单图书名"
+  ],
+  "sourceExpected": "无匹配：提示无结果"
+}

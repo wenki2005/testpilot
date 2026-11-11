@@ -1,0 +1,21 @@
+{
+  "id": "xmind-1-092",
+  "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+  "versionId": "ae13ac27-67c1-460b-954d-e524790d1fd6",
+  "version": 5,
+  "title": "关联企微认证信息正确展示",
+  "expected": "关联企微认证信息正确展示",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-我的页面",
+    "个人信息区",
+    "展示头像、用户名、手机号"
+  ],
+  "sourceExpected": "关联企微认证信息正确展示"
+}

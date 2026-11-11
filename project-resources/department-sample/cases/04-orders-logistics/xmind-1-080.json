@@ -1,0 +1,21 @@
+{
+  "id": "xmind-1-080",
+  "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+  "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
+  "version": 8,
+  "title": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+  "expected": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-订单列表页",
+    "查看订单列表",
+    "按订单生成时间倒序展示"
+  ],
+  "sourceExpected": "展示订单号、状态、价格、收货信息、第一种书名称及总本数，分页每次加载20条"
+}

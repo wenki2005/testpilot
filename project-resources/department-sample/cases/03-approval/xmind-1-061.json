@@ -1,0 +1,22 @@
+{
+  "id": "xmind-1-061",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
+  "version": 19,
+  "title": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
+  "expected": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失",
+  "manualSteps": [],
+  "prerequisites": [],
+  "prerequisiteReview": {
+    "status": "reviewed",
+    "note": "已按最小依赖原则清理；当前用例不再强制执行非必要前置。"
+  },
+  "sourcePath": [
+    "部门申样书_V1.0_测试用例.xmind",
+    "员工端-用书审批详情页",
+    "查看申请明细（本次需求变更补齐）",
+    "审批详情页「申请编号」右侧展示「查看明细",
+    "」入口，点击进入申请表单明细展示页"
+  ],
+  "sourceExpected": "从明细页返回后回到审批详情页，审批时间轴与状态不丢失"
+}
