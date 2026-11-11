@@ -2,13 +2,13 @@
   "schema": 1,
   "kind": "testpilot-project-resources",
   "projectId": "436847ad-f144-425f-b303-1ca9b22e0b52",
-  "exportedAt": "2026-11-11T09:27:10.963Z",
+  "exportedAt": "2026-11-11T09:42:23.742Z",
   "installableSeed": true,
   "historyIncluded": false,
   "credentialsIncluded": false,
   "counts": {
     "modules": 6,
-    "cases": 112,
+    "cases": 111,
     "scriptsWithSteps": 104,
     "chains": 3
   },
@@ -19,7 +19,7 @@
     },
     {
       "file": "modules.json",
-      "sha256": "8fd0e18fee9e57b7ec1572f1df703072ee7d45519a1ad9c47943396270de7cc0"
+      "sha256": "200f46f57bb896bd7a01d72722966be8adb6bfaef7126fb592333f4b039946b0"
     },
     {
       "file": "cases/01-login/xmind-1-001.json",
@@ -392,10 +392,6 @@
     {
       "file": "cases/03-approval/xmind-2-090.json",
       "sha256": "c6d055e3e0145f98ceffa6f061773d0f08b19359e954f301aff6449533aa51eb"
-    },
-    {
-      "file": "cases/03-approval/xmind-2-094.json",
-      "sha256": "0aef87a71fc3be4ea55140e612493344ef5a83e8c0f2987a0cf180158475cb83"
     },
     {
       "file": "cases/03-approval/xmind-2-124.json",
@@ -840,10 +836,6 @@
     {
       "file": "scripts/03-approval/xmind-2-090.json",
       "sha256": "d54e40986a404349d16a61433f719cc574ce9c29f0ca0655dfb78eb9e65e970c"
-    },
-    {
-      "file": "scripts/03-approval/xmind-2-094.json",
-      "sha256": "3928d1644667db8f57f82a7c27fc5f6f5fef9a1ba0bb63df1a0b202708d8e2b5"
     },
     {
       "file": "scripts/03-approval/xmind-2-124.json",
