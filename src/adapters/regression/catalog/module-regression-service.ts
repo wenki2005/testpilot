@@ -341,7 +341,7 @@ export class SystemModuleRegression {
             cases: catalog.cases.map(c => ({ ...(c.priority ? { priority: c.priority } : {}), ...(c.sourceId ? { sourceId: c.sourceId } : {}), ...(c.scriptReview ? { scriptReview: c.scriptReview } : {}), id: c.id, moduleId: c.moduleId, title: c.title, expected: c.expected, manualSteps: c.manualSteps, prerequisites: c.prerequisites, ...(c.prerequisiteReview ? { prerequisiteReview: c.prerequisiteReview } : {}), sourcePath: c.sourcePath, sourceExpected: c.sourceExpected, script: c.script })),
             // 链路按 id 排序导出：资源目录里是按文件名读的（等价于按 id 排序），
             // 不排序会因数组顺序不同被判成“改写了链路定义”，资源同步永远过不去。
-            chains: departmentCoreChains.filter(chain => chain.steps.every(s => s.caseIds.every(id => catalog.cases.some(c => c.id === id)))).map(c => ({ id: c.id, title: c.title, description: c.description, steps: c.steps.map(s => ({ id: s.id, title: s.title, expected: s.expected, caseIds: s.caseIds })) })).sort((a, b) => a.id.localeCompare(b.id)),
+            chains: departmentCoreChains.filter(chain => chain.steps.every(s => s.caseIds.every(id => catalog.cases.some(c => c.id === id)))).map(c => ({ id: c.id, title: c.title, description: c.description, steps: c.steps.map(s => ({ id: s.id, title: s.title, expected: s.expected, caseIds: s.caseIds })).filter(s => s.caseIds.length > 0) })).filter(c => c.steps.length > 0).sort((a, b) => a.id.localeCompare(b.id)),
         };
         const checked = validateProjectResources(resources);
         const versionSelections = Object.fromEntries(catalog.modules.map(m => [m.id, this.getModule(m.id).versions.at(-1)!.id]));

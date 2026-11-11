@@ -4,52 +4,11 @@
   "description": "覆盖企微通知、服务端防线、数据审计和管理端后台；需要相应角色或只读数据时再执行。",
   "steps": [
     {
-      "id": "wecom-notifications",
-      "title": "企微消息通知",
-      "expected": "新版申请、审批、订单和异常节点的通知内容、接收人及关联编号符合用例预期。",
-      "caseIds": [
-        "xmind-2-002",
-        "xmind-2-003",
-        "xmind-2-015",
-        "xmind-2-008",
-        "xmind-2-010",
-        "xmind-2-014",
-        "xmind-2-011"
-      ]
-    },
-    {
-      "id": "service-defenses",
-      "title": "服务端防线",
-      "expected": "服务端校验、存量影响和异常分支符合新版规则，不绕过业务校验。",
-      "caseIds": [
-        "xmind-2-034",
-        "xmind-2-045",
-        "xmind-2-027",
-        "xmind-2-031",
-        "xmind-2-044",
-        "xmind-2-051"
-      ]
-    },
-    {
       "id": "audit",
       "title": "数据与审计",
       "expected": "关键状态、字段变更和审计记录可以按新版要求追溯，不能用伪造数据代替。",
       "caseIds": [
-        "xmind-2-116",
-        "xmind-2-114",
-        "xmind-2-119",
-        "xmind-2-120",
-        "xmind-2-112"
-      ]
-    },
-    {
-      "id": "admin-tracking",
-      "title": "后台订单追踪",
-      "expected": "管理端订单查询、筛选和追踪结果符合新版后台用例，执行前需要管理员角色。",
-      "caseIds": [
-        "xmind-2-040",
-        "xmind-2-050",
-        "xmind-2-030"
+        "xmind-2-119"
       ]
     }
   ]
