@@ -35,7 +35,7 @@ test-artifacts/
 
 # Original distribution-only files
 /MANIFEST.sha256
-/TestPilot演示系统可用性测试报告2026-10-20.docx
+/TestPilot婕旂ず绯荤粺鍙敤鎬ф祴璇曟姤鍛?026-10-20.docx
 
 # Editor and OS files
 .idea/
@@ -61,3 +61,6 @@ Thumbs.db
 *.sqlite3-wal
 *.sqlite3-shm
 *.har
+
+# 本地凭据与 webhook，绝不入库
+.secrets/
