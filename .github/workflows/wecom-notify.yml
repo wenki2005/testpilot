@@ -14,7 +14,6 @@ jobs:
     steps:
       - name: 组装并发送企微消息
         # 没配置 secret 时直接跳过，不会让流水线变红（secrets 只在步骤级可用）
-        if: ${{ secrets.WECOM_WEBHOOK != '' }}
         env:
           WEBHOOK: ${{ secrets.WECOM_WEBHOOK }}
           REPO: ${{ github.repository }}
@@ -24,6 +23,7 @@ jobs:
           PUSHER: ${{ github.event.pusher.name }}
         run: |
           set -euo pipefail
+          if [ -z "$WEBHOOK" ]; then echo "未配置 WECOM_WEBHOOK，跳过通知"; exit 0; fi
 
           # 从事件里取字段，避免把提交信息直接拼进 shell
           author=$(jq -r '.head_commit.author.name // .pusher.name // "未知"' "$GITHUB_EVENT_PATH")
