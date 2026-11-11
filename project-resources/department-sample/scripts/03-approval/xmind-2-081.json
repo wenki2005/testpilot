@@ -4,6 +4,23 @@
   "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
   "version": 19,
   "dependsOn": [],
-  "hasSteps": false,
-  "steps": []
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611110172"
+    },
+    {
+      "action": "assertVisible",
+      "text": "申请信息"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "取消待发货订单并撤回申请"
+    },
+    {
+      "action": "assertVisible",
+      "text": "已取消"
+    }
+  ]
 }

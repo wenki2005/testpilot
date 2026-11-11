@@ -318,7 +318,7 @@ export function isSafeReadOnlyBrowserCase(item: BrowserCheck): boolean {
     // script unsafe to execute. Keep the clarification and prerequisite gates
     // below; the project approval gate is enforced by the run entry point.
     const connected = !!connectedEvidenceKind(item);
-    if (!item.steps?.length || identityExpectation && !connected || backendExpectation && !item.coverageGap && !networkNoCall && !connected || /^\[需澄清\]|待澄清|需澄清/u.test(text) || (actionablePreconditions(item).length > 0 && item.preconditionsConfirmed !== true))
+    if (!item.steps?.length || identityExpectation && !/不再出现|不出现|不再展示/.test(text) && !connected || backendExpectation && !item.coverageGap && !networkNoCall && !connected || /^\[需澄清\]|待澄清|需澄清/u.test(text) || (actionablePreconditions(item).length > 0 && item.preconditionsConfirmed !== true))
         return false;
     return item.steps.every(step => {
         if (step.action === "clickByRole")

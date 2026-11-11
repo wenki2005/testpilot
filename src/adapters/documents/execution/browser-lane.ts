@@ -83,7 +83,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
             return false;
         };
         try {
-            page.setDefaultTimeout(4000);
+            page.setDefaultTimeout(10000);
             for (let caseIndex = 0; caseIndex < cases.length; caseIndex++) {
                 let item = cases[caseIndex]!;
                 if (handoffBlockedReason && !handoff?.prerequisiteCaseIds.includes(item.id)) {
@@ -294,7 +294,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 const base = new URL(url);
                                 base.hash = step.hash;
                                 await page.goto(base.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
-                                await page.waitForTimeout(2000);
+                                await page.waitForTimeout(4500);
                             }
                             else if (step.action === "fillByRoleIndex") {
                                 const fields = page.getByRole(step.role);

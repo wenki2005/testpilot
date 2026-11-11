@@ -4,6 +4,19 @@
   "versionId": "9d1cace5-fc31-472b-a286-cc4c7965843a",
   "version": 8,
   "dependsOn": [],
-  "hasSteps": false,
-  "steps": []
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611110172"
+    },
+    {
+      "action": "assertVisible",
+      "text": "已下单"
+    },
+    {
+      "action": "assertVisible",
+      "text": "待发货"
+    }
+  ]
 }

@@ -7,11 +7,11 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "clickExactText",
-      "text": "订单物流"
+      "action": "openRoute",
+      "hash": "#/logistics-detail/0005BM202611110172"
     },
     {
-      "action": "assertExactVisible",
+      "action": "assertVisible",
       "text": "取消待发货订单并撤销申请"
     }
   ]
