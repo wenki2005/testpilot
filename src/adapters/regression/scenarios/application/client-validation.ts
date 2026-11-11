@@ -132,6 +132,8 @@ export async function prepareClientValidation(page: Page, c: BrowserCheck, targe
             result.detail = '其他必填项及图书/客户基线均有效，仅改变本字段；实际触发隔离客户端校验，所有外发请求被阻止、无业务写入且未跳转。' + observations.join('；') + '。';
         }
         else if (kind === 'overweight-client-validation') {
+            if (!book)
+                throw Error('Blocked: 缺少图书基线，无法构造超重输入。');
             const qty = Math.floor(19000 / book.weightGrams) + 1;
             if (qty < 2 || qty > 999)
                 throw Error('Blocked: 现有图书不能在已知数量范围内构造超过19公斤的测试输入。');

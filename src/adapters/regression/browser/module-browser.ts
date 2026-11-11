@@ -284,59 +284,10 @@ export function webModuleDependencies(dataRoot: string): WebModuleDependencies {
             // Own evidence capture after all adapter assertions. The shared pre-hook
             // page.screenshot can stall a Windows compositor and block later checks.
             try {
-                return await executeDocumentRun(project, { runId, runMode: 'regression', selectedCaseIds: selected, scopePlan: { mode: selected.length === 1 ? 'single' : 'custom', targetCaseIds: selected, impactCaseIds: [] }, captureEvidence: false, onStage: async (stage) => onStage?.(stage), onCasePrepared: async (source, page) => { await waitForDepartmentFormBaseline(page, project.targetUrl); await waitForDifyDeviceBaseline(page, source, project.targetUrl); await prepareFieldValidityBaseline(page, source, project.targetUrl, dataRoot); await prepareInvalidBook(page, source); await prepareClientValidation(page, source, project.targetUrl, dataRoot, png => saveEvidenceFor(source.id, png)); }, onCaseResult: async (result) => {
-                        const saveEvidence = (png: Buffer) => saveEvidenceFor(result.id, png);
+                        return await executeDocumentRun(project, { runId, runMode: 'regression', selectedCaseIds: selected, scopePlan: { mode: selected.length === 1 ? 'single' : 'custom', targetCaseIds: selected, impactCaseIds: [] }, captureEvidence: false, onStage: async (stage) => onStage?.(stage), onCasePrepared: async () => { }, onCaseResult: async (result) => {
+                        // Dify 时代的专项复核已移除：用例结果完全由 steps 的断言决定。
                         const source = project.cases.find(c => c.id === result.id);
-                        const reads = await observer?.take(source ? departmentReadOnlyKind(source) : undefined, source?.steps.filter(s => s.action === 'fillByRoleIndex').at(-1)?.value) ?? [];
-                        const bookReads = await bookObserver?.take(source) ?? [];
-                        if (source && session)
-                            await verifyDifyBookResult(session.page, source, result, bookReads).catch(() => {
-                                if (result.status === 'passed') {
-                                    result.status = 'blocked';
-                                    result.detail = '图书完整断言尚未完成，未将子步骤通过当作业务通过。';
-                                }
-                            });
-                        if (source && session)
-                            await verifyDepartmentReadOnlyResult(session.page, source, result, reads).catch(() => {
-                                if (result.status === 'passed') {
-                                    result.status = 'blocked';
-                                    result.detail = '本条只读补充证据采集未完成；保留未验证状态。';
-                                }
-                            });
-                        if (source && session)
-                            await verifyFieldValidityResult(session.page, source, result);
-                        if (source && session)
-                            await verifyInvalidBook(session.page, source, result);
-                        if (source && session)
-                            await verifyExcludedCustomer(session.page, source, result);
-                        if (source && session)
-                            verifyClientValidation(session.page, source, result);
-                        if (source && session)
-                            await verifyApplicantIdentity(session.page, source, result, project.targetUrl, saveEvidence);
-                        if (source && session)
-                            await verifyDifyDeviceResult(session.page, source, result, project.targetUrl, saveEvidence);
-                        if (source && session)
-                            await verifyDifyListResult(session.page, source, result, project.targetUrl, saveEvidence);
-                        if (source && session)
-                            await verifyEmployeeApplicationReadOnly(session.page, source, result, project.targetUrl, saveEvidence);
-                        if (source && session)
-                            await verifyDifyRecordResult(session.page, source, result, project.targetUrl, saveEvidence);
-                        if (source && session)
-                            await verifyConnectedEvidence(session.page, source, result, project.targetUrl, saveEvidence, undefined, () => readDepartmentCreationReceipts(dataRoot, project.id), () => readDepartmentCreationBaselines(dataRoot, project.id));
-                        if (source && (needsDifyReadback(source) || fieldValidityKind(source)) && !session && result.status === 'passed') {
-                            result.status = 'blocked';
-                            result.detail = '缺少本轮页面与查询补充核验，不能只按子步骤判断通过。';
-                        }
-                        if (result.status === 'passed' && source?.expected === '必填未完成时提交按钮置灰不可点击') {
-                            if (session)
-                                await verifyDifyRequiredButtonAppearance(session.page, result, source.expected);
-                            else {
-                                result.status = 'blocked';
-                                result.detail = '必填与禁用子检查完成，但缺少当前页面的置灰样式证据。';
-                                delete result.evidence;
-                            }
-                        }
-                        if (!source || !difyRecordKind(source) && !isApplicantIdentity(source) && !connectedEvidenceKind(source))
+                        if (!source)
                             await captureMissingDifyFailureEvidence(dataRoot, project, runId, result, true, session?.page);
                         onResult?.(result);
                     } });

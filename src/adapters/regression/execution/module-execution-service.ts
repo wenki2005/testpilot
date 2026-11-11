@@ -680,7 +680,7 @@ export class DifyWebModuleStore {
                 const cache = module.cachedSteps[c.id];
                 if (!c.steps.length && cache?.sourceDigest === moduleDigest(job.snapshot.cases.find(v => v.id === c.id)))
                     c.steps = cache.steps;
-                let reason: string | undefined = cache?.reviewKind && !reviewed ? '当前页面未重新核对到已审核只读计划所需的唯一控件。' : !c.steps.length && !canAuthorReadOnlyBrowserSteps(c) ? browserStepDraftBlockReason(c) : undefined;
+                let reason: string | undefined = !c.steps.length && cache?.reviewKind && !reviewed ? '当前页面未重新核对到已审核只读计划所需的唯一控件。' : !c.steps.length && !canAuthorReadOnlyBrowserSteps(c) ? browserStepDraftBlockReason(c) : undefined;
                 if (c.steps.some(s => s.action.startsWith('fill') && isSensitiveExportField('label' in s ? s.label : 'placeholder' in s ? s.placeholder : '')))
                     reason = '账号密码和验证码由你在测试窗口输入，不能放入自动执行步骤。';
                 if (!reason && !c.steps.length && job.runMode === 'fixed')
