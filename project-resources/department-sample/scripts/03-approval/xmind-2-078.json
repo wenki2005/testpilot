@@ -4,6 +4,23 @@
   "versionId": "ce6b791c-895a-43be-bed2-19ad449eb990",
   "version": 19,
   "dependsOn": [],
-  "hasSteps": false,
-  "steps": []
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "clickExactText",
+      "text": "历史申请记录"
+    },
+    {
+      "action": "assertVisible",
+      "text": "202611040149"
+    },
+    {
+      "action": "assertVisible",
+      "text": "2026-11-04 17:00"
+    },
+    {
+      "action": "assertVisible",
+      "text": "202611040120"
+    }
+  ]
 }
