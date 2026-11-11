@@ -9,7 +9,7 @@
     {
       "action": "fillByLabel",
       "label": "自编码",
-      "value": "1012500025",
+      "value": "2012600876",
       "rowIndex": 0
     },
     {
@@ -18,19 +18,12 @@
       "rowIndex": 0
     },
     {
-      "action": "assertExactVisible",
-      "text": "开心25春小学生同步作文3年级下册XH"
+      "action": "assertVisible",
+      "text": "图书名称"
     },
     {
-      "action": "fillByLabel",
-      "label": "数量（册）",
-      "value": "1",
-      "rowIndex": 0
-    },
-    {
-      "action": "blurByLabel",
-      "label": "数量（册）",
-      "rowIndex": 0
+      "action": "assertVisible",
+      "text": "定价"
     }
   ]
 }

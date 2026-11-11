@@ -10,19 +10,15 @@
       "action": "fillByRoleIndex",
       "role": "combobox",
       "index": 1,
-      "value": "01-01028"
+      "value": "01-01056"
     },
     {
-      "action": "selectByRoleIndex",
-      "role": "combobox",
-      "index": 1,
-      "value": "内部客户部*开心文化-部门费用"
+      "action": "clickExactText",
+      "text": "信息与数据中心*开心文化-部门费用"
     },
     {
-      "action": "assertSelectedByRoleIndex",
-      "role": "combobox",
-      "index": 1,
-      "value": "内部客户部*开心文化-部门费用"
+      "action": "assertVisible",
+      "text": "信息与数据中心*开心文化-部门费用"
     }
   ]
 }

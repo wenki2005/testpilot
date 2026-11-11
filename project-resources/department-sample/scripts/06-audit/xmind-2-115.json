@@ -4,6 +4,23 @@
   "versionId": "e94a0e66-2e25-43c6-ba06-39010c41cae6",
   "version": 3,
   "dependsOn": [],
-  "hasSteps": false,
-  "steps": []
+  "hasSteps": true,
+  "steps": [
+    {
+      "action": "clickExactText",
+      "text": "历史申请记录"
+    },
+    {
+      "action": "assertVisible",
+      "text": "申请编号"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "本人申请"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "代人申请"
+    }
+  ]
 }

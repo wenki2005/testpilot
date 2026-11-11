@@ -7,6 +7,10 @@
   "hasSteps": true,
   "steps": [
     {
+      "action": "clickExactText",
+      "text": "历史申请记录"
+    },
+    {
       "action": "assertExactVisible",
       "text": "已取消"
     }

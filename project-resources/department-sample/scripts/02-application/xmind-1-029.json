@@ -9,7 +9,7 @@
     {
       "action": "fillByLabel",
       "label": "自编码",
-      "value": "1012500025",
+      "value": "2012600876",
       "rowIndex": 0
     },
     {
@@ -18,13 +18,9 @@
       "rowIndex": 0
     },
     {
-      "action": "assertExactVisible",
-      "text": "开心25春小学生同步作文3年级下册XH"
-    },
-    {
       "action": "fillByLabel",
       "label": "数量（册）",
-      "value": "1",
+      "value": "2",
       "rowIndex": 0
     },
     {
@@ -33,34 +29,10 @@
       "rowIndex": 0
     },
     {
-      "action": "clickExactText",
-      "text": "继续添加样书"
-    },
-    {
-      "action": "fillByLabel",
-      "label": "自编码",
-      "value": "1012500037",
-      "rowIndex": 1
-    },
-    {
-      "action": "blurByLabel",
-      "label": "自编码",
-      "rowIndex": 1
-    },
-    {
-      "action": "assertExactVisible",
-      "text": "开心2026年阅读真题100篇语文1年级"
-    },
-    {
-      "action": "fillByLabel",
+      "action": "assertValue",
       "label": "数量（册）",
-      "value": "1",
-      "rowIndex": 1
-    },
-    {
-      "action": "blurByLabel",
-      "label": "数量（册）",
-      "rowIndex": 1
+      "value": "2",
+      "rowIndex": 0
     }
   ]
 }

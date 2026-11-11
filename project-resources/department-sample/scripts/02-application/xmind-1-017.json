@@ -10,19 +10,15 @@
       "action": "fillByRoleIndex",
       "role": "combobox",
       "index": 1,
-      "value": "0001CL201231000001"
+      "value": "合作"
     },
     {
-      "action": "selectByRoleIndex",
-      "role": "combobox",
-      "index": 1,
-      "value": "湖南聿书文化有限公司*湖销*开心"
+      "action": "clickExactText",
+      "text": "吉林省新华书店吉浙合作图书部*新华*开心"
     },
     {
-      "action": "assertSelectedByRoleIndex",
-      "role": "combobox",
-      "index": 1,
-      "value": "湖南聿书文化有限公司*湖销*开心"
+      "action": "assertVisible",
+      "text": "吉林省新华书店吉浙合作图书部*新华*开心"
     }
   ]
 }

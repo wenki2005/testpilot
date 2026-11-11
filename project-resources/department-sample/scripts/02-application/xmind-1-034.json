@@ -7,8 +7,14 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "assertExactVisible",
-      "text": "自编码"
+      "action": "clickExactText",
+      "text": "继续添加样书"
+    },
+    {
+      "action": "fillByLabel",
+      "label": "自编码",
+      "value": "999999",
+      "rowIndex": 1
     },
     {
       "action": "blurByLabel",

@@ -7,6 +7,10 @@
   "hasSteps": true,
   "steps": [
     {
+      "action": "clickExactText",
+      "text": "订单物流"
+    },
+    {
       "action": "assertExactVisible",
       "text": "取消待发货订单并撤销申请"
     }

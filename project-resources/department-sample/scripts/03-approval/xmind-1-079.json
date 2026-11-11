@@ -7,12 +7,28 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "blurByLabel",
-      "label": "收件人"
+      "action": "clickExactText",
+      "text": "历史申请记录"
     },
     {
-      "action": "assertExactVisible",
-      "text": "收货信息"
+      "action": "clickExactText",
+      "text": "开心25春小学生同步作文3年级下册XH等2本样书"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "编辑"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "删除"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "提交申请"
+    },
+    {
+      "action": "assertVisible",
+      "text": "撤回用书申请"
     }
   ]
 }

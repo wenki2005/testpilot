@@ -7,12 +7,20 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "assertVisible",
-      "text": "订单"
+      "action": "clickExactText",
+      "text": "订单物流"
+    },
+    {
+      "action": "clickExactText",
+      "text": "2027一本初中历史 开卷速查速答"
     },
     {
       "action": "assertVisible",
-      "text": "订单列表"
+      "text": "订单物流详情"
+    },
+    {
+      "action": "assertVisible",
+      "text": "收货人"
     }
   ]
 }

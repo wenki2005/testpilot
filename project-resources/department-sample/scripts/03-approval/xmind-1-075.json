@@ -7,12 +7,32 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "blurByLabel",
-      "label": "收件人"
+      "action": "clickExactText",
+      "text": "历史申请记录"
     },
     {
-      "action": "assertExactVisible",
-      "text": "收货信息"
+      "action": "clickExactText",
+      "text": "开心25春小学生同步作文3年级下册XH等2本样书"
+    },
+    {
+      "action": "clickExactText",
+      "text": "申请明细"
+    },
+    {
+      "action": "assertVisible",
+      "text": "¥25.00"
+    },
+    {
+      "action": "assertVisible",
+      "text": "¥49.80"
+    },
+    {
+      "action": "assertVisible",
+      "text": "¥74.80"
+    },
+    {
+      "action": "assertVisible",
+      "text": "0.78"
     }
   ]
 }

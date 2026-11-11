@@ -7,12 +7,20 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "assertNotVisible",
-      "text": "申请人"
+      "action": "clickExactText",
+      "text": "历史申请记录"
     },
     {
       "action": "assertVisible",
-      "text": "申请状态"
+      "text": "申请编号"
+    },
+    {
+      "action": "assertVisible",
+      "text": "已取消"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "申请人"
     }
   ]
 }
