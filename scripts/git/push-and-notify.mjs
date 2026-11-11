@@ -20,6 +20,7 @@ const GIT = process.platform === 'win32' ? 'git' : 'git';
 const dry = process.argv.includes('--dry');
 
 const run = (args, options = {}) => execFileSync(GIT, ['-C', REPO, ...args], { encoding: 'utf8', ...options }).trim();
+const GIT_ENV = { ...process.env, GIT_TERMINAL_PROMPT: '0', GIT_ASKPASS: 'echo' };
 
 function webhook() {
   if (process.env.TESTPILOT_WECOM_WEBHOOK) return process.env.TESTPILOT_WECOM_WEBHOOK.trim();
@@ -108,7 +109,9 @@ if (codeupUrl) targets.push(['codeup', 'HEAD:master']);
 
 for (const [remote, refspec] of targets) {
   try {
-    const out = execFileSync(GIT, ['-C', REPO, 'push', remote, refspec], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const helper = process.env.TESTPILOT_GIT_CRED_HELPER;
+    const extra = remote === 'codeup' && helper ? ['-c', 'credential.helper=', '-c', `credential.helper=${helper}`] : [];
+    const out = execFileSync(GIT, ['-C', REPO, ...extra, 'push', remote, refspec], { encoding: 'utf8', env: GIT_ENV, stdio: ['ignore', 'pipe', 'pipe'] });
     console.log(`push ${remote} ${refspec}: ${(out.match(/->|\\.\\.\\./) ? out.trim().split('\n').pop() : 'ok')}`);
   } catch (error) {
     const message = (error.stderr ?? error.message ?? '').toString().trim();
