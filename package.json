@@ -44,7 +44,8 @@
     "check:architecture": "node scripts/maintenance/check-architecture.mjs",
     "code:index": "node scripts/maintenance/code-index.mjs --write",
     "code:find": "node scripts/maintenance/code-index.mjs --find",
-    "code:format": "node scripts/maintenance/format-typescript.mjs"
+    "code:format": "node scripts/maintenance/format-typescript.mjs",
+    "push": "node scripts/git/push-and-notify.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
