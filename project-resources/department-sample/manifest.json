@@ -2,14 +2,14 @@
   "schema": 1,
   "kind": "testpilot-project-resources",
   "projectId": "436847ad-f144-425f-b303-1ca9b22e0b52",
-  "exportedAt": "2026-11-11T09:02:46.634Z",
+  "exportedAt": "2026-11-11T09:27:10.963Z",
   "installableSeed": true,
   "historyIncluded": false,
   "credentialsIncluded": false,
   "counts": {
     "modules": 6,
-    "cases": 114,
-    "scriptsWithSteps": 105,
+    "cases": 112,
+    "scriptsWithSteps": 104,
     "chains": 3
   },
   "files": [
@@ -19,7 +19,7 @@
     },
     {
       "file": "modules.json",
-      "sha256": "a117571f3041d7729a01ffe7681fe318c16262c088e192abc4048cbb3d27c29c"
+      "sha256": "8fd0e18fee9e57b7ec1572f1df703072ee7d45519a1ad9c47943396270de7cc0"
     },
     {
       "file": "cases/01-login/xmind-1-001.json",
@@ -28,10 +28,6 @@
     {
       "file": "cases/01-login/xmind-1-002.json",
       "sha256": "6a792864e039bf3f9383c13bbcb6860e6106da6c23245040d941deeeff823d42"
-    },
-    {
-      "file": "cases/01-login/xmind-1-003.json",
-      "sha256": "4b3cb391796cba7618590e58dc8a220ffc6274964180282267c7b2698ef02155"
     },
     {
       "file": "cases/01-login/xmind-1-092.json",
@@ -270,10 +266,6 @@
       "sha256": "63f415b2204f73f64c343559d454fef19280b1818a980c4d0ad0cb20cae615bc"
     },
     {
-      "file": "cases/03-approval/xmind-1-070.json",
-      "sha256": "380064ab9a9b9510fd737895b92b7cee55f1aa29aa0868bea21486fdce026a6b"
-    },
-    {
       "file": "cases/03-approval/xmind-1-075.json",
       "sha256": "ac4357b13be41365d2288376b5443d7df3f3563f59fd15dbf222463b761b7578"
     },
@@ -486,10 +478,6 @@
       "sha256": "6ec312c8799a252462b476fba958e4dec1e2486f3665e3945b1d9167ce8c85a6"
     },
     {
-      "file": "scripts/01-login/xmind-1-003.json",
-      "sha256": "95598117da869465702228c14276b2ce54aa80b14159f38d6723fc8d6b5cd839"
-    },
-    {
       "file": "scripts/01-login/xmind-1-092.json",
       "sha256": "654ce310d76049f2b81aa35e8ffeeb94c9b601f072bb199b947c8b2d12c720ca"
     },
@@ -603,7 +591,7 @@
     },
     {
       "file": "scripts/02-application/xmind-1-042.json",
-      "sha256": "f322bdff5473cf04b41adba8ae3d9ed8505a188f1511d66124e28cdae47cd8b5"
+      "sha256": "d8488aa7773deeba56cb5db201cc3560961a50c07f9de667353d753d0823050b"
     },
     {
       "file": "scripts/02-application/xmind-1-043.json",
@@ -615,7 +603,7 @@
     },
     {
       "file": "scripts/02-application/xmind-1-045.json",
-      "sha256": "43c83531312672e972f46a955b0015f40ea17916fef0398f6c0699a93a05d6e7"
+      "sha256": "12e59fa98b1b0a90c26f068286f5d43f1d7d69d084748305a236140a4a27846a"
     },
     {
       "file": "scripts/02-application/xmind-1-046.json",
@@ -623,7 +611,7 @@
     },
     {
       "file": "scripts/02-application/xmind-1-047.json",
-      "sha256": "02860574a023135971cf752ff0d4916492913fd22b54c5736ad493980384517e"
+      "sha256": "d5e22d9a232fd9be1132f6b15e12633851e60813319715ecd0c475bd6a0d64f6"
     },
     {
       "file": "scripts/02-application/xmind-1-048.json",
@@ -631,7 +619,7 @@
     },
     {
       "file": "scripts/02-application/xmind-1-049.json",
-      "sha256": "735f18c7c6a1277781cb69aba27f829f8914ab0fa2a5af8d69dcb2916c6a2a76"
+      "sha256": "bbf9a198f326f1cc51b7290dde055997942abf12da0cd775c5a79313e4fe1faa"
     },
     {
       "file": "scripts/02-application/xmind-1-050.json",
@@ -639,7 +627,7 @@
     },
     {
       "file": "scripts/02-application/xmind-1-051.json",
-      "sha256": "0859b0ec229acf3b34ff683a7881f9c3fb955c6132f2f15091be765805b07eaa"
+      "sha256": "8031f3a9b2511818e11a4bc5e48851a937a9129c19a6ed27b1649c8db682ec3f"
     },
     {
       "file": "scripts/02-application/xmind-1-052.json",
@@ -724,10 +712,6 @@
     {
       "file": "scripts/03-approval/xmind-1-069.json",
       "sha256": "3e00a2b539a598a135283b132100f00a50835272eff51a50f119b886eea52607"
-    },
-    {
-      "file": "scripts/03-approval/xmind-1-070.json",
-      "sha256": "417c4f119cc65973ecb477bfc9fb504cc5cfe5f7e2852b10335172351c320c37"
     },
     {
       "file": "scripts/03-approval/xmind-1-075.json",

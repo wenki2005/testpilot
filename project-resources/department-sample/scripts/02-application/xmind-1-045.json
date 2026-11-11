@@ -7,14 +7,10 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "fillByRoleIndex",
+      "action": "selectByRoleIndex",
       "role": "combobox",
       "index": 0,
-      "value": "营销"
-    },
-    {
-      "action": "clickExactText",
-      "text": "营销用书"
+      "value": "营销用书"
     },
     {
       "action": "fillByRoleIndex",
@@ -59,47 +55,39 @@
       "value": "123"
     },
     {
-      "action": "fillByRoleIndex",
+      "action": "selectByRoleIndex",
       "role": "combobox",
       "index": 2,
-      "value": "湖南"
+      "value": "湖南省"
     },
     {
-      "action": "clickExactText",
-      "text": "湖南省"
-    },
-    {
-      "action": "fillByRoleIndex",
+      "action": "selectByRoleIndex",
       "role": "combobox",
       "index": 3,
-      "value": "长沙"
+      "value": "长沙市"
     },
     {
-      "action": "clickExactText",
-      "text": "长沙市"
-    },
-    {
-      "action": "fillByRoleIndex",
+      "action": "selectByRoleIndex",
       "role": "combobox",
       "index": 4,
-      "value": "芙蓉"
-    },
-    {
-      "action": "clickExactText",
-      "text": "芙蓉区"
+      "value": "芙蓉区"
     },
     {
       "action": "fillByLabel",
       "label": "详细地址",
-      "value": "自动化测试地址一号"
+      "value": "自动化流程测试勿发货"
     },
     {
-      "action": "triggerClientValidation",
-      "name": "提交申请"
+      "action": "blurByLabel",
+      "label": "手机号码"
     },
     {
       "action": "assertFieldInvalid",
       "label": "手机号码"
+    },
+    {
+      "action": "assertExactVisible",
+      "text": "手机号格式错误"
     }
   ]
 }

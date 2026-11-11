@@ -7,6 +7,72 @@
   "hasSteps": true,
   "steps": [
     {
+      "action": "selectByRoleIndex",
+      "role": "combobox",
+      "index": 0,
+      "value": "营销用书"
+    },
+    {
+      "action": "fillByRoleIndex",
+      "role": "combobox",
+      "index": 1,
+      "value": "01-01056"
+    },
+    {
+      "action": "clickExactText",
+      "text": "信息与数据中心*开心文化-部门费用"
+    },
+    {
+      "action": "fillByLabel",
+      "label": "自编码",
+      "value": "2012600876",
+      "rowIndex": 0
+    },
+    {
+      "action": "blurByLabel",
+      "label": "自编码",
+      "rowIndex": 0
+    },
+    {
+      "action": "fillByLabel",
+      "label": "数量（册）",
+      "value": "1",
+      "rowIndex": 0
+    },
+    {
+      "action": "blurByLabel",
+      "label": "数量（册）",
+      "rowIndex": 0
+    },
+    {
+      "action": "fillByLabel",
+      "label": "收件人",
+      "value": "自动化测试"
+    },
+    {
+      "action": "fillByLabel",
+      "label": "手机号码",
+      "value": "13800138000"
+    },
+    {
+      "action": "selectByRoleIndex",
+      "role": "combobox",
+      "index": 2,
+      "value": "湖南省"
+    },
+    {
+      "action": "selectByRoleIndex",
+      "role": "combobox",
+      "index": 3,
+      "value": "长沙市"
+    },
+    {
+      "action": "selectByRoleIndex",
+      "role": "combobox",
+      "index": 4,
+      "value": "芙蓉区"
+    },
+    {
       "action": "blurByLabel",
       "label": "详细地址"
     },
