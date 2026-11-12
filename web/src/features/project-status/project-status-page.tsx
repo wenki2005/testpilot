@@ -28,7 +28,7 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
     // 每条用例取它最近一次的执行结果（跨批次合并，重跑只保留最后一次）
     const latestByCase = useMemo(() => {
         const merged = new Map<string, { status: string; at: number }>();
-        const batches = (state?.batches ?? []).filter(item => item.systemId === activeSystemId)
+        const batches = (state?.batches ?? []).filter(item => item.systemId === activeSystemId && item.phase !== 'cancelled')
             .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
         for (const batch of batches) {
             const at = Date.parse(batch.updatedAt ?? batch.createdAt);

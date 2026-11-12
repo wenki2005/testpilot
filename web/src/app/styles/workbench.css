@@ -350,3 +350,13 @@ button, a, input, select, textarea, summary { -webkit-tap-highlight-color: trans
   .daily-start, .daily-outcome { padding: 20px; }
 }
 .doc-daily-run-scope { overflow-wrap: anywhere; }
+
+
+/* 统一页面内容宽度：四个主栏目铺满可用区域，避免右侧大片留白 */
+.app-shell .workspace > :is(.project-status-page, .dify-page, .sm-workbench, .case-script-editor.case-page, .run-reports) {
+    width: 100%;
+    max-width: 1640px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
