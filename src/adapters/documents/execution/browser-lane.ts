@@ -292,6 +292,27 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                     throw new Error(`占位符「${step.placeholder}」匹配 ${await field.count()} 个控件；需要唯一匹配才能安全填写。`);
                                 await field.fill(step.value);
                             }
+                            else if (step.action === "openLatestRecord") {
+                                const target = new URL(url);
+                                target.hash = step.list === "order" ? "#/logistics" : "#/apply";
+                                await page.goto(target.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
+                                await page.waitForTimeout(3000);
+                                if (step.status) {
+                                    const chip = page.getByText(step.status, { exact: true }).first();
+                                    if (await chip.count())
+                                        await chip.click().catch(() => undefined);
+                                    await page.waitForTimeout(2500);
+                                }
+                                const cardSelector = step.list === "order" ? ".logistics-content-item, .order-content-item, .apply-content-item" : ".apply-content-item";
+                                const card = page.locator(cardSelector).first();
+                                await card.waitFor({ state: "visible", timeout: 15000 });
+                                await card.click();
+                                const navDeadline = Date.now() + 15000;
+                                while (Date.now() < navDeadline && !/-(detail)\//.test(page.url()))
+                                    await page.waitForTimeout(400);
+                                if (!/-(detail)\//.test(page.url()))
+                                    throw new Error(`按状态打开记录失败：${page.url()}`);
+                            }
                             else if (step.action === "clickSubmit") {
                                 const before = page.url();
                                 let btn = page.locator("div.button,button").filter({ hasText: step.name }).first();

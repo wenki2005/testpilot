@@ -34,7 +34,14 @@ export function validateCases(value: unknown): BrowserCheck[] {
                     throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 value 无效。`);
                 return { action: step.action, placeholder: step.placeholder, value: step.value };
             }
-            if (step.action === "clickSubmit") {
+            if (step.action === "openLatestRecord") {
+            if (step.list !== undefined && !["apply", "order"].includes(step.list))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 list 无效。`);
+            if (step.status !== undefined && (typeof step.status !== "string" || step.status.length > 20))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 status 无效。`);
+            return { action: step.action, ...(step.list === undefined ? {} : { list: step.list }), ...(step.status === undefined ? {} : { status: step.status }) };
+        }
+        if (step.action === "clickSubmit") {
             if (typeof step.name !== "string" || step.name.length < 1 || step.name.length > 40)
                 throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 name 无效。`);
             return { action: step.action, name: step.name };

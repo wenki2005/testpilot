@@ -7,8 +7,9 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "openRoute",
-      "hash": "#/apply-detail/202611040149"
+      "action": "openLatestRecord",
+      "list": "apply",
+      "status": "待审批"
     },
     {
       "action": "assertVisible",

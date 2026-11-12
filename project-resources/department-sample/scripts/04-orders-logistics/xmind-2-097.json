@@ -7,8 +7,9 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "openRoute",
-      "hash": "#/logistics-detail/0005BM202611110172"
+      "action": "openLatestRecord",
+      "list": "order",
+      "status": "待发货"
     },
     {
       "action": "assertVisible",

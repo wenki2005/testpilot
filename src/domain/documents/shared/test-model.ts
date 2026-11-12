@@ -95,6 +95,7 @@ export type BrowserStep = {
     action: "captureCurrentUrl";
 }
     | { action: "openRoute"; hash: string }
+    | { action: "openLatestRecord"; list?: "apply" | "order"; status?: string }
     | { action: "clickSubmit"; name: string } | {
     action: "assertCurrentUrlUnchanged";
 } | {

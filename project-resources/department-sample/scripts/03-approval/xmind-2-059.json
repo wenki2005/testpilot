@@ -7,8 +7,9 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "openRoute",
-      "hash": "#/apply-detail/202611110172"
+      "action": "openLatestRecord",
+      "list": "apply",
+      "status": "已通过"
     },
     {
       "action": "clickExactText",

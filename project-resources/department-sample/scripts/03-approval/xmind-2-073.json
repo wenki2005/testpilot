@@ -7,8 +7,9 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "openRoute",
-      "hash": "#/apply-detail/202611040068"
+      "action": "openLatestRecord",
+      "list": "apply",
+      "status": "已驳回"
     },
     {
       "action": "assertNotVisible",

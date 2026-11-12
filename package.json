@@ -46,7 +46,8 @@
     "code:find": "node scripts/maintenance/code-index.mjs --find",
     "code:format": "node scripts/maintenance/format-typescript.mjs",
     "push": "node scripts/git/push-and-notify.mjs",
-    "resources:check": "node scripts/resources/check-project-resources.mjs"
+    "resources:check": "node scripts/resources/check-project-resources.mjs",
+    "testdata:prepare": "node scripts/resources/prepare-test-data.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

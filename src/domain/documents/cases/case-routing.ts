@@ -52,6 +52,6 @@ export function nonBrowserCaseWithoutStimulus(item: Pick<BrowserCheck, "title" |
     const plan = planCaseExecution(item);
     if (!["api-contract", "fixture-or-role", "clarification", "source-review", "manual-analysis"].includes(plan.route))
         return undefined;
-    const stimulus = (item.steps ?? []).some(step => ["openRoute", "clickSubmit", "fillByLabel", "fillByPlaceholder", "fillByRoleIndex", "blurByLabel", "selectByLabel", "clickByRole", "clickExactText", "triggerClientValidation"].includes(step.action));
+    const stimulus = (item.steps ?? []).some(step => ["openRoute", "openLatestRecord", "clickSubmit", "fillByLabel", "fillByPlaceholder", "fillByRoleIndex", "blurByLabel", "selectByLabel", "clickByRole", "clickExactText", "triggerClientValidation"].includes(step.action));
     return stimulus ? undefined : plan;
 }
