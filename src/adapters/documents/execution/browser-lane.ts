@@ -296,7 +296,8 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 const target = new URL(url);
                                 target.hash = step.list === "order" ? "#/logistics" : "#/apply";
                                 await page.goto(target.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
-                                await page.waitForTimeout(3000);
+                                await page.waitForFunction(() => (document.body.innerText || "").trim().length > 40, undefined, { timeout: 20000 }).catch(() => undefined);
+                                await page.waitForTimeout(600);
                                 if (step.status) {
                                     const chip = page.getByText(step.status, { exact: true }).first();
                                     if (await chip.count())
@@ -364,7 +365,8 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 const base = new URL(url);
                                 base.hash = step.hash;
                                 await page.goto(base.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
-                                await page.waitForTimeout(4500);
+                                await page.waitForFunction(() => (document.body.innerText || "").trim().length > 40, undefined, { timeout: 20000 }).catch(() => undefined);
+                                await page.waitForTimeout(600);
                             }
                             else if (step.action === "fillByRoleIndex") {
                                 const fields = page.getByRole(step.role);
