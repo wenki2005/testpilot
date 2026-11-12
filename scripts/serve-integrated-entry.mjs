@@ -7,7 +7,8 @@ import path from 'node:path';
 import { runtimeRoot, workspacePorts, entryPort } from './lib/integrated-workspaces.mjs';
 
 const host = '127.0.0.1', port = entryPort, origin = `http://${host}:${port}`;
-const ownerForPage = url => ['dify-regression', 'module-regression', 'case-scripts', 'run-reports'].includes(url.searchParams.get('page')) ? 'dify' : 'web-regression';
+// 当前只交付部门申样系统：任何未带 /web 前缀的地址都进 dify 工作区。
+const ownerForPage = () => 'dify';
 const prefixFor = owner => owner === 'dify' ? '/dify' : '/web';
 const pathOwner = url => /^\/dify(?:\/|$)/.test(url.pathname) ? 'dify' : /^\/web(?:\/|$)/.test(url.pathname) ? 'web-regression' : undefined;
 const reply = (res, status, message) => { res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }); res.end(JSON.stringify(message)); };
@@ -17,6 +18,11 @@ const server = createServer((req, res) => {
   const url = new URL(req.url, origin);
   if (url.pathname === '/__entry/health' && req.method === 'GET') return reply(res, 200, { service: 'testpilot-unified-entry', port, backends: workspacePorts });
   const explicitOwner = pathOwner(url);
+  if (explicitOwner === 'web-regression') {
+    res.writeHead(302, { location: `/dify/${url.search}`, 'cache-control': 'no-store' });
+    res.end();
+    return;
+  }
   const upstreamPath = explicitOwner ? url.pathname.slice(prefixFor(explicitOwner).length) || '/' : url.pathname;
   if (upstreamPath === '/' && req.method === 'GET') {
     const owner = explicitOwner ?? ownerForPage(url), prefix = prefixFor(owner);
