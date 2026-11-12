@@ -283,3 +283,6 @@
 .sm-workbench .sm-run-information>summary{cursor:pointer;font-size:14px}
 .sm-workbench .sm-run-information p{overflow-wrap:anywhere}
 @media(max-width:700px){.sm-workbench .sm-history{flex-wrap:wrap}.sm-workbench .sm-history>select{flex-basis:65%}.sm-workbench .sm-title{flex-wrap:wrap;gap:12px}.sm-legacy-choice{flex-wrap:wrap}}
+
+.sm-skip-blocked { display: inline-flex; align-items: center; gap: 6px; margin-left: 12px; font-size: 13px; color: var(--muted, #6b7280); cursor: pointer; }
+.sm-skip-blocked input { margin: 0; }

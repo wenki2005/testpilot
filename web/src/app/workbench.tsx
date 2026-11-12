@@ -203,12 +203,11 @@ export default function App() {
     const [activeApiAutoRun, setActiveApiAutoRun] = useState(false);
     const [apiSpecification, setApiSpecification] = useState('');
     const [allowExternalApi, setAllowExternalApi] = useState(false);
-    const [moreOpen, setMoreOpen] = useState(false);
+    const [, setMoreOpen] = useState(false);
     const sidebarProjects = useSidebarProjects();
     const executionPage = page === 'dify-regression' || page === 'module-regression';
     const projectPage = page === 'workbench' || executionPage || page === 'case-scripts' || page === 'run-reports' || page === 'settings' && config?.workspaces?.current === 'dify';
     const selectedRun = useMemo(() => runs.find((r) => r.id === selectedId) ?? null, [runs, selectedId]);
-    const activeRun = runs.find((r) => r.status === 'queued' || r.status === 'running');
     const refresh = useCallback(async () => {
         const [nextRuns, nextConfig, nextChecks, nextProfiles, nextProjectRuns, nextProjectScripts] = await Promise.all([
             api<DemoRun[]>('/api/runs'), api<DemoConfig>('/api/config'), api<DemoCheck[]>('/api/regressions'),
@@ -261,16 +260,6 @@ export default function App() {
         }
         catch (error) {
             setNotice({ kind: 'error', text: `取消失败：${(error as Error).message}` });
-        }
-    };
-    const setFixed = async (fixed: boolean) => {
-        try {
-            const next = await api<DemoConfig>('/api/target', { method: 'POST', body: JSON.stringify({ fixed }) });
-            setConfig(next);
-            setNotice({ kind: 'success', text: fixed ? '样本已切换为预置修复状态。' : '样本已切换为预置故障状态。' });
-        }
-        catch (error) {
-            setNotice({ kind: 'error', text: `切换样本失败：${(error as Error).message}` });
         }
     };
     const saveRegression = async (assertion: DemoAssertion) => {
@@ -513,8 +502,8 @@ export default function App() {
     };
     return <div className={`app-shell agent-shell approved-sidebar-shell ${executionPage ? 'sm-shell' : ''}`}>
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong><span>QUALITY WORKBENCH</span></div></div>
-      <div className="sidebar-project"><label htmlFor="sidebar-project">当前测试项目</label><select id="sidebar-project" aria-label="当前测试项目" value={projectPage ? sidebarProjects?.systemId ?? '' : ''} disabled={!projectPage || !sidebarProjects?.systems.length || sidebarProjects.disabled} onChange={e => selectSidebarProject(e.target.value)}>{projectPage && sidebarProjects?.systems.length ? sidebarProjects.systems.map(s => <option key={s.id} value={s.id}>{s.name}</option>) : <option value="">{projectPage ? '正在读取项目…' : '本地工作区'}</option>}</select><p>项目独立维护用例与运行记录</p></div>
+      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong></div></div>
+      <div className="sidebar-project"><label htmlFor="sidebar-project">当前测试项目</label><select id="sidebar-project" aria-label="当前测试项目" value={projectPage ? sidebarProjects?.systemId ?? '' : ''} disabled={!projectPage || !sidebarProjects?.systems.length || sidebarProjects.disabled} onChange={e => selectSidebarProject(e.target.value)}>{projectPage && sidebarProjects?.systems.length ? sidebarProjects.systems.map(s => <option key={s.id} value={s.id}>{s.name}</option>) : <option value="">{projectPage ? '正在读取项目…' : '本地工作区'}</option>}</select></div>
       <nav aria-label="主导航" className="main-nav">
         {workspaceReady ? <NavItem active={page === 'workbench'} icon="folder" label={isDifyWorkspace ? '项目状态' : '新建测试'} onClick={() => { navigate('workbench'); setMoreOpen(false); }}/> : <div className="nav-item nav-skeleton" aria-hidden="true"><span className="nav-skeleton-bar"/></div>}
         <NavItem active={page === 'case-scripts'} icon="list" label="用例与脚本" onClick={() => { navigate('case-scripts'); setMoreOpen(false); }}/>
@@ -522,34 +511,19 @@ export default function App() {
         <NavItem active={page === 'run-reports'} icon="file" label="运行报告" onClick={() => { navigate('run-reports'); setMoreOpen(false); }}/>
       </nav>
       <div className="sidebar-footer">
-        <NavItem active={page === 'settings'} icon="settings" label="设置" onClick={() => { navigate('settings'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'architecture'} icon="help" label="使用说明" onClick={() => { navigate('architecture'); setMoreOpen(false); }}/>
-        <button className={`nav-item sidebar-more-toggle${moreOpen ? ' active' : ''}`} aria-expanded={moreOpen} aria-controls="sidebar-tools" onClick={() => setMoreOpen(value => !value)}><Icon name="layers"/><span>更多工具</span><Icon name="chevron" size={14}/></button>
-      {moreOpen && <div className="nav-more-menu" id="sidebar-tools" aria-label="测试工具">
-        <NavItem active={page === 'history' || page === 'run-detail'} icon="file" label="其他工具运行记录" onClick={() => { navigate('history'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'document-tests'} icon="list" label="网页回归" onClick={() => { navigate('document-tests'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'project-tests'} icon="box" label="本地项目与脚本" onClick={() => { navigate('project-tests'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'source-tests'} icon="nodes" label="代码测试 Agent" onClick={() => { navigate('source-tests'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'case-generator'} icon="plus" label="生成测试用例" onClick={() => { navigate('case-generator'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'api-suites'} icon="nodes" label="API 测试套件" onClick={() => { navigate('api-suites'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'sqlite-migrations'} icon="database" label="数据库迁移测试" onClick={() => { navigate('sqlite-migrations'); setMoreOpen(false); }}/>
-        <NavItem active={page === 'mysql-browser'} icon="database" label="MySQL 数据查看" onClick={() => { navigate('mysql-browser'); setMoreOpen(false); }}/>
-      </div>}
-        <div className="sidebar-local"><span aria-hidden="true"/>本地运行 · 数据存于本机</div>
+        
       </div>
       <div className="sidebar-bottom">
-        <div className="target-switch"><div className="target-heading"><span className="status-dot"/><strong>样本服务</strong></div><div className="target-name">订单 API <span className="target-tag">本地</span></div><p>预置故障 / 修复用于对照验证</p><div className="segmented" role="group" aria-label="样本状态"><button className={!config?.fixedTarget ? 'selected' : ''} onClick={() => setFixed(false)} disabled={!config || !!activeRun}>预置故障</button><button className={config?.fixedTarget ? 'selected' : ''} onClick={() => setFixed(true)} disabled={!config || !!activeRun}>已修复</button></div></div>
-        <div className="scope-caption"><span>本轮范围</span><p>本地 API 与 CLI<br />Web / 移动端待适配</p></div>
         <div className="user-chip"><div className="avatar">T</div><div><strong>本地演示环境</strong><span>{config?.framework ?? 'Pi'} · TestPilot</span></div><span className="online-dot" aria-label="连接状态"/></div>
       </div>
     </aside>
 
     <main className="workspace" id="workspace-main">
       {config?.workspaces?.current === 'web-regression' && config.workspaces.dataStatus === 'awaiting-source' && <p className="integration-source-status" role="status">原网页回归项目与运行记录尚未迁入。</p>}
-      <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/><strong>{page !== 'workbench' ? pageTitle(page) : isDifyWorkspace ? '项目状态' : workspaceReady ? '新建测试' : '正在读取…'}</strong></div><div className="topbar-meta">{page === 'workbench' && workspaceReady && !isDifyWorkspace && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}<span className="environment-pill"><span className="status-dot"/>{config?.modelAvailable ? `模型已连接 · ${config.modelLabel}` : '本地测试 Agent'}</span><span className="divider"/><button className="top-settings" onClick={() => navigate('settings')} aria-label="打开设置"><Icon name="settings" size={16}/></button></div></header>
+      <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/><strong>{page !== 'workbench' ? pageTitle(page) : isDifyWorkspace ? '项目状态' : workspaceReady ? '新建测试' : '正在读取…'}</strong></div><div className="topbar-meta">{page === 'workbench' && workspaceReady && !isDifyWorkspace && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}</div></header>
       {notice && <div className={`notice notice-${notice.kind}`} role="status"><span>{notice.text}</span><button aria-label="关闭提示" onClick={() => setNotice(null)}>×</button></div>}
       {page === 'workbench' && !workspaceReady && <div className="workspace-loading" role="status"><span className="workspace-loading-bar"/><p>正在读取项目…</p></div>}
-      {page === 'workbench' && workspaceReady && isDifyWorkspace && <ProjectStatusPage systemId={sidebarProjects?.systemId} storage={config.storage} onNavigate={navigate}/>}
+      {page === 'workbench' && workspaceReady && isDifyWorkspace && <ProjectStatusPage systemId={sidebarProjects?.systemId} onNavigate={navigate}/>}
       {page === 'workbench' && workspaceReady && !isDifyWorkspace && <div className={`agent-home ${activeDocumentProjectId || activeApiSuiteId ? 'agent-home-active' : ''}`}>
         {!activeDocumentProjectId && !activeApiSuiteId ? <section className="agent-conversation">
           <div className="agent-welcome"><h1>开始一次新的测试</h1><p>提供测试目标与需求资料，让 Agent 整理范围、准备测试并保留证据。</p></div>

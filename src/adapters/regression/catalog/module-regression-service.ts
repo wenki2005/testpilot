@@ -584,7 +584,7 @@ export class SystemModuleRegression {
      * which already reports them as "待补脚本" instead of running them.
      */
     start(input: unknown) {
-        const data = z.object({ systemId: uuid, moduleIds: z.array(uuid).min(1).max(100), requestId: uuid, runMode: z.enum(['fixed', 'assist']).optional(), scope: z.enum(['core', 'all', 'custom', 'starter']).optional(), caseSelections: z.record(z.string(), z.array(z.string()).min(1).max(200)).optional(), versionSelections: z.record(z.string(), uuid).optional() }).parse(input);
+        const data = z.object({ systemId: uuid, moduleIds: z.array(uuid).min(1).max(100), requestId: uuid, runMode: z.enum(['fixed', 'assist']).optional(), scope: z.enum(['core', 'all', 'custom', 'starter']).optional(), caseSelections: z.record(z.string(), z.array(z.string()).min(1).max(200)).optional(), versionSelections: z.record(z.string(), uuid).optional(), skipBlocked: z.boolean().optional() }).parse(input);
         const fingerprint = moduleDigest(data);
         const replay = this.replay(data.requestId, fingerprint);
         if (replay)
@@ -614,10 +614,14 @@ export class SystemModuleRegression {
             const chosen = data.scope === 'custom' ? data.caseSelections?.[m.id] : data.scope === 'core' || data.scope === 'starter' ? preset.ids : undefined;
             if (data.scope === 'custom' && !chosen?.length)
                 throw Error('请选择要执行的用例。');
-            if (chosen) {
-                if (!chosen.length || new Set(chosen).size !== chosen.length || chosen.some(id => !cases.some(c => c.id === id)))
+            const effectiveChosen = chosen ?? (data.skipBlocked ? cases.map(c => c.id) : undefined);
+            if (effectiveChosen) {
+                if (!effectiveChosen.length || new Set(effectiveChosen).size !== effectiveChosen.length || effectiveChosen.some(id => !cases.some(c => c.id === id)))
                     throw Error('执行范围为空、重复或包含未知用例。');
-                Object.assign(entry, { selectedCaseIds: cases.filter(c => chosen.includes(c.id)).map(c => c.id) });
+                const picked = cases.filter(c => effectiveChosen.includes(c.id) && (!data.skipBlocked || ((c as { steps?: unknown[] }).steps ?? []).length > 0));
+                if (data.skipBlocked && !picked.length)
+                    throw Error('勾选“跳过无脚本用例”后没有可执行用例，请取消勾选或补充脚本。');
+                Object.assign(entry, { selectedCaseIds: picked.map(c => c.id) });
             }
         }
         const account = this.accountProfile(system);
