@@ -67,6 +67,14 @@ export async function difySelectionScriptPackage(modules: DifyScriptModuleInput[
 function buildScriptPackage(jobs: DifyScriptModuleInput[], runnerFiles: Record<string, Uint8Array>, context?: ScriptPackageContext): Buffer {
     if (!runnerFiles['run.mjs'] || !runnerFiles['package.json'])
         throw Error('本轮执行包缺少固定脚本，请恢复打包阶段后重试。');
+    // 旧执行包里 openRoute/openLatestRecord 分支引用了未定义的 url，导出前统一修正。
+    {
+        const runner = runnerFiles['run.mjs'];
+        const text = new TextDecoder().decode(runner);
+        const fixed = text.replaceAll('new URL(url)', 'new URL(suite.targetUrl)');
+        if (fixed !== text)
+            runnerFiles['run.mjs'] = new TextEncoder().encode(fixed);
+    }
     const base = 'Dify_固定脚本/';
     const files: Record<string, Uint8Array> = {};
     const modules: Array<{

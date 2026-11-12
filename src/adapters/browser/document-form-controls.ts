@@ -146,16 +146,27 @@ export async function selectDocumentOptionByRoleIndex(page: Page, index: number,
     const control = controls.nth(index);
     if (!(await control.isVisible()))
         throw new Error(`第 ${index + 1} 个 combobox 当前不可见。`);
-    await control.click();
-    const option = page.getByRole("option", { name: value, exact: true });
-    const optionCount = await option.count();
-    if (optionCount === 1) {
-        await option.click();
-        return;
+    // 下拉数据可能异步加载：点击后最多等 8 秒，仍未出现就重新展开再等一轮。
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await control.click();
+        const deadline = Date.now() + 8000;
+        while (Date.now() < deadline) {
+            const option = page.getByRole("option", { name: value, exact: true });
+            if (await option.count() === 1) {
+                await option.click();
+                return;
+            }
+            const visibleText = page.getByText(value, { exact: true }).filter({ visible: true });
+            if (await visibleText.count() === 1) {
+                await visibleText.click();
+                return;
+            }
+            await page.waitForTimeout(300);
+        }
+        await page.keyboard.press("Escape").catch(() => undefined);
+        await page.waitForTimeout(400);
     }
+    const option = page.getByRole("option", { name: value, exact: true });
     const visibleText = page.getByText(value, { exact: true }).filter({ visible: true });
-    const textCount = await visibleText.count();
-    if (textCount !== 1)
-        throw new Error(`选项「${value}」有 ${textCount} 个可见精确匹配；无法安全选择。`);
-    await visibleText.click();
+    throw new Error(`选项「${value}」在等待 24 秒后仍未出现；option 匹配 ${await option.count()} 个，文本匹配 ${await visibleText.count()} 个。`);
 }
