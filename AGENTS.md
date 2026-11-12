@@ -1,8 +1,10 @@
 # TestPilot 回归测试协作规则
 
+> 做用例相关工作（新增、修改、补脚本）前，先读 [`docs/agent/README.md`](docs/agent/README.md)；需求原文在 [`docs/requirements/`](docs/requirements/)。
+
 ## 集成后的模块边界（2026-11-03）
 
-- 代码与模块总入口：`代码导航.md`；脚本入口：`scripts/README.md`；归属和数据边界：`docs/collaboration/模块隔离与协作规范.md`。
+- 代码与模块总入口：`代码导航.md`；用例操作手册：`docs/agent/README.md`；脚本入口：`scripts/README.md`；归属和数据边界：`docs/collaboration/模块隔离与协作规范.md`。
 - 不同工作区共用代码、分进程运行，数据和登录态必须隔离。默认路径为 `%LOCALAPPDATA%/TestPilot/workspaces/<工作区>`；未迁移的旧工作区仍保留原位置，不得代迁或改写。
 - 当前用户已授权迁入 TestPilot 本地数据；网页回归原数据仍在运行，按用户最新要求暂缓迁入；这不等于授权自动执行外部业务提交、消息通知或目标数据库写入。
 - 新工具放 `scripts/`，审计放 `scripts/verify/`；最新业务脚本索引分别生成在各数据区的 `script-index`，不手改、不提交真实运行数据。
@@ -15,7 +17,7 @@
 
 - src、web、tests、scripts：TestPilot 应用源码、自身测试和构建/发布脚本。
 - examples、packaging：本地样例与 Windows 演示包材料。
-- project-resources/department-sample：当前131条用例、对应脚本与核心链路的定义快照。
+- project-resources/department-sample：当前 110 条用例、对应脚本与核心链路的定义快照。
 - regression/shared：两人复用的执行说明或公共工具，改动需写清影响。
 - regression/packs：按模块导入的原始用例包（CSV/Markdown）。
 - regression/plans：当前前置编号维护清单；旧执行计划与旧脚本镜像不保留在源码中。

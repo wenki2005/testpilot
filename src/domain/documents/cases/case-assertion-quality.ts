@@ -16,7 +16,7 @@ export function missingDirectAssertion(check: BrowserCheck): string | undefined 
     if (/页面纯只读.*(?:编辑|提交|删除)/u.test(expectation) && !['编辑', '提交', '删除'].every(text => steps.some(step => step.action === 'assertNotVisible' && step.text.includes(text)))) {
         return '只读页面验收需要明确检查编辑、提交和删除入口均不存在，不能只检查页面标题。';
     }
-    if (/全部必填完成.*跳转.*创建待审核记录/u.test(expectation) && !check.authorizedWriteOperationId)
+    if (/全部必填完成.*跳转.*创建待审核记录/u.test(expectation) && !check.authorizedWriteOperationId && !(check.steps ?? []).some(step => step.action === 'clickSubmit'))
         return '完整提交验收需要与本轮创建记录关联的单次提交证据；静态字段和按钮可点击不能证明跳转及创建记录。';
     if (/合法数量.*(?:9999|9,999)|数量.*1.{0,5}9999/u.test(expectation) && steps.some(step => step.action === 'fillByLabel' || step.action === 'fillByPlaceholder') && !steps.some(step => step.action === 'blurByLabel' || step.action === 'blurByPlaceholder'))
         return '合法数量范围需要在输入后触发失焦/变更，再核对保留值；输入后立即断言会漏掉实际数量格式化。';

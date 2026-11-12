@@ -34,7 +34,12 @@ export function validateCases(value: unknown): BrowserCheck[] {
                     throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 value 无效。`);
                 return { action: step.action, placeholder: step.placeholder, value: step.value };
             }
-            if (step.action === "openRoute") {
+            if (step.action === "clickSubmit") {
+            if (typeof step.name !== "string" || step.name.length < 1 || step.name.length > 40)
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 name 无效。`);
+            return { action: step.action, name: step.name };
+        }
+        if (step.action === "openRoute") {
             if (typeof step.hash !== "string" || !step.hash.startsWith("#/") || step.hash.length > 200)
                 throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 hash 无效。`);
             return { action: step.action, hash: step.hash };

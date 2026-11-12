@@ -1,5 +1,7 @@
 # 项目名称
 
+**让 AI 加/改用例：[AI 操作手册](docs/agent/README.md)；需求原文：[docs/requirements](docs/requirements/)。**
+
 **找代码先看：[代码导航](代码导航.md)。** 支持按中文功能、函数名、新旧文件名、用例编号定位。
 
 ## 部门申样自动化测试项目（TestPilot）

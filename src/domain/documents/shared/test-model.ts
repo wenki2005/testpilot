@@ -94,7 +94,8 @@ export type BrowserStep = {
 } | {
     action: "captureCurrentUrl";
 }
-    | { action: "openRoute"; hash: string } | {
+    | { action: "openRoute"; hash: string }
+    | { action: "clickSubmit"; name: string } | {
     action: "assertCurrentUrlUnchanged";
 } | {
     action: "assertRoleDisabled";

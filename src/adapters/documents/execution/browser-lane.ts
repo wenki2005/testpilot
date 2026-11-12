@@ -290,6 +290,51 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                     throw new Error(`占位符「${step.placeholder}」匹配 ${await field.count()} 个控件；需要唯一匹配才能安全填写。`);
                                 await field.fill(step.value);
                             }
+                            else if (step.action === "clickSubmit") {
+                                const before = page.url();
+                                let btn = page.getByRole("button", { name: step.name, exact: true }).first();
+                                if (await page.getByRole("button", { name: step.name, exact: true }).count() !== 1)
+                                    btn = page.getByText(step.name, { exact: true }).first();
+                                if (await btn.count() !== 1)
+                                    throw new Error(`提交按钮未唯一定位：${step.name}`);
+                                const isDisabled = () => btn.evaluate((el: Element) => {
+                                    const node = el.closest("button,div,a") ?? el;
+                                    return (node instanceof HTMLButtonElement && node.disabled) || /disabled/i.test(String(node.className));
+                                });
+                                const enableDeadline = Date.now() + 20000;
+                                while (await isDisabled()) {
+                                    if (Date.now() > enableDeadline)
+                                        throw new Error(`提交按钮一直处于禁用状态：${step.name}`);
+                                    await page.waitForTimeout(500);
+                                }
+                                const handle = await btn.elementHandle();
+                                const box = handle ? await handle.boundingBox() : null;
+                                if (box) {
+                                    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+                                    await page.waitForTimeout(120);
+                                    await page.mouse.down();
+                                    await page.waitForTimeout(80);
+                                    await page.mouse.up();
+                                }
+                                else {
+                                    await btn.click({ force: true });
+                                }
+                                const deadline = Date.now() + 20000;
+                                while (Date.now() < deadline) {
+                                    await page.waitForTimeout(500);
+                                    if (page.url() !== before && /#\/apply-detail\//.test(page.url()))
+                                        break;
+                                }
+                                if (!/#\/apply-detail\//.test(page.url())) {
+                                    const diag = await page.evaluate(() => {
+                                        const toasts = [...document.querySelectorAll('.el-message,.el-message__content,.el-notification__content')].map(e => (e.textContent || '').trim()).filter(Boolean);
+                                        const dialogs = [...document.querySelectorAll('.el-message-box,[role=dialog]')].filter(e => e.getClientRects().length).map(e => (e.textContent || '').trim().slice(0, 80));
+                                        const btn = [...document.querySelectorAll('div,button')].find(e => (e.textContent || '').trim() === '提交申请');
+                                        return { toasts, dialogs, btnClass: btn ? String(btn.className) : 'none' };
+                                    }).catch(() => null);
+                                    throw new Error(`提交后未跳转：${page.url()} | 提示=${JSON.stringify(diag?.toasts ?? [])} 弹窗=${JSON.stringify(diag?.dialogs ?? [])} 按钮=${diag?.btnClass ?? '未知'}`);
+                                }
+                            }
                             else if (step.action === "openRoute") {
                                 const base = new URL(url);
                                 base.hash = step.hash;
