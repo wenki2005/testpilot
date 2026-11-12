@@ -2,7 +2,7 @@
   "schema": 1,
   "kind": "testpilot-project-resources",
   "projectId": "436847ad-f144-425f-b303-1ca9b22e0b52",
-  "exportedAt": "2026-11-12T02:18:03.034Z",
+  "exportedAt": "2026-11-12T02:37:27.869Z",
   "installableSeed": true,
   "historyIncluded": false,
   "credentialsIncluded": false,
@@ -14,12 +14,8 @@
   },
   "files": [
     {
-      "file": "project.json",
-      "sha256": "512f78eb8f6f5996996b68a1c0d73161d0360dd975da962199f8c4af0f94a5fb"
-    },
-    {
-      "file": "modules.json",
-      "sha256": "7e9da031773d5f9d6ef26def167d9ffa7792658c757e90cb109a00f42d7dd74e"
+      "file": "README.md",
+      "sha256": "88c32835f3ba3655487865d01e6b00ebde70b86a66cad95d6da02ab27f9494db"
     },
     {
       "file": "cases/01-login/xmind-1-001.json",
@@ -462,6 +458,34 @@
       "sha256": "4411b1dd00b90f566fbe307b4dc031fa80cdd32f102199c296fe7617a80aa92d"
     },
     {
+      "file": "chains/order-logistics.json",
+      "sha256": "402d7faaf22bf8866e2d6169ed95e210675d60e5ea3cd53d7ebe67684bceeaaf"
+    },
+    {
+      "file": "chains/reject-reapply.json",
+      "sha256": "0861c745a0c305806ad992c86acb314cf756d77e6bd43338135cf800ac9c8f98"
+    },
+    {
+      "file": "chains/submit-order.json",
+      "sha256": "080f339f6064da767091f7c1375d647f2af0685a854d9fd51401ac3a26621411"
+    },
+    {
+      "file": "config/environment.example.json",
+      "sha256": "9c6fdfed24a0d09ac9b5cdc7c50a707fca968a966cb9719c6435eb54aec6ae92"
+    },
+    {
+      "file": "fixtures/README.md",
+      "sha256": "6ee6e8c8c54575d6e637eb4afb024e1a80fdf6465b0471a014696d8c0c8395d9"
+    },
+    {
+      "file": "modules.json",
+      "sha256": "7e9da031773d5f9d6ef26def167d9ffa7792658c757e90cb109a00f42d7dd74e"
+    },
+    {
+      "file": "project.json",
+      "sha256": "512f78eb8f6f5996996b68a1c0d73161d0360dd975da962199f8c4af0f94a5fb"
+    },
+    {
       "file": "scripts/01-login/xmind-1-001.json",
       "sha256": "39ff175c99d0c3f1836d6e752af618e1935921b8b5e1b1235f86a911b71787f2"
     },
@@ -900,30 +924,6 @@
     {
       "file": "scripts/06-audit/xmind-2-119.json",
       "sha256": "b954254a3ede221f2dcf6a039b97d5443b1056ecaa4935a28d58adcbc31fbdc0"
-    },
-    {
-      "file": "chains/order-logistics.json",
-      "sha256": "402d7faaf22bf8866e2d6169ed95e210675d60e5ea3cd53d7ebe67684bceeaaf"
-    },
-    {
-      "file": "chains/reject-reapply.json",
-      "sha256": "0861c745a0c305806ad992c86acb314cf756d77e6bd43338135cf800ac9c8f98"
-    },
-    {
-      "file": "chains/submit-order.json",
-      "sha256": "080f339f6064da767091f7c1375d647f2af0685a854d9fd51401ac3a26621411"
-    },
-    {
-      "file": "config/environment.example.json",
-      "sha256": "9c6fdfed24a0d09ac9b5cdc7c50a707fca968a966cb9719c6435eb54aec6ae92"
-    },
-    {
-      "file": "fixtures/README.md",
-      "sha256": "6ee6e8c8c54575d6e637eb4afb024e1a80fdf6465b0471a014696d8c0c8395d9"
-    },
-    {
-      "file": "README.md",
-      "sha256": "88c32835f3ba3655487865d01e6b00ebde70b86a66cad95d6da02ab27f9494db"
     }
   ]
 }

@@ -52,19 +52,25 @@ project-resources/department-sample/
 ## 五、新增一条用例
 
 1. 选模块目录，取下一个可用编号
-2. 写 `cases/<目录>/<编号>.json`，至少包含：`id`、`moduleId`、`title`、`expected`、`sourcePath`、`priority`
-3. 写 `scripts/<目录>/<编号>.json`，`caseId` 同编号，`steps` 为动作数组；暂不写步骤就留空数组
+2. 写 `cases/<目录>/<编号>.json`，字段（照抄现有用例即可）：
+   `id`、`moduleId`、`versionId`、`version`、`title`、`expected`、`manualSteps`（数组）、`prerequisites`（数组）、`prerequisiteReview`、`sourcePath`（数组）、`sourceExpected`；
+   可选 `priority`（P0–P3）、`sourceId`、`scriptReview`
+3. 写 `scripts/<目录>/<编号>.json`，字段：`caseId`、`moduleId`、`versionId`、`version`、`dependsOn`（数组）、`steps`（动作数组，暂无步骤就写 `[]`）。
+   **`versionId` 必须与用例文件完全相同**，`moduleId` 也要一致，读取器会强制校验，不一致直接报错
 4. 把 `"<moduleId>:<编号>"` 追加到 `modules.json` 对应模块的 `caseKeys`
-5. 重建清单：`node scripts/resources/rebuild-manifest.mjs`（或按现有工具重建）
+5. 重建清单：`node scripts/resources/check-project-resources.mjs --rebuild`
 6. 本地校验：`npm run resources:check`
-7. 推到运行中的工作台：`node scripts/resources/sync-project-resources.mjs --dir project-resources/department-sample`，按提示用预览/应用接口
+7. 同步到运行中的工作台（需服务在跑、`dist/` 已构建）：
+   - 预览：`node scripts/resources/sync-project-resources.mjs --dir project-resources/department-sample`
+   - 应用：加 `--apply --base-revision <预览返回的 revision>`
+   - 修改已有文件时加 `--allow-edits`
 
 ## 六、修改一条用例
 
-- **改步骤**：只动 `scripts/<...>.json` 的 `steps`，用例 `expected` 不动
+- **改步骤**：只动 `scripts/<...>.json` 的 `steps` 与 `hasSteps`，用例 `expected` 不动
 - **改预期**：先确认需求文档支持，再改 `cases/<...>.json` 的 `expected`；需求文档没写的，记为待澄清，不要自己编
 - 用例文字来自测试文档导入，**不要为了跑通去改原话**
-- 改完同样要 `npm run resources:check` 并同步到运行中的工作台
+- 改完同样跑 `--rebuild` + `npm run resources:check`，再用 `--allow-edits` 同步到工作台
 
 ## 七、禁止事项
 
@@ -77,6 +83,6 @@ project-resources/department-sample/
 
 | 命令 | 作用 |
 |---|---|
-| `npm run resources:check` | 用例/脚本成对、编号与文件名一致、模块引用完整、manifest 哈希匹配 |
-| `npm run resources:sync` | 预览资源变更（不写入），确认 added/removed/changed 数量 |
+| `npm run resources:check` | 用例/脚本成对、编号与文件名一致、模块引用完整、manifest 哈希匹配；加 `--rebuild` 可重建清单 |
+| `npm run resources:sync -- --dir project-resources/department-sample` | 预览资源变更（不写入），确认 added/removed/changed 数量 |
 | `npm run scripts:check` | 校验运行中的模块脚本镜像（需要服务在跑） |
