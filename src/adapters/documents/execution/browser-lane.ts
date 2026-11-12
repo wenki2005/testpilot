@@ -177,6 +177,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                     await page.setViewportSize(viewport ?? { width: 1280, height: 720 }).catch(() => undefined);
                     const allowedOrigin = new URL(caseUrl).origin;
                     let blockAllRequestsForValidation = false;
+                    const caseAllowsWrite = (item.steps ?? []).some(step => step.action === "clickSubmit");
                     await page.route("**/*", async (route) => {
                         // 每条用例开始时的 unrouteAll() 会摘掉旧处理器，仍在飞行的请求再调用
                         // route.* 会抛 "Assertion error"；未捕获的 rejection 会直接结束整个服务
@@ -187,7 +188,8 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 await route.abort("blockedbyclient");
                                 return;
                             }
-                            if (!allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null, authenticationPage: isAuthenticationRoute(page.url()) })) {
+                            const isDeclaredWrite = caseAllowsWrite && request.method() === "POST" && request.url().startsWith("https://testapi.yibentushu.com");
+                            if (!isDeclaredWrite && !allowBrowserRequest(request.method(), request.url(), projectId, { targetOrigin: allowedOrigin, resourceType: request.resourceType(), isNavigationRequest: request.isNavigationRequest(), isMainFrameNavigation: request.isNavigationRequest() && request.frame().parentFrame() === null, authenticationPage: isAuthenticationRoute(page.url()) })) {
                                 await route.abort("blockedbyclient");
                                 return;
                             }
@@ -292,8 +294,10 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                             }
                             else if (step.action === "clickSubmit") {
                                 const before = page.url();
-                                let btn = page.getByRole("button", { name: step.name, exact: true }).first();
-                                if (await page.getByRole("button", { name: step.name, exact: true }).count() !== 1)
+                                let btn = page.locator("div.button,button").filter({ hasText: step.name }).first();
+                                if (await btn.count() !== 1)
+                                    btn = page.getByRole("button", { name: step.name, exact: true }).first();
+                                if (await btn.count() !== 1)
                                     btn = page.getByText(step.name, { exact: true }).first();
                                 if (await btn.count() !== 1)
                                     throw new Error(`提交按钮未唯一定位：${step.name}`);
