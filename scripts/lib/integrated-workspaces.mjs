@@ -5,7 +5,7 @@ import { resolveDataDirectories } from './data-directory.mjs';
 export const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const runtimeRoot = resolveDataDirectories().workspacesRoot;
 export const legacyRuntimeRoot = path.join(repoRoot, 'runtime-data');
-export const workspaceNames = ['dify', 'web-regression'];
+export const workspaceNames = ['dify'];
 const localPort = (value, fallback) => { const port = value ? Number(value) : fallback; if (!Number.isInteger(port) || port < 1024 || port > 65535) throw Error('Invalid local TestPilot port.'); return port; };
 export const workspacePorts = { dify: localPort(process.env.TESTPILOT_DIFY_PORT, 4323), 'web-regression': localPort(process.env.TESTPILOT_WEB_PORT, 4324) };
 export const entryPort = localPort(process.env.TESTPILOT_ENTRY_PORT, 4325);
