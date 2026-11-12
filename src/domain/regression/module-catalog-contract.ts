@@ -14,6 +14,7 @@ export type TestedSystem = {
         name: string;
     }>;
     activeAccountId?: string;
+    accountNames?: Record<string, string>;
     databaseBinding?: RegressionDatabaseBinding | undefined;
     selectedModuleIds: string[];
     createdAt: string;

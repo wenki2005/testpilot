@@ -96,8 +96,10 @@ export class SystemModuleRegression {
         const project = { id: profileId, name: system.name, targetUrl: system.targetUrl, browserProfileIsolation: true } as DocumentProject;
         void this.deps.savedSessionStatus(project).then(status => {
             if (this.closed || this.occupied(system.id) || this.accountProfile(this.getSystem(system.id)).id !== profileId) return;
-            if (status === 'connected')
+            if (status === 'connected') {
                 this.rememberAccount(system, { state: 'connected', message: '已复用本机登录会话；无需重复扫码。', profileId, checkedAt: now() });
+                void this.labelAccount(system.id, profileId);
+            }
             else if (status === 'expired')
                 this.accounts[system.id] = { state: 'unknown', message: '登录已失效，请打开被测系统重新登录。', profileId };
         }).catch(() => { /* Preserve saved status; a temporary CDP failure is not logout. */ });
@@ -138,7 +140,7 @@ export class SystemModuleRegression {
             delete this.accounts[value.id];
         return this.save('system', value);
     }
-    private accountProfile(system: TestedSystem) { const id = system.activeAccountId ?? system.profileId; return id === system.profileId ? { id, name: '我的账号' } : system.accountProfiles?.find(a => a.id === id) ?? { id: system.profileId, name: '我的账号' }; }
+    private accountName(system: TestedSystem, id: string) { const custom = system.accountNames?.[id]; if (custom) return custom; return id === system.profileId ? '我的账号' : system.accountProfiles?.find(a => a.id === id)?.name ?? '我的账号'; } private accountProfile(system: TestedSystem) { const id = system.activeAccountId ?? system.profileId; return { id, name: this.accountName(system, id) }; }
     addAccount(key: string, input: unknown) {
         const data = z.object({ name: z.string().trim().min(1).max(40) }).parse(input);
         const s = this.getSystem(key);
@@ -167,7 +169,24 @@ export class SystemModuleRegression {
         this.restoreAccount(updated);
         return updated;
     }
-    private hasProfile(system: TestedSystem, profileId: string) { return system.profileId === profileId || system.accountProfiles?.some(a => a.id === profileId); }
+    renameAccount(key: string, input: unknown) { const data = z.object({ accountId: uuid, name: z.string().trim().min(1).max(40) }).parse(input); const s = this.getSystem(key); if (!this.hasProfile(s, data.accountId)) throw Error('账号不属于当前系统。'); s.accountNames ??= {}; const others = [s.profileId, ...(s.accountProfiles ?? []).map(a => a.id)].filter(id => id !== data.accountId).map(id => this.accountName(s, id)); if (others.includes(data.name)) throw Error('账号名称已存在。'); s.accountNames[data.accountId] = data.name; s.updatedAt = now(); return this.save('system', s); } private async labelAccount(systemId: string, profileId: string) {
+        if (!this.deps.loginIdentity) return;
+        try {
+            const system = this.getSystem(systemId);
+            if (system.accountNames?.[profileId]) return;
+            const identity = await this.deps.loginIdentity({ id: profileId, name: system.name, targetUrl: system.targetUrl, browserProfileIsolation: true } as DocumentProject);
+            if (!identity || this.closed) return;
+            const label = identity.name?.trim() || (identity.phoneTail ? `尾号${identity.phoneTail}` : undefined);
+            if (!label) return;
+            const fresh = this.getSystem(systemId);
+            fresh.accountNames ??= {};
+            if (fresh.accountNames[profileId]) return;
+            fresh.accountNames[profileId] = label.slice(0, 40);
+            fresh.updatedAt = now();
+            this.save('system', fresh);
+        }
+        catch { /* 自动命名失败不影响登录 */ }
+    } private hasProfile(system: TestedSystem, profileId: string) { return system.profileId === profileId || system.accountProfiles?.some(a => a.id === profileId); }
     saveSelection(systemId: string, input: unknown) {
         const selected = z.array(uuid).max(100).parse(input);
         if (new Set(selected).size !== selected.length)
@@ -810,8 +829,10 @@ export class SystemModuleRegression {
                 catch { }
                 databaseEvidence ??= { binding: system.databaseBinding, capturedAt: now(), status: 'blocked', checks: [{ id: 'connection', title: '测试库准备', status: 'blocked', detail: '未完成本机只读核验；不会将未检查的数据当成已准备。' }] };
             }
-            if (!this.closed && !controller.signal.aborted)
+            if (!this.closed && !controller.signal.aborted) {
                 this.rememberAccount(system, { state: 'connected', message: '已登录；本机自动保存并复用登录信息。', profileId: profile.id, checkedAt: now(), ...(databaseEvidence ? { databaseEvidence } : {}) });
+                void this.labelAccount(system.id, profile.id);
+            }
         }, (error: unknown) => {
             if (!this.closed && !controller.signal.aborted)
                 this.accounts[key] = { state: 'error', message: error instanceof Error ? error.message : '未完成窗口连接；本机已保存的登录信息仍保留。', profileId: profile.id };

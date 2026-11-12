@@ -233,7 +233,7 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceD
                         res.end(output.bytes);
                         return;
                     }
-                    const system = route.match(/^\/systems\/([0-9a-f-]{36})\/(selection|connect|continue|disconnect|accounts|account-selection)$/i);
+                    const system = route.match(/^\/systems\/([0-9a-f-]{36})\/(selection|connect|continue|disconnect|accounts|account-selection|account-rename)$/i);
                     if (req.method === 'POST' && system) {
                         const key = system[1]!;
                         const action = system[2];
@@ -242,6 +242,8 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceD
                             json(res, 200, systemModules.addAccount(key, data));
                         else if (action === 'account-selection')
                             json(res, 200, systemModules.selectAccount(key, data.accountId));
+                        else if (action === 'account-rename')
+                            json(res, 200, systemModules.renameAccount(key, data));
                         else if (action === 'selection')
                             json(res, 200, systemModules.saveSelection(key, data.moduleIds));
                         else if (action === 'connect')
