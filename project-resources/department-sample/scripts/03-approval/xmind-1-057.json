@@ -7,12 +7,20 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "blurByLabel",
-      "label": "收件人"
+      "action": "openRoute",
+      "hash": "#/apply"
     },
     {
-      "action": "assertExactVisible",
-      "text": "收货信息"
+      "action": "assertVisible",
+      "text": "申请编号"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "202611040149"
+    },
+    {
+      "action": "assertNotVisible",
+      "text": "202611110172"
     }
   ]
 }
