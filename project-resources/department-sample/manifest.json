@@ -2,7 +2,7 @@
   "schema": 1,
   "kind": "testpilot-project-resources",
   "projectId": "436847ad-f144-425f-b303-1ca9b22e0b52",
-  "exportedAt": "2026-11-12T02:53:17.042Z",
+  "exportedAt": "2026-11-12T05:58:15.554Z",
   "installableSeed": true,
   "historyIncluded": false,
   "credentialsIncluded": false,
@@ -10,7 +10,7 @@
     "modules": 6,
     "cases": 110,
     "scriptsWithSteps": 103,
-    "chains": 3
+    "chains": 1
   },
   "files": [
     {
@@ -902,16 +902,8 @@
       "sha256": "b954254a3ede221f2dcf6a039b97d5443b1056ecaa4935a28d58adcbc31fbdc0"
     },
     {
-      "file": "chains/order-logistics.json",
-      "sha256": "402d7faaf22bf8866e2d6169ed95e210675d60e5ea3cd53d7ebe67684bceeaaf"
-    },
-    {
-      "file": "chains/reject-reapply.json",
-      "sha256": "0861c745a0c305806ad992c86acb314cf756d77e6bd43338135cf800ac9c8f98"
-    },
-    {
-      "file": "chains/submit-order.json",
-      "sha256": "080f339f6064da767091f7c1375d647f2af0685a854d9fd51401ac3a26621411"
+      "file": "chains/submit-cancel.json",
+      "sha256": "3c952439b9b6c8b8df1fb6048f409a87544251dc38649f727e3f81172a46cff5"
     },
     {
       "file": "config/environment.example.json",
