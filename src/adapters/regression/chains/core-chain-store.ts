@@ -10,6 +10,10 @@ import type { WebModuleDependencies } from '../execution/module-execution-servic
 import { departmentCoreChainBrowser, type CoreChainExecutor } from './core-chain-browser.js';
 
 const hash = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex'), now = () => new Date().toISOString();
+/** The selectable chains come from the one definition file so a changed
+ * journey cannot leave a stale id list behind in the request schema. */
+const chainIdOptions = departmentCoreChains.map(c => c.id);
+const chainIdInput = z.enum(chainIdOptions as [string, ...string[]]);
 /** Separate result store: core journeys do not add/rename original modules or
  * overwrite the original 131 case verdicts. Restart never replays a journey. */
 export class DepartmentCoreChainStore {
@@ -41,14 +45,14 @@ export class DepartmentCoreChainStore {
     state(systemId: string): CoreState { const s = this.catalog.getSystem(systemId), supported = s.targetUrl === 'https://cdn.yibentushu.com/test-sample-apply/index.html#/home' && s.databaseBinding === 'department-supply-readonly'; return { definitions: structuredClone(departmentCoreChains), runs: this.list().filter(r => r.systemId === systemId && r.profileId === (s.activeAccountId ?? s.profileId) && r.targetUrl === s.targetUrl && r.environment === s.environment), supported }; }
     historyForSystem(systemId: string): CoreRun[] { this.catalog.getSystem(systemId); return this.list().filter(r => r.systemId === systemId); }
     start(input: unknown) {
-        const data = z.object({ systemId: z.string().uuid(), requestId: z.string().uuid(), chainIds: z.array(z.enum(['submit-order', 'reject-reapply', 'stock-retry', 'order-logistics'])).min(1).max(4), stockApplicationNos: z.array(z.string().regex(/^\d{12}$/)).min(1).max(6).optional() }).parse(input), digest = hash(data), old = this.db.prepare('SELECT digest,run_id FROM requests WHERE id=?').get(data.requestId);
+        const data = z.object({ systemId: z.string().uuid(), requestId: z.string().uuid(), chainIds: z.array(chainIdInput).min(1), stockApplicationNos: z.array(z.string().regex(/^\d{12}$/)).min(1).max(6).optional() }).parse(input), digest = hash(data), old = this.db.prepare('SELECT digest,run_id FROM requests WHERE id=?').get(data.requestId);
         if (old) {
             if (old.digest !== digest)
                 throw Error('同一请求不能对应不同链路。');
             return this.get(String(old.run_id));
         }
-        if (data.stockApplicationNos && (!data.chainIds.includes('stock-retry') || new Set(data.stockApplicationNos).size !== data.stockApplicationNos.length))
-            throw Error('库存申请绑定需要库存链路且编号不能重复。');
+        if (data.stockApplicationNos)
+            throw Error('库存补锁链路已移除，不能再绑定库存申请编号。');
         if (new Set(data.chainIds).size !== data.chainIds.length)
             throw Error('链路不能重复选择。');
         const s = this.catalog.getSystem(data.systemId), state = this.catalog.state();
@@ -62,7 +66,7 @@ export class DepartmentCoreChainStore {
         // no steps or missing evidence are still blocked by the executor and
         // recorded as such. This keeps chain selection usable without making
         // the user click through every imported case first.
-        const chains: CoreChainResult[] = departmentCoreChains.filter(c => data.chainIds.includes(c.id as typeof data.chainIds[number])).map(c => ({ ...structuredClone(c), references: [], steps: c.steps.map(step => {
+        const chains: CoreChainResult[] = departmentCoreChains.filter(c => data.chainIds.includes(c.id)).map(c => ({ ...structuredClone(c), references: [], steps: c.steps.map(step => {
                 const refs = step.caseIds.map(id => {
                     const match = sources.filter(c => c.caseId === id);
                     if (match.length !== 1)
@@ -71,7 +75,7 @@ export class DepartmentCoreChainStore {
                 });
                 return { ...structuredClone(step), sources: refs, status: 'not_executed', detail: '尚未执行。' };
             }) }));
-        const run: CoreRun = { id: randomUUID(), requestId: data.requestId, systemId: s.id, systemName: s.name, profileId: s.activeAccountId ?? s.profileId, targetUrl: s.targetUrl, environment: s.environment, definitionDigest: hash({ chains, ...(data.stockApplicationNos ? { stockApplicationNos: data.stockApplicationNos } : {}) }), ...(data.stockApplicationNos ? { stockApplicationNos: data.stockApplicationNos } : {}), createdAt: now(), updatedAt: now(), phase: 'queued', message: '已保存链路顺序，等待执行。', chains, difyRuns: [] };
+        const run: CoreRun = { id: randomUUID(), requestId: data.requestId, systemId: s.id, systemName: s.name, profileId: s.activeAccountId ?? s.profileId, targetUrl: s.targetUrl, environment: s.environment, definitionDigest: hash(chains), createdAt: now(), updatedAt: now(), phase: 'queued', message: '已保存链路顺序，等待执行。', chains, difyRuns: [] };
         this.db.exec('BEGIN IMMEDIATE');
         try {
             this.save(run);

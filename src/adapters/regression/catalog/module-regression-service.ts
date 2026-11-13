@@ -288,8 +288,7 @@ export class SystemModuleRegression {
             return { systems: [], systemId: '', modules: [], cases: [], chains: [] };
         const modules = this.list<FixedModule>('module').filter(m => m.systemId === system.id && !m.archived).reverse();
         const cases = modules.flatMap(m => this.editorCases(m, undefined, system));
-        const short = ['申请提交与申请记录', '申请撤销与订单取消', '库存不足与定时补锁', '企微通知与后台追踪'];
-        const chains = departmentCoreChains.map((c, i) => ({ id: c.id, title: short[i]!, caseKeys: [...new Set(c.steps.flatMap(s => s.caseIds))].flatMap(id => cases.filter(v => v.id === id).map(v => v.moduleId + ':' + id)) })).filter(c => c.caseKeys.length);
+        const chains = departmentCoreChains.map(c => ({ id: c.id, title: c.title, caseKeys: [...new Set(c.steps.flatMap(s => s.caseIds))].flatMap(id => cases.filter(v => v.id === id).map(v => v.moduleId + ':' + id)) })).filter(c => c.caseKeys.length);
         return { systems: systems.map(s => ({ id: s.id, name: s.name })), systemId: system.id, modules: modules.map(m => ({ id: m.id, name: m.name, caseKeys: cases.filter(c => c.moduleId === m.id).map(c => c.moduleId + ':' + c.id) })), cases, chains };
     }
     editorRevision(systemId: string) {
