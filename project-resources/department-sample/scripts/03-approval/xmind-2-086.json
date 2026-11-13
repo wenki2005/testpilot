@@ -7,12 +7,16 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "assertExactVisible",
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611040149"
+    },
+    {
+      "action": "assertVisible",
       "text": "目前仓库样书库存不足，请联系运营核实库存数量"
     },
     {
-      "action": "assertExactVisible",
-      "text": "撤销用书申请"
+      "action": "assertVisible",
+      "text": "撤回用书申请"
     }
   ]
 }

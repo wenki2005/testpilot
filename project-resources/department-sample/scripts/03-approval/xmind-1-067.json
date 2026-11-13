@@ -7,12 +7,20 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "blurByLabel",
-      "label": "收件人"
+      "action": "openRoute",
+      "hash": "#/apply-detail/202611040149"
     },
     {
-      "action": "assertExactVisible",
-      "text": "收货信息"
+      "action": "assertVisible",
+      "text": "锁单失败"
+    },
+    {
+      "action": "clickExactText",
+      "text": "我已协调库存，尝试重新锁单"
+    },
+    {
+      "action": "assertVisible",
+      "text": "锁单失败"
     }
   ]
 }
