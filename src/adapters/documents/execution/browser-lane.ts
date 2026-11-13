@@ -500,11 +500,11 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                                 return "unavailable";
                                             }
                                         }))].filter(item => item && item !== here).slice(0, 3);
-                                    const frameNote = framePaths.length ? `；页内其他 iframe=${framePaths.join(",")}` : "";
+                                    const frameNote = framePaths.length ? `（页内还有 iframe：${framePaths.join(",")}）` : "";
                                     const rendering = await inspectTextRenderSupport(page);
                                     if (rendering.visualOnly)
                                         throw new Error(`Blocked: 页面仅有 canvas 渲染；需视觉断言验证。当前页=${current.pathname}${current.hash}${frameNote}`);
-                                    throw new Error(`断言失败：页面未见文案「${step.text}」；当前页=${current.pathname}${current.hash}${frameNote}`);
+                                    throw new Error(`断言失败：未见文案：${step.text}${frameNote}`);
                                 }
                             }
                             else if (step.action === "assertNotVisible") {
@@ -520,7 +520,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                     await page.getByText(step.text, { exact: true }).first().waitFor({ state: "visible", timeout: 5000 });
                                 }
                                 catch {
-                                    throw new Error(`断言失败：没有完全匹配的可见文本：${step.text}`);
+                                    throw new Error(`断言失败：未见文案：${step.text}`);
                                 }
                             }
                             else if (step.action === "assertSelectedByRoleIndex") {
