@@ -1448,3 +1448,7 @@ pre { margin: 0; max-height: 180px; overflow: auto; padding: 8px; color: #3e536c
   .doc-tests-page .doc-import-grid { grid-template-columns: minmax(0, 1fr); }
   .doc-tests-page .doc-file-field input[type="file"] { width: 100%; max-width: 100%; min-width: 0; }
 }
+
+
+/* 全站整体放大：1.2 倍，命中所有页面（含运行报告） */
+.app-shell { zoom: 1.2; }
