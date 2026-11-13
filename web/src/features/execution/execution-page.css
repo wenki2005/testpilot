@@ -286,3 +286,23 @@
 
 .sm-skip-blocked { display: inline-flex; align-items: center; gap: 6px; margin-left: 12px; font-size: 13px; color: var(--muted, #6b7280); cursor: pointer; }
 .sm-skip-blocked input { margin: 0; }
+
+/* 「+ 新账号」按钮：与下拉同排，白底描边，避免被当成普通链接 */
+.sm-account .sm-add-account {
+    border: 1px solid #cfd8e6;
+    background: #fff;
+    color: #1f4f9c;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    margin-right: 6px;
+}
+.sm-account .sm-add-account:hover:not(:disabled) {
+    border-color: #7fa6dc;
+    background: #f3f8ff;
+}
+.sm-account .sm-add-account:disabled {
+    color: #9aa8bb;
+    border-color: #e2e8f1;
+    background: #f7f9fc;
+}
