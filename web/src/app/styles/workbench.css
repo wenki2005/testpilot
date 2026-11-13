@@ -354,17 +354,17 @@ button, a, input, select, textarea, summary { -webkit-tap-highlight-color: trans
 
 
 /* 统一页面宽度 + 整体字号放大 1.1 倍（zoom 会让布局一并放大，所以宽度按 1.1 折算） */
-.app-shell { zoom: 1.1; }
+
 .app-shell .workspace > :is(.project-status-page, .dify-page, .sm-workbench, .run-reports) {
     width: 100%;
-    max-width: 909px;
+    max-width: 833px;
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
 }
 .app-shell .workspace > .case-script-editor.case-page {
     width: 100%;
-    max-width: 1491px;
+    max-width: 1367px;
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;

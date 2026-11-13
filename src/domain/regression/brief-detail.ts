@@ -10,6 +10,9 @@ export function briefDetail(status: string, raw: string): string {
     body = body.replace(/^故障[:：]\s*/, '');
     body = body.replace(/^没有完全匹配的可见文本[:：]\s*/, '未见文案：');
     body = body.replace(/^期望可见文本未出现在页面或嵌入 frame[:：]\s*/, '页面未见：');
+    body = body.replace(/^断言失败[:：]\s*/, '');
+    // 去掉失败信息里附带的技术性位置，只保留人能读的原因
+    body = body.replace(/[；;]\s*(当前页|页面)=[^；;]*/g, '').replace(/[；;]\s*页内其他 iframe=[^；;]*/g, '').replace(/[；;]\s*frames=[^；;]*/g, '');
     body = body.replace(/^观察窗口内出现 (\d+) 个 fetch\/XHR 请求.*$/, '发出了 $1 个请求（应拦截）');
     body = body.replace(/^字段「(.+?)」尚无可见无效状态.*$/, '字段「$1」无无效状态');
     body = body.replace(/本轮数据库排查[:：].*$/, '');

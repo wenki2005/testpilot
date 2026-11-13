@@ -119,7 +119,7 @@ function buildScriptPackage(jobs: DifyScriptModuleInput[], runnerFiles: Record<s
         files[prefix + 'README.md'] = strToU8(`# Dify · ${moduleName}\n\n- 模块版本：v${entry?.version ?? '未记录'}\n- 所选范围：${cases.length} 条\n- 执行脚本：\`${script}\`\n- 来源：${job.id ?? '当前勾选范围（逐条来源见 manifest）'}\n\n在本目录执行：\n\n\`\`\`sh\nnpm install\nnpx playwright install chromium\nnpm test\n\`\`\`\n\n\`cases.json\` 是执行器读取的固定文件名；\`cases.md\` 保存原始预期；\`manifest.json\` 标注 Dify 归属、模块、版本及来源。不要移动单个文件，整个模块目录一起保存。独立脚本不会调用 Dify；缺少完整步骤或本机补充核验的用例继续报告 blocked。\n`);
         modules.push({ moduleId, moduleName, versionId: entry?.versionId ?? job.moduleId, version: entry?.version ?? null, jobId: job.id, directory: 'modules/' + directory, script, caseCount: cases.length });
         if (cases.some(c => c.expected === '必填未完成时提交按钮置灰不可点击'))
-            files[prefix + 'DIFY-CHECKS.md'] = strToU8('必填未完成时提交按钮置灰不可点击：本机 Dify 额外验证渲染后的灰色背景。当前独立脚本不包含此样式检查，因此该条保留原预期并以无完整步骤/blocked 导出，不仅凭禁用状态宣称通过。请在 Dify 工作台运行此条。\n');
+            files[prefix + 'DIFY-CHECKS.md'] = strToU8('必填未完成时提交按钮置灰不可点击：本机 TestPilot 额外验证渲染后的灰色背景。当前独立脚本不包含此样式检查，因此该条保留原预期并以无完整步骤/blocked 导出，不仅凭禁用状态宣称通过。请在 Dify 工作台运行此条。\n');
         if (cases.some(needsDifyReadback))
             files[prefix + 'DIFY-READBACK.md'] = strToU8('本目录包含需要 TestPilot 本机查询回读、提示颜色或完整表单有效性转换核验的用例。独立脚本不包含这些补充检查，相应条目保留原始预期并留空步骤，独立执行须报告 blocked。请在 TestPilot 固定回归工作台执行完整核验。\n');
     }

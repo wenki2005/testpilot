@@ -97,7 +97,7 @@ import { handleStaticFile } from "../interfaces/http/shared/static-file-route.js
 import { mergeDocumentBrowserCases as mergeBrowserCases } from "../domain/documents/cases/case-merge.js";
 import { createDemoArtifactStore } from "../storage/local-tests/demo-artifact-store.js";
 import { renderDemoRunReport } from "../reporters/demo-run-report.js";
-const host = "127.0.0.1";
+const host = process.env.TESTPILOT_HOST ?? "127.0.0.1";
 const port = Number(process.env.PORT ?? 4317);
 const workspaces = integratedWorkspaceConfig();
 const { documentWebsiteMapService, documentAutomaticRecoveryService, documentRunRecoveryReadinessService, documentRunInvestigationService, documentRunImageAnalysisService, documentStepRevisionProposalService, documentAutonomousPlanExecutionService, documentAutonomousPlanService, documentSessionOpenService, documentParallelRunService, documentSessionProfileService, documentCaseMarkdownService, documentRunArtifacts, documentRunHistoryService, documentStepProbeAdapter, documentProjectRunUsecaseService, documentCaseStepAuthoringService, generateMissingBrowserSteps, documentProjectSessionService, documentCaseSelectionService, documentImpactReviewService, documentSiteVersionService, documentProjectUpdateService, documentProjectReviewService, documentProjectWorkflowPreparationService, documentPageEvidence } = createDocumentApplicationServices();
@@ -261,7 +261,7 @@ async function readProjectRunFiles(id: string): Promise<string[]> {
 }
 const { loadProfile: loadRegisteredProfile, view: projectScriptView, persist: persistProjectScripts, load: loadProjectScripts, createCandidate: createProjectScriptCandidate } = projectScriptRegistry;
 async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
-    const policy = evaluateLocalRequestPolicy(req, `http://${host}:${port}`);
+    const policy = evaluateLocalRequestPolicy(req, `http://${req.headers.host ?? `${host}:${port}`}`);
     if ("status" in policy) {
         fail(res, policy.status, policy.message);
         return;

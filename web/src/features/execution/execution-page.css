@@ -286,3 +286,42 @@
 
 .sm-skip-blocked { display: inline-flex; align-items: center; gap: 6px; margin-left: 12px; font-size: 13px; color: var(--muted, #6b7280); cursor: pointer; }
 .sm-skip-blocked input { margin: 0; }
+
+/* 「+ 新账号」按钮：与下拉同排，白底描边，避免被当成普通链接 */
+.sm-account .sm-add-account {
+    border: 1px solid #cfd8e6;
+    background: #fff;
+    color: #1f4f9c;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    margin-right: 6px;
+}
+.sm-account .sm-add-account:hover:not(:disabled) {
+    border-color: #7fa6dc;
+    background: #f3f8ff;
+}
+.sm-account .sm-add-account:disabled {
+    color: #9aa8bb;
+    border-color: #e2e8f1;
+    background: #f7f9fc;
+}
+
+/* 「+ 新账号」改成与其他主按钮一致的蓝底白字 */
+.sm-account .sm-add-account {
+    background: #1964f7 !important;
+    border: 1px solid #1964f7 !important;
+    color: #fff !important;
+    padding: 5px 14px !important;
+    border-radius: 6px !important;
+    font-weight: 600;
+}
+.sm-account .sm-add-account:hover:not(:disabled) {
+    background: #1154d6 !important;
+    border-color: #1154d6 !important;
+}
+.sm-account .sm-add-account:disabled {
+    background: #c8d6ee !important;
+    border-color: #c8d6ee !important;
+    color: #fff !important;
+}
