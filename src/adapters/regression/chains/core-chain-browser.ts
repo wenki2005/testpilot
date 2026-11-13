@@ -12,6 +12,7 @@ import { compareDepartmentGoods } from '../../database/regression-readback.js';
 import { assertApprovalProgress } from '../evidence/integration-assertions.js';
 import { inspectOrder85Presentation } from '../scenarios/orders/order-detail-presentation.js';
 import { captureDifyPng } from '../evidence/module-evidence.js';
+import { checkSubmitCancelStep, createJourney, createMutationGate, releaseChainMutation } from './core-chain-submit-cancel.js';
 type Row = Record<string, any>;
 type Fixture = {
     baseline: DepartmentCreationBaseline;
@@ -20,11 +21,17 @@ type Fixture = {
 };
 export type CorePatch = Partial<Pick<CoreStepResult, 'status' | 'detail' | 'startedAt' | 'finishedAt' | 'evidence' | 'evidenceKind' | 'references'>>;
 export type CoreChainExecutor = (run: CoreRun, chain: CoreChainResult, emit: (stepId: string, patch: CorePatch) => void, signal: AbortSignal, onLogin: (waiting: boolean) => void) => Promise<void>;
+/** Steps that read back a stored application. The submit→cancel journey builds
+ * and removes its own document, so it must not be blocked on these fixtures. */
+const readbackStepIds = new Set(['submitted', 'application-detail', 'approved', 'order-created', 'outbound', 'rejected', 'no-order', 'reapply-entry', 'warehouse', 'shortage', 'retry', 'search', 'detail', 'status', 'tracking']);
 export function departmentCoreChainBrowser(root: string, deps: WebModuleDependencies, saveEvidence: (runId: string, bytes: Buffer) => Promise<string>): CoreChainExecutor {
     return async (run, chain, emit, signal, onLogin) => {
         if (run.targetUrl !== 'https://cdn.yibentushu.com/test-sample-apply/index.html#/home')
             throw Error('核心链路只适用于已绑定的部门申样测试环境。');
         const project = { id: run.profileId, name: run.systemName, fileName: 'core-business-chains', format: 'text', browserProfileIsolation: true, targetUrl: run.targetUrl, sourceText: '', cases: [], createdAt: run.createdAt, updatedAt: run.updatedAt } as DocumentProject;
+        // A journey may submit and cancel exactly one application; both are
+        // gated and payload-checked, and every other mutation stays blocked.
+        const gate = createMutationGate(), journey = createJourney(run.id);
         let browserRoot = root, idleUrl: string | undefined;
         try {
             const config = JSON.parse(await readFile(path.join(root, 'private', 'core-browser-session.json'), 'utf8'));
@@ -67,7 +74,12 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
             const device = await page.evaluate(() => ({ ua: navigator.userAgent, width: innerWidth, height: innerHeight }));
             if (/ Mobile/.test(device.ua))
                 throw Error('既有测试窗口为移动布局，请恢复桌面布局后重试；未擅自改变其他运行的设备。');
-            policy = async (route) => { const q = route.request(), u = new URL(q.url()); await (q.method() === 'GET' || q.method() === 'HEAD' || q.method() === 'OPTIONS' ? route.continue() : u.origin === 'https://testapi.yibentushu.com' ? route.abort('blockedbyclient') : route.continue()).catch(() => { }); };
+            policy = async (route) => {
+                if (await releaseChainMutation(route, gate, signal))
+                    return;
+                const q = route.request(), u = new URL(q.url());
+                await (q.method() === 'GET' || q.method() === 'HEAD' || q.method() === 'OPTIONS' ? route.continue() : u.origin === 'https://testapi.yibentushu.com' ? route.abort('blockedbyclient') : route.continue()).catch(() => { });
+            };
             await page.route('**/*', policy);
             const current = page;
             const get = async (p: string): Promise<Row> => {
@@ -103,16 +115,11 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
                     throw Error('本人申请商品缺失。');
                 fixtures.push({ baseline, stored, goods });
             }
-            const approved = fixtures.filter(f => Number(f.stored.examine_status) === 1 && Number(f.stored.lock_status) === 1 && f.stored.order_id), rejected = fixtures.filter(f => Number(f.stored.examine_status) === 2);
+            const approved = fixtures.filter(f => Number(f.stored.examine_status) === 1 && Number(f.stored.lock_status) === 1 && f.stored.order_id);
             const choose = (usage: number) => approved.filter(f => Number(f.stored.book_usage) === usage).sort((a, b) => a.baseline.applyNo.localeCompare(b.baseline.applyNo))[0];
-            const first = choose(1), second = choose(2), stockCandidates = fixtures.filter(f => Number(f.stored.examine_status) === 1 && f.goods.some(g => ['1012600290', '3012600103', '2012600995'].includes(String(g.product_id)))), stock = run.stockApplicationNos ? run.stockApplicationNos.map(no => {
-                const f = stockCandidates.find(f => f.baseline.applyNo === no);
-                if (!f)
-                    throw Error('指定库存申请没有本人可信提交凭证、审批通过状态或指定商品，未替换为旧样本。');
-                return f;
-            }) : stockCandidates;
-            const selected = chain.id === 'submit-order' ? [first, second].filter((f): f is Fixture => !!f) : chain.id === 'reject-reapply' ? rejected.slice(0, 1) : chain.id === 'stock-retry' ? stock : [first, second].filter((f): f is Fixture => !!f);
-            if (!selected.length || chain.id === 'submit-order' && selected.length !== 2)
+            const first = choose(1), second = choose(2), needsReadback = chain.steps.some(s => readbackStepIds.has(s.id));
+            const selected = needsReadback ? [first, second].filter((f): f is Fixture => !!f) : [];
+            if (needsReadback && selected.length !== 2)
                 throw Error('未找到对应链路的本人可信提交凭证及现有状态，未新建申请补样本。');
             chain.references = selected.map(f => f.baseline.applyNo);
             const load = async (route: string, api: string) => {
@@ -185,6 +192,12 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
                 }
             };
             const check = async (id: string): Promise<CorePatch> => {
+                const journeyPatch = await checkSubmitCancelStep(id, { page: current, dataRoot: root, gate, journey, signal });
+                if (journeyPatch) {
+                    if (journey.applyNo)
+                        chain.references = [journey.applyNo];
+                    return journeyPatch;
+                }
                 if (id === 'submitted') {
                     for (const f of selected) {
                         await form(f);
@@ -317,7 +330,7 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
             for (const step of chain.steps) {
                 signal.throwIfAborted();
                 await ensureIdle();
-                emit(step.id, { startedAt: new Date().toISOString(), detail: '正在核验同一链路记录…', references: chain.references });
+                emit(step.id, { startedAt: new Date().toISOString(), detail: journey.applyNo ? '正在核验本轮申请' + journey.applyNo + '…' : '正在核验同一链路记录…', references: chain.references });
                 let patch: CorePatch;
                 try {
                     patch = await check(step.id);
@@ -339,6 +352,11 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
                 patch.evidenceKind ??= 'current-readback';
                 emit(step.id, { ...patch, finishedAt: new Date().toISOString(), references: chain.references });
             }
+            // A submission that could not be cancelled would leave a real
+            // pending application behind; say so on the cancel step.
+            const cancelStep = chain.steps.find(step => step.id === 'cancel');
+            if (journey.applyNo && cancelStep && cancelStep.status !== 'passed')
+                emit('cancel', { detail: (cancelStep.detail ?? '') + '；本轮已真实创建申请' + journey.applyNo + '（收件人/备注标记' + journey.marker + '），撤销未完成，请先在该测试环境人工核对并处理再重跑。', finishedAt: new Date().toISOString(), references: chain.references });
         }
         finally {
             if (page && policy)
