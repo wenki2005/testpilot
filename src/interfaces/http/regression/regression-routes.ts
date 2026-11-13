@@ -233,6 +233,19 @@ export function createDifyRegressionRoutes({ artifactsDir, host, port, resourceD
                         res.end(output.bytes);
                         return;
                     }
+                    const evidenceMatch = route.match(/^\/evidence\/([0-9a-f-]{36})\/([0-9a-f]{64}\.png)$/i);
+                    if (req.method === 'GET' && evidenceMatch) {
+                        const file = path.join(artifactsDir, 'document-tests', 'runs', evidenceMatch[1]!, 'screenshots', evidenceMatch[2]!);
+                        try {
+                            const bytes = await readFile(file);
+                            res.writeHead(200, { 'content-type': 'image/png', 'cache-control': 'no-store' });
+                            res.end(bytes);
+                        }
+                        catch {
+                            fail(res, 404, '没有该截图。');
+                        }
+                        return;
+                    }
                     const system = route.match(/^\/systems\/([0-9a-f-]{36})\/(selection|connect|continue|disconnect|accounts|account-selection|account-rename)$/i);
                     if (req.method === 'POST' && system) {
                         const key = system[1]!;

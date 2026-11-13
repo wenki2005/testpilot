@@ -27,7 +27,7 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
     const latestRunCount = latestRun?.entries.reduce((total, entry) => total + (entry.selectedCaseIds?.length ?? entry.caseCount), 0) ?? 0;
     // 每条用例取它最近一次的执行结果（跨批次合并，重跑只保留最后一次）
     const latestByCase = useMemo(() => {
-        const merged = new Map<string, { status: string; at: number }>();
+        const merged = new Map<string, { status: string; at: number; detail?: string; title?: string; runId?: string; evidence?: string; moduleName?: string }>();
         const batches = (state?.batches ?? []).filter(item => item.systemId === activeSystemId && item.phase !== 'cancelled')
             .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
         for (const batch of batches) {
@@ -35,7 +35,7 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
             for (const job of batch.jobs ?? []) {
                 for (const result of job.results ?? []) {
                     const previous = merged.get(result.caseId);
-                    if (!previous || at >= previous.at) merged.set(result.caseId, { status: result.status, at });
+                    if (!previous || at >= previous.at) merged.set(result.caseId, { status: result.status, at, detail: result.detail, title: result.title, runId: job.documentRunId, evidence: result.evidence, moduleName: job.moduleName });
                 }
             }
         }
@@ -61,6 +61,12 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
         }).filter(row => row.total > 0).sort((a, b) => (position.get(a.id) ?? 0) - (position.get(b.id) ?? 0));
         return { ...tally, rows, covered: cases.length - tally.not_executed - tally.never };
     }, [cases, modules, latestByCase]);
+    const failedCases = useMemo(() => cases
+        .map(c => ({ id: c.id, title: c.title, ...(latestByCase.get(c.id) ?? {}) }))
+        .filter(c => c.status === 'failed')
+        .sort((a, b) => a.id.localeCompare(b.id)), [cases, latestByCase]);
+    const [failedOpen, setFailedOpen] = useState(false);
+    const [failedDetail, setFailedDetail] = useState<string>();
     const statusSegments = [
         { key: 'passed', label: '通过', className: 'passed' },
         { key: 'failed', label: '失败', className: 'failed' },
@@ -80,7 +86,10 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
           <span className="project-status-latest-stamp">{latest.at ? `最近执行 ${new Date(latest.at).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}` : '还没有执行记录'}</span>
         </div>
         <div className="project-status-tiles">
-          {statusSegments.map(segment => <div key={segment.key} className={`project-status-tile ${segment.className}`}><strong>{latest[segment.key]}</strong><span>{segment.label}</span></div>)}
+          {statusSegments.map(segment => {
+            const clickable = segment.key === 'failed' && latest.failed > 0;
+            return <div key={segment.key} role={clickable ? 'button' : undefined} tabIndex={clickable ? 0 : undefined} onClick={() => clickable && setFailedOpen(true)} onKeyDown={e => { if (clickable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setFailedOpen(true); } }} className={`project-status-tile ${segment.className}${clickable ? ' project-status-tile-clickable' : ''}`}><strong>{latest[segment.key]}</strong><span>{segment.label}</span>{clickable && <em>点击查看</em>}</div>;
+        })}
         </div>
         {cases.length > 0 && <div className="project-status-progress" role="img" aria-label={statusSegments.map(segment => `${segment.label} ${latest[segment.key]}`).join('，')}>
           {statusSegments.filter(segment => latest[segment.key] > 0).map(segment => <i key={segment.key} className={segment.className} style={{ width: `${(latest[segment.key] / cases.length) * 100}%` }}/>)}
@@ -96,6 +105,52 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
           </tr>)}</tbody>
         </table>}
       </section>
+      {failedOpen && <div className="ps-mask" role="presentation" onClick={() => { setFailedOpen(false); setFailedDetail(undefined); }}>
+        <div className="ps-modal" role="dialog" aria-label="失败用例" onClick={e => e.stopPropagation()}>
+          <header><h3>失败用例 <span className="ps-tag">{failedCases.length} 条</span></h3><button type="button" onClick={() => { setFailedOpen(false); setFailedDetail(undefined); }}>关闭</button></header>
+          <div className="ps-body">
+            <table className="ps-table">
+              <thead><tr><th style={{ width: 84 }}>编号</th><th>用例</th><th style={{ width: 190 }}>失败原因</th><th style={{ width: 60 }}/></tr></thead>
+              <tbody>
+                {failedCases.map(item => <tr key={item.id}>
+                  <td>{item.id.replace('xmind-', '')}</td>
+                  <td>{item.title}</td>
+                  <td className="ps-reason">{item.detail ?? '—'}</td>
+                  <td><button type="button" className="ps-link" onClick={() => setFailedDetail(item.id)}>查看</button></td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
+          <footer><span>共 {failedCases.length} 条</span><span>点「查看」看失败原因与截图</span></footer>
+        </div>
+      </div>}
+      {failedDetail && (() => {
+        const row = failedCases.find(c => c.id === failedDetail);
+        if (!row) return null;
+        const index = failedCases.findIndex(c => c.id === failedDetail);
+        const goto = (delta: number) => { const next = failedCases[index + delta]; if (next) setFailedDetail(next.id); };
+        return <div className="ps-mask" role="presentation" onClick={() => setFailedDetail(undefined)}>
+          <div className="ps-modal ps-detail" role="dialog" aria-label="失败详情" onClick={e => e.stopPropagation()}>
+            <header><h3>{row.id.replace('xmind-', '')} {row.title}</h3><button type="button" onClick={() => setFailedDetail(undefined)}>关闭</button></header>
+            <div className="ps-body">
+              <div className="ps-kv">
+                <b>状态</b><span><span className="ps-tag">失败</span></span>
+                <b>模块</b><span>{row.moduleName ?? '—'}</span>
+                <b>执行时间</b><span>{new Date(row.at ?? 0).toLocaleString('zh-CN')}</span>
+              </div>
+              <div className="ps-reason-box"><b>失败原因</b><br/>{row.detail ?? '—'}</div>
+              {row.runId && row.evidence
+                ? <img className="ps-shot" alt="失败截图" src={`${root}/evidence/${row.runId}/${row.evidence}`}/>
+                : <div className="ps-shot ps-shot-empty">这条没有截图</div>}
+            </div>
+            <footer>
+              <button type="button" className="ps-link" disabled={index <= 0} onClick={() => goto(-1)}>◀ 上一条</button>
+              <span>{index + 1} / {failedCases.length}</span>
+              <button type="button" className="ps-link" disabled={index >= failedCases.length - 1} onClick={() => goto(1)}>下一条 ▶</button>
+            </footer>
+          </div>
+        </div>;
+      })()}
       <div className="project-status-recent-inline">
         <span className="project-status-recent-label">最近运行</span>
         {latestRun ? (<><b>{latestRun.scope === 'core' ? '核心链路' : latestRun.scope === 'custom' ? '自选用例' : '全部用例'} · {latestRunCount} 条</b>

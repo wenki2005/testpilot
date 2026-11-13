@@ -44,3 +44,30 @@
 .project-status-recent-inline b { font-size: 14px; }
 .project-status-recent-inline span { color: var(--muted, #6b7280); font-size: 13px; }
 .project-status-inline-link { margin-left: auto; border: 0; background: none; color: var(--accent, #2563eb); cursor: pointer; font-size: 13px; }
+
+/* 失败卡片可点击 + 失败清单/详情弹窗 */
+.project-status-tile-clickable { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; position: relative; }
+.project-status-tile-clickable:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(24,50,82,.12); border-color: #9dc0f5; }
+.project-status-tile-clickable em { position: absolute; right: 10px; top: 10px; font-style: normal; font-size: 11px; color: #1964f7; background: #eaf2ff; border-radius: 20px; padding: 1px 8px; opacity: 0; transition: opacity .15s ease; }
+.project-status-tile-clickable:hover em { opacity: 1; }
+.ps-mask { position: fixed; inset: 0; background: rgba(13,28,48,.45); display: flex; align-items: flex-start; justify-content: center; padding-top: 64px; z-index: 60; }
+.ps-modal { width: 780px; max-height: 76vh; background: #fff; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+.ps-modal.ps-detail { width: 840px; }
+.ps-modal header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid #eef2f8; }
+.ps-modal header h3 { margin: 0; font-size: 16px; }
+.ps-modal header button { border: 0; background: #1964f7; color: #fff; border-radius: 8px; padding: 6px 14px; cursor: pointer; }
+.ps-modal .ps-body { padding: 6px 0; overflow: auto; }
+.ps-modal.ps-detail .ps-body { padding: 16px 18px; }
+.ps-modal footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border-top: 1px solid #eef2f8; font-size: 13px; color: #5b6b82; }
+.ps-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ps-table th { text-align: left; color: #5b6b82; font-weight: 600; background: #f8fafd; padding: 9px 14px; border-bottom: 1px solid #eef2f8; }
+.ps-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5fa; vertical-align: top; }
+.ps-reason { color: #c0392b; }
+.ps-link { border: 0; background: none; color: #1964f7; cursor: pointer; padding: 0; font-size: 13px; }
+.ps-link:disabled { color: #b6c1d1; cursor: default; }
+.ps-tag { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 20px; background: #fdecea; color: #c0392b; }
+.ps-kv { display: grid; grid-template-columns: 84px 1fr; gap: 8px 12px; font-size: 13.5px; margin-bottom: 12px; }
+.ps-kv b { color: #5b6b82; font-weight: 600; }
+.ps-reason-box { background: #fff7f1; border: 1px solid #ffd9bd; color: #8a4b12; border-radius: 10px; padding: 11px 13px; font-size: 13.5px; line-height: 1.7; margin-bottom: 14px; }
+.ps-shot { width: 100%; border-radius: 10px; border: 1px solid #e3e9f2; display: block; }
+.ps-shot-empty { height: 220px; display: flex; align-items: center; justify-content: center; color: #8797ad; background: #f7f9fc; }
