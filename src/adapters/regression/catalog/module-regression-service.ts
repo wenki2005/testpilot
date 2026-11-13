@@ -179,6 +179,20 @@ export class SystemModuleRegression {
             const label = identity.name?.trim() || (identity.phoneTail ? `尾号${identity.phoneTail}` : undefined);
             if (!label) return;
             const fresh = this.getSystem(systemId);
+            // 自动合并到已有账号：同一个人重复扫码时不再新建第二个账号
+            const siblings = [fresh.profileId, ...(fresh.accountProfiles ?? []).map(a => a.id)].filter(id => id !== profileId);
+            const merged = siblings.find(id => this.accountName(fresh, id) === label);
+            if (merged) {
+                if (profileId !== fresh.profileId)
+                    fresh.accountProfiles = (fresh.accountProfiles ?? []).filter(a => a.id !== profileId);
+                if (fresh.accountNames)
+                    delete fresh.accountNames[profileId];
+                fresh.activeAccountId = merged;
+                fresh.updatedAt = now();
+                this.save('system', fresh);
+                delete this.accounts[systemId];
+                return;
+            }
             fresh.accountNames ??= {};
             if (fresh.accountNames[profileId]) return;
             fresh.accountNames[profileId] = label.slice(0, 40);
