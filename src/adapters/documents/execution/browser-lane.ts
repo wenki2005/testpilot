@@ -490,19 +490,21 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 // miss copy that is visibly rendered as a composed row.
                                 if (!await waitForVisibleText(step.text)) {
                                     const current = new URL(page.url());
-                                    const framePaths = page.frames().map(frame => {
-                                        try {
-                                            const frameUrl = new URL(frame.url());
-                                            return `${frameUrl.pathname}${frameUrl.hash}`;
-                                        }
-                                        catch {
-                                            return "unavailable";
-                                        }
-                                    });
+                                    const here = `${current.pathname}${current.hash}`;
+                                    const framePaths = [...new Set(page.frames().map(frame => {
+                                            try {
+                                                const frameUrl = new URL(frame.url());
+                                                return `${frameUrl.pathname}${frameUrl.hash}`;
+                                            }
+                                            catch {
+                                                return "unavailable";
+                                            }
+                                        }))].filter(item => item && item !== here).slice(0, 3);
+                                    const frameNote = framePaths.length ? `；页内其他 iframe=${framePaths.join(",")}` : "";
                                     const rendering = await inspectTextRenderSupport(page);
                                     if (rendering.visualOnly)
-                                        throw new Error(`Blocked: 页面仅有无可访问文本的 canvas 渲染面；需视觉断言验证预期内容。页面=${current.pathname}${current.hash}；frames=${framePaths.join(",")}`);
-                                    throw new Error(`断言失败：期望可见文本未出现在页面或嵌入 frame：${step.text}；页面=${current.pathname}${current.hash}；frames=${framePaths.join(",")}`);
+                                        throw new Error(`Blocked: 页面仅有 canvas 渲染；需视觉断言验证。当前页=${current.pathname}${current.hash}${frameNote}`);
+                                    throw new Error(`断言失败：页面未见文案「${step.text}」；当前页=${current.pathname}${current.hash}${frameNote}`);
                                 }
                             }
                             else if (step.action === "assertNotVisible") {
