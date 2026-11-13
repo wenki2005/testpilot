@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFile, realpath, stat } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import type { BatchView } from '../../../domain/regression/module-catalog-contract.js';
 import type { DifyNotification } from '../../../domain/regression/notification-contract.js';
@@ -17,6 +18,7 @@ type Payload = {
     };
 };
 type Transport = (url: string, payload: Payload) => Promise<'sent' | 'failed' | 'uncertain'>;
+const readRepoWebhook = (root?: string) => { const candidates = [root ? path.join(root, 'wecom-webhook.txt') : '', path.join(process.cwd(), '.secrets', 'wecom-webhook.txt')].filter(Boolean); for (const file of candidates) { try { const value = readFileSync(file, 'utf8').trim(); if (value) return value; } catch { /* try next */ } } return undefined; };
 const timestamp = () => new Date().toISOString();
 const digest = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex');
 export function difyNotificationWebhook(value: string | undefined): string | undefined {
@@ -51,7 +53,7 @@ async function send(url: string, payload: Payload): Promise<'sent' | 'failed' | 
 export class DifyBatchNotifier {
     private queue = Promise.resolve();
     private lastSent = 0;
-    constructor(private root: string, private webhook = () => process.env.TESTPILOT_DIFY_WECOM_WEBHOOK, private transport: Transport = send, private intervalMs = 3100) { }
+    constructor(private root: string, private webhook = () => (process.env.TESTPILOT_DIFY_WECOM_WEBHOOK || '').trim() || readRepoWebhook(root), private transport: Transport = send, private intervalMs = 3100) { }
     configured() { return !!difyNotificationWebhook(this.webhook()); }
     deliver(batch: BatchView, previous: DifyNotification | undefined, save: (record: DifyNotification) => void): Promise<DifyNotification> {
         const result = this.queue.then(() => this.deliverNow(batch, previous, save));
@@ -88,17 +90,11 @@ export class DifyBatchNotifier {
         const record = previous ? structuredClone(previous) : { status: 'disabled' as const, updatedAt: timestamp(), items: [] } as DifyNotification;
         const commit = () => { record.updatedAt = timestamp(); save(structuredClone(record)); };
         const url = difyNotificationWebhook(this.webhook());
-        if (!batch.notifyFailures || !url) {
+        if (!url) {
             if (!record.items.length) {
                 record.status = 'disabled';
                 commit();
             }
-            return record;
-        }
-        const abnormal = batch.jobs.some(j => j.phase !== 'completed' || j.outcome !== 'passed' && j.results.some(r => !r.outOfScope)) || batch.phase === 'interrupted';
-        if (!abnormal) {
-            record.status = 'not-needed';
-            commit();
             return record;
         }
         if (!record.items.length) {
@@ -122,7 +118,16 @@ export class DifyBatchNotifier {
             }
             if (!['pending', 'failed'].includes(item.status))
                 continue;
-            const content = String(cloudSafe(`## TestPilot Dify 回归异常\n系统：${batch.systemName.slice(0, 100)}\n批次：${batch.id}\n通过 ${batch.counts.passed}，失败 ${batch.counts.failed}，阻塞 ${batch.counts.blocked}，未完成 ${batch.counts.error + batch.counts.not_executed}\n异常模块：${batch.jobs.filter(j => j.phase !== 'completed' || j.outcome !== 'passed').map(j => j.moduleName.slice(0, 80)).slice(0, 6).join('、')}\n请在本机 Dify 工作台查看本批次报告。${batch.notifyScreenshots ? '最多附本轮前 3 张失败截图；缺失项在工作台说明。' : '未启用截图外发。'}`));
+            const failed = batch.jobs.flatMap(j => j.results.filter(r => !r.outOfScope && (r.status === 'failed' || r.status === 'error'))).slice(0, 8);
+            const scopeName = ({ core: '核心链路', custom: '自选用例', all: '全部用例', starter: '起步集合' } as Record<string, string>)[String(batch.scope ?? '')] ?? '回归';
+            const content = String(cloudSafe([
+                '## TestPilot 回归完成',
+                `系统：${batch.systemName.slice(0, 100)}`,
+                `范围：${scopeName}`,
+                `结果：通过 ${batch.counts.passed} · 失败 ${batch.counts.failed} · 阻塞 ${batch.counts.blocked} · 未执行 ${batch.counts.not_executed}`,
+                failed.length ? `失败用例：\n${failed.map(r => `- ${r.caseId}｜${String(r.detail ?? '').slice(0, 40)}`).join('\n')}` : '本轮无失败',
+                '详情：http://127.0.0.1:4325/dify/?page=run-reports'
+            ].join('\n')));
             const payload: Payload | undefined = item.type === 'summary' ? { msgtype: 'markdown', markdown: { content } } : await this.image(batch, item.id);
             if (!payload) {
                 item.status = 'skipped';

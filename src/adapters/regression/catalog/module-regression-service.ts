@@ -895,9 +895,6 @@ export class SystemModuleRegression {
     private async notify(batch: RegressionBatch) {
         if (this.closed)
             return;
-        // A user's later disable takes effect even for an older enabled batch.
-        if (!this.getSystem(batch.systemId).notifyFailures)
-            return;
         try {
             await this.notifier.deliver(this.view(batch), batch.notification, record => {
                 if (!this.closed) {
