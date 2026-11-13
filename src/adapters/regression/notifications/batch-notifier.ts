@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFile, realpath, stat } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
+import { networkInterfaces } from 'node:os';
 import path from 'node:path';
 import type { BatchView } from '../../../domain/regression/module-catalog-contract.js';
 import type { DifyNotification } from '../../../domain/regression/notification-contract.js';
@@ -18,6 +19,24 @@ type Payload = {
     };
 };
 type Transport = (url: string, payload: Payload) => Promise<'sent' | 'failed' | 'uncertain'>;
+
+const lanAddress = () => {
+    try {
+        for (const list of Object.values(networkInterfaces()))
+            for (const item of list ?? [])
+                if (item.family === 'IPv4' && !item.internal)
+                    return item.address;
+    }
+    catch { /* ignore */ }
+    return '127.0.0.1';
+};
+const publicBaseUrl = () => (process.env.TESTPILOT_PUBLIC_BASE_URL || `http://${lanAddress()}:4325`).replace(/\/+$/, '');
+const shortReason = (value: unknown) => {
+    let text = String(value ?? '');
+    text = text.replace(/^断言失败[:：]\s*/, '').replace(/^失败[:：]\s*/, '').replace(/^阻塞[:：]\s*/, '');
+    text = text.replace(/[；;]\s*(当前页|页面)=[^；;]*/g, '').replace(/[；;]\s*页内其他 iframe=[^；;]*/g, '').replace(/[；;]\s*frames=[^；;]*/g, '');
+    return text.trim().slice(0, 40);
+};
 const readRepoWebhook = (root?: string) => { const candidates = [root ? path.join(root, 'wecom-webhook.txt') : '', path.join(process.cwd(), '.secrets', 'wecom-webhook.txt')].filter(Boolean); for (const file of candidates) { try { const value = readFileSync(file, 'utf8').trim(); if (value) return value; } catch { /* try next */ } } return undefined; };
 const timestamp = () => new Date().toISOString();
 const digest = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -97,18 +116,19 @@ export class DifyBatchNotifier {
             }
             return record;
         }
+        const failedRows = batch.jobs.flatMap(j => j.results.filter(r => !r.outOfScope && (r.status === 'failed' || r.status === 'error')).map(r => ({ job: j, row: r })));
+        const blockedRows = batch.jobs.flatMap(j => j.results.filter(r => !r.outOfScope && r.status === 'blocked').map(r => ({ job: j, row: r })));
         if (!record.items.length) {
             record.items.push({ id: 'summary', type: 'summary', status: 'pending', attempts: 0 });
-            if (batch.notifyScreenshots)
-                for (const j of batch.jobs)
-                    for (const r of j.results.filter(r => !r.outOfScope && (r.status === 'failed' || r.status === 'error')).slice(0, 3)) {
-                        if (record.items.filter(i => i.type === 'image').length >= 3)
-                            break;
-                        record.items.push({ id: `image:${j.id}:${r.caseId}`, type: 'image', status: r.evidence ? 'pending' : 'skipped', attempts: 0, ...(!r.evidence ? { detail: '本轮没有该项截图；未用其他轮截图替代。' } : {}) });
-                    }
+            failedRows.forEach((item, index) => {
+                const label = `第 ${index + 1} 条 · ${item.row.caseId}（下图）`;
+                record.items.push({ id: `label:${item.job.id}:${item.row.caseId}`, type: 'summary', status: 'pending', attempts: 0, detail: label });
+                record.items.push({ id: `image:${item.job.id}:${item.row.caseId}`, type: 'image', status: item.row.evidence ? 'pending' : 'skipped', attempts: 0, ...(!item.row.evidence ? { detail: '本轮没有该项截图。' } : {}) });
+            });
         }
         record.status = 'sending';
         commit();
+        let sentCount = 0;
         for (const item of record.items) {
             // 'sending' persisted by a crashed process is uncertain, never replay silently.
             if (item.status === 'sending') {
@@ -118,16 +138,19 @@ export class DifyBatchNotifier {
             }
             if (!['pending', 'failed'].includes(item.status))
                 continue;
-            const failed = batch.jobs.flatMap(j => j.results.filter(r => !r.outOfScope && (r.status === 'failed' || r.status === 'error'))).slice(0, 8);
             const scopeName = ({ core: '核心链路', custom: '自选用例', all: '全部用例', starter: '起步集合' } as Record<string, string>)[String(batch.scope ?? '')] ?? '回归';
-            const content = String(cloudSafe([
+            const base = publicBaseUrl();
+            const reportUrl = `${base}/dify/?page=run-reports&report=${encodeURIComponent(batch.id)}&system=${encodeURIComponent(batch.systemId)}`;
+            const mainContent = [
                 '## TestPilot 回归完成',
                 `系统：${batch.systemName.slice(0, 100)}`,
                 `范围：${scopeName}`,
                 `结果：通过 ${batch.counts.passed} · 失败 ${batch.counts.failed} · 阻塞 ${batch.counts.blocked} · 未执行 ${batch.counts.not_executed}`,
-                failed.length ? `失败用例：\n${failed.map(r => `- ${r.caseId}｜${String(r.detail ?? '').slice(0, 40)}`).join('\n')}` : '本轮无失败',
-                '详情：http://127.0.0.1:4325/dify/?page=run-reports'
-            ].join('\n')));
+                failedRows.length ? `失败用例：\n${failedRows.map((item, index) => `${index + 1}. ${item.row.caseId}｜${shortReason(item.row.detail)}${item.row.evidence ? `（见第 ${index + 1} 张图）` : '（无截图）'}`).join('\n')}` : '本轮无失败用例',
+                blockedRows.length ? `阻塞用例：\n${blockedRows.slice(0, 10).map(item => `- ${item.row.caseId}｜${shortReason(item.row.detail)}`).join('\n')}` : '',
+                `详情：${reportUrl}`
+            ].filter(Boolean).join('\n');
+            const content = String(cloudSafe(item.id === 'summary' ? mainContent : String(item.detail ?? '')));
             const payload: Payload | undefined = item.type === 'summary' ? { msgtype: 'markdown', markdown: { content } } : await this.image(batch, item.id);
             if (!payload) {
                 item.status = 'skipped';
@@ -158,7 +181,10 @@ export class DifyBatchNotifier {
                 status = 'uncertain';
             }
             this.lastSent = Date.now();
+            sentCount++;
             item.status = status;
+            if (sentCount > 0 && sentCount % 15 === 0)
+                await new Promise(r => setTimeout(r, 60000));
             if (status === 'failed')
                 item.detail = '接收端明确拒绝；可以重试通知，不会重跑网页。';
             if (status === 'uncertain')

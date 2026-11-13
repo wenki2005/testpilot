@@ -6,7 +6,9 @@ import { writeFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { runtimeRoot, workspacePorts, entryPort } from './lib/integrated-workspaces.mjs';
 
-const host = '127.0.0.1', port = entryPort, origin = `http://${host}:${port}`;
+const bindHost = process.env.TESTPILOT_ENTRY_HOST ?? '127.0.0.1';
+const host = bindHost === '0.0.0.0' ? '127.0.0.1' : bindHost;
+const port = entryPort, origin = `http://${host}:${port}`;
 // 当前只交付部门申样系统：任何未带 /web 前缀的地址都进 dify 工作区。
 const ownerForPage = () => 'dify';
 const prefixFor = owner => owner === 'dify' ? '/dify' : '/web';
@@ -14,7 +16,11 @@ const pathOwner = url => /^\/dify(?:\/|$)/.test(url.pathname) ? 'dify' : /^\/web
 const reply = (res, status, message) => { res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' }); res.end(JSON.stringify(message)); };
 
 const server = createServer((req, res) => {
-  if (req.headers.host !== `127.0.0.1:${port}` && req.headers.host !== `localhost:${port}`) return reply(res, 421, { error: 'Invalid local entry host.' });
+  const requestHost = String(req.headers.host ?? '');
+  const hostName = requestHost.split(':')[0];
+  const hostAllowed = bindHost !== '127.0.0.1' || hostName === '127.0.0.1' || hostName === 'localhost';
+  if (!hostAllowed || !requestHost.endsWith(`:${port}`)) return reply(res, 421, { error: 'Invalid local entry host.' });
+  const requestOrigin = `http://${requestHost}`;
   const url = new URL(req.url, origin);
   if (url.pathname === '/__entry/health' && req.method === 'GET') return reply(res, 200, { service: 'testpilot-unified-entry', port, backends: workspacePorts });
   const explicitOwner = pathOwner(url);
@@ -30,13 +36,13 @@ const server = createServer((req, res) => {
   }
   let refererOwner;
   if (req.headers.referer) {
-    try { const from = new URL(req.headers.referer); if ([origin, `http://localhost:${port}`].includes(from.origin)) refererOwner = pathOwner(from); } catch { /* no trusted page context */ }
+    try { const from = new URL(req.headers.referer); if ([origin, `http://localhost:${port}`, requestOrigin].includes(from.origin)) refererOwner = pathOwner(from); } catch { /* no trusted page context */ }
   }
   const owner = explicitOwner ?? refererOwner;
   // Unknown API/artifact requests must name their workspace explicitly. Never
   // guess a write destination, or leak data from another tab's last selection.
   if (!owner && !url.pathname.startsWith('/assets/') && url.pathname !== '/favicon.ico') return reply(res, 409, { error: 'Open a workspace page or use /dify/api/... or /web/api/....' });
-  if (req.headers.origin && ![origin, `http://localhost:${port}`].includes(req.headers.origin)) return reply(res, 403, { error: 'Cross-origin entry requests are not allowed.' });
+  if (req.headers.origin && ![origin, `http://localhost:${port}`, requestOrigin].includes(req.headers.origin)) return reply(res, 403, { error: 'Cross-origin entry requests are not allowed.' });
   const selected = owner ?? 'web-regression';
   const headers = { ...req.headers, host: `${host}:${workspacePorts[selected]}` };
   // The browser origin was checked above. Present the corresponding local
@@ -52,7 +58,7 @@ const server = createServer((req, res) => {
       upstream.on('end', () => {
         try {
           const config = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-          config.workspaces = { ...config.workspaces, difyUrl: origin + '/dify/', webUrl: origin + '/web/' };
+          config.workspaces = { ...config.workspaces, difyUrl: requestOrigin + '/dify/', webUrl: requestOrigin + '/web/' };
           const body = JSON.stringify(config);
           delete forwarded['transfer-encoding'];
           forwarded['content-length'] = Buffer.byteLength(body);
@@ -75,7 +81,7 @@ const server = createServer((req, res) => {
   res.on('close', () => { if (!res.writableEnded) proxy.destroy(); });
   req.pipe(proxy);
 });
-server.listen(port, host, () => {
+server.listen(port, bindHost, () => {
   mkdirSync(runtimeRoot, { recursive: true });
   writeFileSync(path.join(runtimeRoot, 'entry-process.json'), JSON.stringify({ pid: process.pid, port, service: 'testpilot-unified-entry', code: process.argv[1], startedAt: new Date().toISOString() }, null, 2));
   console.log('Unified entry: ' + origin);
