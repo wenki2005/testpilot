@@ -173,20 +173,30 @@ export class SystemModuleRegression {
         if (!this.deps.loginIdentity) return;
         try {
             const system = this.getSystem(systemId);
-            if (system.accountNames?.[profileId]) return;
+            if (system.accountNames?.[profileId] && system.accountIdentities?.[profileId]) return;
             const identity = await this.deps.loginIdentity({ id: profileId, name: system.name, targetUrl: system.targetUrl, browserProfileIsolation: true } as DocumentProject);
             if (!identity || this.closed) return;
-            const label = identity.name?.trim() || (identity.phoneTail ? `尾号${identity.phoneTail}` : undefined);
+            const name = identity.name?.trim();
+            const label = name || (identity.phoneTail ? `尾号${identity.phoneTail}` : undefined);
             if (!label) return;
             const fresh = this.getSystem(systemId);
-            // 自动合并到已有账号：同一个人重复扫码时不再新建第二个账号
+            fresh.accountIdentities ??= {};
+            fresh.accountIdentities[profileId] = { name: label, ...(identity.dept ? { dept: identity.dept } : {}), ...(identity.userName ? { userName: identity.userName } : {}) };
+            const samePerson = (id: string) => {
+                const other = fresh.accountIdentities?.[id];
+                if (!other) return false;
+                if (identity.userName && other.userName) return other.userName === identity.userName;
+                return other.name === label && (other.dept ?? '') === (identity.dept ?? '');
+            };
             const siblings = [fresh.profileId, ...(fresh.accountProfiles ?? []).map(a => a.id)].filter(id => id !== profileId);
-            const merged = siblings.find(id => this.accountName(fresh, id) === label);
+            const merged = siblings.find(samePerson);
             if (merged) {
                 if (profileId !== fresh.profileId)
                     fresh.accountProfiles = (fresh.accountProfiles ?? []).filter(a => a.id !== profileId);
                 if (fresh.accountNames)
                     delete fresh.accountNames[profileId];
+                if (fresh.accountIdentities)
+                    delete fresh.accountIdentities[profileId];
                 fresh.activeAccountId = merged;
                 fresh.updatedAt = now();
                 this.save('system', fresh);
@@ -194,8 +204,9 @@ export class SystemModuleRegression {
                 return;
             }
             fresh.accountNames ??= {};
-            if (fresh.accountNames[profileId]) return;
-            fresh.accountNames[profileId] = label.slice(0, 40);
+            const nameTaken = siblings.some(id => this.accountName(fresh, id) === label);
+            const deptLeaf = identity.dept ? identity.dept.split('/').pop() : '';
+            fresh.accountNames[profileId] = (nameTaken && deptLeaf ? `${label}（${deptLeaf}）` : label).slice(0, 40);
             fresh.updatedAt = now();
             this.save('system', fresh);
         }
