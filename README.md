@@ -49,6 +49,14 @@
 
 装完请**新开一个终端**（PATH 才会刷新）再继续。仅在直连 GitHub 失败时才配 git/npm 代理，撤销命令和更多细节见[使用指南](使用指南.md)的第〇节。
 
+非 Windows 机器（macOS/Linux，或没有 Edge 的电脑）没有 Edge 兜底，`npm ci` 之后还要装一次 Playwright 自带的浏览器（直连不稳时同样走上面的本地代理）：
+
+```bash
+npx playwright install chromium
+```
+
+缺它时点“连接我的账号”只会显示“连接未完成”、不会打开浏览器窗口；失败原因在 设置 → 测试账号 里能看到（例如 `Executable doesn't exist at ...ms-playwright/chromium-1248/...`）。
+
 ## 运行说明
 
 ### 当前开发环境
