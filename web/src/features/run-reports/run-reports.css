@@ -6,3 +6,16 @@
 .run-reports .rp-badge.rp-zero{background:transparent;color:#7a879a;font-weight:400}.run-reports .rp-step-proof{min-width:0}.run-reports .rp-step-proof summary{cursor:pointer;line-height:1.8}.run-reports .rp-step-proof summary:focus-visible{outline:2px solid #3a83f7;outline-offset:3px}.run-reports .rp-proof-body{padding:12px 14px;margin:10px 0 4px;background:#fff;border:1px solid #dfe7f2;border-radius:4px;font-size:13.5px}.run-reports .rp-proof-body strong{font-size:13.5px;font-weight:600;display:block;margin-top:8px}.run-reports .rp-proof-body strong:first-child{margin-top:0}.run-reports .rp-proof-body p{white-space:pre-wrap;line-height:1.9;color:#405e82;margin:6px 0 10px}.run-reports .rp-proof-body button{margin-top:5px}
 
 .run-reports .rp-error{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px;padding:12px 15px;border:1px solid #edc8bf;border-radius:4px;background:#fff4f1;color:#a43f27;overflow-wrap:anywhere}.run-reports .rp-loading{padding:25px 0;color:#61738d}.run-reports .rp-edit-error{margin-top:12px;color:#a43f27;overflow-wrap:anywhere}.run-reports .rp-table:has(th:nth-child(8)):is(.rp-detail-table){table-layout:auto}.run-reports .rp-run-info dd{white-space:pre-wrap}.run-reports .rp-no-steps{padding:16px 0}.run-reports .rp-proof-body a{display:inline-flex;padding:3px 11px;min-height:28px;border:1px solid #3a83f7;background:#3a83f7;color:#fff;border-radius:4px;font-size:14px;line-height:20px;text-decoration:none}.run-reports .rp-proof-body a:hover{background:#2673e8}.run-reports .rp-dialog{--rp-blue:#3a83f7}.run-reports .rp-detail-table th:last-child{width:100px}.run-reports .rp-detail-table .rp-detail-tag{display:inline-block;max-width:100%;overflow-wrap:anywhere}
+
+.rp-fail-panel { margin: 18px 0 22px; }
+.rp-fail-panel h2 { font-size: 16px; margin: 0 0 10px; }
+.rp-fail-list { display: grid; gap: 12px; }
+.rp-fail-item { border: 1px solid #e3eaf4; border-radius: 8px; padding: 12px 14px; background: #fff; }
+.rp-fail-item header { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.rp-fail-badge { font-size: 12px; padding: 1px 8px; border-radius: 10px; }
+.rp-fail-badge.failed, .rp-fail-badge.error { background: #fdeaea; color: #b3261e; }
+.rp-fail-badge.blocked { background: #fdf3e0; color: #9a6200; }
+.rp-fail-group { color: #8494ab; font-size: 12px; }
+.rp-fail-item p { margin: 6px 0 8px; font-size: 13.5px; color: #31405a; }
+.rp-fail-shot img { max-width: 420px; border: 1px solid #dde5f0; border-radius: 6px; display: block; }
+.rp-fail-noimg { font-size: 12px; color: #8494ab; }

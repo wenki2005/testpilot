@@ -120,11 +120,7 @@ export class DifyBatchNotifier {
         const blockedRows = batch.jobs.flatMap(j => j.results.filter(r => !r.outOfScope && r.status === 'blocked').map(r => ({ job: j, row: r })));
         if (!record.items.length) {
             record.items.push({ id: 'summary', type: 'summary', status: 'pending', attempts: 0 });
-            failedRows.forEach((item, index) => {
-                const label = `第 ${index + 1} 条 · ${item.row.caseId}（下图）`;
-                record.items.push({ id: `label:${item.job.id}:${item.row.caseId}`, type: 'summary', status: 'pending', attempts: 0, detail: label });
-                record.items.push({ id: `image:${item.job.id}:${item.row.caseId}`, type: 'image', status: item.row.evidence ? 'pending' : 'skipped', attempts: 0, ...(!item.row.evidence ? { detail: '本轮没有该项截图。' } : {}) });
-            });
+            // 只发一条汇总消息；失败清单与截图在报告页查看。
         }
         record.status = 'sending';
         commit();
@@ -140,7 +136,7 @@ export class DifyBatchNotifier {
                 continue;
             const scopeName = ({ core: '核心链路', custom: '自选用例', all: '全部用例', starter: '起步集合' } as Record<string, string>)[String(batch.scope ?? '')] ?? '回归';
             const base = publicBaseUrl();
-            const reportUrl = `${base}/dify/?page=run-reports&report=${encodeURIComponent(batch.id)}&system=${encodeURIComponent(batch.systemId)}`;
+            const reportUrl = `${base}/dify/?page=run-reports&report=${encodeURIComponent('batch:' + batch.id)}&system=${encodeURIComponent(batch.systemId)}`;
             const mainContent = [
                 '## TestPilot 回归完成',
                 `系统：${batch.systemName.slice(0, 100)}`,
