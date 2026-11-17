@@ -44,6 +44,13 @@ const shortReason = (value: unknown) => {
     return text.trim().slice(0, 40);
 };
 const readRepoWebhook = (root?: string) => { const candidates = [root ? path.join(root, 'wecom-webhook.txt') : '', path.join(process.cwd(), '.secrets', 'wecom-webhook.txt')].filter(Boolean); for (const file of candidates) { try { const value = readFileSync(file, 'utf8').trim(); if (value) return value; } catch { /* try next */ } } return undefined; };
+const displayCaseId = (id: string) => {
+    const staged = /^xmind-(\d+)-(\d+)$/i.exec(id);
+    if (staged) return `${Number(staged[1]!)}-${staged[2]!.padStart(3, '0')}`;
+    const legacy = /^xmind-(\d+)$/i.exec(id);
+    if (legacy) return legacy[1]!.padStart(3, '0');
+    return String(id);
+};
 const timestamp = () => new Date().toISOString();
 const digest = (v: unknown) => createHash('sha256').update(JSON.stringify(v)).digest('hex');
 export function difyNotificationWebhook(value: string | undefined): string | undefined {
@@ -126,7 +133,7 @@ export class DifyBatchNotifier {
         ];
         for (const job of batch.jobs)
             for (const result of job.results ?? [])
-                rows.push([job.moduleName, result.caseId, result.title, label[result.status] ?? result.status, String(result.detail ?? '').slice(0, 300), result.evidence ? '有' : '无']);
+                rows.push([job.moduleName, displayCaseId(result.caseId), result.title, label[result.status] ?? result.status, String(result.detail ?? '').slice(0, 300), result.evidence ? '有' : '无']);
         const stamp = new Date(batch.createdAt);
         const pad = (n: number) => String(n).padStart(2, '0');
         const safe = batch.systemName.replace(/[\\/:*?"<>|]/g, '').slice(0, 40);
@@ -191,8 +198,8 @@ export class DifyBatchNotifier {
                 `账号：${batch.accountName ?? '未记录'}`,
                 `结果：通过 ${batch.counts.passed} · 失败 ${batch.counts.failed} · 阻塞 ${batch.counts.blocked} · 未执行 ${batch.counts.not_executed}`,
                 `耗时：${duration}`,
-                `失败用例：${failedRows.length ? failedRows.slice(0, 10).map(item => item.row.caseId).join('、') : '无'}`,
-                `阻塞用例：${blockedRows.length ? blockedRows.slice(0, 10).map(item => item.row.caseId).join('、') : '无'}`,
+                `失败用例：${failedRows.length ? failedRows.slice(0, 10).map(item => displayCaseId(item.row.caseId)).join('、') : '无'}`,
+                `阻塞用例：${blockedRows.length ? blockedRows.slice(0, 10).map(item => displayCaseId(item.row.caseId)).join('、') : '无'}`,
                 `报告：${file.name}（见附件）`,
                 '截图：本机报告目录查看，群里不发图',
             ].join('\n')));
