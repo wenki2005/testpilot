@@ -1,0 +1,94 @@
+{
+  "generatedAt": "2026-11-17T13:24:32.757Z",
+  "modules": [
+    {
+      "moduleId": "fed0a215-2807-41e4-b150-16a9ffc22e41",
+      "name": "AI结构化验证（临时）",
+      "versionId": "c4365779-ffb4-4e66-8f1d-8ae1596a36ae",
+      "caseCount": 3,
+      "keywords": [
+        "AI结构化验证（临时）"
+      ]
+    },
+    {
+      "moduleId": "d293ef3e-482d-4048-aa90-94260ef47596",
+      "name": "数据与审计",
+      "versionId": "bcdc9665-9e91-4ddb-82ac-f5cccf5f1afe",
+      "caseCount": 2,
+      "keywords": [
+        "数据",
+        "审计"
+      ]
+    },
+    {
+      "moduleId": "a1288838-bcb7-43a2-b79c-179e54132ebb",
+      "name": "PC/H5 横向适配",
+      "versionId": "c1690e57-a246-4534-83c9-b6188294d34f",
+      "caseCount": 1,
+      "keywords": [
+        "PC/H5",
+        "横向适配"
+      ]
+    },
+    {
+      "moduleId": "b7de8f06-4e4d-4a62-a48d-881566a6f933",
+      "name": "订单与物流",
+      "versionId": "60f52439-b067-4b54-b7d8-7e730f5a1e7e",
+      "caseCount": 13,
+      "keywords": [
+        "订单",
+        "物流"
+      ]
+    },
+    {
+      "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+      "name": "申请记录与审批详情",
+      "versionId": "07588f11-eea0-4c55-96f6-ffb33b96fffb",
+      "caseCount": 44,
+      "keywords": [
+        "申请记录",
+        "审批详情"
+      ]
+    },
+    {
+      "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
+      "name": "申样申请与经销商数据",
+      "versionId": "82e2665b-b2b4-4f02-a522-a27a8f619f44",
+      "caseCount": 46,
+      "keywords": [
+        "申样申请",
+        "经销商数据"
+      ]
+    },
+    {
+      "moduleId": "2d6950a6-996d-4096-b820-22a0cd1a7d02",
+      "name": "登录入口与公共基础",
+      "versionId": "ca7f1888-7ec3-4e03-b962-b8948ab8c4ce",
+      "caseCount": 3,
+      "keywords": [
+        "登录入口",
+        "公共基础"
+      ]
+    },
+    {
+      "moduleId": "f7c3d761-5de6-465d-b0ac-e2887315a9c2",
+      "name": "表单与只读交互",
+      "versionId": "c9cd90c9-e797-47ab-8527-7b4ede6208d4",
+      "caseCount": 3,
+      "keywords": [
+        "表单",
+        "只读交互"
+      ]
+    },
+    {
+      "moduleId": "137a1c8b-e02f-4259-8a0b-b17ab876c1ac",
+      "name": "页面与故障检出",
+      "versionId": "a6d3f7c8-1793-4073-9034-f6bf59ddfab5",
+      "caseCount": 2,
+      "keywords": [
+        "页面",
+        "故障检出"
+      ]
+    }
+  ]
+}

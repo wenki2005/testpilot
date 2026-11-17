@@ -1,6 +1,7 @@
 # TestPilot 回归测试协作规则
 
 > 做用例相关工作（新增、修改、补脚本）前，先读 [`docs/agent/README.md`](docs/agent/README.md)；需求原文在 [`docs/requirements/`](docs/requirements/)。
+> 归类与步骤规范见 [`docs/agent/case-authoring.md`](docs/agent/case-authoring.md)，交付前运行 `npm run cases:validate`。
 
 ## 集成后的模块边界（2026-11-03）
 
