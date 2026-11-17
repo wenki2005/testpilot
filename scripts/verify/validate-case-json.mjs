@@ -7,6 +7,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const schemaPath = join(root, 'docs/agent/step-schema.json');
@@ -30,9 +31,15 @@ const walk = (target) => {
 for (const target of process.argv.slice(2))
   walk(target);
 const problems = [];
+const seenCaseIds = new Map();
 const check = (file) => {
   const errors = [];
   const doc = readJson(file);
+  const key = String(doc.caseId ?? '');
+  if (key) {
+    if (seenCaseIds.has(key)) errors.push(`caseId 重复：${key}（另见 ${seenCaseIds.get(key)}）`);
+    else seenCaseIds.set(key, basename(file));
+  }
   for (const key of ['caseId', 'title', 'expected', 'moduleId', 'executionRoute', 'steps']) {
     if (doc[key] === undefined || doc[key] === '') errors.push(`缺少字段 ${key}`);
   }
@@ -54,6 +61,21 @@ const check = (file) => {
   return errors;
 };
 
+if (modules.digest) {
+  const expected = createHash('sha256').update(JSON.stringify((modules.modules ?? []).map(item => ({ moduleId: item.moduleId, name: item.name, versionId: item.versionId })).sort((a, b) => a.moduleId.localeCompare(b.moduleId)))).digest('hex');
+  if (expected !== modules.digest) problems.push('modules.json 内容与 digest 不一致（被手改），请运行 npm run cases:context 重新导出');
+}
+const catalogUrl = process.env.TESTPILOT_CATALOG_URL ?? 'http://127.0.0.1:4325/dify/api/system-module-regression';
+if (modules.digest) {
+  try {
+    const live = await (await fetch(catalogUrl, { signal: AbortSignal.timeout(3000) })).json();
+    const liveModules = (live.modules ?? []).filter(item => !item.archived).map(item => ({ moduleId: item.id, name: item.name, versionId: item.versions?.at(-1)?.id })).sort((a, b) => a.moduleId.localeCompare(b.moduleId));
+    const digest = createHash('sha256').update(JSON.stringify(liveModules)).digest('hex');
+    if (digest !== modules.digest) problems.push('modules.json 已过期：请先运行 npm run cases:context');
+  } catch {
+    console.log('提示：无法连接工作台，跳过 modules.json 过期检查');
+  }
+}
 if (!files.length) { console.error('没有找到 JSON 文件'); process.exit(2); }
 let failed = 0;
 for (const file of files) {
@@ -61,5 +83,6 @@ for (const file of files) {
   if (errors.length) { failed++; console.log(`FAIL ${basename(file)}`); for (const error of errors) console.log('  - ' + error); }
   else console.log(`PASS ${basename(file)}`);
 }
+for (const problem of problems) { failed++; console.log(`FAIL ${problem}`); }
 console.log(`\n${files.length - failed}/${files.length} 通过`);
 process.exit(failed ? 1 : 0);

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** 从运行中的工作台导出模块清单，供外部 Agent 归类使用。 */
 import { writeFileSync, mkdirSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -15,5 +16,6 @@ for (const module of state.modules ?? []) {
   modules.push({ moduleId: module.id, name: module.name, versionId: version?.id, caseCount: version?.caseCount, keywords });
 }
 mkdirSync(join(root, 'docs/agent'), { recursive: true });
-writeFileSync(join(root, 'docs/agent/modules.json'), JSON.stringify({ generatedAt: new Date().toISOString(), modules }, null, 2) + '\n', 'utf8');
+const digest = createHash('sha256').update(JSON.stringify(modules.map(item => ({ moduleId: item.moduleId, name: item.name, versionId: item.versionId })).sort((a, b) => a.moduleId.localeCompare(b.moduleId)))).digest('hex');
+writeFileSync(join(root, 'docs/agent/modules.json'), JSON.stringify({ generatedAt: new Date().toISOString(), moduleCount: modules.length, digest, modules }, null, 2) + '\n', 'utf8');
 console.log(`已导出 ${modules.length} 个模块到 docs/agent/modules.json`);
