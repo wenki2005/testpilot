@@ -295,8 +295,8 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                             else if (step.action === "openLatestRecord") {
                                 const target = new URL(url);
                                 target.hash = step.list === "order" ? "#/logistics" : "#/apply";
-                                await page.goto(target.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
-                                await page.waitForFunction(() => (document.body.innerText || "").trim().length > 40, undefined, { timeout: 20000 }).catch(() => undefined);
+                                await page.goto(target.toString(), { waitUntil: "domcontentloaded", timeout: 15000 });
+                                await page.waitForFunction(() => (document.body.innerText || "").trim().length > 40, undefined, { timeout: 8000 }).catch(() => undefined);
                                 await page.waitForTimeout(600);
                                 if (step.status) {
                                     const chip = page.getByText(step.status, { exact: true }).first();
@@ -306,9 +306,9 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 }
                                 const cardSelector = step.list === "order" ? ".logistics-content-item, .order-content-item, .apply-content-item" : ".apply-content-item";
                                 const card = page.locator(cardSelector).first();
-                                await card.waitFor({ state: "visible", timeout: 15000 });
+                                await card.waitFor({ state: "visible", timeout: 8000 });
                                 await card.click();
-                                const navDeadline = Date.now() + 15000;
+                                const navDeadline = Date.now() + 8000;
                                 while (Date.now() < navDeadline && !/-(detail)\//.test(page.url()))
                                     await page.waitForTimeout(400);
                                 if (!/-(detail)\//.test(page.url()))
@@ -365,7 +365,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 const base = new URL(url);
                                 base.hash = step.hash;
                                 await page.goto(base.toString(), { waitUntil: "domcontentloaded", timeout: 30000 });
-                                await page.waitForFunction(() => (document.body.innerText || "").trim().length > 40, undefined, { timeout: 20000 }).catch(() => undefined);
+                                await page.waitForFunction(() => (document.body.innerText || "").trim().length > 40, undefined, { timeout: 8000 }).catch(() => undefined);
                                 await page.waitForTimeout(600);
                             }
                             else if (step.action === "fillByRoleIndex") {
