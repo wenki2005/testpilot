@@ -1,15 +1,6 @@
 {
-  "generatedAt": "2026-11-17T13:24:32.757Z",
+  "generatedAt": "2026-11-17T13:34:59.342Z",
   "modules": [
-    {
-      "moduleId": "fed0a215-2807-41e4-b150-16a9ffc22e41",
-      "name": "AI结构化验证（临时）",
-      "versionId": "c4365779-ffb4-4e66-8f1d-8ae1596a36ae",
-      "caseCount": 3,
-      "keywords": [
-        "AI结构化验证（临时）"
-      ]
-    },
     {
       "moduleId": "d293ef3e-482d-4048-aa90-94260ef47596",
       "name": "数据与审计",
