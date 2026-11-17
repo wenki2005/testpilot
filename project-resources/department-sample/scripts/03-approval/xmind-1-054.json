@@ -11,8 +11,9 @@
       "text": "历史申请记录"
     },
     {
-      "action": "clickExactText",
-      "text": "开心25春小学生同步作文3年级下册XH等2本样书"
+      "action": "openLatestRecord",
+      "list": "apply",
+      "status": "已通过"
     },
     {
       "action": "assertVisible",
