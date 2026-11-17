@@ -76,12 +76,14 @@ function independentRecordScope(job: WebModuleJob): boolean { const checks = job
 function jobOutcome(job: WebModuleJob): Outcome { const outcome = moduleOutcome(job.results); return job.databaseEvidence?.status === 'failed' ? 'failed' : job.databaseEvidence?.status === 'blocked' && outcome === 'passed' && !independentRecordScope(job) ? 'blocked' : outcome; }
 function executionDigest(job: WebModuleJob) { return moduleDigest(job.databaseBinding ? { execution: job.executionProject, databaseBinding: job.databaseBinding, databaseEvidenceDigest: job.databaseEvidenceDigest } : job.executionProject); }
 type Phase = 'queued' | 'preflight' | 'awaiting-login' | 'preparing' | 'dispatching' | 'executing' | 'reporting' | 'completed' | 'blocked' | 'error' | 'cancelled' | 'interrupted';
+export type ApprovalWait = { caseIds: string[]; pollMs: number; timeoutMs: number };
 export type WebModuleJob = {
     id: string;
     moduleId: string;
     moduleName: string;
     moduleDigest: string;
     requestId: string;
+    approvalWait?: ApprovalWait;
     parentJobId?: string | undefined;
     createdAt: string;
     updatedAt: string;
@@ -368,7 +370,7 @@ export class DifyWebModuleStore {
         moduleName?: string;
         databaseBinding?: RegressionDatabaseBinding;
     }) {
-        const data = z.object({ moduleId: id, requestId: id, selectedCaseIds: z.array(z.string()).min(1).max(200).optional(), confirmedCaseIds: z.array(z.string()).max(200).default([]), parentJobId: id.optional(), runMode: z.enum(['fixed', 'assist']).optional() }).parse(input);
+        const data = z.object({ moduleId: id, requestId: id, selectedCaseIds: z.array(z.string()).min(1).max(200).optional(), confirmedCaseIds: z.array(z.string()).max(200).default([]), parentJobId: id.optional(), runMode: z.enum(['fixed', 'assist']).optional(), approvalWait: z.object({ caseIds: z.array(z.string()).max(50).optional(), pollMs: z.number().int().min(10).max(300000).default(30000), timeoutMs: z.number().int().min(100).max(1800000).default(300000) }).optional() }).parse(input);
         if (data.parentJobId && !context) {
             const parent = this.getJob(data.parentJobId);
             if (parent.snapshot.browserProfileIsolation)
@@ -426,6 +428,7 @@ export class DifyWebModuleStore {
             this.db.exec('ROLLBACK');
             throw e;
         }
+        job.approvalWait = { caseIds: data.approvalWait?.caseIds ?? [], pollMs: data.approvalWait?.pollMs ?? 30000, timeoutMs: data.approvalWait?.timeoutMs ?? 300000 };
         this.launch(job);
         return job;
     }
@@ -522,6 +525,72 @@ export class DifyWebModuleStore {
         job.executionFinished = true;
         job.outcome = jobOutcome(job);
         this.save('job', job);
+    }
+    private looksLikeApproval(row: { expected: string; detail: string }) {
+        // Only cases that need an approval transition wait; status-display or filter
+        // cases must not stall for five minutes when they fail for other reasons.
+        return /等待审批|审批通过|审核通过|审批完成|审核完成|审批结果|审核结果|审批进度|审核进度|审批驳回|审核驳回|驳回理由|审批后|审核后|待上级审批|上级审批|审批同意|审核同意/.test(row.expected)
+            || (/待审批|待审核|审批中/.test(row.detail) && /已通过|已审批|已处理|审批通过|审核通过/.test(row.expected));
+    }
+    private approvalTargets(job: WebModuleJob, execution: DocumentProject) {
+        const cfg = job.approvalWait;
+        if (!cfg)
+            return [];
+        return job.results.filter(row => (cfg.caseIds.includes(row.caseId) || this.looksLikeApproval(row)) && row.status !== 'passed' && !row.outOfScope && execution.cases.some(c => c.id === row.caseId && c.lifecycleStatus === 'runnable' && c.selectedForRegression));
+    }
+    private async awaitApproval(job: WebModuleJob, execution: DocumentProject, signal: AbortSignal) {
+        const cfg = job.approvalWait;
+        if (!cfg)
+            return;
+        const targets = this.approvalTargets(job, execution);
+        if (!targets.length)
+            return;
+        const attempts = Math.max(1, Math.floor(cfg.timeoutMs / cfg.pollMs));
+        this.event(job, 'executing', `审批等待：每 ${Math.round(cfg.pollMs / 1000)} 秒轮询一次，最多 ${attempts} 次（约 ${Math.round(cfg.timeoutMs / 60000)} 分钟）；超时未处理按失败计。`);
+        for (const row of targets) {
+            const started = Date.now();
+            let observed = row.detail;
+            for (let attempt = 1; attempt <= attempts; attempt++) {
+                signal.throwIfAborted();
+                await delay(cfg.pollMs, undefined, { signal });
+                let actual: { status: string; detail: string; evidence?: string; evidenceNote?: string } | undefined;
+                try {
+                    const run = await this.deps.execute(execution, randomUUID(), [row.caseId]);
+                    actual = run.deterministic.results.find(c => c.id === row.caseId);
+                }
+                catch (error) {
+                    observed = `第 ${attempt} 次轮询未取得页面结果：${error instanceof Error ? error.message.slice(0, 200) : '未知错误'}`;
+                    this.event(job, 'executing', `审批轮询 ${attempt}/${attempts} 未取得结果，继续等待。`);
+                    continue;
+                }
+                if (actual) {
+                    observed = actual.detail ?? observed;
+                    if (actual.evidence)
+                        row.evidence = actual.evidence;
+                    row.evidenceOrigin = 'document-run';
+                    if (actual.evidenceNote)
+                        row.evidenceNote = actual.evidenceNote;
+                    if (actual.status === 'passed') {
+                        row.status = 'passed';
+                        row.detail = `审批在 ${Math.round((Date.now() - started) / 1000)} 秒内完成（第 ${attempt} 次轮询）。${actual.detail ?? ''}`;
+                        delete row.blockerCode;
+                        delete row.nextAction;
+                        this.save('job', job);
+                        break;
+                    }
+                    row.status = actual.status === 'failed' ? 'failed' : actual.status === 'blocked' ? 'blocked' : 'not_executed';
+                    row.detail = actual.detail;
+                }
+                this.event(job, 'executing', `审批未完成：第 ${attempt}/${attempts} 次检查，继续等待。`);
+            }
+            if (row.status !== 'passed') {
+                row.status = 'failed';
+                row.blockerCode = 'approval-timeout';
+                row.nextAction = '由运营/他人在被测系统完成审批后重测；本轮超过等待上限按失败计。';
+                row.detail = `审批等待超时：每 ${Math.round(cfg.pollMs / 1000)} 秒检查一次，共 ${attempts} 次（约 ${Math.round(cfg.timeoutMs / 60000)} 分钟）仍未完成；按约定标记失败，未计通过。最后一次观察：${observed ?? '无'}`;
+            }
+            this.save('job', job);
+        }
     }
     private async report(job: WebModuleJob, signal: AbortSignal) {
         if (job.runMode === 'fixed') {
@@ -820,6 +889,7 @@ export class DifyWebModuleStore {
                 job.executionFinished = true;
                 this.save('job', job);
             }
+            await this.awaitApproval(job, execution, signal);
             for (const row of job.results) {
                 if (row.status !== 'blocked' || row.outOfScope)
                     continue;

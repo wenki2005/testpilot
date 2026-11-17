@@ -190,3 +190,6 @@
     background: #f2f6fc !important;
     border-color: #9fb6d6 !important;
 }
+.case-script-editor .pane-actions{display:flex;align-items:center;gap:8px}
+.case-script-editor .pane-actions .pane-save{padding:4px 12px;min-height:28px;font-size:12px}
+.case-script-editor .editor-footer{position:sticky;bottom:0;z-index:6;background:#fff;border-top:1px solid #e5eaf3;margin-top:10px;padding:12px 0 4px}

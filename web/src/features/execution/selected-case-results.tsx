@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import type { FixedModule } from '../../../../src/domain/regression/module-catalog-contract';
 import { latestModuleSummary, type LatestModuleResults } from './latest-case-results';
+import CaseEvidenceDialog from '../shared/case-evidence-dialog';
 type Scope = 'starter' | 'all' | 'custom';
 type Counts = ReturnType<typeof latestModuleSummary>['counts'];
 type CasePack = {
@@ -35,6 +36,7 @@ export default function SelectionResults({ modules, scope, caseSelections, lates
 }) {
     const [expanded, setExpanded] = useState('');
     const [detailId, setDetailId] = useState('');
+    const [shotIndex, setShotIndex] = useState(-1);
     const [filter, setFilter] = useState('all');
     const [pack, setPack] = useState<{
         key: string;
@@ -56,7 +58,7 @@ export default function SelectionResults({ modules, scope, caseSelections, lates
     const opened = rows.find(row => row.module.id === expanded);
     const packKey = opened ? `${opened.module.id}:${opened.version.id}` : '';
     const selectionKey = JSON.stringify(rows.map(row => [row.module.id, row.version.id, row.ids]));
-    useEffect(() => { setDetailId(''); setFilter('all'); }, [selectionKey]);
+    useEffect(() => { setDetailId(''); setFilter('all'); setShotIndex(-1); }, [selectionKey]);
     useEffect(() => {
         if (!packKey || !opened)
             return;
@@ -89,6 +91,17 @@ export default function SelectionResults({ modules, scope, caseSelections, lates
             return { item, source, status: source?.result.outOfScope ? 'outside' as const : source?.result.status ?? 'not_executed' as const };
         });
     }, [pack, packKey, latestResults, selectionKey]);
+    const shotCases = useMemo(() => cases
+        .filter(row => (filter === 'all' || row.status === filter) && row.source?.result.evidence)
+        .map(({ item, source, status }) => ({
+            id: item.id,
+            title: item.title,
+            status,
+            moduleName: opened?.module.name ?? '',
+            at: source?.startedAt ?? 0,
+            detail: source?.result.detail ?? '',
+            evidenceUrl: `${apiBase}/dify-web-modules/jobs/${source!.jobId}/evidence/${source!.result.evidence}`,
+        })), [cases, filter, opened]);
     return <section className="sm-results" aria-label="当前所选模块运行结果">
     <div className="sm-heading"><div><h2>运行结果</h2><p className="sm-batch-range">当前勾选 {modules.length} 个模块 · {({ starter: '日常用例', all: '全部用例', custom: '自选用例' })[scope]} {selectedCount} 条 · 尚未执行</p></div><div className="sm-actions">{modules.length > 0 && <CountsView counts={counts}/>}<button disabled={downloadDisabled} onClick={onDownload}>下载固定脚本</button></div></div>
     <div className="sm-table"><table><thead><tr><th>模块</th><th>版本</th><th>用例</th><th>结果</th><th>操作</th></tr></thead><tbody>
@@ -99,9 +112,10 @@ export default function SelectionResults({ modules, scope, caseSelections, lates
       {error ? <p role="alert">{error}</p> : pack?.key !== packKey ? <p role="status">正在加载用例…</p> : <div className="sm-table"><table><thead><tr><th>用例</th><th>运行结果</th><th>操作</th></tr></thead><tbody>{cases.filter(row => filter === 'all' || row.status === filter).map(({ item, source, status }) => {
                     const evidence = source?.result.evidence ? `${apiBase}/dify-web-modules/jobs/${source.jobId}/evidence/${source.result.evidence}` : undefined;
                     return <Fragment key={item.id}><tr><td><span className="sm-priority">{item.priority ?? '—'}</span>{item.title}</td><td><span className={`sm-badge sm-${status}`}>{names[status]}</span></td><td><button className="sm-link" aria-expanded={detailId === item.id} onClick={() => setDetailId(detailId === item.id ? '' : item.id)}>{detailId === item.id ? '收起详情' : '查看详情'}</button></td></tr>
-          {detailId === item.id && <tr className="sm-detail-row"><td colSpan={3}><div className="sm-evidence"><h3>{item.title}</h3><h4>原始预期</h4><p>{item.expected}</p><h4>实际结果</h4><p>{source?.result.detail ?? '当前账号、环境和模块版本下尚无执行结果。'}</p>{source?.result.nextAction && <p>{source.result.nextAction}</p>}{source && <><p>执行时间：{new Date(source.startedAt).toLocaleString('zh-CN', { hour12: false })}</p><button className="sm-link" onClick={() => onSource(source.batchId, source.jobId)}>查看来源批次</button></>}{evidence && <p><a href={evidence} target="_blank" rel="noreferrer">查看执行截图</a></p>}</div></td></tr>}
+          {detailId === item.id && <tr className="sm-detail-row"><td colSpan={3}><div className="sm-evidence"><h3>{item.title}</h3><h4>原始预期</h4><p>{item.expected}</p><h4>实际结果</h4><p>{source?.result.detail ?? '当前账号、环境和模块版本下尚无执行结果。'}</p>{source?.result.nextAction && <p>{source.result.nextAction}</p>}{source && <><p>执行时间：{new Date(source.startedAt).toLocaleString('zh-CN', { hour12: false })}</p><button className="sm-link" onClick={() => onSource(source.batchId, source.jobId)}>查看来源批次</button></>}{evidence && <p><button type="button" className="sm-link" onClick={() => setShotIndex(shotCases.findIndex(c => c.id === item.id))}>查看截图</button></p>}</div></td></tr>}
         </Fragment>;
                 })}</tbody></table></div>}
     </div>}
-  </section>;
+      {shotIndex >= 0 && <CaseEvidenceDialog cases={shotCases} index={Math.max(0, Math.min(shotIndex, shotCases.length - 1))} onChange={setShotIndex} onClose={() => setShotIndex(-1)} />}
+</section>;
 }

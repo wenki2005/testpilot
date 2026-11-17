@@ -14,7 +14,7 @@ import { reviewConnectedEvidence } from '../scenarios/connected-systems.js';
 import type { ConnectedKind } from '../evidence/connected-evidence-contract.js';
 import { reviewEmployeeApplicationReadOnly } from '../scenarios/records/employee-application-readonly.js';
 export type DifyReviewKind = 'required-empty-disabled' | 'employee-application-readonly' | DepartmentReadOnlyKind | DifyBookKind | DifyDeviceKind | DifyListKind | FieldValidityKind | DifyRecordKind | InvalidBookKind | 'excluded-customer' | ClientValidationKind | 'applicant-identity' | ConnectedKind;
-export type DifyBlockerCode = 'write-required' | 'business-clarification' | 'identity-evidence' | 'fixture-required' | 'assertion-incomplete' | 'steps-missing' | 'legacy-review' | 'prerequisite-required';
+export type DifyBlockerCode = 'write-required' | 'business-clarification' | 'identity-evidence' | 'fixture-required' | 'assertion-incomplete' | 'steps-missing' | 'legacy-review' | 'prerequisite-required' | 'approval-timeout';
 export function difyBlocker(check: BrowserCheck, reason: string): {
     blockerCode: DifyBlockerCode;
     detail: string;

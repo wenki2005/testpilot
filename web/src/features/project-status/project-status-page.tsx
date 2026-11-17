@@ -3,8 +3,9 @@ import type { CaseEditorCatalog } from '../../../../src/domain/cases/case-script
 import type { SystemModuleState } from '../../../../src/domain/regression/module-catalog-contract';
 import { sidebarProjectEvents } from '../../shared/project-selection';
 import './project-status-page.css';
+import CaseEvidenceDialog from '../shared/case-evidence-dialog';
 
-const root = '/api/system-module-regression';
+const root = (location.pathname.startsWith('/dify/') ? '/dify' : '') + '/api/system-module-regression';
 const phaseNames: Record<string, string> = { completed: '本轮结束', interrupted: '未完成', cancelled: '已取消', running: '执行中', queued: '排队中' };
 async function request<T>(path: string): Promise<T> { const response = await fetch(path); const value = await response.json(); if (!response.ok) throw Error(value.error ?? '读取项目状态失败。'); return value; }
 export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?: string; onNavigate: (page: 'case-scripts' | 'dify-regression' | 'run-reports') => void }) {
@@ -124,33 +125,12 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
           <footer><span>共 {failedCases.length} 条</span><span>点「查看」看失败原因与截图</span></footer>
         </div>
       </div>}
-      {failedDetail && (() => {
-        const row = failedCases.find(c => c.id === failedDetail);
-        if (!row) return null;
-        const index = failedCases.findIndex(c => c.id === failedDetail);
-        const goto = (delta: number) => { const next = failedCases[index + delta]; if (next) setFailedDetail(next.id); };
-        return <div className="ps-mask" role="presentation" onClick={() => setFailedDetail(undefined)}>
-          <div className="ps-modal ps-detail" role="dialog" aria-label="失败详情" onClick={e => e.stopPropagation()}>
-            <header><h3>{row.id.replace('xmind-', '')} {row.title}</h3><button type="button" onClick={() => setFailedDetail(undefined)}>关闭</button></header>
-            <div className="ps-body">
-              <div className="ps-kv">
-                <b>状态</b><span><span className="ps-tag">失败</span></span>
-                <b>模块</b><span>{row.moduleName ?? '—'}</span>
-                <b>执行时间</b><span>{new Date(row.at ?? 0).toLocaleString('zh-CN')}</span>
-              </div>
-              <div className="ps-reason-box"><b>失败原因</b><br/>{row.detail ?? '—'}</div>
-              {row.runId && row.evidence
-                ? <img className="ps-shot" alt="失败截图" src={`${root}/evidence/${row.runId}/${row.evidence}`}/>
-                : <div className="ps-shot ps-shot-empty">这条没有截图</div>}
-            </div>
-            <footer>
-              <button type="button" className="ps-link" disabled={index <= 0} onClick={() => goto(-1)}>◀ 上一条</button>
-              <span>{index + 1} / {failedCases.length}</span>
-              <button type="button" className="ps-link" disabled={index >= failedCases.length - 1} onClick={() => goto(1)}>下一条 ▶</button>
-            </footer>
-          </div>
-        </div>;
-      })()}
+      {failedDetail && <CaseEvidenceDialog
+        cases={failedCases.map(row => ({ id: row.id, title: row.title, status: 'failed', moduleName: row.moduleName, at: row.at ?? 0, detail: row.detail, ...(row.runId && row.evidence ? { evidenceUrl: `${root}/evidence/${row.runId}/${row.evidence}` } : {}) }))}
+        index={Math.max(0, failedCases.findIndex(c => c.id === failedDetail))}
+        onChange={next => setFailedDetail(failedCases[next]?.id)}
+        onClose={() => setFailedDetail(undefined)}
+      />}
       <div className="project-status-recent-inline">
         <span className="project-status-recent-label">最近运行</span>
         {latestRun ? (<><b>{latestRun.scope === 'core' ? '核心链路' : latestRun.scope === 'custom' ? '自选用例' : '全部用例'} · {latestRunCount} 条</b>

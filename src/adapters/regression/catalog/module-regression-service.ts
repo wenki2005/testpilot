@@ -628,7 +628,7 @@ export class SystemModuleRegression {
      * which already reports them as "待补脚本" instead of running them.
      */
     start(input: unknown) {
-        const data = z.object({ systemId: uuid, moduleIds: z.array(uuid).min(1).max(100), requestId: uuid, runMode: z.enum(['fixed', 'assist']).optional(), scope: z.enum(['core', 'all', 'custom', 'starter']).optional(), caseSelections: z.record(z.string(), z.array(z.string()).min(1).max(200)).optional(), versionSelections: z.record(z.string(), uuid).optional(), skipBlocked: z.boolean().optional() }).parse(input);
+        const data = z.object({ systemId: uuid, moduleIds: z.array(uuid).min(1).max(100), requestId: uuid, runMode: z.enum(['fixed', 'assist']).optional(), scope: z.enum(['core', 'all', 'custom', 'starter']).optional(), caseSelections: z.record(z.string(), z.array(z.string()).min(1).max(200)).optional(), versionSelections: z.record(z.string(), uuid).optional(), skipBlocked: z.boolean().optional(), skipNeedsReview: z.boolean().optional() }).parse(input);
         const fingerprint = moduleDigest(data);
         const replay = this.replay(data.requestId, fingerprint);
         if (replay)
@@ -647,7 +647,8 @@ export class SystemModuleRegression {
         });
         for (const entry of entries) {
             const m = this.getModule(entry.moduleId);
-            const cases = this.store.getModule(entry.versionId).project.cases;
+            const pack = this.store.getModule(entry.versionId);
+            const cases = pack.project.cases;
             const preset = data.scope === 'starter' ? { ids: m.starterCaseIds, version: m.starterVersionId, label: '只读起步集合' } : { ids: m.coreCaseIds, version: m.coreVersionId, label: '核心范围' };
             if (data.scope === 'core' || data.scope === 'starter') {
                 if (preset.ids === undefined)
@@ -658,11 +659,13 @@ export class SystemModuleRegression {
             const chosen = data.scope === 'custom' ? data.caseSelections?.[m.id] : data.scope === 'core' || data.scope === 'starter' ? preset.ids : undefined;
             if (data.scope === 'custom' && !chosen?.length)
                 throw Error('请选择要执行的用例。');
-            const effectiveChosen = chosen ?? (data.skipBlocked ? cases.map(c => c.id) : undefined);
+            const effectiveChosen = chosen ?? (data.skipBlocked || data.skipNeedsReview ? cases.map(c => c.id) : undefined);
             if (effectiveChosen) {
                 if (!effectiveChosen.length || new Set(effectiveChosen).size !== effectiveChosen.length || effectiveChosen.some(id => !cases.some(c => c.id === id)))
                     throw Error('执行范围为空、重复或包含未知用例。');
-                const picked = cases.filter(c => effectiveChosen.includes(c.id) && (!data.skipBlocked || ((c as { steps?: unknown[] }).steps ?? []).length > 0));
+                const picked = cases.filter(c => effectiveChosen.includes(c.id) && (!data.skipBlocked || ((c as { steps?: unknown[] }).steps ?? []).length > 0) && (!data.skipNeedsReview || pack.scriptReviews?.[c.id]?.status !== 'pending'));
+                if (data.skipNeedsReview && !picked.length)
+                    throw Error('所选用例全部待核对，已按勾选跳过；请取消勾选或先完成核对。');
                 if (data.skipBlocked && !picked.length)
                     throw Error('勾选“跳过无脚本用例”后没有可执行用例，请取消勾选或补充脚本。');
                 Object.assign(entry, { selectedCaseIds: picked.map(c => c.id) });
