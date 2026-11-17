@@ -553,6 +553,8 @@ export class DifyWebModuleStore {
             for (let attempt = 1; attempt <= attempts; attempt++) {
                 signal.throwIfAborted();
                 await delay(cfg.pollMs, undefined, { signal });
+                if (Date.now() - started > cfg.timeoutMs)
+                    break;
                 let actual: { status: string; detail: string; evidence?: string; evidenceNote?: string } | undefined;
                 try {
                     const run = await this.deps.execute(execution, randomUUID(), [row.caseId]);
