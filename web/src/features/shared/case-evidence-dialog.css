@@ -1,0 +1,24 @@
+.ced-mask{position:fixed;inset:0;background:rgba(13,28,48,.45);display:flex;align-items:flex-start;justify-content:center;padding-top:64px;z-index:60}
+.ced-modal{width:840px;max-height:76vh;background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.ced-modal header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px;border-bottom:1px solid #eef2f8}
+.ced-modal header h3{margin:0;font-size:16px;color:#16223c;overflow-wrap:anywhere}
+.ced-modal header button{border:0;background:#1964f7;color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;white-space:nowrap}
+.ced-body{padding:16px 18px;overflow:auto}
+.ced-kv{display:grid;grid-template-columns:84px 1fr;gap:8px 12px;font-size:13.5px;margin-bottom:12px;color:#16223c}
+.ced-kv b{color:#5b6b82;font-weight:600}
+.ced-tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:20px;background:#fdecea;color:#c0392b}
+.ced-tag.ced-passed{background:#edf8f1;color:#147447}
+.ced-tag.ced-blocked,.ced-tag.ced-not_executed{background:#fff6e8;color:#9b6619}
+.ced-reason{background:#fff7f1;border:1px solid #ffd9bd;color:#8a4b12;border-radius:10px;padding:11px 13px;font-size:13.5px;line-height:1.7;margin-bottom:14px;overflow-wrap:anywhere}
+.ced-shot{width:100%;border-radius:10px;border:1px solid #e3e9f2;display:block}
+.ced-shot-empty{height:220px;display:flex;align-items:center;justify-content:center;color:#8797ad;background:#f7f9fc}
+.ced-modal footer{display:flex;justify-content:space-between;align-items:center;padding:10px 18px;border-top:1px solid #eef2f8;font-size:13px;color:#5b6b82}
+.ced-modal .ced-step{font:inherit;font-size:14px;height:28px;min-height:28px;padding:3px 11px;border-radius:4px;border:1px solid #e3e6ec;background:#fff;color:#16223c;cursor:pointer;white-space:nowrap}
+.ced-modal .ced-step:hover:not(:disabled){border-color:#3a83f7;color:#1454cb}
+.ced-modal .ced-step:disabled{background:#eef0f4;color:#8b94a3;border-color:#e3e6ec;cursor:not-allowed}
+.ced-modal .ced-step.ced-next{background:#3a83f7;border-color:#3a83f7;color:#fff}
+.ced-modal .ced-step.ced-next:hover:not(:disabled){background:#1964f7;border-color:#1964f7;color:#fff}
+.ced-modal .ced-step.ced-next:disabled{background:#eef0f4;color:#8b94a3;border-color:#e3e6ec}
+.ced-modal header .ced-close{background:#1964f7;color:#fff;border:0;border-radius:8px;padding:6px 14px;height:auto;min-height:0;font-size:14px;cursor:pointer}
+.ced-modal header .ced-close,.ced-modal header .ced-close:hover{background:#1964f7!important;color:#fff!important;border:0!important}
+.ced-modal header .ced-close:hover{background:#1154d6!important}

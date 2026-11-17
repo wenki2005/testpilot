@@ -1,5 +1,5 @@
 export type DifyNotificationItem = {
-  id:string; type:'summary'|'image';
+  id:string; type:'summary'|'image'|'file';
   status:'pending'|'sending'|'sent'|'failed'|'uncertain'|'skipped';
   attempts:number; detail?:string; payloadDigest?:string;
 };

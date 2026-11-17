@@ -43,7 +43,7 @@
 .project-status-recent-label { color: var(--muted, #6b7280); font-size: 13px; }
 .project-status-recent-inline b { font-size: 14px; }
 .project-status-recent-inline span { color: var(--muted, #6b7280); font-size: 13px; }
-.project-status-inline-link { margin-left: auto; border: 0; background: none; color: var(--accent, #2563eb); cursor: pointer; font-size: 13px; }
+.project-status-inline-link { margin-left: auto; border: 0; background: none; color: #1964f7; cursor: pointer; padding: 0; min-height: 28px; font-size: 13px; }
 
 /* 失败卡片可点击 + 失败清单/详情弹窗 */
 .project-status-tile-clickable { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; position: relative; }
@@ -63,7 +63,7 @@
 .ps-table th { text-align: left; color: #5b6b82; font-weight: 600; background: #f8fafd; padding: 9px 14px; border-bottom: 1px solid #eef2f8; }
 .ps-table td { padding: 10px 14px; border-bottom: 1px solid #f1f5fa; vertical-align: top; }
 .ps-reason { color: #c0392b; }
-.ps-link { border: 0; background: none; color: #1964f7; cursor: pointer; padding: 0; font-size: 13px; }
+.ps-link { border: 0; background: none; color: #1964f7; cursor: pointer; padding: 0; min-height: 28px; font-size: 13px; }
 .ps-link:disabled { color: #b6c1d1; cursor: default; }
 .ps-tag { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 20px; background: #fdecea; color: #c0392b; }
 .ps-kv { display: grid; grid-template-columns: 84px 1fr; gap: 8px 12px; font-size: 13.5px; margin-bottom: 12px; }
@@ -74,18 +74,61 @@
 
 
 /* 项目状态顶部按钮：与执行测试页保持一致，hover 只加深、不变白 */
-.project-status-actions button {
-    background: #1964f7;
-    border: 1px solid #1964f7;
+/* Buttons follow the compact tokens used by the execution workbench. */
+.project-status-page button:not(.ced-step):not(.ced-close) {
+    font: inherit;
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid #e3e6ec;
+    border-radius: 4px;
+    color: #566680;
+    min-height: 28px;
+    padding: 3px 11px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.project-status-page button:not(.ced-step):not(.ced-close):hover:not(:disabled) {
+    border-color: #3a83f7;
+    color: #1454cb;
+}
+.project-status-page button:not(.ced-step):not(.ced-close):disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+.project-status-page .project-status-primary {
+    background: #3a83f7;
+    border-color: #3a83f7;
     color: #fff;
     font-weight: 600;
 }
-.project-status-actions button:hover:not(:disabled) {
-    background: #1154d6;
-    border-color: #1154d6;
+.project-status-page .project-status-primary:hover:not(:disabled) {
+    background: #1964f7;
+    border-color: #1964f7;
     color: #fff;
 }
-.project-status-actions button:focus-visible {
+.project-status-page button:not(.ced-step):not(.ced-close):focus-visible {
     outline: 3px solid #9bc0ff;
     outline-offset: 2px;
 }
+
+/* Final override: match execution workbench compact buttons exactly. */
+.project-status-page.project-status-page button:not(.ced-step):not(.ced-close) {
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.2;
+    height: 28px;
+    min-height: 28px;
+    padding: 3px 11px;
+    border-radius: 4px;
+}
+.project-status-page.project-status-page .ps-link,
+.project-status-page.project-status-page .project-status-inline-link {
+    border: 0;
+    background: none;
+    height: 28px;
+    padding: 0;
+    font-size: 13px;
+    color: #1964f7;
+}
+
+.project-status-page.project-status-page button:not(.ced-step):not(.ced-close){font-size:13px!important}

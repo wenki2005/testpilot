@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import type { CoreChain, CoreRun, CoreStatus } from '../../../../../src/domain/regression/core-chain-definitions';
+import CaseEvidenceDialog from '../../shared/case-evidence-dialog';
 const names: Record<CoreStatus, string> = { passed: '通过', failed: '失败', blocked: '阻塞', not_executed: '未执行' };
 type Counts = Record<CoreStatus, number>;
 const emptyCounts = (): Counts => ({ passed: 0, failed: 0, blocked: 0, not_executed: 0 });
@@ -15,8 +16,9 @@ export default function CoreChainResults({ definitions, selected, run, expanded,
     onExpanded: (id: string) => void;
 }) {
     const [filter, setFilter] = useState('all'), [detailId, setDetailId] = useState(''), panel = useRef<HTMLDivElement>(null);
+    const [shot, setShot] = useState<{cases: Array<{id: string; title: string; status: string; moduleName?: string; at?: string | number; detail?: string; evidenceUrl?: string}>; index: number} | null>(null);
     const selectionKey = selected.join('|');
-    useEffect(() => { setFilter('all'); setDetailId(''); }, [run?.id, selectionKey, expanded]);
+    useEffect(() => { setFilter('all'); setDetailId(''); setShot(null); }, [run?.id, selectionKey, expanded]);
     useEffect(() => {
         if (expanded)
             panel.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -42,9 +44,10 @@ export default function CoreChainResults({ definitions, selected, run, expanded,
                     return null;
                 const evidence = result?.evidence && run ? `${evidenceRoot}/runs/${run.id}/evidence/${result.evidence}` : undefined;
                 return <Fragment key={step.id}><tr><td>{index + 1}. {step.title}</td><td><span className={'sm-badge sm-' + status}>{names[status]}</span></td><td><button className="sm-link" aria-expanded={detailId === step.id} onClick={() => setDetailId(detailId === step.id ? '' : step.id)}>{detailId === step.id ? '收起详情' : '查看详情'}</button></td></tr>
-    {detailId === step.id && <tr className="sm-detail-row"><td colSpan={3}><div className="sm-evidence"><h3>{step.title}</h3><h4>预期结果</h4><p>{step.expected}</p><h4>实际结果</h4><p>{result?.detail ?? '该步骤在所选批次中未执行。'}</p>{result?.evidenceKind === 'historical-submission' && <p>证据方式：历史提交凭证＋本轮读回。</p>}{result?.references?.length ? <p>关联申请：{result.references.join('、')}</p> : null}{result?.finishedAt && <p>执行时间：{new Date(result.finishedAt).toLocaleString('zh-CN')}</p>}{evidence && <p><a href={evidence} target="_blank" rel="noreferrer">查看执行截图</a></p>}<details><summary>关联原用例</summary>{result?.sources?.length ? result.sources.map(source => <div key={source.caseId}><h4>{source.caseId} · {source.title}</h4><p>原始预期：{source.expected}</p></div>) : <p>{step.caseIds.join('、')}</p>}</details></div></td></tr>}
+    {detailId === step.id && <tr className="sm-detail-row"><td colSpan={3}><div className="sm-evidence"><h3>{step.title}</h3><h4>预期结果</h4><p>{step.expected}</p><h4>实际结果</h4><p>{result?.detail ?? '该步骤在所选批次中未执行。'}</p>{result?.evidenceKind === 'historical-submission' && <p>证据方式：历史提交凭证＋本轮读回。</p>}{result?.references?.length ? <p>关联申请：{result.references.join('、')}</p> : null}{result?.finishedAt && <p>执行时间：{new Date(result.finishedAt).toLocaleString('zh-CN')}</p>}{evidence && <p><button type="button" className="sm-link" onClick={() => { const list = opened.steps.filter(s => opened.actual?.steps.find(v => v.id === s.id)?.evidence).map(s => { const actual = opened.actual!.steps.find(v => v.id === s.id)!; return { id: s.id, title: s.title, status: actual.status, moduleName: opened.chain.title, at: run?.createdAt ?? 0, detail: actual.detail ?? '', evidenceUrl: `${evidenceRoot}/runs/${run!.id}/evidence/${actual.evidence}` }; }); setShot({ cases: list, index: Math.max(0, list.findIndex(x => x.id === step.id)) }); }}>查看截图</button></p>}<details><summary>关联原用例</summary>{result?.sources?.length ? result.sources.map(source => <div key={source.caseId}><h4>{source.caseId} · {source.title}</h4><p>原始预期：{source.expected}</p></div>) : <p>{step.caseIds.join('、')}</p>}</details></div></td></tr>}
    </Fragment>;
             })}{!opened.steps.some(step => filter === 'all' || ('status' in step ? step.status : 'not_executed') === filter) && <tr><td colSpan={3} className="sm-empty">该链路没有此状态的步骤。</td></tr>}</tbody></table></div>
   </div>}
- </section>;
+     {shot && <CaseEvidenceDialog cases={shot.cases} index={shot.index} onChange={index => setShot({ ...shot, index })} onClose={() => setShot(null)} />}
+</section>;
 }

@@ -1,12 +1,18 @@
 import { createHash } from 'node:crypto';
 import { readFile, realpath, stat } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
+import { buildXlsx } from '../../reports/simple-xlsx.js';
 import { networkInterfaces } from 'node:os';
 import path from 'node:path';
 import type { BatchView } from '../../../domain/regression/module-catalog-contract.js';
 import type { DifyNotification } from '../../../domain/regression/notification-contract.js';
 import { cloudSafe } from '../../integrations/dify/workflow-client.js';
 type Payload = {
+    msgtype: 'file';
+    file: {
+        media_id: string;
+    };
+} | {
     msgtype: 'markdown';
     markdown: {
         content: string;
@@ -105,6 +111,45 @@ export class DifyBatchNotifier {
             return undefined;
         }
     }
+    /** Text-only Excel attachment; screenshots stay on this machine. */
+    private reportFile(batch: BatchView) {
+        const label = { passed: '通过', failed: '失败', blocked: '阻塞', not_executed: '未执行', error: '异常', outside: '范围外' } as Record<string, string>;
+        const rows: Array<Array<string | number>> = [
+            ['TestPilot 回归报告'],
+            ['系统', batch.systemName],
+            ['账号', batch.accountName ?? '未记录'],
+            ['开始', new Date(batch.createdAt).toLocaleString('zh-CN', { hour12: false })],
+            ['结束', new Date(batch.updatedAt).toLocaleString('zh-CN', { hour12: false })],
+            ['结果', `通过 ${batch.counts.passed} / 失败 ${batch.counts.failed} / 阻塞 ${batch.counts.blocked} / 未执行 ${batch.counts.not_executed}`],
+            [],
+            ['模块', '用例编号', '标题', '结果', '实际结果', '截图'],
+        ];
+        for (const job of batch.jobs)
+            for (const result of job.results ?? [])
+                rows.push([job.moduleName, result.caseId, result.title, label[result.status] ?? result.status, String(result.detail ?? '').slice(0, 300), result.evidence ? '有' : '无']);
+        const stamp = new Date(batch.createdAt);
+        const pad = (n: number) => String(n).padStart(2, '0');
+        const safe = batch.systemName.replace(/[\\/:*?"<>|]/g, '').slice(0, 40);
+        const name = `TestPilot_${safe}_${stamp.getFullYear()}${pad(stamp.getMonth() + 1)}${pad(stamp.getDate())}_${pad(stamp.getHours())}${pad(stamp.getMinutes())}.xlsx`;
+        return { name, bytes: buildXlsx('用例明细', rows, [22, 18, 48, 10, 70, 8]) };
+    }
+    private async uploadReport(url: string, bytes: Uint8Array, name: string): Promise<string | undefined> {
+        try {
+            const key = new URL(url).searchParams.get('key');
+            if (!key)
+                return undefined;
+            const form = new FormData();
+            form.append('media', new Blob([bytes as unknown as BlobPart]), name);
+            const response = await fetch(`https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key=${encodeURIComponent(key)}&type=file`, { method: 'POST', body: form, signal: AbortSignal.timeout(20000) });
+            if (!response.ok)
+                return undefined;
+            const result = await response.json() as { media_id?: unknown };
+            return typeof result.media_id === 'string' ? result.media_id : undefined;
+        }
+        catch {
+            return undefined;
+        }
+    }
     private async deliverNow(batch: BatchView, previous: DifyNotification | undefined, save: (record: DifyNotification) => void) {
         const record = previous ? structuredClone(previous) : { status: 'disabled' as const, updatedAt: timestamp(), items: [] } as DifyNotification;
         const commit = () => { record.updatedAt = timestamp(); save(structuredClone(record)); };
@@ -135,18 +180,22 @@ export class DifyBatchNotifier {
             if (!['pending', 'failed'].includes(item.status))
                 continue;
             const scopeName = ({ core: '核心链路', custom: '自选用例', all: '全部用例', starter: '起步集合' } as Record<string, string>)[String(batch.scope ?? '')] ?? '回归';
-            const base = publicBaseUrl();
-            const reportUrl = `${base}/dify/?page=run-reports&report=${encodeURIComponent('batch:' + batch.id)}&system=${encodeURIComponent(batch.systemId)}`;
-            const mainContent = [
-                '## TestPilot 回归完成',
+            const started = Date.parse(batch.createdAt);
+            const ended = Date.parse(batch.updatedAt);
+            const seconds = Number.isFinite(started) && Number.isFinite(ended) ? Math.max(0, Math.round((ended - started) / 1000)) : 0;
+            const duration = seconds >= 60 ? `${Math.floor(seconds / 60)} 分 ${seconds % 60} 秒` : `${seconds} 秒`;
+            const file = this.reportFile(batch);
+            const content = String(cloudSafe([
+                '## 自动化测试',
                 `系统：${batch.systemName.slice(0, 100)}`,
-                `范围：${scopeName}`,
+                `账号：${batch.accountName ?? '未记录'}`,
                 `结果：通过 ${batch.counts.passed} · 失败 ${batch.counts.failed} · 阻塞 ${batch.counts.blocked} · 未执行 ${batch.counts.not_executed}`,
-                failedRows.length ? `失败用例：\n${failedRows.map((item, index) => `${index + 1}. ${item.row.caseId}｜${shortReason(item.row.detail)}${item.row.evidence ? `（见第 ${index + 1} 张图）` : '（无截图）'}`).join('\n')}` : '本轮无失败用例',
-                blockedRows.length ? `阻塞用例：\n${blockedRows.slice(0, 10).map(item => `- ${item.row.caseId}｜${shortReason(item.row.detail)}`).join('\n')}` : '',
-                `详情：${reportUrl}`
-            ].filter(Boolean).join('\n');
-            const content = String(cloudSafe(item.id === 'summary' ? mainContent : String(item.detail ?? '')));
+                `耗时：${duration}`,
+                `失败用例：${failedRows.length ? failedRows.slice(0, 10).map(item => item.row.caseId).join('、') : '无'}`,
+                `阻塞用例：${blockedRows.length ? blockedRows.slice(0, 10).map(item => item.row.caseId).join('、') : '无'}`,
+                `报告：${file.name}（见附件）`,
+                '截图：本机报告目录查看，群里不发图',
+            ].join('\n')));
             const payload: Payload | undefined = item.type === 'summary' ? { msgtype: 'markdown', markdown: { content } } : await this.image(batch, item.id);
             if (!payload) {
                 item.status = 'skipped';
@@ -172,6 +221,12 @@ export class DifyBatchNotifier {
             let status: 'sent' | 'failed' | 'uncertain';
             try {
                 status = await this.transport(url, payload);
+                if (status === 'sent' && item.type === 'summary' && !record.items.some(i => i.id === 'attachment')) {
+                    const mediaId = await this.uploadReport(url, file.bytes, file.name);
+                    const sentFile = mediaId ? await this.transport(url, { msgtype: 'file', file: { media_id: mediaId } }) : 'failed';
+                    record.items.push({ id: 'attachment', type: 'file', status: sentFile, attempts: 1 });
+                    commit();
+                }
             }
             catch {
                 status = 'uncertain';
