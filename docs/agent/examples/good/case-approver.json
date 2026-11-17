@@ -1,0 +1,13 @@
+{
+  "caseId": "1-901",
+  "title": "审批详情显示审批人姓名",
+  "expected": "详情页展示审批人姓名与当前审批状态",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "executionRoute": "browser",
+  "confidence": 0.9,
+  "reason": "标题与预期指向审批详情页，只读断言",
+  "steps": [
+    { "action": "openLatestRecord", "list": "apply", "status": "已通过" },
+    { "action": "assertVisible", "text": "审批人" }
+  ]
+}

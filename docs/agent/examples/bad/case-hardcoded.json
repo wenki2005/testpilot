@@ -1,0 +1,11 @@
+{
+  "caseId": "1-902",
+  "title": "打开某条具体申请并断言",
+  "expected": "能看到指定申请",
+  "moduleId": "50defb76-157a-4ed1-9f91-10a8ba991e0c",
+  "executionRoute": "browser",
+  "steps": [
+    { "action": "clickExactText", "text": "开心25春小学生同步作文3年级下册XH等2本样书" }
+  ],
+  "confidence": 0.5
+}
