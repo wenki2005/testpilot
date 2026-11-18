@@ -58,3 +58,22 @@
 .rp-sum-table .c-pass{color:#15803d}.rp-sum-table .c-fail{color:#c81e1e}.rp-sum-table .c-block{color:#b45309}
 
 .rp-detail-table{display:none !important}
+
+/* rp-number-style */
+.rp-sum-num{background:none !important;border:0 !important;color:inherit !important;font:inherit !important;padding:0 !important;height:auto !important;min-height:0 !important;line-height:1.4 !important;text-decoration:underline dotted;cursor:pointer}
+.rp-crumbs button{background:none !important;border:0 !important;color:#2f7cf6 !important;font:inherit !important;padding:0 !important;height:auto !important}
+.rp-heading .rp-actions button:not(.rp-star){display:none !important}
+
+.rp-case-mask{position:fixed !important;inset:0 !important;background:rgba(15,23,42,.35) !important;display:flex !important;align-items:center !important;justify-content:center !important;z-index:9999 !important}
+.rp-case-modal{width:760px !important;max-height:78vh !important;background:#fff !important;border-radius:12px !important;display:flex !important;flex-direction:column !important;box-shadow:0 24px 60px rgba(15,23,42,.25) !important}
+.rp-case-modal header{display:flex !important;align-items:center !important;gap:10px !important;padding:14px 18px !important;border-bottom:1px solid #eef1f6 !important}
+.rp-case-modal header h3{margin:0 !important;font-size:18px !important}
+.rp-case-badge{background:#fdeaea !important;color:#c81e1e !important;border-radius:999px !important;padding:2px 10px !important;font-size:13px !important}
+.rp-case-modal header button{margin-left:auto !important;height:30px !important;padding:0 12px !important;border:1px solid #d7dee9 !important;background:#fff !important;color:#33415c !important;border-radius:6px !important;font-size:13px !important}
+.rp-case-body{overflow:auto !important}
+.rp-case-modal table{width:100% !important;border-collapse:collapse !important}
+.rp-case-modal th{background:#f7f9fc !important;text-align:left !important;color:#64748b !important;font-size:13px !important;padding:10px 14px !important;border-bottom:1px solid #eef1f6 !important}
+.rp-case-modal td{padding:12px 14px !important;border-bottom:1px solid #eef1f6 !important;font-size:14px !important}
+.rp-case-reason{color:#c81e1e !important;font-size:13px !important}
+.rp-case-view{height:28px !important;padding:0 10px !important;border:1px solid #d7dee9 !important;background:#fff !important;color:#33415c !important;border-radius:6px !important;font-size:13px !important}
+.rp-case-modal footer{display:flex !important;justify-content:space-between !important;padding:10px 18px !important;border-top:1px solid #eef1f6 !important;color:#64748b !important;font-size:13px !important}
