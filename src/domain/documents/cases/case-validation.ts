@@ -190,6 +190,11 @@ export function validateCases(value: unknown): BrowserCheck[] {
                     throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 reducedMotion 必须是布尔值。`);
                 return { action: step.action, value: step.value };
             }
+            if (step.action === "readText") {
+                if (typeof step.label !== "string" || !step.label.trim())
+                    throw new Error(`第 ${i + 1} 条步骤 readText 需要 label。`);
+                return { action: step.action, label: step.label, ...(typeof step.pattern === "string" ? { pattern: step.pattern } : {}), ...(typeof step.as === "string" ? { as: step.as } : {}) };
+            }
             throw new Error(`不支持的浏览器动作：${step.action}`);
         });
         const networkAssertionIndex = steps.findIndex(step => step.action === "assertNoFetchOrXhr");

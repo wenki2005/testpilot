@@ -93,6 +93,11 @@ export type BrowserStep = {
     rowIndex?: number;
 } | {
     action: "captureCurrentUrl";
+} | {
+    action: "readText";
+    label: string;
+    pattern?: string;
+    as?: string;
 }
     | { action: "openRoute"; hash: string }
     | { action: "openLatestRecord"; list?: "apply" | "order"; status?: string }

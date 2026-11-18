@@ -244,6 +244,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                     if (item.writeResultSourceRunId)
                         detail += `；只读复核既有提交，来源run=${item.writeResultSourceRunId}，operation=${item.writeResultOperationId}`;
                     const assertionFailures: string[] = [];
+                    const captured: Record<string, string> = {};
                     for (let stepIndex = 0; stepIndex < (item.steps ?? []).length; stepIndex++) {
                         const step = item.steps![stepIndex]!;
                         currentStepIndex = stepIndex;
@@ -292,7 +293,16 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                     throw new Error(`占位符「${step.placeholder}」匹配 ${await field.count()} 个控件；需要唯一匹配才能安全填写。`);
                                 await field.fill(step.value);
                             }
-                            else if (step.action === "openLatestRecord") {
+                            else if (step.action === "readText") {
+                                const bodyText = await page.locator("body").innerText();
+                                const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                                const pattern = step.pattern ?? (escapeRegExp(String(step.label)) + "[:：]?\\s*([^\\n]+)");
+                                const matched = new RegExp(pattern, "u").exec(bodyText);
+                                const value = matched ? String(matched[1] ?? "").trim() : "";
+                                if (!value) throw new Error("读取失败：未找到 " + step.label);
+    captured[step.as ?? step.label] = value;
+}
+else if (step.action === "openLatestRecord") {
                                 const target = new URL(url);
                                 target.hash = step.list === "order" ? "#/logistics" : "#/apply";
                                 await page.goto(target.toString(), { waitUntil: "domcontentloaded", timeout: 15000 });
@@ -718,6 +728,8 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                             detail += '；' + writeDetail;
                         await onEvidence?.(item, undefined, '本轮单次提交后状态');
                     }
+                    if (Object.keys(captured).length)
+                        detail += "；读取：" + JSON.stringify(captured);
                     await record({ id: item.id, title: item.title, status: item.coverageGap ? "blocked" : "passed", detail: item.coverageGap ? `可见子断言通过，但完整用例仍未验证：${item.coverageGap}` : detail, durationMs: Date.now() - start });
                     if (!item.coverageGap)
                         establishedCases.add(item.id);
