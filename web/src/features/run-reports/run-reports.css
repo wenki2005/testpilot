@@ -93,3 +93,7 @@
 
 .rp-case-reason.fail{color:#c81e1e !important}
 .rp-case-reason.block{color:#b45309 !important}
+
+.rp-case-modal header:has(.rp-case-badge.pass) .rp-case-pills,
+.rp-case-modal header:has(.rp-case-badge.fail) .rp-case-pills,
+.rp-case-modal header:has(.rp-case-badge.block) .rp-case-pills{display:none !important}
