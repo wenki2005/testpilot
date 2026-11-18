@@ -340,3 +340,6 @@
 
 .core-chain-name{font:inherit;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer}
 .core-chain-name span{margin-right:4px;color:#64748f}
+
+/* results-hidden: 执行测试页不再展示运行结果，结果统一在运行报告查看 */
+.sm-results{display:none !important}
