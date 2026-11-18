@@ -343,3 +343,6 @@
 
 /* results-hidden: 执行测试页不再展示运行结果，结果统一在运行报告查看 */
 .sm-results{display:none !important}
+
+/* hide-run-details */
+.sm-run-information{display:none !important}
