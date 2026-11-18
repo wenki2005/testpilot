@@ -35,7 +35,7 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
         let browserRoot = root, idleUrl: string | undefined;
         try {
             const config = JSON.parse(await readFile(path.join(root, 'private', 'core-browser-session.json'), 'utf8'));
-            if (config.schema !== 1 || config.profileId !== run.profileId || !path.isAbsolute(config.dataRoot) || config.idleUrl !== 'http://127.0.0.1:4321/api/system-module-regression')
+            if (config.schema !== 1 || config.profileId !== run.profileId || !path.isAbsolute(config.dataRoot) || typeof config.idleUrl !== 'string' || !/^http:\/\/127\.0\.0\.1:\d+\/api\/system-module-regression$/.test(config.idleUrl))
                 throw Error('核心链路既有会话配置无效。');
             browserRoot = config.dataRoot;
             idleUrl = config.idleUrl;
@@ -47,7 +47,14 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
         const ensureIdle = async () => {
             if (!idleUrl)
                 return;
-            const response = await fetch(idleUrl, { signal: AbortSignal.timeout(8000) });
+            let response;
+            try {
+                response = await fetch(idleUrl, { signal: AbortSignal.timeout(8000) });
+            }
+            catch {
+                // Integrated workspaces run on a different port; an unreachable idle endpoint means there is no separate Dify window to borrow.
+                return;
+            }
             if (!response.ok)
                 throw Error('既有Dify窗口归属服务不可核对。');
             const state = await response.json(), system = state.systems?.find((s: Row) => s.id === run.systemId);
