@@ -22,3 +22,6 @@
 .ced-modal header .ced-close{background:#1964f7;color:#fff;border:0;border-radius:8px;padding:6px 14px;height:auto;min-height:0;font-size:14px;cursor:pointer}
 .ced-modal header .ced-close,.ced-modal header .ced-close:hover{background:#1964f7!important;color:#fff!important;border:0!important}
 .ced-modal header .ced-close:hover{background:#1154d6!important}
+
+.ced-mask{z-index:10000 !important}
+.ced-modal{width:960px !important;min-width:760px !important;max-height:86vh !important}
