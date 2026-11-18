@@ -171,6 +171,7 @@ export default function RunReports() {
             u.searchParams.delete(k);
         history.replaceState(null, '', u);
     }, [catalog?.systemId, selectedKey]);
+    useEffect(() => { const back = () => setSelectedKey(''); window.addEventListener('testpilot:reports', back); return () => window.removeEventListener('testpilot:reports', back); }, []);
     const [caseModal, setCaseModal] = useState<{ title: string; rows: Array<{ id: string; title: string; status: string; detail: string; evidenceUrl?: string }> } | null>(null);
     const [runDetails, setRunDetails] = useState<Record<string, { account: string; rows: Array<{ name: string; total: number; passed: number; failed: number; blocked: number; notExecuted: number; cases: Array<{ id: string; title: string; status: string; detail: string; evidenceUrl?: string }> }> }>>({});
     useEffect(() => { void fetch('/dify/api/system-module-regression').then(response => response.json()).then(state => { const map: typeof runDetails = {}; for (const batch of state.batches ?? []) { map[batch.id] = { account: batch.accountName ?? '—', rows: (batch.jobs ?? []).map((job: any) => { const results = (job.results ?? []).map((item: any) => ({ id: item.caseId, title: item.title, status: item.status, detail: String(item.detail ?? ''), evidenceUrl: item.evidence ? '/dify/api/system-module-regression/jobs/' + job.id + '/evidence/' + item.evidence : undefined })); const count = (status: string) => results.filter((item: any) => item.status === status).length; return { name: job.moduleName, total: results.length, passed: count('passed'), failed: count('failed') + count('error'), blocked: count('blocked'), notExecuted: count('not_executed'), cases: results }; }) }; } setRunDetails(map); }).catch(() => undefined); }, []);
@@ -287,7 +288,7 @@ export default function RunReports() {
     const r = detail?.report, extraError = detail?.groups.some(g => g.counts.error > 0), extraOutside = detail?.groups.some(g => g.counts.outside > 0);
     return <section className="run-reports" aria-label="运行报告" aria-busy={loading || busy || detailLoading}>
   {error && <div className="rp-error" role="alert"><span>{error}</span><button type="button" disabled={busy || loading} onClick={refresh}>重试</button></div>}
-  {selectedKey ? <><div className="rp-crumbs"><button type="button" onClick={() => setSelectedKey('')}>运行报告</button><span>›</span><strong>本次测试结果</strong></div>{detailLoading ? <p className="rp-loading">正在读取报告…</p> : r && detail ? <>
+  {selectedKey ? <>{detailLoading ? <p className="rp-loading">正在读取报告…</p> : r && detail ? <>
    <header className="rp-heading rp-detail-heading"><h1>本次测试结果</h1><div className="rp-actions"><button type="button" className={'rp-star' + (r.metadata.important ? ' active' : '')} aria-label={r.metadata.important ? '取消重要' : '标记重要'} aria-pressed={r.metadata.important} disabled={busy} onClick={() => void mark(r)}><Icon name="star"/></button><Format value={format} onChange={setFormat} disabled={busy}/><button type="button" disabled={busy || active(r)} onClick={() => void download([r])}>下载报告</button></div></header>
    <div className="rp-sum-block">
     <div className="rp-sum-meta"><span>{date(r.createdAt)}</span><span>{scopes[r.scope]}</span><span>{runDetails[r.id]?.account ?? '—'}</span><span>{r.size} {r.kind === 'core' ? '步' : '条'}</span><span>{r.id.slice(0, 8)}</span></div>
