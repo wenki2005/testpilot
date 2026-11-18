@@ -171,6 +171,8 @@ export default function RunReports() {
             u.searchParams.delete(k);
         history.replaceState(null, '', u);
     }, [catalog?.systemId, selectedKey]);
+    const [runDetails, setRunDetails] = useState<Record<string, { account: string; rows: Array<{ name: string; total: number; passed: number; failed: number; blocked: number; notExecuted: number }> }>>({});
+    useEffect(() => { void fetch('/dify/api/system-module-regression').then(response => response.json()).then(state => { const map: typeof runDetails = {}; for (const batch of state.batches ?? []) { map[batch.id] = { account: batch.accountName ?? '—', rows: (batch.jobs ?? []).map((job: any) => { const results = job.results ?? []; const count = (status: string) => results.filter((item: any) => item.status === status).length; return { name: job.moduleName, total: results.length, passed: count('passed'), failed: count('failed') + count('error'), blocked: count('blocked'), notExecuted: count('not_executed') }; }) }; } setRunDetails(map); }).catch(() => undefined); }, []);
     const rows = useMemo(() => catalog?.reports.filter(r => (!scope || r.scope === scope) && (!importantOnly || r.metadata.important) && (!keyword || (r.name + ' ' + r.id + ' ' + r.metadata.note).toLowerCase().includes(keyword.toLowerCase())) && (!period || Date.now() - Date.parse(r.createdAt) <= Number(period) * 86400000) && (!result || result === 'failed' && r.counts.failed + r.counts.error > 0 || result === 'blocked' && r.counts.blocked > 0 || result === 'passed' && r.size > 0 && r.counts.passed === r.size || result === 'unfinished' && r.phase !== 'completed')) ?? [], [catalog, scope, importantOnly, keyword, period, result]);
     const pages = Math.max(1, Math.ceil(rows.length / 8)), currentPage = Math.min(page, pages), visible = rows.slice((currentPage - 1) * 8, currentPage * 8), selectable = visible.filter(r => !active(r)), allSelected = selectable.length > 0 && selectable.every(r => chosen.has(r.key));
     const toggleChosen = (key: string, on: boolean) => setChosen(old => {
@@ -286,7 +288,26 @@ export default function RunReports() {
   {error && <div className="rp-error" role="alert"><span>{error}</span><button type="button" disabled={busy || loading} onClick={refresh}>重试</button></div>}
   {selectedKey ? <><div className="rp-back-row"><button className="rp-back" type="button" disabled={busy} onClick={() => setSelectedKey('')}><Icon name="back"/>报告列表</button></div>{detailLoading ? <p className="rp-loading">正在读取报告…</p> : r && detail ? <>
    <header className="rp-heading rp-detail-heading"><h1>本次测试结果</h1><div className="rp-actions"><button type="button" className={'rp-star' + (r.metadata.important ? ' active' : '')} aria-label={r.metadata.important ? '取消重要' : '标记重要'} aria-pressed={r.metadata.important} disabled={busy} onClick={() => void mark(r)}><Icon name="star"/></button><Format value={format} onChange={setFormat} disabled={busy}/><button type="button" disabled={busy || active(r)} onClick={() => void download([r])}>下载报告</button></div></header>
-   <div className="rp-detail-meta"><span>{date(r.createdAt)}</span><span>{scopes[r.scope]}</span><span>{r.groupCount} {r.kind === 'core' ? '条链路' : '个模块'} · {r.size} {r.kind === 'core' ? '步骤' : '用例'}</span><span>{phases[r.phase] ?? r.phase}</span><div className="rp-summary-tiles">
+   <div className="rp-sum-block">
+    <div className="rp-sum-meta"><span>{date(r.createdAt)}</span><span>{scopes[r.scope]}</span><span>{runDetails[r.id]?.account ?? '—'}</span><span>{r.size} {r.kind === 'core' ? '步' : '条'}</span><span>{r.id.slice(0, 8)}</span></div>
+    <div className="rp-sum-tiles">
+    <div className="rp-sum-tile pass"><strong>{r.counts.passed}</strong><span>通过</span></div>
+    <div className="rp-sum-tile fail"><strong>{r.counts.failed}</strong><span>失败</span></div>
+    <div className="rp-sum-tile block"><strong>{r.counts.blocked}</strong><span>阻塞</span></div>
+    <div className="rp-sum-tile none"><strong>{r.counts.not_executed}</strong><span>未执行</span></div>
+    <div className="rp-sum-tile never"><strong>0</strong><span>从未运行</span></div>
+    </div>
+    <div className="rp-sum-bar">
+    <i className="pass" style={{ width: Math.round((r.counts.passed / Math.max(1, r.size)) * 100) + '%' }}/>
+    <i className="fail" style={{ width: Math.round((r.counts.failed / Math.max(1, r.size)) * 100) + '%' }}/>
+    <i className="block" style={{ width: Math.round((r.counts.blocked / Math.max(1, r.size)) * 100) + '%' }}/>
+    <i className="none" style={{ width: Math.round((r.counts.not_executed / Math.max(1, r.size)) * 100) + '%' }}/>
+    </div>
+    <table className="rp-sum-table"><thead><tr><th>模块</th><th>用例</th><th>通过</th><th>失败</th><th>阻塞</th><th>未执行</th><th>未运行</th></tr></thead><tbody>
+    {(runDetails[r.id]?.rows ?? []).map(row => <tr key={row.name}><td>{row.name}</td><td>{row.total}</td><td className="c-pass">{row.passed}</td><td className="c-fail">{row.failed}</td><td className="c-block">{row.blocked}</td><td>{row.notExecuted}</td><td>0</td></tr>)}
+    </tbody></table>
+    </div>
+    <div className="rp-detail-meta"><span>{date(r.createdAt)}</span><span>{scopes[r.scope]}</span><span>{r.groupCount} {r.kind === 'core' ? '条链路' : '个模块'} · {r.size} {r.kind === 'core' ? '步骤' : '用例'}</span><span>{phases[r.phase] ?? r.phase}</span><div className="rp-summary-tiles">
 <div className="rp-summary-tile pass"><strong>{r.counts.passed}</strong><span>通过</span></div>
 <div className="rp-summary-tile fail"><strong>{r.counts.failed}</strong><span>失败</span></div>
 <div className="rp-summary-tile block"><strong>{r.counts.blocked}</strong><span>阻塞</span></div>
