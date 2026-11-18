@@ -77,3 +77,16 @@
 .rp-case-reason{color:#c81e1e !important;font-size:13px !important}
 .rp-case-view{height:28px !important;padding:0 10px !important;border:1px solid #d7dee9 !important;background:#fff !important;color:#33415c !important;border-radius:6px !important;font-size:13px !important}
 .rp-case-modal footer{display:flex !important;justify-content:space-between !important;padding:10px 18px !important;border-top:1px solid #eef1f6 !important;color:#64748b !important;font-size:13px !important}
+
+.rp-sum-num{text-decoration:none !important}
+.rp-sum-module{background:none !important;border:0 !important;color:#1f2d3d !important;font:inherit !important;padding:0 !important;height:auto !important;cursor:pointer !important}
+.rp-sum-module:hover{color:#2f7cf6 !important}
+.rp-case-badge.pass{background:#e7f8ee !important;color:#15803d !important}
+.rp-case-badge.block{background:#fff1e0 !important;color:#b45309 !important}
+.rp-case-pills{display:flex;gap:8px;margin-left:8px}
+.rp-case-pills span{border-radius:4px;padding:2px 8px;font-size:12px;font-weight:600}
+.rp-case-pills .pass{background:#e7f8ee;color:#15803d}
+.rp-case-pills .fail{background:#fdeaea;color:#c81e1e}
+.rp-case-pills .block{background:#fff1e0;color:#b45309}
+
+.rp-case-reason.pass{color:#15803d !important}
