@@ -19,3 +19,8 @@
 .rp-fail-item p { margin: 6px 0 8px; font-size: 13.5px; color: #31405a; }
 .rp-fail-shot img { max-width: 420px; border: 1px solid #dde5f0; border-radius: 6px; display: block; }
 .rp-fail-noimg { font-size: 12px; color: #8494ab; }
+
+/* hide-report-tools: 报告页不提供搜索与下载 */
+.rp-search{display:none !important}
+.rp-actions select{display:none !important}
+.rp-download{display:none !important}
