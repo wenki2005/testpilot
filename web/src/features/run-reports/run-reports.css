@@ -36,3 +36,25 @@
 .rp-summary-bar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:#e8edf5;margin-bottom:16px}
 .rp-summary-bar i{display:block;height:100%}
 .rp-summary-bar .pass{background:#2fbf71}.rp-summary-bar .fail{background:#e5484d}.rp-summary-bar .block{background:#f2a93b}.rp-summary-bar .none{background:#a3b1c6}
+
+.rp-detail-meta,.rp-summary-tiles,.rp-detail-subheading,.rp-fail-panel{display:none !important}
+.rp-sum-block{margin:16px 0 8px}
+.rp-sum-meta{display:flex;gap:16px;flex-wrap:wrap;color:#64748b;font-size:14px;margin-bottom:14px}
+.rp-sum-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.rp-sum-tile{border:1px solid #e5e9f0;border-radius:10px;background:#fff;text-align:center;padding:14px}
+.rp-sum-tile strong{display:block;font-size:28px;line-height:1.1}
+.rp-sum-tile span{color:#475569;font-size:14px}
+.rp-sum-tile.pass{background:#eafaf0;border-color:#c9efd9}.rp-sum-tile.pass strong{color:#15803d}
+.rp-sum-tile.fail{background:#fdeeee;border-color:#f6d3d3}.rp-sum-tile.fail strong{color:#c81e1e}
+.rp-sum-tile.block{background:#fff6e8;border-color:#f5e0bd}.rp-sum-tile.block strong{color:#b45309}
+.rp-sum-tile.none{background:#f1f4f9;border-color:#e2e8f0}.rp-sum-tile.none strong{color:#475569}
+.rp-sum-tile.never{background:#f6f7fb;border-color:#e6e9f2}.rp-sum-tile.never strong{color:#64748b}
+.rp-sum-bar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:#e8edf5;margin:12px 0 16px}
+.rp-sum-bar i{display:block;height:100%}
+.rp-sum-bar .pass{background:#2fbf71}.rp-sum-bar .fail{background:#e5484d}.rp-sum-bar .block{background:#f2a93b}.rp-sum-bar .none{background:#a3b1c6}
+.rp-sum-table{width:100%;border-collapse:collapse}
+.rp-sum-table th{text-align:left;color:#64748b;font-size:13px;font-weight:600;padding:10px 12px;border-bottom:1px solid #e5e9f0}
+.rp-sum-table td{padding:12px;border-bottom:1px solid #eef1f6;font-size:14px}
+.rp-sum-table .c-pass{color:#15803d}.rp-sum-table .c-fail{color:#c81e1e}.rp-sum-table .c-block{color:#b45309}
+
+.rp-detail-table{display:none !important}
