@@ -170,6 +170,19 @@ export class DifyBatchNotifier {
         }
         const failedRows = batch.jobs.flatMap(j => j.results.filter(r => !r.outOfScope && (r.status === 'failed' || r.status === 'error')).map(r => ({ job: j, row: r })));
         const blockedRows = batch.jobs.flatMap(j => j.results.filter(r => !r.outOfScope && r.status === 'blocked').map(r => ({ job: j, row: r })));
+        const approvalNotice = (() => {
+            for (const job of batch.jobs) for (const result of job.results ?? []) {
+                const matched = /读取：(\{[^}]*\})/.exec(String(result.detail ?? ''));
+                if (!matched) continue;
+                try {
+                    const captured = JSON.parse(matched[1] ?? '{}');
+                    const applicationNo = captured.applicationNo;
+                    const approver = captured.approver;
+                    if (applicationNo) return { applicationNo, approver };
+                } catch { }
+            }
+            return undefined;
+        })();
         if (!record.items.length) {
             record.items.push({ id: 'summary', type: 'summary', status: 'pending', attempts: 0 });
             // 只发一条汇总消息；失败清单与截图在报告页查看。
@@ -202,6 +215,8 @@ export class DifyBatchNotifier {
                 `阻塞用例：${blockedRows.length ? blockedRows.slice(0, 10).map(item => displayCaseId(item.row.caseId)).join('、') : '无'}`,
                 `报告：${file.name}（见附件）`,
                 '截图：本机报告目录查看，群里不发图',
+                ...(approvalNotice ? ['【待审批】用书申请 ' + approvalNotice.applicationNo, '最终审批人：' + (approvalNotice.approver ?? '未知') + '（请以企微审批流程为准）'] : []),
+                ...(batch.jobs.some(job => (job.results ?? []).some(result => result.status === 'passed' && /提交申请|xmind-1-050/.test(`${result.caseId} ${result.title}`))) ? ['审批提醒：本轮包含提交类用例，请到企微审批流程处理；H5 仅显示最终审批人，指定上级以企微为准。'] : []),
             ].join('\n')));
             const payload: Payload | undefined = item.type === 'summary' ? { msgtype: 'markdown', markdown: { content } } : await this.image(batch, item.id);
             if (!payload) {
