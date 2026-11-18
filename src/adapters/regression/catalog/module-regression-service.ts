@@ -628,7 +628,7 @@ export class SystemModuleRegression {
      * which already reports them as "待补脚本" instead of running them.
      */
     start(input: unknown) {
-        const data = z.object({ systemId: uuid, moduleIds: z.array(uuid).min(1).max(100), requestId: uuid, runMode: z.enum(['fixed', 'assist']).optional(), scope: z.enum(['core', 'all', 'custom', 'starter']).optional(), caseSelections: z.record(z.string(), z.array(z.string()).min(1).max(200)).optional(), versionSelections: z.record(z.string(), uuid).optional(), skipBlocked: z.boolean().optional(), skipNeedsReview: z.boolean().optional() }).parse(input);
+        const data = z.object({ systemId: uuid, moduleIds: z.array(uuid).min(1).max(100), requestId: uuid, runMode: z.enum(['fixed', 'assist']).optional(), scope: z.enum(['core', 'all', 'custom', 'starter']).optional(), caseSelections: z.record(z.string(), z.array(z.string()).min(1).max(200)).optional(), versionSelections: z.record(z.string(), uuid).optional(), skipBlocked: z.boolean().optional(), skipNeedsReview: z.boolean().optional(), skipClarify: z.boolean().optional() }).parse(input);
         const fingerprint = moduleDigest(data);
         const replay = this.replay(data.requestId, fingerprint);
         if (replay)
@@ -659,12 +659,12 @@ export class SystemModuleRegression {
             const chosen = data.scope === 'custom' ? data.caseSelections?.[m.id] : data.scope === 'core' || data.scope === 'starter' ? preset.ids : undefined;
             if (data.scope === 'custom' && !chosen?.length)
                 throw Error('请选择要执行的用例。');
-            const effectiveChosen = chosen ?? (data.skipBlocked || data.skipNeedsReview ? cases.map(c => c.id) : undefined);
+            const effectiveChosen = chosen ?? (data.skipBlocked || data.skipNeedsReview || data.skipClarify ? cases.map(c => c.id) : undefined);
             if (effectiveChosen) {
                 if (!effectiveChosen.length || new Set(effectiveChosen).size !== effectiveChosen.length || effectiveChosen.some(id => !cases.some(c => c.id === id)))
                     throw Error('执行范围为空、重复或包含未知用例。');
-                const picked = cases.filter(c => effectiveChosen.includes(c.id) && (!data.skipBlocked || ((c as { steps?: unknown[] }).steps ?? []).length > 0) && (!data.skipNeedsReview || pack.scriptReviews?.[c.id]?.status !== 'pending'));
-                if (data.skipNeedsReview && !picked.length) {
+                const picked = cases.filter(c => effectiveChosen.includes(c.id) && (!data.skipBlocked || ((c as { steps?: unknown[] }).steps ?? []).length > 0) && (!data.skipNeedsReview || pack.scriptReviews?.[c.id]?.status !== 'pending') && (!data.skipClarify || !/待澄清|待确认|需澄清/.test(String((c as { title?: string }).title ?? '') + ' ' + String((c as { expected?: string }).expected ?? ''))));
+                if ((data.skipNeedsReview || data.skipClarify) && !picked.length) {
                     Object.assign(entry, { selectedCaseIds: [] });
                     continue;
                 }
@@ -676,7 +676,7 @@ export class SystemModuleRegression {
         const account = this.accountProfile(system);
         const effectiveEntries = entries.filter(entry => { const ids = (entry as { selectedCaseIds?: string[] }).selectedCaseIds; return !Array.isArray(ids) || ids.length > 0; });
         if (!effectiveEntries.length)
-            throw Error('所选用例全部待核对，已按勾选跳过；请取消勾选或先完成核对。');
+            throw Error('所选用例已按勾选跳过（待核对/待澄清）；请取消勾选或先完成核对。');
         const batch = this.create({ ...system, profileId: account.id }, effectiveEntries, data.requestId, fingerprint, undefined, { runMode: data.runMode ?? 'assist', scope: data.scope ?? 'all', accountName: account.name });
         this.saveSelection(system.id, data.moduleIds);
         return batch;
