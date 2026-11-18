@@ -285,8 +285,19 @@ export default function RunReports() {
     return <section className="run-reports" aria-label="运行报告" aria-busy={loading || busy || detailLoading}>
   {error && <div className="rp-error" role="alert"><span>{error}</span><button type="button" disabled={busy || loading} onClick={refresh}>重试</button></div>}
   {selectedKey ? <><div className="rp-back-row"><button className="rp-back" type="button" disabled={busy} onClick={() => setSelectedKey('')}><Icon name="back"/>报告列表</button></div>{detailLoading ? <p className="rp-loading">正在读取报告…</p> : r && detail ? <>
-   <header className="rp-heading rp-detail-heading"><h1>{r.name}</h1><div className="rp-actions"><button type="button" className={'rp-star' + (r.metadata.important ? ' active' : '')} aria-label={r.metadata.important ? '取消重要' : '标记重要'} aria-pressed={r.metadata.important} disabled={busy} onClick={() => void mark(r)}><Icon name="star"/></button><Format value={format} onChange={setFormat} disabled={busy}/><button type="button" disabled={busy || active(r)} onClick={() => void download([r])}>下载报告</button></div></header>
-   <div className="rp-detail-meta"><span>{date(r.createdAt)}</span><span>{scopes[r.scope]}</span><span>{r.groupCount} {r.kind === 'core' ? '条链路' : '个模块'} · {r.size} {r.kind === 'core' ? '步骤' : '用例'}</span><span>{phases[r.phase] ?? r.phase}</span></div>
+   <header className="rp-heading rp-detail-heading"><h1>本次测试结果</h1><div className="rp-actions"><button type="button" className={'rp-star' + (r.metadata.important ? ' active' : '')} aria-label={r.metadata.important ? '取消重要' : '标记重要'} aria-pressed={r.metadata.important} disabled={busy} onClick={() => void mark(r)}><Icon name="star"/></button><Format value={format} onChange={setFormat} disabled={busy}/><button type="button" disabled={busy || active(r)} onClick={() => void download([r])}>下载报告</button></div></header>
+   <div className="rp-detail-meta"><span>{date(r.createdAt)}</span><span>{scopes[r.scope]}</span><span>{r.groupCount} {r.kind === 'core' ? '条链路' : '个模块'} · {r.size} {r.kind === 'core' ? '步骤' : '用例'}</span><span>{phases[r.phase] ?? r.phase}</span><div className="rp-summary-tiles">
+<div className="rp-summary-tile pass"><strong>{r.counts.passed}</strong><span>通过</span></div>
+<div className="rp-summary-tile fail"><strong>{r.counts.failed}</strong><span>失败</span></div>
+<div className="rp-summary-tile block"><strong>{r.counts.blocked}</strong><span>阻塞</span></div>
+<div className="rp-summary-tile none"><strong>{r.counts.not_executed}</strong><span>未执行</span></div>
+</div>
+<div className="rp-summary-bar">
+<i className="pass" style={{ width: Math.round((r.counts.passed / Math.max(1, r.size)) * 100) + '%' }}/>
+<i className="fail" style={{ width: Math.round((r.counts.failed / Math.max(1, r.size)) * 100) + '%' }}/>
+<i className="block" style={{ width: Math.round((r.counts.blocked / Math.max(1, r.size)) * 100) + '%' }}/>
+<i className="none" style={{ width: Math.round((r.counts.not_executed / Math.max(1, r.size)) * 100) + '%' }}/>
+</div></div>
    <div className="rp-detail-subheading"><h2>本批次结果</h2><Counts counts={r.counts}/></div>
    {failedSteps.length > 0 && <section className="rp-fail-panel" aria-label="失败与阻塞">
     <h2>失败与阻塞（{failedSteps.length}）</h2>

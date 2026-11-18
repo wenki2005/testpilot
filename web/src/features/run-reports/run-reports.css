@@ -24,3 +24,15 @@
 .rp-search{display:none !important}
 .rp-actions select{display:none !important}
 .rp-download{display:none !important}
+
+.rp-summary-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 10px}
+.rp-summary-tile{border:1px solid #e5e9f0;border-radius:10px;background:#fff;text-align:center;padding:14px}
+.rp-summary-tile strong{display:block;font-size:28px;line-height:1.1}
+.rp-summary-tile span{color:#475569;font-size:14px}
+.rp-summary-tile.pass{background:#eafaf0;border-color:#c9efd9}.rp-summary-tile.pass strong{color:#15803d}
+.rp-summary-tile.fail{background:#fdeeee;border-color:#f6d3d3}.rp-summary-tile.fail strong{color:#c81e1e}
+.rp-summary-tile.block{background:#fff6e8;border-color:#f5e0bd}.rp-summary-tile.block strong{color:#b45309}
+.rp-summary-tile.none{background:#f1f4f9;border-color:#e2e8f0}.rp-summary-tile.none strong{color:#475569}
+.rp-summary-bar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:#e8edf5;margin-bottom:16px}
+.rp-summary-bar i{display:block;height:100%}
+.rp-summary-bar .pass{background:#2fbf71}.rp-summary-bar .fail{background:#e5484d}.rp-summary-bar .block{background:#f2a93b}.rp-summary-bar .none{background:#a3b1c6}
