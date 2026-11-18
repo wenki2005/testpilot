@@ -90,3 +90,6 @@
 .rp-case-pills .block{background:#fff1e0;color:#b45309}
 
 .rp-case-reason.pass{color:#15803d !important}
+
+.rp-case-reason.fail{color:#c81e1e !important}
+.rp-case-reason.block{color:#b45309 !important}
