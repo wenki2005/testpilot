@@ -66,8 +66,14 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
         .map(c => ({ id: c.id, title: c.title, ...(latestByCase.get(c.id) ?? {}) }))
         .filter(c => c.status === 'failed')
         .sort((a, b) => a.id.localeCompare(b.id)), [cases, latestByCase]);
+    const blockedCases = useMemo(() => cases
+        .map(c => ({ id: c.id, title: c.title, ...(latestByCase.get(c.id) ?? {}) }))
+        .filter(c => c.status === 'blocked')
+        .sort((a, b) => a.id.localeCompare(b.id)), [cases, latestByCase]);
     const [failedOpen, setFailedOpen] = useState(false);
     const [failedDetail, setFailedDetail] = useState<string>();
+    const [blockedOpen, setBlockedOpen] = useState(false);
+    const [blockedDetail, setBlockedDetail] = useState<string>();
     const statusSegments = [
         { key: 'passed', label: '通过', className: 'passed' },
         { key: 'failed', label: '失败', className: 'failed' },
@@ -88,8 +94,9 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
         </div>
         <div className="project-status-tiles">
           {statusSegments.map(segment => {
-            const clickable = segment.key === 'failed' && latest.failed > 0;
-            return <div key={segment.key} role={clickable ? 'button' : undefined} tabIndex={clickable ? 0 : undefined} onClick={() => clickable && setFailedOpen(true)} onKeyDown={e => { if (clickable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setFailedOpen(true); } }} className={`project-status-tile ${segment.className}${clickable ? ' project-status-tile-clickable' : ''}`}><strong>{latest[segment.key]}</strong><span>{segment.label}</span>{clickable && <em>点击查看</em>}</div>;
+            const clickable = (segment.key === 'failed' && latest.failed > 0) || (segment.key === 'blocked' && latest.blocked > 0);
+            const open = () => { if (segment.key === 'failed') setFailedOpen(true); else if (segment.key === 'blocked') setBlockedOpen(true); };
+            return <div key={segment.key} role={clickable ? 'button' : undefined} tabIndex={clickable ? 0 : undefined} onClick={() => clickable && open()} onKeyDown={e => { if (clickable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(); } }} className={`project-status-tile ${segment.className}${clickable ? ' project-status-tile-clickable' : ''}`}><strong>{latest[segment.key]}</strong><span>{segment.label}</span>{clickable && <em>点击查看</em>}</div>;
         })}
         </div>
         {cases.length > 0 && <div className="project-status-progress" role="img" aria-label={statusSegments.map(segment => `${segment.label} ${latest[segment.key]}`).join('，')}>
@@ -125,6 +132,31 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
           <footer><span>共 {failedCases.length} 条</span><span>点「查看」看失败原因与截图</span></footer>
         </div>
       </div>}
+      {blockedOpen && <div className="ps-mask" role="presentation" onClick={() => { setBlockedOpen(false); setBlockedDetail(undefined); }}>
+        <div className="ps-modal" role="dialog" aria-label="阻塞用例" onClick={e => e.stopPropagation()}>
+          <header><h3>阻塞用例 <span className="ps-tag">{blockedCases.length} 条</span></h3><button type="button" onClick={() => { setBlockedOpen(false); setBlockedDetail(undefined); }}>关闭</button></header>
+          <div className="ps-body">
+            <table className="ps-table">
+              <thead><tr><th style={{ width: 84 }}>编号</th><th>用例</th><th style={{ width: 190 }}>阻塞原因</th><th style={{ width: 60 }}/></tr></thead>
+              <tbody>
+                {blockedCases.map(item => <tr key={item.id}>
+                  <td>{item.id.replace('xmind-', '')}</td>
+                  <td>{item.title}</td>
+                  <td className="ps-reason">{item.detail ?? '—'}</td>
+                  <td><button type="button" className="ps-link" onClick={() => setBlockedDetail(item.id)}>查看</button></td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div>
+          <footer><span>共 {blockedCases.length} 条</span><span>点「查看」看阻塞原因</span></footer>
+        </div>
+      </div>}
+      {blockedDetail && <CaseEvidenceDialog
+        cases={blockedCases.map(row => ({ id: row.id, title: row.title, status: 'blocked', moduleName: row.moduleName, at: row.at ?? 0, detail: row.detail, ...(row.runId && row.evidence ? { evidenceUrl: `${root}/evidence/${row.runId}/${row.evidence}` } : {}) }))}
+        index={Math.max(0, blockedCases.findIndex(c => c.id === blockedDetail))}
+        onChange={next => setBlockedDetail(blockedCases[next]?.id)}
+        onClose={() => setBlockedDetail(undefined)}
+      />}
       {failedDetail && <CaseEvidenceDialog
         cases={failedCases.map(row => ({ id: row.id, title: row.title, status: 'failed', moduleName: row.moduleName, at: row.at ?? 0, detail: row.detail, ...(row.runId && row.evidence ? { evidenceUrl: `${root}/evidence/${row.runId}/${row.evidence}` } : {}) }))}
         index={Math.max(0, failedCases.findIndex(c => c.id === failedDetail))}
