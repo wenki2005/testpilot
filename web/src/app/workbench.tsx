@@ -184,6 +184,8 @@ export default function App() {
     const [page, setPage] = useState<Page>(() => resolveWorkbenchPage(window.location));
     const requestedDocumentProjectId = new URLSearchParams(window.location.search).get('documentProject') ?? '';
     const requestedDocumentRunId = new URLSearchParams(window.location.search).get('documentRun') ?? '';
+    const [reportDetail, setReportDetail] = useState(() => new URLSearchParams(location.search).get('report') ?? '');
+    useEffect(() => { const sync = () => setReportDetail(new URLSearchParams(location.search).get('report') ?? ''); window.addEventListener('popstate', sync); window.addEventListener('testpilot:reports', sync); return () => { window.removeEventListener('popstate', sync); window.removeEventListener('testpilot:reports', sync); }; }, []);
     const [notice, setNotice] = useState<Notice>(null);
     const [busy, setBusy] = useState(false);
     const [booting, setBooting] = useState(true);
@@ -520,7 +522,7 @@ export default function App() {
 
     <main className="workspace" id="workspace-main">
       {config?.workspaces?.current === 'web-regression' && config.workspaces.dataStatus === 'awaiting-source' && <p className="integration-source-status" role="status">原网页回归项目与运行记录尚未迁入。</p>}
-      <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/><strong>{page !== 'workbench' ? pageTitle(page) : isDifyWorkspace ? '项目状态' : workspaceReady ? '新建测试' : '正在读取…'}</strong></div><div className="topbar-meta">{page === 'workbench' && workspaceReady && !isDifyWorkspace && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}</div></header>
+      <header className="topbar"><div className="breadcrumbs"><span>TestPilot</span><Icon name="chevron" size={14}/>{page === 'run-reports' && reportDetail ? <><button type="button" className="crumb-link" onClick={() => { const next = new URL(location.href); next.searchParams.delete('report'); history.pushState(null, '', next); window.dispatchEvent(new Event('testpilot:reports')); }}>运行报告</button><Icon name="chevron" size={14}/><strong>本次测试结果</strong></> : <strong>{page !== 'workbench' ? pageTitle(page) : isDifyWorkspace ? '项目状态' : workspaceReady ? '新建测试' : '正在读取…'}</strong>}</div><div className="topbar-meta">{page === 'workbench' && workspaceReady && !isDifyWorkspace && (activeDocumentProjectId || activeApiSuiteId) && <button className="new-session-button" onClick={startNewTest}><Icon name="plus" size={15}/>新建测试</button>}</div></header>
       {notice && <div className={`notice notice-${notice.kind}`} role="status"><span>{notice.text}</span><button aria-label="关闭提示" onClick={() => setNotice(null)}>×</button></div>}
       {page === 'workbench' && !workspaceReady && <div className="workspace-loading" role="status"><span className="workspace-loading-bar"/><p>正在读取项目…</p></div>}
       {page === 'workbench' && workspaceReady && isDifyWorkspace && <ProjectStatusPage systemId={sidebarProjects?.systemId} onNavigate={navigate}/>}

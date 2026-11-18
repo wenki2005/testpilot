@@ -369,3 +369,5 @@ button, a, input, select, textarea, summary { -webkit-tap-highlight-color: trans
     margin-right: auto;
     box-sizing: border-box;
 }
+
+.crumb-link{background:none !important;border:0 !important;color:#2f7cf6 !important;font:inherit !important;padding:0 !important;height:auto !important;cursor:pointer}
