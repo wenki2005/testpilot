@@ -10,6 +10,7 @@ import { callDifyWorkflow, cloudSafe, DifyWorkflowError } from '../../integratio
 import { checkDispatch, resultCounts, type ExecutionManifest } from './execution-manifest-store.js';
 import { validateCases, makeDocumentProject, isSafeReadOnlyBrowserCase, browserStepDraftBlockReason, canAuthorReadOnlyBrowserSteps, actionablePreconditions, type BrowserCheck, type DocumentProject, type DocumentRun } from '../../documents/execution/workflow-facade.js';
 import { parseDifyMarkdown, formatDifyMarkdown } from '../authoring/markdown-case-pack.js';
+import { sendApprovalNotice } from '../notifications/batch-notifier.js';
 import { difyBlocker, reviewedDifyReadOnlyPlan, type DifyBlockerCode, type DifyReviewKind } from '../authoring/case-readiness.js';
 import { difyCoverageGap } from '../authoring/case-quality.js';
 import { assertDifyExportSafe } from '../exports/export-policy.js';
@@ -187,7 +188,7 @@ export class DifyWebModuleStore {
     private db: DatabaseSync;
     private active = new Map<string, AbortController>();
     private closed = false;
-    constructor(root: string, private deps: WebModuleDependencies) {
+    constructor(private root: string, private deps: WebModuleDependencies) {
         mkdirSync(path.join(root, 'dify-web-modules'), { recursive: true });
         this.db = new DatabaseSync(path.join(root, 'dify-web-modules', 'records.sqlite'));
         this.db.exec('PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS records(kind TEXT,id TEXT PRIMARY KEY,payload TEXT NOT NULL); CREATE TABLE IF NOT EXISTS requests(id TEXT PRIMARY KEY,fingerprint TEXT NOT NULL,job_id TEXT NOT NULL)');
@@ -517,6 +518,18 @@ export class DifyWebModuleStore {
                 row.detail = briefDetail(actual.status, actual.detail);
                 row.evidence = actual.evidence;
                 row.evidenceOrigin = 'document-run';
+                const captured = /读取：(\{[^}]*\})/.exec(String(actual.detail ?? ''));
+                if (row.status === 'passed' && captured) {
+                    try {
+                        const data = JSON.parse(captured[1] ?? '{}');
+                        if (data.applicationNo) {
+                            const account = String((job as unknown as { accountName?: string }).accountName ?? '—');
+                            const content = [`【已提交】用书申请 ${data.applicationNo}`, `账号：${account}　用例：${row.caseId.replace(/^xmind-/, '')} ${row.title}`].join('\n');
+                            void sendApprovalNotice(this.root, content);
+                        }
+                    }
+                    catch { }
+                }
                 row.evidenceNote = (actual as typeof actual & {
                     evidenceNote?: string;
                 }).evidenceNote ?? row.evidenceNote;

@@ -215,8 +215,6 @@ export class DifyBatchNotifier {
                 `阻塞用例：${blockedRows.length ? blockedRows.slice(0, 10).map(item => displayCaseId(item.row.caseId)).join('、') : '无'}`,
                 `报告：${file.name}（见附件）`,
                 '截图：本机报告目录查看，群里不发图',
-                ...(approvalNotice ? ['【待审批】用书申请 ' + approvalNotice.applicationNo, '最终审批人：' + (approvalNotice.approver ?? '未知') + '（请以企微审批流程为准）'] : []),
-                ...(batch.jobs.some(job => (job.results ?? []).some(result => result.status === 'passed' && /提交申请|xmind-1-050/.test(`${result.caseId} ${result.title}`))) ? ['审批提醒：本轮包含提交类用例，请到企微审批流程处理；H5 仅显示最终审批人，指定上级以企微为准。'] : []),
             ].join('\n')));
             const payload: Payload | undefined = item.type === 'summary' ? { msgtype: 'markdown', markdown: { content } } : await this.image(batch, item.id);
             if (!payload) {
@@ -267,5 +265,18 @@ export class DifyBatchNotifier {
         record.status = record.items.every(i => i.status === 'sent') ? 'sent' : record.items.some(i => i.status === 'uncertain') ? 'uncertain' : record.items.some(i => i.status === 'sent') ? 'partial' : 'failed';
         commit();
         return record;
+    }
+}
+
+/** 提交成功后立即发送一条审批提醒（不等整批结束）。 */
+export async function sendApprovalNotice(root: string, content: string): Promise<boolean> {
+    const url = difyNotificationWebhook(readRepoWebhook(root));
+    if (!url)
+        return false;
+    try {
+        return await send(url, { msgtype: 'markdown', markdown: { content } }) === 'sent';
+    }
+    catch {
+        return false;
     }
 }
