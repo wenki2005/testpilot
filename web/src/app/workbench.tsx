@@ -185,7 +185,7 @@ export default function App() {
     const requestedDocumentProjectId = new URLSearchParams(window.location.search).get('documentProject') ?? '';
     const requestedDocumentRunId = new URLSearchParams(window.location.search).get('documentRun') ?? '';
     const [reportDetail, setReportDetail] = useState(() => new URLSearchParams(location.search).get('report') ?? '');
-    useEffect(() => { const sync = () => setReportDetail(new URLSearchParams(location.search).get('report') ?? ''); window.addEventListener('popstate', sync); window.addEventListener('testpilot:reports', sync); return () => { window.removeEventListener('popstate', sync); window.removeEventListener('testpilot:reports', sync); }; }, []);
+    useEffect(() => { const sync = () => setReportDetail(new URLSearchParams(location.search).get('report') ?? ''); window.addEventListener('popstate', sync); window.addEventListener('testpilot:reports-sync', sync); return () => { window.removeEventListener('popstate', sync); window.removeEventListener('testpilot:reports-sync', sync); }; }, []);
     const [notice, setNotice] = useState<Notice>(null);
     const [busy, setBusy] = useState(false);
     const [booting, setBooting] = useState(true);
