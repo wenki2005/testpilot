@@ -51,7 +51,7 @@ export default function CaseEvidenceDialog({ cases, index, onChange, onClose, re
           <b>模块</b><span>{row.moduleName ?? '—'}</span>
           <b>执行时间</b><span>{row.at ? new Date(row.at).toLocaleString('zh-CN') : '—'}</span>
         </div>
-        <div className="ced-reason"><b>{reasonLabel}</b><br/>{row.detail ?? '—'}</div>
+        <div className={'ced-reason ced-reason-' + row.status}><b>{row.status === 'passed' ? '通过结果' : row.status === 'blocked' ? '阻塞原因' : reasonLabel}</b><br/>{row.status === 'passed' ? '通过' : (row.detail ?? '—')}</div>
         {row.evidenceUrl
           ? <img className="ced-shot" alt="执行截图" src={row.evidenceUrl}/>
           : <div className="ced-shot ced-shot-empty">这条没有截图</div>}

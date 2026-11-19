@@ -25,3 +25,8 @@
 
 .ced-mask{z-index:10000 !important}
 .ced-modal{width:960px !important;min-width:760px !important;max-height:86vh !important}
+
+.ced-reason{border-radius:8px;padding:12px 14px}
+.ced-reason-passed{background:#eafaf0;border:1px solid #c9efd9;color:#15803d}
+.ced-reason-blocked{background:#fff6e8;border:1px solid #f5e0bd;color:#b45309}
+.ced-reason-failed,.ced-reason-error{background:#fdeeee;border:1px solid #f6d3d3;color:#c81e1e}
