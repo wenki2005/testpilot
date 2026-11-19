@@ -83,7 +83,7 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
     ] as const;
     if (loading && !state) return <section className="project-status-page"><div className="project-status-empty">正在读取项目状态…</div></section>;
     return <section className="project-status-page" aria-label="项目状态">
-      <header className="project-status-top"><div><span className="project-status-crumb">TestPilot / 项目状态</span><h1>{system?.name ?? '当前测试项目'}</h1></div><div className="project-status-actions"><button type="button" onClick={() => window.location.reload()}>刷新</button><button type="button" className="project-status-primary" onClick={() => onNavigate('case-scripts')}>查看用例与脚本</button></div></header>
+      <header className="project-status-top"><div><span className="project-status-crumb">TestPilot / 项目状态</span><h1>{system?.name ?? '当前测试项目'}</h1></div><div className="project-status-actions"><button type="button" className="project-status-primary" onClick={() => window.location.reload()}>刷新</button></div></header>
       {error && <div className="project-status-error" role="alert">{error}</div>}
       <div className="project-status-heading"><div><h2>项目状态</h2></div></div>
       <div className="project-status-metrics"><div><strong>{cases.length || '—'}</strong><span>用例</span></div><div><strong>{modules.length || '—'}</strong><span>模块</span></div><div><strong>{catalog?.chains.length || '—'}</strong><span>核心链路</span></div><div className={pending ? 'warning' : ''}><strong>{pending || 0}</strong><span>脚本待核对</span></div></div>
