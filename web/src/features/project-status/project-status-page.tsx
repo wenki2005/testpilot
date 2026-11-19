@@ -70,6 +70,11 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
         .map(c => ({ id: c.id, title: c.title, ...(latestByCase.get(c.id) ?? {}) }))
         .filter(c => c.status === 'blocked')
         .sort((a, b) => a.id.localeCompare(b.id)), [cases, latestByCase]);
+    const passedCases = useMemo(() => cases.map(c => ({ id: c.id, title: c.title, ...(latestByCase.get(c.id) ?? {}) })).filter(c => c.status === 'passed'), [cases, latestByCase]);
+    const notExecutedCases = useMemo(() => cases.map(c => ({ id: c.id, title: c.title, ...(latestByCase.get(c.id) ?? {}) })).filter(c => c.status === 'not_executed'), [cases, latestByCase]);
+    const neverCases = useMemo(() => cases.map(c => ({ id: c.id, title: c.title, ...(latestByCase.get(c.id) ?? {}) })).filter(c => !latestByCase.has(c.id)), [cases, latestByCase]);
+    const [otherOpen, setOtherOpen] = useState('');
+    const [otherDetail, setOtherDetail] = useState<string>();
     const [failedOpen, setFailedOpen] = useState(false);
     const [failedDetail, setFailedDetail] = useState<string>();
     const [blockedOpen, setBlockedOpen] = useState(false);
@@ -94,8 +99,8 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
         </div>
         <div className="project-status-tiles">
           {statusSegments.map(segment => {
-            const clickable = (segment.key === 'failed' && latest.failed > 0) || (segment.key === 'blocked' && latest.blocked > 0);
-            const open = () => { if (segment.key === 'failed') setFailedOpen(true); else if (segment.key === 'blocked') setBlockedOpen(true); };
+            const clickable = latest[segment.key] > 0;
+            const open = () => { if (segment.key === 'failed') setFailedOpen(true); else if (segment.key === 'blocked') setBlockedOpen(true); else setOtherOpen(segment.key); };
             return <div key={segment.key} role={clickable ? 'button' : undefined} tabIndex={clickable ? 0 : undefined} onClick={() => clickable && open()} onKeyDown={e => { if (clickable && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(); } }} className={`project-status-tile ${segment.className}${clickable ? ' project-status-tile-clickable' : ''}`}><strong>{latest[segment.key]}</strong><span>{segment.label}</span>{clickable && <em>点击查看</em>}</div>;
         })}
         </div>
@@ -113,6 +118,21 @@ export default function ProjectStatusPage({ systemId, onNavigate }: { systemId?:
           </tr>)}</tbody>
         </table>}
       </section>
+      {otherOpen && (() => { const list = otherOpen === 'passed' ? passedCases : otherOpen === 'not_executed' ? notExecutedCases : neverCases; const title = otherOpen === 'passed' ? '通过用例' : otherOpen === 'not_executed' ? '未执行用例' : '从未运行用例'; return <div className="ps-mask" role="presentation" onClick={() => { setOtherOpen(''); setOtherDetail(undefined); }}>
+        <div className="ps-modal" role="dialog" aria-label={title} onClick={e => e.stopPropagation()}>
+          <header><h3>{title} <span className="ps-tag">{list.length} 条</span></h3><button type="button" onClick={() => { setOtherOpen(''); setOtherDetail(undefined); }}>关闭</button></header>
+          <div className="ps-body"><table className="ps-table"><thead><tr><th style={{ width: 84 }}>编号</th><th>用例</th><th style={{ width: 190 }}>结果</th><th style={{ width: 60 }}/></tr></thead><tbody>
+            {list.map(item => <tr key={item.id}><td>{item.id.replace('xmind-', '')}</td><td>{item.title}</td><td className={otherOpen === 'passed' ? 'ps-reason ps-pass' : 'ps-reason'}>{otherOpen === 'passed' ? '通过' : (item.detail ?? '—')}</td><td><button type="button" className="ps-link" onClick={() => setOtherDetail(item.id)}>查看</button></td></tr>)}
+          </tbody></table></div>
+          <footer><span>共 {list.length} 条</span><span>点「查看」看结果与截图</span></footer>
+        </div>
+      </div>; })()}
+      {otherDetail && <CaseEvidenceDialog
+        cases={(otherOpen === 'passed' ? passedCases : otherOpen === 'not_executed' ? notExecutedCases : neverCases).map(row => ({ id: row.id, title: row.title, status: row.status ?? (otherOpen === 'never' ? 'not_executed' : otherOpen), moduleName: row.moduleName, at: row.at ?? 0, detail: otherOpen === 'passed' ? '通过' : row.detail, ...(row.runId && row.evidence ? { evidenceUrl: `${root}/evidence/${row.runId}/${row.evidence}` } : {}) }))}
+        index={0}
+        onChange={() => undefined}
+        onClose={() => setOtherDetail(undefined)}
+      />}
       {failedOpen && <div className="ps-mask" role="presentation" onClick={() => { setFailedOpen(false); setFailedDetail(undefined); }}>
         <div className="ps-modal" role="dialog" aria-label="失败用例" onClick={e => e.stopPropagation()}>
           <header><h3>失败用例 <span className="ps-tag">{failedCases.length} 条</span></h3><button type="button" onClick={() => { setFailedOpen(false); setFailedDetail(undefined); }}>关闭</button></header>
