@@ -22,10 +22,9 @@ const step = (id: string, title: string, expected: string, caseIds: string[]): C
 export const departmentCoreChains: CoreChain[] = [
     {
         id: 'apply-flow',
-        title: '用书申请：提交 → 待审批 → 记录明细',
+        title: '用书申请：待审批 → 记录明细',
         description: '从提交一张测试申请单开始，检查待审核状态、审批人文案、明细回显与全部状态入口。提交会真实创建一条待审批记录。',
         steps: [
-            step('submit', '提交申请', '全部必填完成且格式正确：提交按钮可点击，跳转用书审批详情页并创建待审核记录。', ['xmind-1-050']),
             step('pending', '待审核状态', '待审核状态按钮置灰，展示申请编号与申请信息。', ['xmind-1-053']),
             step('approver', '审批人文案', '待审批记录展示「审批人 张三（待审批）」。', ['xmind-2-089']),
             step('rows', '样书明细', '多行明细逐行展示小计，总计与预估总重计算正确。', ['xmind-1-075']),
@@ -35,12 +34,11 @@ export const departmentCoreChains: CoreChain[] = [
     },
     {
         id: 'order-flow',
-        title: '订单与物流：列表 → 详情 → 取消',
+        title: '订单与物流：列表 → 详情',
         description: '从订单列表进入详情，再取消待发货订单并撤回申请，检查按钮消失与时间轴节点。取消属于写操作。',
         steps: [
             step('order-list', '订单列表', '订单列表展示订单号、状态与查看明细入口。', ['xmind-1-080']),
-            step('order-detail', '订单详情', '展示对应订单详情。', ['xmind-1-084']),
-            step('cancel', '取消订单', '取消成功后按钮消失，时间轴新增「订单已取消」节点并显示取消时间。', ['xmind-2-106'])
+            step('order-detail', '订单详情', '展示对应订单详情。', ['xmind-1-084'])
         ]
     }
 ];

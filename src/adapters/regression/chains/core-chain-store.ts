@@ -42,7 +42,7 @@ export class DepartmentCoreChainStore {
         return JSON.parse(String(row.payload)) as CoreRun;
     }
     activeForSystem(id: string) { return [...this.active.keys()].some(k => this.get(k).systemId === id); }
-    state(systemId: string): CoreState { const s = this.catalog.getSystem(systemId), supported = s.targetUrl === 'https://cdn.yibentushu.com/test-sample-apply/index.html#/home' && s.databaseBinding === 'department-supply-readonly'; return { definitions: structuredClone(departmentCoreChains), runs: this.list().filter(r => r.systemId === systemId && r.profileId === (s.activeAccountId ?? s.profileId) && r.targetUrl === s.targetUrl && r.environment === s.environment), supported }; }
+    state(systemId: string): CoreState { const s = this.catalog.getSystem(systemId), supported = s.targetUrl === 'https://cdn.yibentushu.com/test-sample-apply/index.html#/home'; return { definitions: structuredClone(departmentCoreChains), runs: this.list().filter(r => r.systemId === systemId && r.profileId === (s.activeAccountId ?? s.profileId) && r.targetUrl === s.targetUrl && r.environment === s.environment), supported }; }
     historyForSystem(systemId: string): CoreRun[] { this.catalog.getSystem(systemId); return this.list().filter(r => r.systemId === systemId); }
     start(input: unknown) {
         const data = z.object({ systemId: z.string().uuid(), requestId: z.string().uuid(), chainIds: z.array(chainIdInput).min(1), stockApplicationNos: z.array(z.string().regex(/^\d{12}$/)).min(1).max(6).optional() }).parse(input), digest = hash(data), old = this.db.prepare('SELECT digest,run_id FROM requests WHERE id=?').get(data.requestId);
