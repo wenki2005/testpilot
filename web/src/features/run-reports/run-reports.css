@@ -97,3 +97,18 @@
 .rp-case-modal header:has(.rp-case-badge.pass) .rp-case-pills,
 .rp-case-modal header:has(.rp-case-badge.fail) .rp-case-pills,
 .rp-case-modal header:has(.rp-case-badge.block) .rp-case-pills{display:none !important}
+
+.rp-view-btn.force{height:30px;padding:0 16px;border:1px solid #2f7cf6;border-radius:6px;background:#fff;color:#2f7cf6;font-size:13px;cursor:pointer}
+.rp-view-btn:hover{background:#e8f1ff;border-color:#1f5fd6;color:#1f5fd6}
+.rp-table th:last-child{text-align:left}
+.rp-table td:last-child{text-align:left}
+
+
+.rp-table{table-layout:fixed}
+.rp-table td,.rp-table th{overflow-wrap:anywhere}
+
+.rp-list-table{min-width:0 !important;width:100% !important}
+.rp-list-table th,.rp-list-table td{white-space:normal}
+
+.rp-table .rp-view-btn{height:30px !important;padding:0 16px !important;border:1px solid #2f7cf6 !important;border-radius:6px !important;background:#fff !important;color:#2f7cf6 !important;font-size:13px !important;cursor:pointer}
+.rp-table .rp-view-btn:hover{background:#e8f1ff !important;border-color:#1f5fd6 !important;color:#1f5fd6 !important}
