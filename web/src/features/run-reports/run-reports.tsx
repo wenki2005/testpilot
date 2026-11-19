@@ -171,6 +171,7 @@ export default function RunReports() {
         for (const k of ['batch', 'coreRun', 'scope', 'case', 'caseScope', 'module', 'draft'])
             u.searchParams.delete(k);
         history.replaceState(null, '', u);
+        window.dispatchEvent(new Event('testpilot:reports-sync'));
     }, [catalog?.systemId, selectedKey]);
     useEffect(() => { const back = () => setSelectedKey(''); window.addEventListener('testpilot:reports', back); return () => window.removeEventListener('testpilot:reports', back); }, []);
     const [caseModal, setCaseModal] = useState<{ title: string; rows: Array<{ id: string; title: string; status: string; detail: string; moduleName?: string; evidenceUrl?: string }> } | null>(null);
