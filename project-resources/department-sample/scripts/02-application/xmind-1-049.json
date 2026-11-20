@@ -25,7 +25,7 @@
     {
       "action": "fillByLabel",
       "label": "自编码",
-      "value": "2012600876",
+      "value": "{{bookCode}}",
       "rowIndex": 0
     },
     {
