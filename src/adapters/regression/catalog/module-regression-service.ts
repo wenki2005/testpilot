@@ -785,11 +785,24 @@ export class SystemModuleRegression {
                 batch.message = `本轮先执行 ${order.length - dependent.length - 1} 个无关模块，再提交申请，等审批通过后执行 ${dependent.length} 个依赖模块。`;
                 this.save('batch', batch);
             }
+            let pendingSkip: string | undefined;
             for (const item of order) {
                 if (signal.aborted || this.closed)
                     return;
                 if (item.entry.skipReason)
                     continue;
+                // 审批没通过时，依赖模块不整块跳过：先把它里面不依赖审批的用例跑完，
+                // 只把真正依赖审批结果的那几条留空并写明原因。
+                if (pendingSkip) {
+                    const keep = this.nonDependentCaseIds(item.entry);
+                    if (!keep.length) {
+                        item.entry.skipReason = pendingSkip;
+                        this.save('batch', batch);
+                        continue;
+                    }
+                    item.entry.skipReason = `仅执行不依赖审批的 ${keep.length} 条用例：${pendingSkip}`;
+                    item.entry.selectedCaseIds = keep;
+                }
                 await this.runEntry(batch, item.entry, signal);
                 if (signal.aborted || this.closed)
                     return;
@@ -797,21 +810,19 @@ export class SystemModuleRegression {
                     continue;
                 const applicationNo = await this.submittedApplicationNo(item.entry);
                 if (!applicationNo) {
-                    for (const dep of dependent)
-                        dep.entry.skipReason = '提交模块没有返回申请编号，依赖审批的模块未执行。';
+                    pendingSkip = '提交模块没有返回申请编号，依赖审批的用例未执行。';
+                    batch.message = pendingSkip;
                     this.save('batch', batch);
                     continue;
                 }
                 const state = await this.waitCrossModuleApproval(batch, applicationNo, signal);
                 if (state === 'approved')
                     continue;
-                const reason = state === 'cancelled' ? `申请已取消（申请 ${applicationNo}），依赖模块未执行。`
-                    : state === 'rejected' ? `申请已驳回（申请 ${applicationNo}），依赖模块未执行。`
-                        : state === 'timeout' ? `审批等待超时（5 分钟）：申请 ${applicationNo} 未通过审批，依赖模块未执行。`
-                            : `未能确认审批状态（申请 ${applicationNo}），依赖模块未执行。`;
-                for (const dep of dependent)
-                    dep.entry.skipReason = reason;
-                batch.message = reason;
+                pendingSkip = state === 'cancelled' ? `申请已取消（申请 ${applicationNo}）`
+                    : state === 'rejected' ? `申请已驳回（申请 ${applicationNo}）`
+                        : state === 'timeout' ? `审批等待超时（5 分钟）：申请 ${applicationNo} 未通过审批`
+                            : `未能确认审批状态（申请 ${applicationNo}）`;
+                batch.message = pendingSkip + '，依赖审批的用例未执行。';
                 this.save('batch', batch);
             }
             if (!signal.aborted && !this.closed) {
@@ -849,6 +860,17 @@ export class SystemModuleRegression {
         if (!submitItem || !dependent.length)
             return items;
         return [...items.filter(item => !item.submit && !item.dependent), submitItem, ...dependent];
+    }
+    /** 该模块里不依赖审批结果的用例编号；审批没通过时只跑这些，不整块跳过。 */
+    private nonDependentCaseIds(entry: RegressionBatch['entries'][number]) {
+        try {
+            const pack = this.store.getModule(entry.versionId);
+            const cases = entry.selectedCaseIds?.length ? pack.project.cases.filter(c => entry.selectedCaseIds!.includes(c.id)) : pack.project.cases;
+            return cases.filter(c => !approvalDependencyOf({ approvalDependent: c.approvalDependent, expected: c.expected, steps: ((c.steps?.length ? c.steps : pack.cachedSteps?.[c.id]?.steps ?? []) as Array<{ action: string; status?: string; pattern?: string }>) })).map(c => c.id);
+        }
+        catch {
+            return entry.selectedCaseIds ?? [];
+        }
     }
     private async runEntry(batch: RegressionBatch, entry: RegressionBatch['entries'][number], signal: AbortSignal) {
         const job = this.store.start({ moduleId: entry.versionId, requestId: randomUUID(), ...(batch.runMode ? { runMode: batch.runMode } : {}), ...(entry.selectedCaseIds ? { selectedCaseIds: entry.selectedCaseIds } : {}), ...(entry.confirmedCaseIds ? { confirmedCaseIds: entry.confirmedCaseIds } : {}) }, { profileId: batch.profileId, targetUrl: batch.targetUrl, moduleName: entry.moduleName, ...(batch.accountName ? { accountName: batch.accountName } : {}), ...(batch.databaseBinding ? { databaseBinding: batch.databaseBinding } : {}) });
