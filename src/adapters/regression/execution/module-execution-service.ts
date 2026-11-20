@@ -1,6 +1,6 @@
 import { briefDetail } from '../../../domain/regression/brief-detail.js';
 import { createHash, randomUUID } from 'node:crypto';
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { z } from 'zod';
@@ -830,9 +830,15 @@ export class DifyWebModuleStore {
             }
             this.save('module', module);
             job.executionProject = execution;
-            if (job.runtimeVariables)
+            // 记录夹具：脚本里写 {{夹具名}}，真实编号放在 record-fixtures.json，脚本不再写死编号。
+            let fixtures: Record<string, string> = {};
+            try {
+                fixtures = JSON.parse(readFileSync(path.join(this.root, 'record-fixtures.json'), 'utf8')) as Record<string, string>;
+            }
+            catch { /* 没有夹具文件就按原样执行 */ }
+            if (Object.keys(fixtures).length || job.runtimeVariables)
                 for (const c of execution.cases)
-                    c.runtimeVariables = { ...job.runtimeVariables };
+                    c.runtimeVariables = { ...fixtures, ...(job.runtimeVariables ?? {}) };
             job.planDigest = executionDigest(job);
             this.save('job', job);
             checkModulePlan(job);
