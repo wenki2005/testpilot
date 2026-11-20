@@ -836,6 +836,16 @@ export class DifyWebModuleStore {
                 fixtures = JSON.parse(readFileSync(path.join(this.root, 'record-fixtures.json'), 'utf8')) as Record<string, string>;
             }
             catch { /* 没有夹具文件就按原样执行 */ }
+            // 图书基线：脚本里写 {{bookCode}}/{{bookName}}，换环境只更新 book-fixtures.json。
+            try {
+                const books = JSON.parse(readFileSync(path.join(this.root, 'dify-web-modules', 'book-fixtures.json'), 'utf8')) as { books?: Array<{ code?: string; name?: string }> };
+                const first = books?.books?.[0];
+                if (first?.code)
+                    fixtures.bookCode = String(first.code);
+                if (first?.name)
+                    fixtures.bookName = String(first.name);
+            }
+            catch { /* 没有图书基线就按原样执行 */ }
             if (Object.keys(fixtures).length || job.runtimeVariables)
                 for (const c of execution.cases)
                     c.runtimeVariables = { ...fixtures, ...(job.runtimeVariables ?? {}) };
