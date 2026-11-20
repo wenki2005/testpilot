@@ -13,7 +13,9 @@ import { difyScriptName } from '../../../domain/regression/script-package-layout
 import { mysqlBrowserStatus } from '../../database/mysql-browser.js';
 import { assertDifyExportSafe } from '../exports/export-policy.js';
 import { difyBlocker } from '../authoring/case-readiness.js';
-import { DifyBatchNotifier } from '../notifications/batch-notifier.js';
+import { DifyBatchNotifier, sendApprovalNotice } from '../notifications/batch-notifier.js';
+import { waitForApproval } from '../chains/core-chain-approval.js';
+import { approvalDependencyOf } from '../../../domain/documents/cases/approval-dependency.js';
 import type { CaseDependency, CaseEditorCatalog, EditableCase } from '../../../domain/cases/case-script-contract.js';
 import { departmentCoreChains } from '../../../domain/regression/core-chain-definitions.js';
 import { validateProjectResources, compareProjectResources, resourceDigest, resourceKey, type ProjectResources } from '../resources/project-resource-contract.js';
@@ -28,7 +30,7 @@ export class SystemModuleRegression {
     private connections = new Map<string, AbortController>();
     private accounts: Record<string, AccountView> = {};
     private closed = false;
-    constructor(root: string, private store: DifyWebModuleStore, private deps: WebModuleDependencies, private notifier = new DifyBatchNotifier(root)) {
+    constructor(private root: string, private store: DifyWebModuleStore, private deps: WebModuleDependencies, private notifier = new DifyBatchNotifier(root)) {
         const dir = path.join(root, 'system-module-regression');
         mkdirSync(dir, { recursive: true });
         this.db = new DatabaseSync(path.join(dir, 'catalog.sqlite'));
@@ -777,24 +779,40 @@ export class SystemModuleRegression {
             batch.phase = 'running';
             batch.message = '按模块顺序执行。';
             this.save('batch', batch);
-            for (const entry of batch.entries) {
-                if (signal.aborted || this.closed)
-                    return;
-                const job = this.store.start({ moduleId: entry.versionId, requestId: randomUUID(), ...(batch.runMode ? { runMode: batch.runMode } : {}), ...(entry.selectedCaseIds ? { selectedCaseIds: entry.selectedCaseIds } : {}), ...(entry.confirmedCaseIds ? { confirmedCaseIds: entry.confirmedCaseIds } : {}) }, { profileId: batch.profileId, targetUrl: batch.targetUrl, moduleName: entry.moduleName, ...(batch.accountName ? { accountName: batch.accountName } : {}), ...(batch.databaseBinding ? { databaseBinding: batch.databaseBinding } : {}) });
-                entry.jobId = job.id;
-                batch.updatedAt = now();
-                batch.message = `正在回归：${entry.moduleName}`;
+            const order = this.executionOrder(batch);
+            const submit = order.find(item => item.submit), dependent = order.filter(item => !item.submit && item.dependent), crossModule = !!submit && dependent.length > 0;
+            if (crossModule) {
+                batch.message = `本轮先执行 ${order.length - dependent.length - 1} 个无关模块，再提交申请，等审批通过后执行 ${dependent.length} 个依赖模块。`;
                 this.save('batch', batch);
-                while (!terminal.has(this.store.getJob(job.id).phase)) {
-                    if (signal.aborted || this.closed)
-                        return;
-                    await new Promise(r => setTimeout(r, 100));
-                }
+            }
+            for (const item of order) {
                 if (signal.aborted || this.closed)
                     return;
-                const done = this.store.getJob(job.id);
-                if (done.phase === 'completed')
-                    this.accounts[batch.systemId] = { state: 'connected', message: '测试窗口已连接；权限以各用例实际结果为准。', profileId: batch.profileId, checkedAt: now(), ...(done.databaseEvidence ? { databaseEvidence: done.databaseEvidence } : {}) };
+                if (item.entry.skipReason)
+                    continue;
+                await this.runEntry(batch, item.entry, signal);
+                if (signal.aborted || this.closed)
+                    return;
+                if (!crossModule || item !== submit)
+                    continue;
+                const applicationNo = await this.submittedApplicationNo(item.entry);
+                if (!applicationNo) {
+                    for (const dep of dependent)
+                        dep.entry.skipReason = '提交模块没有返回申请编号，依赖审批的模块未执行。';
+                    this.save('batch', batch);
+                    continue;
+                }
+                const state = await this.waitCrossModuleApproval(batch, applicationNo, signal);
+                if (state === 'approved')
+                    continue;
+                const reason = state === 'cancelled' ? `申请已取消（申请 ${applicationNo}），依赖模块未执行。`
+                    : state === 'rejected' ? `申请已驳回（申请 ${applicationNo}），依赖模块未执行。`
+                        : state === 'timeout' ? `审批等待超时（5 分钟）：申请 ${applicationNo} 未通过审批，依赖模块未执行。`
+                            : `未能确认审批状态（申请 ${applicationNo}），依赖模块未执行。`;
+                for (const dep of dependent)
+                    dep.entry.skipReason = reason;
+                batch.message = reason;
+                this.save('batch', batch);
             }
             if (!signal.aborted && !this.closed) {
                 batch.phase = 'completed';
@@ -813,6 +831,65 @@ export class SystemModuleRegression {
                 await this.notify(batch);
             }
         }
+    }
+    /** 按选中用例把模块排成：无关模块 → 提交模块 → 依赖审批的模块。 */
+    private executionOrder(batch: RegressionBatch) {
+        const items = batch.entries.map(entry => {
+            let submit = false, dependent = false;
+            try {
+                const pack = this.store.getModule(entry.versionId);
+                const cases = entry.selectedCaseIds?.length ? pack.project.cases.filter(c => entry.selectedCaseIds!.includes(c.id)) : pack.project.cases;
+                submit = cases.some(c => (c.steps ?? []).some(step => step.action === 'clickSubmit'));
+                dependent = cases.some(c => approvalDependencyOf({ approvalDependent: c.approvalDependent, expected: c.expected, steps: (c.steps ?? []) as Array<{ action: string; status?: string; pattern?: string }> }));
+            }
+            catch { /* 版本读取失败时按普通模块处理，不阻塞整批 */ }
+            return { entry, submit, dependent };
+        });
+        const submitItem = items.find(item => item.submit), dependent = items.filter(item => !item.submit && item.dependent);
+        if (!submitItem || !dependent.length)
+            return items;
+        return [...items.filter(item => !item.submit && !item.dependent), submitItem, ...dependent];
+    }
+    private async runEntry(batch: RegressionBatch, entry: RegressionBatch['entries'][number], signal: AbortSignal) {
+        const job = this.store.start({ moduleId: entry.versionId, requestId: randomUUID(), ...(batch.runMode ? { runMode: batch.runMode } : {}), ...(entry.selectedCaseIds ? { selectedCaseIds: entry.selectedCaseIds } : {}), ...(entry.confirmedCaseIds ? { confirmedCaseIds: entry.confirmedCaseIds } : {}) }, { profileId: batch.profileId, targetUrl: batch.targetUrl, moduleName: entry.moduleName, ...(batch.accountName ? { accountName: batch.accountName } : {}), ...(batch.databaseBinding ? { databaseBinding: batch.databaseBinding } : {}) });
+        entry.jobId = job.id;
+        batch.updatedAt = now();
+        batch.message = `正在回归：${entry.moduleName}`;
+        this.save('batch', batch);
+        while (!terminal.has(this.store.getJob(job.id).phase)) {
+            if (signal.aborted || this.closed)
+                return;
+            await new Promise(r => setTimeout(r, 100));
+        }
+        if (signal.aborted || this.closed)
+            return;
+        const done = this.store.getJob(job.id);
+        if (done.phase === 'completed')
+            this.accounts[batch.systemId] = { state: 'connected', message: '测试窗口已连接；权限以各用例实际结果为准。', profileId: batch.profileId, checkedAt: now(), ...(done.databaseEvidence ? { databaseEvidence: done.databaseEvidence } : {}) };
+    }
+    /** 批次结果的 detail 是精简版，申请编号要去本轮文档运行里取。 */
+    private async submittedApplicationNo(entry: RegressionBatch['entries'][number]) {
+        const job = entry.jobId ? this.store.getJob(entry.jobId) : undefined;
+        const direct = (job?.results ?? []).map(row => /"applicationNo":"([^"]+)"/u.exec(row.detail ?? '')?.[1]).find(Boolean);
+        if (direct)
+            return direct;
+        if (!job?.documentRunId)
+            return undefined;
+        const run = await this.deps.recover(job.documentRunId).catch(() => undefined);
+        for (const result of run?.deterministic.results ?? []) {
+            const matched = /"applicationNo":"([^"]+)"/u.exec(String(result.detail ?? ''));
+            if (matched?.[1])
+                return matched[1];
+        }
+        return undefined;
+    }
+    /** 跨模块等待：先发一条企微提醒，再每 30 秒只读查一次审批进度，最多 5 分钟。 */
+    private async waitCrossModuleApproval(batch: RegressionBatch, applicationNo: string, signal: AbortSignal) {
+        const sent = await sendApprovalNotice(this.root, `【已提交】用书申请 ${applicationNo}\n账号：${batch.accountName ?? '—'}　批次：${batch.entries.length} 个模块\n等待审批：每 30 秒只读检查一次，最多 10 次（约 5 分钟）。`).catch(() => false);
+        batch.message = `等待审批：申请 ${applicationNo}，每 30 秒只读检查一次，最多 10 次${sent ? '；已发送企微提醒' : '；企微提醒未发送成功'}`;
+        this.save('batch', batch);
+        const outcome = await waitForApproval({ applicationNo, profileId: batch.profileId, dataRoot: this.root, targetUrl: batch.targetUrl, signal, onProgress: message => { batch.message = message; this.save('batch', batch); } });
+        return outcome.state;
     }
     async cancel(key: string) {
         const batch = this.get<RegressionBatch>('batch', key);
@@ -1035,7 +1112,7 @@ export class SystemModuleRegression {
         const fileName = `Dify_${difyScriptName(system.name, 24)}_${scopeName}_${entries.length}模块${count}条_导出${stamp}.zip`;
         return { fileName, bytes: await difySelectionScriptPackage(modules, donors, { systemId: system.id, systemName: system.name, createdAt, selectionScope: data.scope, modules: entries }) };
     }
-    report(key: string) { const b = this.getBatch(key); const report = [`# ${b.systemName} 模块回归报告`, `批次：${b.id}`, `环境：${b.environment}`, `账号：${b.accountName ?? '历史默认账号'}`, `目标：${b.targetUrl}`, `时间：${b.createdAt}`, `批次状态：${b.phase}`, `异常通知：${b.notification?.status ?? '未启用'}（独立于用例结果）`, ...(b.notification?.items.map(i => `- ${i.type === 'summary' ? '异常摘要' : '失败截图'}：${i.status}${i.detail ? '；' + i.detail : ''}`) ?? []), `通过 ${b.counts.passed}；失败 ${b.counts.failed}；阻塞 ${b.counts.blocked}；异常 ${b.counts.error}；未执行 ${b.counts.not_executed}；范围外 ${b.counts.outside}`, ...b.entries.map(e => `\n## ${e.moduleName} · v${e.version}\n版本指纹：${e.digest}\n${e.jobId ? this.store.renderReport(this.store.getJob(e.jobId)) : '本模块未启动，不计为通过。'}`)].join('\n\n'); assertDifyExportSafe(report); return report; }
+    report(key: string) { const b = this.getBatch(key); const report = [`# ${b.systemName} 模块回归报告`, `批次：${b.id}`, `环境：${b.environment}`, `账号：${b.accountName ?? '历史默认账号'}`, `目标：${b.targetUrl}`, `时间：${b.createdAt}`, `批次状态：${b.phase}`, `异常通知：${b.notification?.status ?? '未启用'}（独立于用例结果）`, ...(b.notification?.items.map(i => `- ${i.type === 'summary' ? '异常摘要' : '失败截图'}：${i.status}${i.detail ? '；' + i.detail : ''}`) ?? []), `通过 ${b.counts.passed}；失败 ${b.counts.failed}；阻塞 ${b.counts.blocked}；异常 ${b.counts.error}；未执行 ${b.counts.not_executed}；范围外 ${b.counts.outside}`, ...b.entries.map(e => `\n## ${e.moduleName} · v${e.version}\n版本指纹：${e.digest}\n${e.jobId ? this.store.renderReport(this.store.getJob(e.jobId)) : e.skipReason ? `本模块未执行：${e.skipReason}` : '本模块未启动，不计为通过。'}`)].join('\n\n'); assertDifyExportSafe(report); return report; }
     close() {
         if (this.closed)
             return;

@@ -59,6 +59,8 @@ export type BatchEntry = {
     jobId?: string;
     selectedCaseIds?: string[];
     confirmedCaseIds?: string[];
+    /** 跨模块审批等待未通过时，依赖模块不执行并在这里写明原因。 */
+    skipReason?: string;
 };
 export type RegressionBatch = {
     id: string;
