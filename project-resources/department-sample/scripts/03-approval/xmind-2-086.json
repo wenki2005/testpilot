@@ -8,7 +8,7 @@
   "steps": [
     {
       "action": "openRoute",
-      "hash": "#/apply-detail/202611040149"
+      "hash": "#/apply-detail/{{restock-failed-1}}"
     },
     {
       "action": "assertVisible",

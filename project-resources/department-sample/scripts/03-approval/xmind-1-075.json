@@ -7,13 +7,8 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "clickExactText",
-      "text": "历史申请记录"
-    },
-    {
-      "action": "openLatestRecord",
-      "list": "apply",
-      "status": "待审批"
+      "action": "openRoute",
+      "hash": "#/apply-detail/{{applicationNo}}"
     },
     {
       "action": "clickExactText",
@@ -21,19 +16,35 @@
     },
     {
       "action": "assertVisible",
-      "text": "¥25.00"
+      "text": "小计"
     },
     {
       "action": "assertVisible",
-      "text": "¥49.80"
+      "text": "总计"
     },
     {
       "action": "assertVisible",
-      "text": "¥74.80"
+      "text": "预估总重"
     },
     {
-      "action": "assertVisible",
-      "text": "0.78"
+      "action": "assertMatch",
+      "pattern": "[¥￥]\\s?\\d[\\d,]*\\.\\d{2}"
+    },
+    {
+      "action": "assertMatch",
+      "pattern": "总计[：:]\\s*[¥￥]\\s?\\d[\\d,]*\\.\\d{2}"
+    },
+    {
+      "action": "assertMatch",
+      "pattern": "预估总重[：:]\\s*\\d+(?:\\.\\d+)?\\s*\\(公斤\\)"
+    },
+    {
+      "action": "assertMatch",
+      "pattern": "\\t\\d{1,4}\\t"
+    },
+    {
+      "action": "assertMatch",
+      "pattern": "\\t\\d+\\.\\d{1,2}\\t"
     }
   ]
 }

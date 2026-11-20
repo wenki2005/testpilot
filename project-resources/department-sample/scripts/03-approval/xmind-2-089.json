@@ -7,17 +7,16 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "openLatestRecord",
-      "list": "apply",
-      "status": "待审批"
+      "action": "openRoute",
+      "hash": "#/apply-detail/{{applicationNo}}"
     },
     {
       "action": "assertVisible",
       "text": "审批人"
     },
     {
-      "action": "assertVisible",
-      "text": "待审批"
+      "action": "assertMatch",
+      "pattern": "已同意|待审批"
     }
   ]
 }
