@@ -103,7 +103,10 @@ export type BrowserStep = {
     as?: string;
 }
     | { action: "openRoute"; hash: string }
-    | { action: "openLatestRecord"; list?: "apply" | "order"; status?: string }
+    | { action: "openLatestRecord"; list?: "apply" | "order"; status?: string; contains?: string }
+    | { action: "readListRows"; list?: "apply" | "order"; as?: string }
+    | { action: "assertRowsSorted"; variable?: string; order?: "asc" | "desc" }
+    | { action: "assertRowsOwned"; variable?: string; applicant?: string }
     | { action: "clickSubmit"; name: string } | {
     action: "assertCurrentUrlUnchanged";
 } | {

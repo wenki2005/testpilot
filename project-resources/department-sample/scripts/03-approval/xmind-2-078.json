@@ -7,20 +7,14 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "clickExactText",
-      "text": "历史申请记录"
+      "action": "readListRows",
+      "list": "apply",
+      "as": "rows"
     },
     {
-      "action": "assertVisible",
-      "text": "202611040149"
-    },
-    {
-      "action": "assertVisible",
-      "text": "2026-11-04 17:00"
-    },
-    {
-      "action": "assertVisible",
-      "text": "202611040120"
+      "action": "assertRowsSorted",
+      "variable": "rows",
+      "order": "desc"
     }
   ]
 }

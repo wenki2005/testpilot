@@ -15,12 +15,13 @@
       "text": "申请编号"
     },
     {
-      "action": "assertNotVisible",
-      "text": "202611040149"
+      "action": "readListRows",
+      "list": "apply",
+      "as": "rows"
     },
     {
-      "action": "assertNotVisible",
-      "text": "202611110172"
+      "action": "assertRowsOwned",
+      "variable": "rows"
     }
   ]
 }

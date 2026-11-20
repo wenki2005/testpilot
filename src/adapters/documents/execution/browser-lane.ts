@@ -186,7 +186,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                         await record({ id: item.id, title: item.title, status: "blocked", detail: `现有步骤不足以证明需求：${assertionGap}`, durationMs: Date.now() - start });
                         continue;
                     }
-                    if (!steps.some(step => ["assertControlEnabled", "assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible", "assertRoleDisabled", "assertMaxLengthOrMessage", "assertValue", "assertValueByPlaceholder", "assertSelectedByRoleIndex", "assertDisabled", "assertFieldInvalid", "assertCurrentUrlUnchanged", "assertNoFetchOrXhr", "assertNoHorizontalOverflow", "assertMatch"].includes(step.action))) {
+                    if (!steps.some(step => ["assertControlEnabled", "assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible", "assertRoleDisabled", "assertMaxLengthOrMessage", "assertValue", "assertValueByPlaceholder", "assertSelectedByRoleIndex", "assertDisabled", "assertFieldInvalid", "assertCurrentUrlUnchanged", "assertNoFetchOrXhr", "assertNoHorizontalOverflow", "assertMatch", "assertRowsSorted", "assertRowsOwned"].includes(step.action))) {
                         await record({ id: item.id, title: item.title, status: "blocked", detail: "该用例只有操作步骤，没有结果断言；请补充断言后再运行。", durationMs: Date.now() - start });
                         continue;
                     }
@@ -347,6 +347,57 @@ else if (step.action === "openLatestRecord") {
                                     await page.waitForTimeout(400);
                                 if (!/-(detail)\//.test(page.url()))
                                     throw new Error(`按状态打开记录失败：${page.url()}`);
+                            }
+                            else if (step.action === "readListRows") {
+                                const target = new URL(url);
+                                target.hash = step.list === "order" ? "#/logistics" : "#/apply";
+                                await page.goto(target.toString(), { waitUntil: "domcontentloaded", timeout: 15000 });
+                                await page.waitForFunction(() => document.querySelectorAll(".apply-content-item, .order-content-item, .logistics-content-item").length > 0, undefined, { timeout: 12000 }).catch(() => undefined);
+                                await page.waitForTimeout(800);
+                                const rows = await page.evaluate(() => {
+                                    const cards = [...document.querySelectorAll(".apply-content-item, .order-content-item, .logistics-content-item")];
+                                    return cards.map(card => ({
+                                        time: (card.querySelector(".header .time")?.textContent ?? "").trim(),
+                                        no: (card.querySelector(".header .or")?.textContent ?? "").replace(/\s+/g, " ").trim(),
+                                        status: (card.querySelector(".content .status")?.textContent ?? "").trim(),
+                                        applicant: ((card.textContent ?? "").replace(/\s+/g, " ").match(/申请人[：:]\s*([^\s|、，,]+)/u)?.[1] ?? (card.querySelector(".content > li:nth-child(2) .name")?.textContent ?? "").replace(/^申请人[：:]\s*/u, "")).trim(),
+                                        text: (card.textContent ?? "").replace(/\s+/g, " ").trim(),
+                                    }));
+                                });
+                                const name = step.as ?? "rows";
+                                if (!rows.length)
+                                    throw new Error("列表没有任何记录，无法做后续断言。");
+                                variables.set(name, JSON.stringify(rows));
+                                captured[name] = rows.length + " 行";
+                            }
+                            else if (step.action === "assertRowsSorted") {
+                                const raw = variables.get(step.variable ?? "rows");
+                                if (!raw)
+                                    throw new Error("还没有读取列表，无法断言排序。");
+                                const rows = JSON.parse(raw) as Array<{
+                                    time: string;
+                                }>;
+                                const times = rows.map(row => String(row.time ?? "")).filter(Boolean);
+                                if (times.length < 2)
+                                    throw new Error("列表少于两条记录，无法验证排序。");
+                                const sorted = [...times].sort(), order = step.order ?? "desc";
+                                const expected = order === "asc" ? sorted : [...sorted].reverse();
+                                if (JSON.stringify(times) !== JSON.stringify(expected))
+                                    throw new Error(`断言失败：列表没有按申请时间${order === "asc" ? "升序" : "倒序"}排列：${times.join(" | ")}`);
+                            }
+                            else if (step.action === "assertRowsOwned") {
+                                const raw = variables.get(step.variable ?? "rows");
+                                if (!raw)
+                                    throw new Error("还没有读取列表，无法断言归属。");
+                                const rows = JSON.parse(raw) as Array<{
+                                    applicant: string;
+                                }>;
+                                const expected = String(step.applicant ?? variables.get("accountName") ?? "").trim();
+                                if (!expected)
+                                    throw new Error("缺少当前账号名，无法断言列表归属。");
+                                const foreign = rows.filter(row => !String(row.applicant ?? "").includes(expected));
+                                if (foreign.length)
+                                    throw new Error(`断言失败：${foreign.length} 条记录的申请人不是当前账号「${expected}」：${foreign.map(row => row.applicant || "(空)").join(" | ")}`);
                             }
                             else if (step.action === "clickSubmit") {
                                 const before = page.url();

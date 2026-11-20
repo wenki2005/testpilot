@@ -39,7 +39,30 @@ export function validateCases(value: unknown): BrowserCheck[] {
                 throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 list 无效。`);
             if (step.status !== undefined && (typeof step.status !== "string" || step.status.length > 20))
                 throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 status 无效。`);
-            return { action: step.action, ...(step.list === undefined ? {} : { list: step.list }), ...(step.status === undefined ? {} : { status: step.status }) };
+            if (step.contains !== undefined && (typeof step.contains !== "string" || step.contains.length > 40))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 contains 无效。`);
+            return { action: step.action, ...(step.list === undefined ? {} : { list: step.list }), ...(step.status === undefined ? {} : { status: step.status }), ...(step.contains === undefined ? {} : { contains: step.contains }) };
+        }
+        if (step.action === "readListRows") {
+            if (step.list !== undefined && !["apply", "order"].includes(step.list))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 list 无效。`);
+            if (step.as !== undefined && (typeof step.as !== "string" || !/^[\w-]{1,40}$/.test(step.as)))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 as 无效。`);
+            return { action: step.action, ...(step.list === undefined ? {} : { list: step.list }), ...(step.as === undefined ? {} : { as: step.as }) };
+        }
+        if (step.action === "assertRowsSorted") {
+            if (step.variable !== undefined && (typeof step.variable !== "string" || !/^[\w-]{1,40}$/.test(step.variable)))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 variable 无效。`);
+            if (step.order !== undefined && !["asc", "desc"].includes(step.order))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 order 无效。`);
+            return { action: step.action, ...(step.variable === undefined ? {} : { variable: step.variable }), ...(step.order === undefined ? {} : { order: step.order }) };
+        }
+        if (step.action === "assertRowsOwned") {
+            if (step.variable !== undefined && (typeof step.variable !== "string" || !/^[\w-]{1,40}$/.test(step.variable)))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 variable 无效。`);
+            if (step.applicant !== undefined && (typeof step.applicant !== "string" || step.applicant.length > 60))
+                throw new Error(`第 ${i + 1} 条第 ${j + 1} 步 applicant 无效。`);
+            return { action: step.action, ...(step.variable === undefined ? {} : { variable: step.variable }), ...(step.applicant === undefined ? {} : { applicant: step.applicant }) };
         }
         if (step.action === "clickSubmit") {
             if (typeof step.name !== "string" || step.name.length < 1 || step.name.length > 40)
