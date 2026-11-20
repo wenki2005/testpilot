@@ -8,7 +8,7 @@
   "steps": [
     {
       "action": "openRoute",
-      "hash": "#/apply-detail/{{lockFailed}}"
+      "hash": "#/apply-detail/{{applicationNo}}"
     },
     {
       "action": "assertVisible",
