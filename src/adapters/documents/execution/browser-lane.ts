@@ -169,7 +169,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                         await record({ id: item.id, title: item.title, status: "blocked", detail: `现有步骤不足以证明需求：${assertionGap}`, durationMs: Date.now() - start });
                         continue;
                     }
-                    if (!steps.some(step => ["assertControlEnabled", "assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible", "assertRoleDisabled", "assertMaxLengthOrMessage", "assertValue", "assertValueByPlaceholder", "assertSelectedByRoleIndex", "assertDisabled", "assertFieldInvalid", "assertCurrentUrlUnchanged", "assertNoFetchOrXhr", "assertNoHorizontalOverflow"].includes(step.action))) {
+                    if (!steps.some(step => ["assertControlEnabled", "assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible", "assertRoleDisabled", "assertMaxLengthOrMessage", "assertValue", "assertValueByPlaceholder", "assertSelectedByRoleIndex", "assertDisabled", "assertFieldInvalid", "assertCurrentUrlUnchanged", "assertNoFetchOrXhr", "assertNoHorizontalOverflow", "assertMatch"].includes(step.action))) {
                         await record({ id: item.id, title: item.title, status: "blocked", detail: "该用例只有操作步骤，没有结果断言；请补充断言后再运行。", durationMs: Date.now() - start });
                         continue;
                     }
@@ -524,6 +524,11 @@ else if (step.action === "openLatestRecord") {
                                 catch {
                                     throw new Error(`断言失败：不应出现的文本仍可见：${step.text}`);
                                 }
+                            }
+                            else if (step.action === "assertMatch") {
+                                const body = await page.locator("body").innerText();
+                                if (!new RegExp(step.pattern).test(body))
+                                    throw new Error("断言失败：页面未出现匹配 " + step.pattern + " 的内容");
                             }
                             else if (step.action === "assertExactVisible") {
                                 try {

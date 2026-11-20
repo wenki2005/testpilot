@@ -29,7 +29,7 @@ export type DifyScriptModuleInput = Pick<WebModuleJob, 'moduleId' | 'moduleName'
 };
 /** Narrow Dify export compatibility fix; the shared runner source is unchanged. */
 export function difyPortableRunner(source: string): string {
-    const allowed = ['assertControlEnabled', 'assertSelectedByRoleIndex', 'assertText', 'assertVisible', 'assertNotVisible', 'assertExactVisible', 'assertRoleVisible', 'assertValue', 'assertValueByPlaceholder', 'assertDisabled', 'assertRoleDisabled', 'assertFieldInvalid', 'assertMaxLengthOrMessage', 'assertNoHorizontalOverflow', 'assertNoFetchOrXhr', 'assertCurrentUrlUnchanged'];
+    const allowed = ['assertControlEnabled', 'assertSelectedByRoleIndex', 'assertText', 'assertVisible', 'assertNotVisible', 'assertExactVisible', 'assertRoleVisible', 'assertValue', 'assertValueByPlaceholder', 'assertDisabled', 'assertRoleDisabled', 'assertFieldInvalid', 'assertMaxLengthOrMessage', 'assertNoHorizontalOverflow', 'assertNoFetchOrXhr', 'assertCurrentUrlUnchanged', 'assertMatch'];
     const match = source.match(/c\.steps\.some\(s=>(\[[^\]\n]+\])\.includes\(s\.action\)\)/);
     let existing: unknown;
     try {

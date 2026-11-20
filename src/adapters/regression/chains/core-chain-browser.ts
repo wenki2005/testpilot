@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import type { Page, Route } from 'playwright';
 import type { CoreRun, CoreChainResult, CoreStepResult } from '../../../domain/regression/core-chain-definitions.js';
 import type { WebModuleDependencies, WebModuleJob } from '../execution/module-execution-service.js';
+import { sendApprovalNotice } from '../notifications/batch-notifier.js';
 import type { DocumentProject } from '../../documents/execution/workflow-facade.js';
 import { acquireDocumentPageLease } from '../../documents/execution/workflow-facade.js';
 import { getExistingPersistentTestPage } from '../../browser/browser-runtime.js';
@@ -13,6 +14,7 @@ import { assertApprovalProgress } from '../evidence/integration-assertions.js';
 import { inspectOrder85Presentation } from '../scenarios/orders/order-detail-presentation.js';
 import { captureDifyPng } from '../evidence/module-evidence.js';
 import { checkSubmitCancelStep, createJourney, createMutationGate, releaseChainMutation } from './core-chain-submit-cancel.js';
+import { approvalPollAttempts, approvalPollMs, waitForApproval } from './core-chain-approval.js';
 type Row = Record<string, any>;
 type Fixture = {
     baseline: DepartmentCreationBaseline;
@@ -24,11 +26,11 @@ export type CoreChainExecutor = (run: CoreRun, chain: CoreChainResult, emit: (st
 /** Steps that read back a stored application. The submit→cancel journey builds
  * and removes its own document, so it must not be blocked on these fixtures. */
 const readbackStepIds = new Set(['submitted', 'application-detail', 'approved', 'order-created', 'outbound', 'rejected', 'no-order', 'reapply-entry', 'warehouse', 'shortage', 'retry', 'search', 'detail', 'status', 'tracking']);
-export function departmentCoreChainBrowser(root: string, deps: WebModuleDependencies, saveEvidence: (runId: string, bytes: Buffer) => Promise<string>): CoreChainExecutor {
+export function departmentCoreChainBrowser(root: string, deps: WebModuleDependencies, saveEvidence: (runId: string, bytes: Buffer) => Promise<string>, loadCases?: (ids: string[]) => unknown[], accountLabel?: (run: CoreRun) => string | undefined): CoreChainExecutor {
     return async (run, chain, emit, signal, onLogin) => {
         if (run.targetUrl !== 'https://cdn.yibentushu.com/test-sample-apply/index.html#/home')
             throw Error('核心链路只适用于已绑定的部门申样测试环境。');
-        const project = { id: run.profileId, name: run.systemName, fileName: 'core-business-chains', format: 'text', browserProfileIsolation: true, targetUrl: run.targetUrl, sourceText: '', cases: [], createdAt: run.createdAt, updatedAt: run.updatedAt } as DocumentProject;
+        const project = { id: run.profileId, name: run.systemName, fileName: 'core-business-chains', format: 'text', browserProfileIsolation: true, targetUrl: run.targetUrl, sourceText: '', cases: [], reviewStatus: 'approved' as const, createdAt: run.createdAt, updatedAt: run.updatedAt } as DocumentProject;
         // A journey may submit and cancel exactly one application; both are
         // gated and payload-checked, and every other mutation stays blocked.
         const gate = createMutationGate(), journey = createJourney(run.id);
@@ -62,6 +64,123 @@ export function departmentCoreChainBrowser(root: string, deps: WebModuleDependen
                 throw Error('既有Dify窗口身份不匹配或正在使用，未借用。');
         };
         await ensureIdle();
+        // 只读链路：直接复用模块执行器按用例编号跑，不读数据库。
+        const chainModuleEngine = true; // 核心链路统一走模块执行器，不再依赖数据库基线。
+        if (chainModuleEngine) {
+            const chainRunId = `${run.id}-${chain.id}`;
+            const withCases = (ids: string[]) => ({ ...project, cases: loadCases?.(ids) ?? [] }) as DocumentProject;
+            const results = new Map<string, { status: string; detail: string }>();
+            let currentDocumentRunId: string | undefined;
+            const cancelDocumentRun = () => {
+                const id = currentDocumentRunId;
+                if (id)
+                    void deps.cancel(run.profileId, id).catch(() => undefined);
+            };
+            const runCases = async (documentRunId: string, steps: CoreStepResult[]) => {
+                if (!steps.length)
+                    return;
+                signal.throwIfAborted();
+                currentDocumentRunId = documentRunId;
+                const ids = steps.flatMap(s => s.caseIds);
+                const nowIso = () => new Date().toISOString();
+                await deps.execute(withCases(ids), documentRunId, ids, undefined, result => {
+                    results.set(result.id, { status: result.status, detail: result.detail });
+                    const step = steps.find(s => s.caseIds.includes(result.id));
+                    if (!step)
+                        return;
+                    // 每个用例一结束就回传，页面上的「第 X/Y 步」才能跟着真实进度走；
+                    // 停止运行时也能看到已完成的步骤，而不是整批全为空。
+                    emit(step.id, {
+                        status: result.status === 'passed' ? 'passed' : result.status === 'failed' ? 'failed' : 'blocked',
+                        detail: result.detail,
+                        startedAt: nowIso(),
+                        finishedAt: nowIso(),
+                    });
+                    const next = steps[steps.indexOf(step) + 1];
+                    if (next)
+                        emit(next.id, { detail: '正在执行该步骤的用例。', startedAt: nowIso() });
+                });
+                // 停止运行通过 deps.cancel 中断执行器；这里再抛一次，让链路批次记为已取消。
+                signal.throwIfAborted();
+            };
+            const stepPatch = (step: CoreStepResult): CorePatch => {
+                const hit = step.caseIds.map(id => results.get(id)).find((item): item is { status: string; detail: string } => !!item);
+                return {
+                    status: hit?.status === 'passed' ? 'passed' : hit?.status === 'failed' ? 'failed' : 'blocked',
+                    detail: hit?.detail ?? '未返回该步骤的用例结果。',
+                    startedAt: new Date().toISOString(),
+                    finishedAt: new Date().toISOString(),
+                };
+            };
+            const applicationNoOf = (step: CoreStepResult | undefined) => {
+                if (!step)
+                    return undefined;
+                for (const id of step.caseIds) {
+                    const match = /读取：(\{[^}]*\})/.exec(results.get(id)?.detail ?? '');
+                    if (!match)
+                        continue;
+                    try {
+                        const data = JSON.parse(match[1] ?? '{}') as { applicationNo?: unknown };
+                        if (data.applicationNo)
+                            return String(data.applicationNo);
+                    }
+                    catch { /* 读取内容不是结构化数据时忽略 */ }
+                }
+                return undefined;
+            };
+            signal.addEventListener('abort', cancelDocumentRun, { once: true });
+            try {
+                // 提交与待审核状态必须在审批发生前完成；其余步骤要求存在「已通过」的记录。
+                const submit = chain.steps.find(s => s.id === 'submit');
+                const pre = chain.steps.filter(s => s.id === 'submit' || s.id === 'pending');
+                const post = chain.steps.filter(s => !pre.includes(s));
+                await runCases(chainRunId + '-1', pre);
+                for (const step of pre)
+                    emit(step.id, stepPatch(step));
+                if (submit && results.get(submit.caseIds[0]!)?.status !== 'passed') {
+                    const reason = '提交申请未通过，后续步骤未执行：' + (results.get(submit.caseIds[0]!)?.detail ?? '未返回提交结果。');
+                    for (const step of post)
+                        emit(step.id, { status: 'blocked', detail: reason, startedAt: new Date().toISOString(), finishedAt: new Date().toISOString() });
+                    return;
+                }
+                const applicationNo = applicationNoOf(submit);
+                if (applicationNo) {
+                    const label = accountLabel?.(run) ?? run.systemName;
+                    const sent = await sendApprovalNotice(root, `【已提交】用书申请 ${applicationNo}\n账号：${label}　用例：${submit!.caseIds[0]!.replace(/^xmind-/, '')} ${submit!.title}`).catch(() => false);
+                    emit(submit!.id, { detail: (results.get(submit!.caseIds[0]!)?.detail ?? '') + (sent ? '；已发送企微提交提醒' : '；企微提交提醒未发送成功，请检查群机器人配置') });
+                    const first = post[0];
+                    if (first)
+                        emit(first.id, { detail: `等待审批：申请 ${applicationNo}；每 ${approvalPollMs / 1000} 秒只读查询一次审批进度，最多 ${approvalPollAttempts} 次（约 ${approvalPollMs * approvalPollAttempts / 60000} 分钟）。`, startedAt: new Date().toISOString() });
+                    const outcome = await waitForApproval({
+                        applicationNo,
+                        profileId: run.profileId,
+                        dataRoot: browserRoot,
+                        targetUrl: run.targetUrl,
+                        signal,
+                        onProgress: message => { if (first)
+                            emit(first.id, { detail: message }); },
+                    });
+                    signal.throwIfAborted();
+                    const stopReason = outcome.state === 'approved' ? undefined
+                        : outcome.state === 'cancelled' ? `申请已取消（申请 ${applicationNo}），后续步骤未执行。`
+                            : outcome.state === 'rejected' ? `申请已驳回（申请 ${applicationNo}），后续步骤未执行。`
+                                : outcome.state === 'timeout' ? `审批等待超时（5 分钟）：申请 ${applicationNo} 未在等待窗口内通过审批。`
+                                    : `未能确认审批状态：申请 ${applicationNo}；${outcome.detail}`;
+                    if (stopReason) {
+                        for (const step of post)
+                            emit(step.id, { status: 'failed', detail: stopReason, startedAt: new Date().toISOString(), finishedAt: new Date().toISOString() });
+                        return;
+                    }
+                }
+                await runCases(chainRunId + '-2', post);
+                for (const step of post)
+                    emit(step.id, stepPatch(step));
+            }
+            finally {
+                signal.removeEventListener('abort', cancelDocumentRun);
+            }
+            return;
+        }
         if (browserRoot === root)
             await deps.inspect(project, { id: run.id } as WebModuleJob, signal, onLogin);
         signal.throwIfAborted();

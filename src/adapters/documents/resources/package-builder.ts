@@ -77,6 +77,8 @@ export function buildDocumentPackageInput(project: DocumentProject, run: Documen
         "else if(s.action==='clickSubmit'){throw Error('Blocked: 提交动作需要平台运行，独立 runner 不重放写入')}",
         "else if(s.action==='fillByLabel')"
     ].join(""));
+    packagedRunner = packagedRunner.replace("else if(s.action==='fillByLabel')", "else if(s.action==='assertMatch'){const bodyText=await page.locator('body').innerText();if(!new RegExp(s.pattern).test(bodyText))throw Error('断言失败：页面未匹配 '+s.pattern)}else if(s.action==='fillByLabel')");
+    packagedRunner = packagedRunner.replace("else if(s.action==='fillByLabel')", "else if(s.action==='readText'){const bodyText=await page.locator('body').innerText();const m=s.pattern?bodyText.match(new RegExp(s.pattern)):null;if(m){s.captured=m[0]}}else if(s.action==='fillByLabel')");
     const packageActions = [...new Set(selectedCases.flatMap(item => item.steps.map(step => step.action)))];
     const unsupportedPackageActions = packageActions.filter(action => !packagedRunner.includes(`s.action==='${action}'`));
     if (unsupportedPackageActions.length)

@@ -141,6 +141,8 @@ export class SystemModuleRegression {
         return this.save('system', value);
     }
     private accountName(system: TestedSystem, id: string) { const custom = system.accountNames?.[id]; if (custom) return custom; return id === system.profileId ? '我的账号' : system.accountProfiles?.find(a => a.id === id)?.name ?? '我的账号'; } private accountProfile(system: TestedSystem) { const id = system.activeAccountId ?? system.profileId; return { id, name: this.accountName(system, id) }; }
+    /** 通知与报告里的账号名；不能再用系统名冒充账号。 */
+    accountLabel(systemId: string) { const s = this.getSystem(systemId); return this.accountName(s, s.activeAccountId ?? s.profileId); }
     addAccount(key: string, input: unknown) {
         const data = z.object({ name: z.string().trim().min(1).max(40) }).parse(input);
         const s = this.getSystem(key);

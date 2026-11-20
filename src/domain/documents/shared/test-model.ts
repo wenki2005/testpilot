@@ -69,6 +69,9 @@ export type BrowserStep = {
     action: "assertNotVisible";
     text: string;
 } | {
+    action: "assertMatch";
+    pattern: string;
+} | {
     action: "assertExactVisible";
     text: string;
 } | {

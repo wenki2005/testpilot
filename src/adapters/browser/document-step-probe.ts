@@ -40,7 +40,7 @@ export function createDocumentStepProbeAdapter(ports: DocumentStepProbePorts) {
             const locatorKinds = new Set([
                 "fillByLabel", "fillByPlaceholder", "fillByRoleIndex", "blurByLabel", "blurByPlaceholder",
                 "selectByLabel", "selectByPlaceholder", "selectByRoleIndex", "clickByRole", "clickExactText",
-                "assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible",
+                "assertMatch", "assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible",
                 "assertValue", "assertValueByPlaceholder", "assertDisabled", "assertFieldInvalid",
                 "assertRoleDisabled", "assertMaxLengthOrMessage", "triggerClientValidation",
             ]);

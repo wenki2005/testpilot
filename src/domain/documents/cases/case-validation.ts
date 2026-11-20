@@ -106,6 +106,13 @@ export function validateCases(value: unknown): BrowserCheck[] {
                 text("text");
                 return { action: step.action, text: step.text };
             }
+            if (step.action === "assertMatch") {
+                if (!step.pattern || typeof step.pattern !== "string")
+                    throw new Error("断言缺少正则表达式");
+                try { new RegExp(step.pattern); }
+                catch { throw new Error("断言正则表达式无效"); }
+                return { action: step.action, pattern: step.pattern };
+            }
             if (step.action === "assertExactVisible") {
                 text("text");
                 return { action: step.action, text: step.text };

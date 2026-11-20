@@ -30,7 +30,7 @@ export class DepartmentCoreChainStore {
                 r.message = '服务重启，已有步骤结果已保存；不会自动重放。';
                 this.save(r);
             }
-        this.executor = executor ?? departmentCoreChainBrowser(root, deps, async (id, bytes) => { const name = createHash('sha256').update(bytes).digest('hex') + '.png', dir = path.join(root, 'department-core-chains', 'evidence', id); mkdirSync(dir, { recursive: true }); await writeFile(path.join(dir, name), bytes); return name; });
+        this.executor = executor ?? departmentCoreChainBrowser(root, deps, async (id, bytes) => { const name = createHash('sha256').update(bytes).digest('hex') + '.png', dir = path.join(root, 'department-core-chains', 'evidence', id); mkdirSync(dir, { recursive: true }); await writeFile(path.join(dir, name), bytes); return name; }, ids => this.catalog.state().modules.flatMap(m => this.catalog.cases(m.id).cases.map(item => ({ ...item, lifecycleStatus: 'ready' as const }))).filter(c => ids.includes(c.id)), run => this.catalog.accountLabel(run.systemId));
     }
     private list(): CoreRun[] { return this.db.prepare('SELECT payload FROM runs ORDER BY rowid DESC').all().map(r => JSON.parse(String(r.payload))); }
     private save(run: CoreRun) { run.updatedAt = now(); this.db.prepare('INSERT INTO runs VALUES(?,?) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload').run(run.id, JSON.stringify(run)); }

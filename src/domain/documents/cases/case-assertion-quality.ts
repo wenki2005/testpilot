@@ -9,7 +9,7 @@ export function missingDirectAssertion(check: BrowserCheck): string | undefined 
     const expectation = `${check.title} ${check.expected}`;
     const steps = check.steps ?? [];
     if (/多行样书明细.*(?:小计|总计)/u.test(expectation)) {
-        const numericAssertions = steps.filter(step => ['assertText', 'assertVisible', 'assertExactVisible'].includes(step.action) && 'text' in step && /\d/u.test(step.text));
+        const numericAssertions = steps.filter(step => (['assertText', 'assertVisible', 'assertExactVisible'].includes(step.action) && 'text' in step && /\d/u.test(step.text)) || (step.action === 'assertMatch' && 'pattern' in step && /\\d/u.test(String(step.pattern))));
         if (numericAssertions.length < 4)
             return '多行金额与重量验收需要对实际记录的逐行小计、总金额、总重量及图书/数量给出直接数值断言；只检查表头或零值不能证明多行计算。请利用本次数据库明细和当前页面证据。';
     }

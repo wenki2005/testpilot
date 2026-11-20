@@ -64,7 +64,7 @@ export async function handleDocumentCaseStepRoute(req: IncomingMessage, res: Ser
             if (!steps.length)
                 throw new Error(`AI 没有生成可执行步骤；${error instanceof Error ? error.message : String(error)}`);
         }
-        if (!steps.length || !steps.some(step => ["assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible", "assertRoleDisabled", "assertMaxLengthOrMessage", "assertValue", "assertDisabled", "assertFieldInvalid", "assertNoFetchOrXhr", "assertNoHorizontalOverflow"].includes(step.action))) {
+        if (!steps.length || !steps.some(step => ["assertText", "assertVisible", "assertNotVisible", "assertExactVisible", "assertRoleVisible", "assertRoleDisabled", "assertMaxLengthOrMessage", "assertValue", "assertDisabled", "assertFieldInvalid", "assertNoFetchOrXhr", "assertNoHorizontalOverflow", "assertMatch"].includes(step.action))) {
             throw new Error("没有生成可执行的验收断言；保留原用例并补充页面证据、具体测试数据或可观察的通过条件后重试。空草稿不会保存为已生成步骤。");
         }
         // Revalidate at the HTTP boundary and update only steps, preserving case IDs and provenance.

@@ -28,7 +28,7 @@ import { supportsDepartmentDatabase } from '../../../domain/database/regression-
 export const moduleDigest = (value: unknown) => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const now = () => new Date().toISOString();
 const id = z.string().uuid();
-const assertions = new Set(['assertText', 'assertVisible', 'assertNotVisible', 'assertExactVisible', 'assertRoleVisible', 'assertRoleDisabled', 'assertValue', 'assertValueByPlaceholder', 'assertSelectedByRoleIndex', 'assertDisabled', 'assertFieldInvalid', 'assertMaxLengthOrMessage', 'assertNoHorizontalOverflow', 'assertNoFetchOrXhr']);
+const assertions = new Set(['assertMatch', 'assertText', 'assertVisible', 'assertNotVisible', 'assertExactVisible', 'assertRoleVisible', 'assertRoleDisabled', 'assertValue', 'assertValueByPlaceholder', 'assertSelectedByRoleIndex', 'assertDisabled', 'assertFieldInvalid', 'assertMaxLengthOrMessage', 'assertNoHorizontalOverflow', 'assertNoFetchOrXhr']);
 type Outcome = 'passed' | 'failed' | 'blocked' | 'error' | 'not_executed';
 export type WebModule = {
     id: string;

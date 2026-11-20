@@ -2,8 +2,9 @@ import DepartmentCoreChains from './core-chains/core-chain-selector';
 import { difyScriptArchiveName } from '../../../../src/domain/regression/script-package-layout';
 import SelectionResults from './selected-case-results';
 import CaseEvidenceDialog from '../shared/case-evidence-dialog';
+import Modal from '../shared/modal';
 import CrossModuleResults from './cross-module-results';
-import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import type { SystemModuleState, TestedSystem, FixedModule, BatchView } from '../../../../src/domain/regression/module-catalog-contract';
 import type { WebModuleJobView } from '../../../../src/domain/regression/module-execution-contract';
 import './execution-page.css';
@@ -59,12 +60,6 @@ async function api<T>(path = '', data?: unknown): Promise<T> {
 }
 const latest = (m: FixedModule) => m.versions[m.versions.length - 1]!;
 const date = (value: string) => new Date(value).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-function Modal({ title, onClose, children, error }: {
-    title: string;
-    onClose: () => void;
-    children: ReactNode;
-    error: string;
-}) { const ref = useRef<HTMLDialogElement>(null); useEffect(() => { const d = ref.current!; d.showModal(); return () => d.close(); }, []); return <dialog className="sm-modal" ref={ref} onCancel={onClose}><header><h2>{title}</h2><button onClick={onClose}>关闭</button></header>{error && <p role="alert" className="sm-modal-error">{error}</p>}{children}</dialog>; }
 type CasePack = {
     module: FixedModule;
     version: {

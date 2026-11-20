@@ -24,4 +24,14 @@
 .core-results{margin-top:28px;padding-top:24px;border-top:1px solid #e0e8f3}
 .core-results .sm-evidence p{overflow-wrap:anywhere}
 .core-results .sm-case-results{scroll-margin-top:20px}
+/* 核心链路弹窗里的执行序号：和「全部用例」的优先级标签同位，用来标先后顺序 */
+.core-step-no{flex:0 0 auto;min-width:26px;height:26px;padding:0 6px;border-radius:6px;background:#eef4ff;color:#3262a7;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.core-step-no.is-passed{background:#edf8f1;color:#087f3f}
+.core-step-no.is-failed{background:#fff0f0;color:#d12b20}
+.sm-pack-row>.sm-badge{flex:0 0 auto;margin-top:2px}
+/* 核心链路弹窗：标题与底部固定，步骤列表内部滚动，弹窗始终留在视口内。
+   注意 .app-shell 有 zoom:1.2，vh 按未缩放尺寸计算，所以这里留出余量。 */
+.sm-modal.core-steps{display:flex;flex-direction:column;max-height:74vh;overflow:hidden}
+.sm-modal.core-steps>.sm-heading,.sm-modal.core-steps>.sm-case-toolbar,.sm-modal.core-steps>footer{flex:0 0 auto}
+.sm-modal.core-steps>.sm-pack-cases{flex:0 1 auto;min-height:0;max-height:calc(74vh - 230px);overflow-y:auto}
 @media(max-width:640px){.core-journeys>.sm-heading{align-items:flex-start;gap:15px;flex-direction:column}.core-step-list>li>p,.core-step-links{margin-left:0}.core-run-meta label{width:100%}.core-run-meta select{flex:1;min-width:0}.core-chain-detail>.sm-heading{gap:12px}.core-journeys .sm-table table{min-width:680px}}
