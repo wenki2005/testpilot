@@ -84,6 +84,23 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
         };
         try {
             page.setDefaultTimeout(10000);
+            // 运行级变量：readText 带 as 的结果存进来，后续用例可用 {{名字}} 引用
+            // （例如按本次提交的申请编号打开详情）。不带 {{}} 的步骤行为完全不变。
+            const variables = new Map<string, string>();
+            const resolveStep = (raw: BrowserCheck['steps'][number]) => {
+                const out = { ...raw } as Record<string, unknown>;
+                for (const [key, value] of Object.entries(out)) {
+                    if (typeof value !== 'string' || !value.includes('{{'))
+                        continue;
+                    out[key] = value.replace(/\{\{\s*([\w-]+)\s*\}\}/gu, (_match: string, name: string) => {
+                        const resolved = variables.get(name);
+                        if (resolved === undefined)
+                            throw new Error(`缺少运行变量「${name}」：本轮没有读到对应值，未执行该步骤。`);
+                        return resolved;
+                    });
+                }
+                return out as BrowserCheck['steps'][number];
+            };
             for (let caseIndex = 0; caseIndex < cases.length; caseIndex++) {
                 let item = cases[caseIndex]!;
                 if (handoffBlockedReason && !handoff?.prerequisiteCaseIds.includes(item.id)) {
@@ -246,7 +263,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                     const assertionFailures: string[] = [];
                     const captured: Record<string, string> = {};
                     for (let stepIndex = 0; stepIndex < (item.steps ?? []).length; stepIndex++) {
-                        const step = item.steps![stepIndex]!;
+                        const step = resolveStep(item.steps![stepIndex]!);
                         currentStepIndex = stepIndex;
                         if (signal?.aborted)
                             throw new Error("cancelled by user");
@@ -301,6 +318,7 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                                 const value = matched ? String(matched[1] ?? "").trim() : "";
                                 if (!value) throw new Error("读取失败：未找到 " + step.label);
     captured[step.as ?? step.label] = value;
+    variables.set(step.as ?? step.label, value);
 }
 else if (step.action === "openLatestRecord") {
                                 const target = new URL(url);
