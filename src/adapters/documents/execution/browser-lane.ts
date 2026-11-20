@@ -347,6 +347,9 @@ else if (step.action === "openLatestRecord") {
                                     await page.waitForTimeout(400);
                                 if (!/-(detail)\//.test(page.url()))
                                     throw new Error(`按状态打开记录失败：${page.url()}`);
+                                // 记录被删除/无权查看时页面只剩占位图，直接判阻塞，别让后续断言报“未见文案”。
+                                if (/暂无内容显示/u.test(await page.locator("body").innerText().catch(() => "")))
+                                    throw new Error("Blocked: 打开的记录没有可显示内容（可能已删除或无权查看）。");
                             }
                             else if (step.action === "readListRows") {
                                 const target = new URL(url);
