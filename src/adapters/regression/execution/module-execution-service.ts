@@ -18,6 +18,8 @@ import { missingDirectAssertion } from '../../documents/cases/case-quality.js';
 import { isDifyRecordIndependent } from '../scenarios/scenario-planner.js';
 import { isSensitiveExportField } from '../../documents/evidence/sensitive-data.js';
 import { excludedCaseReason } from '../../documents/cases/case-scope.js';
+import { approvalDependencyOf } from '../../../domain/documents/cases/approval-dependency.js';
+import { waitForApproval } from '../chains/core-chain-approval.js';
 import { connectedEvidenceKind } from '../evidence/connected-evidence-contract.js';
 import { departmentBlockerDiagnostic } from '../evidence/blocker-diagnostics.js';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -85,6 +87,7 @@ export type WebModuleJob = {
     moduleDigest: string;
     requestId: string;
     approvalWait?: ApprovalWait;
+    accountName?: string;
     parentJobId?: string | undefined;
     createdAt: string;
     updatedAt: string;
@@ -369,6 +372,7 @@ export class DifyWebModuleStore {
         profileId: string;
         targetUrl: string;
         moduleName?: string;
+        accountName?: string;
         databaseBinding?: RegressionDatabaseBinding;
     }) {
         const data = z.object({ moduleId: id, requestId: id, selectedCaseIds: z.array(z.string()).min(1).max(200).optional(), confirmedCaseIds: z.array(z.string()).max(200).default([]), parentJobId: id.optional(), runMode: z.enum(['fixed', 'assist']).optional(), approvalWait: z.object({ caseIds: z.array(z.string()).max(50).optional(), pollMs: z.number().int().min(10).max(300000).default(30000), timeoutMs: z.number().int().min(100).max(1800000).default(300000) }).optional() }).parse(input);
@@ -413,6 +417,8 @@ export class DifyWebModuleStore {
             job.snapshot.browserProfileIsolation = true;
             job.moduleName = context.moduleName ?? job.moduleName;
             job.snapshot.name = job.moduleName;
+            if (context.accountName)
+                job.accountName = context.accountName;
         }
         if (context?.databaseBinding) {
             if (!supportsDepartmentDatabase(job.snapshot.targetUrl))
@@ -518,18 +524,6 @@ export class DifyWebModuleStore {
                 row.detail = briefDetail(actual.status, actual.detail);
                 row.evidence = actual.evidence;
                 row.evidenceOrigin = 'document-run';
-                const captured = /读取：(\{[^}]*\})/.exec(String(actual.detail ?? ''));
-                if (row.status === 'passed' && captured) {
-                    try {
-                        const data = JSON.parse(captured[1] ?? '{}');
-                        if (data.applicationNo) {
-                            const account = String((job as unknown as { accountName?: string }).accountName ?? '—');
-                            const content = [`【已提交】用书申请 ${data.applicationNo}`, `账号：${account}　用例：${row.caseId.replace(/^xmind-/, '')} ${row.title}`].join('\n');
-                            void sendApprovalNotice(this.root, content);
-                        }
-                    }
-                    catch { }
-                }
                 row.evidenceNote = (actual as typeof actual & {
                     evidenceNote?: string;
                 }).evidenceNote ?? row.evidenceNote;
@@ -539,73 +533,67 @@ export class DifyWebModuleStore {
         job.outcome = jobOutcome(job);
         this.save('job', job);
     }
-    private looksLikeApproval(row: { expected: string; detail: string }) {
-        // Only cases that need an approval transition wait; status-display or filter
-        // cases must not stall for five minutes when they fail for other reasons.
-        return /等待审批|审批通过|审核通过|审批完成|审核完成|审批结果|审核结果|审批进度|审核进度|审批驳回|审核驳回|驳回理由|审批后|审核后|待上级审批|上级审批|审批同意|审核同意/.test(row.expected)
-            || (/待审批|待审核|审批中/.test(row.detail) && /已通过|已审批|已处理|审批通过|审核通过/.test(row.expected));
+    private approvalDependent(row: WebModuleResult, job: WebModuleJob) {
+        const source = job.snapshot.cases.find(c => c.id === row.caseId) as (typeof job.snapshot.cases[number] & {
+            approvalDependent?: boolean;
+        }) | undefined;
+        const steps = job.executionProject?.cases.find(c => c.id === row.caseId)?.steps ?? source?.steps ?? [];
+        return approvalDependencyOf({ approvalDependent: source?.approvalDependent, expected: row.expected, steps: steps as Array<{ action: string; status?: string; pattern?: string }> });
     }
-    private approvalTargets(job: WebModuleJob, execution: DocumentProject) {
-        const cfg = job.approvalWait;
-        if (!cfg)
-            return [];
-        return job.results.filter(row => (cfg.caseIds.includes(row.caseId) || this.looksLikeApproval(row)) && row.status !== 'passed' && !row.outOfScope && execution.cases.some(c => c.id === row.caseId && c.lifecycleStatus === 'runnable' && c.selectedForRegression));
-    }
-    private async awaitApproval(job: WebModuleJob, execution: DocumentProject, signal: AbortSignal) {
+    /** 提交成功后：只有本轮存在「依赖审批」的用例，才发企微并只读等待审批；绝不重跑提交用例。 */
+    private async approvalPhase(job: WebModuleJob, execution: DocumentProject, signal: AbortSignal) {
         const cfg = job.approvalWait;
         if (!cfg)
             return;
-        const targets = this.approvalTargets(job, execution);
-        if (!targets.length)
+        const submitRow = job.results.find(row => row.status === 'passed' && /读取：\{[^}]*"applicationNo"/u.test(row.detail ?? ''));
+        const applicationNo = submitRow ? /"applicationNo":"([^"]+)"/u.exec(submitRow.detail ?? '')?.[1] : undefined;
+        const targets = job.results.filter(row => row.status !== 'passed' && !row.outOfScope && this.approvalDependent(row, job));
+        // R7：没有提交成功、或本轮没有依赖审批的用例，就不发群也不等待。
+        if (!applicationNo || !submitRow || !targets.length)
             return;
-        const attempts = Math.max(1, Math.floor(cfg.timeoutMs / cfg.pollMs));
-        this.event(job, 'executing', `审批等待：每 ${Math.round(cfg.pollMs / 1000)} 秒轮询一次，最多 ${attempts} 次（约 ${Math.round(cfg.timeoutMs / 60000)} 分钟）；超时未处理按失败计。`);
-        for (const row of targets) {
-            const started = Date.now();
-            let observed = row.detail;
-            for (let attempt = 1; attempt <= attempts; attempt++) {
-                signal.throwIfAborted();
-                await delay(cfg.pollMs, undefined, { signal });
-                if (Date.now() - started > cfg.timeoutMs)
-                    break;
-                let actual: { status: string; detail: string; evidence?: string; evidenceNote?: string } | undefined;
-                try {
-                    const run = await this.deps.execute(execution, randomUUID(), [row.caseId]);
-                    actual = run.deterministic.results.find(c => c.id === row.caseId);
-                }
-                catch (error) {
-                    observed = `第 ${attempt} 次轮询未取得页面结果：${error instanceof Error ? error.message.slice(0, 200) : '未知错误'}`;
-                    this.event(job, 'executing', `审批轮询 ${attempt}/${attempts} 未取得结果，继续等待。`);
+        const attempts = Math.max(1, Math.floor(cfg.timeoutMs / cfg.pollMs)), windowMinutes = Math.round(cfg.timeoutMs / 60000), pollSeconds = Math.round(cfg.pollMs / 1000);
+        const sent = await sendApprovalNotice(this.root, `【已提交】用书申请 ${applicationNo}\n账号：${job.accountName ?? '—'}　用例：${submitRow.caseId.replace(/^xmind-/, '')} ${submitRow.title}\n等待审批：每 ${pollSeconds} 秒只读检查一次，最多 ${attempts} 次（约 ${windowMinutes} 分钟）。`).catch(() => false);
+        submitRow.detail = `${submitRow.detail ?? ''}；${sent ? '已发送企微提醒（本轮有依赖审批的用例）' : '企微提醒未发送成功，请检查群机器人配置'}`;
+        this.save('job', job);
+        this.event(job, 'executing', `审批等待：申请 ${applicationNo}，每 ${pollSeconds} 秒只读检查一次，最多 ${attempts} 次；超时未处理按失败计。`);
+        const outcome = await waitForApproval({ applicationNo, profileId: job.snapshot.id, dataRoot: this.root, targetUrl: job.snapshot.targetUrl, signal, pollMs: cfg.pollMs, attempts, onProgress: message => this.event(job, 'executing', message) });
+        signal.throwIfAborted();
+        if (outcome.state === 'approved') {
+            // 审批通过后，只重跑只读的依赖用例；带写操作的一律不自动重跑，避免重复提交。
+            const rerunnable = targets.filter(row => {
+                const source = execution.cases.find(c => c.id === row.caseId);
+                return !!source && !source.authorizedWriteOperationId && !(source.steps ?? []).some(step => /^(clickSubmit|fill|select|upload|press|drag)/u.test(step.action));
+            });
+            for (const row of targets) {
+                if (rerunnable.includes(row))
                     continue;
-                }
-                if (actual) {
-                    observed = actual.detail ?? observed;
-                    if (actual.evidence)
-                        row.evidence = actual.evidence;
-                    row.evidenceOrigin = 'document-run';
-                    if (actual.evidenceNote)
-                        row.evidenceNote = actual.evidenceNote;
-                    if (actual.status === 'passed') {
-                        row.status = 'passed';
-                        row.detail = `审批在 ${Math.round((Date.now() - started) / 1000)} 秒内完成（第 ${attempt} 次轮询）。${actual.detail ?? ''}`;
-                        delete row.blockerCode;
-                        delete row.nextAction;
-                        this.save('job', job);
-                        break;
-                    }
-                    row.status = actual.status === 'failed' ? 'failed' : actual.status === 'blocked' ? 'blocked' : 'not_executed';
-                    row.detail = actual.detail;
-                }
-                this.event(job, 'executing', `审批未完成：第 ${attempt}/${attempts} 次检查，继续等待。`);
+                row.status = 'blocked';
+                row.detail = `审批已通过（申请 ${applicationNo}），但该用例包含写操作，未自动重跑；请确认后再单独执行。`;
             }
-            if (row.status !== 'passed') {
-                row.status = 'failed';
-                row.blockerCode = 'approval-timeout';
-                row.nextAction = '由运营/他人在被测系统完成审批后重测；本轮超过等待上限按失败计。';
-                row.detail = `审批等待超时：每 ${Math.round(cfg.pollMs / 1000)} 秒检查一次，共 ${attempts} 次（约 ${Math.round(cfg.timeoutMs / 60000)} 分钟）仍未完成；按约定标记失败，未计通过。最后一次观察：${observed ?? '无'}`;
+            if (rerunnable.length) {
+                const rerun = await this.deps.execute(execution, randomUUID(), rerunnable.map(row => row.caseId));
+                this.capture(job, rerun);
+                for (const row of rerunnable) {
+                    row.detail = `${row.detail ?? ''}；审批通过后已重新核验。`;
+                    if (row.status === 'passed')
+                        delete row.blockerCode;
+                }
             }
             this.save('job', job);
+            return;
         }
+        const reason = outcome.state === 'cancelled' ? `申请已取消（申请 ${applicationNo}），后续步骤未执行。`
+            : outcome.state === 'rejected' ? `申请已驳回（申请 ${applicationNo}），后续步骤未执行。`
+                : outcome.state === 'timeout' ? `审批等待超时（5 分钟）：申请 ${applicationNo} 未在等待窗口内通过审批。`
+                    : `未能确认审批状态：申请 ${applicationNo}；${outcome.detail}`;
+        for (const row of targets) {
+            row.status = 'failed';
+            row.detail = reason;
+            row.nextAction = '由运营/他人在被测系统完成审批后重测。';
+            if (outcome.state === 'timeout')
+                row.blockerCode = 'approval-timeout';
+        }
+        this.save('job', job);
     }
     private async report(job: WebModuleJob, signal: AbortSignal) {
         if (job.runMode === 'fixed') {
@@ -841,10 +829,16 @@ export class DifyWebModuleStore {
             this.save('job', job);
             checkModulePlan(job);
             const runnable = execution.cases.filter(c => job.selectedCaseIds.includes(c.id) && c.lifecycleStatus === 'runnable' && c.selectedForRegression);
-            if (runnable.length) {
-                this.event(job, 'dispatching', job.runMode === 'fixed' ? `本机派发 ${runnable.length} 条可执行用例。` : `Dify 正在派发 ${runnable.length} 条可执行用例。`);
-                for (let offset = 0; job.runMode !== 'fixed' && offset < runnable.length; offset += 20) {
-                    const manifest: ExecutionManifest = { schema: 1, run_id: job.id, module_id: job.moduleId, plan_digest: job.planDigest!, suite_digest: job.moduleDigest, case_ids: runnable.slice(offset, offset + 20).map(c => c.id) };
+            // 同一个模块里既有提交用例、又有依赖审批的用例时：先跑其它用例，再提交，等审批，最后跑依赖用例。
+            const dependent = runnable.filter(c => approvalDependencyOf({ approvalDependent: c.approvalDependent, expected: c.expected, steps: c.steps as Array<{ action: string; status?: string; pattern?: string }> }));
+            const splitApproval = dependent.length > 0 && dependent.length < runnable.length && runnable.some(c => (c.steps ?? []).some(step => step.action === 'clickSubmit'));
+            const batch = splitApproval ? runnable.filter(c => !dependent.includes(c)) : runnable;
+            if (splitApproval)
+                this.event(job, 'executing', `本轮先执行 ${batch.length} 条与审批无关的用例，提交成功并审批通过后再执行 ${dependent.length} 条依赖审批的用例。`);
+            if (batch.length) {
+                this.event(job, 'dispatching', job.runMode === 'fixed' ? `本机派发 ${batch.length} 条可执行用例。` : `Dify 正在派发 ${batch.length} 条可执行用例。`);
+                for (let offset = 0; job.runMode !== 'fixed' && offset < batch.length; offset += 20) {
+                    const manifest: ExecutionManifest = { schema: 1, run_id: job.id, module_id: job.moduleId, plan_digest: job.planDigest!, suite_digest: job.moduleDigest, case_ids: batch.slice(offset, offset + 20).map(c => c.id) };
                     checkDispatch(await this.cloud(job, 'dispatch', offset / 20, { execution_json: JSON.stringify({ ...manifest, phase: 'dispatch' }) }, manifest.case_ids, signal, 'execution'), manifest);
                 }
                 signal.throwIfAborted();
@@ -852,9 +846,9 @@ export class DifyWebModuleStore {
                 await this.deps.saveProject(execution);
                 job.documentRunId = randomUUID();
                 job.executionStarted = true;
-                this.event(job, 'executing', `正在测试 ${runnable.length} 条用例。`);
+                this.event(job, 'executing', `正在测试 ${batch.length} 条用例。`);
                 let refreshExecutionWatchdog = () => { };
-                const executionPromise = this.deps.execute(execution, job.documentRunId, runnable.map(c => c.id), stage => {
+                const executionPromise = this.deps.execute(execution, job.documentRunId, batch.map(c => c.id), stage => {
                     if (stage === 'awaiting-login')
                         this.event(job, 'awaiting-login', '测试窗口需要重新登录，请登录后继续。');
                     else if (job.phase === 'awaiting-login')
@@ -904,7 +898,7 @@ export class DifyWebModuleStore {
                 job.executionFinished = true;
                 this.save('job', job);
             }
-            await this.awaitApproval(job, execution, signal);
+            await this.approvalPhase(job, execution, signal);
             for (const row of job.results) {
                 if (row.status !== 'blocked' || row.outOfScope)
                     continue;

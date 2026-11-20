@@ -159,6 +159,8 @@ export type BrowserCheck = {
     authorizedWriteOperationId?: string;
     writeResultOperationId?: string;
     writeResultSourceRunId?: string;
+    /** 显式声明：这条用例只有在申请审批通过后才有意义，优先于自动判断。 */
+    approvalDependent?: boolean;
     requiredAssertions?: string[];
     id: string;
     title: string;

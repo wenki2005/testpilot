@@ -780,7 +780,7 @@ export class SystemModuleRegression {
             for (const entry of batch.entries) {
                 if (signal.aborted || this.closed)
                     return;
-                const job = this.store.start({ moduleId: entry.versionId, requestId: randomUUID(), ...(batch.runMode ? { runMode: batch.runMode } : {}), ...(entry.selectedCaseIds ? { selectedCaseIds: entry.selectedCaseIds } : {}), ...(entry.confirmedCaseIds ? { confirmedCaseIds: entry.confirmedCaseIds } : {}) }, { profileId: batch.profileId, targetUrl: batch.targetUrl, moduleName: entry.moduleName, ...(batch.databaseBinding ? { databaseBinding: batch.databaseBinding } : {}) });
+                const job = this.store.start({ moduleId: entry.versionId, requestId: randomUUID(), ...(batch.runMode ? { runMode: batch.runMode } : {}), ...(entry.selectedCaseIds ? { selectedCaseIds: entry.selectedCaseIds } : {}), ...(entry.confirmedCaseIds ? { confirmedCaseIds: entry.confirmedCaseIds } : {}) }, { profileId: batch.profileId, targetUrl: batch.targetUrl, moduleName: entry.moduleName, ...(batch.accountName ? { accountName: batch.accountName } : {}), ...(batch.databaseBinding ? { databaseBinding: batch.databaseBinding } : {}) });
                 entry.jobId = job.id;
                 batch.updatedAt = now();
                 batch.message = `正在回归：${entry.moduleName}`;
