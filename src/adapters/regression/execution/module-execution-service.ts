@@ -88,6 +88,8 @@ export type WebModuleJob = {
     requestId: string;
     approvalWait?: ApprovalWait;
     accountName?: string;
+    /** 批次在依赖模块开跑前注入的变量（如 applicationNo）。 */
+    runtimeVariables?: Record<string, string>;
     parentJobId?: string | undefined;
     createdAt: string;
     updatedAt: string;
@@ -373,6 +375,7 @@ export class DifyWebModuleStore {
         targetUrl: string;
         moduleName?: string;
         accountName?: string;
+        runtimeVariables?: Record<string, string>;
         databaseBinding?: RegressionDatabaseBinding;
     }) {
         const data = z.object({ moduleId: id, requestId: id, selectedCaseIds: z.array(z.string()).min(1).max(200).optional(), confirmedCaseIds: z.array(z.string()).max(200).default([]), parentJobId: id.optional(), runMode: z.enum(['fixed', 'assist']).optional(), approvalWait: z.object({ caseIds: z.array(z.string()).max(50).optional(), pollMs: z.number().int().min(10).max(300000).default(30000), timeoutMs: z.number().int().min(100).max(1800000).default(300000) }).optional() }).parse(input);
@@ -419,6 +422,8 @@ export class DifyWebModuleStore {
             job.snapshot.name = job.moduleName;
             if (context.accountName)
                 job.accountName = context.accountName;
+            if (context.runtimeVariables)
+                job.runtimeVariables = context.runtimeVariables;
         }
         if (context?.databaseBinding) {
             if (!supportsDepartmentDatabase(job.snapshot.targetUrl))
@@ -825,6 +830,9 @@ export class DifyWebModuleStore {
             }
             this.save('module', module);
             job.executionProject = execution;
+            if (job.runtimeVariables)
+                for (const c of execution.cases)
+                    c.runtimeVariables = { ...job.runtimeVariables };
             job.planDigest = executionDigest(job);
             this.save('job', job);
             checkModulePlan(job);

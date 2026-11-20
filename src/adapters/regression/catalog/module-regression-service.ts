@@ -785,7 +785,7 @@ export class SystemModuleRegression {
                 batch.message = `本轮先执行 ${order.length - dependent.length - 1} 个无关模块，再提交申请，等审批通过后执行 ${dependent.length} 个依赖模块。`;
                 this.save('batch', batch);
             }
-            let pendingSkip: string | undefined;
+            let pendingSkip: string | undefined, sharedVariables: Record<string, string> | undefined;
             for (const item of order) {
                 if (signal.aborted || this.closed)
                     return;
@@ -803,12 +803,14 @@ export class SystemModuleRegression {
                     item.entry.skipReason = `仅执行不依赖审批的 ${keep.length} 条用例：${pendingSkip}`;
                     item.entry.selectedCaseIds = keep;
                 }
-                await this.runEntry(batch, item.entry, signal);
+                await this.runEntry(batch, item.entry, signal, sharedVariables);
                 if (signal.aborted || this.closed)
                     return;
                 if (!crossModule || item !== submit)
                     continue;
                 const applicationNo = await this.submittedApplicationNo(item.entry);
+                if (applicationNo)
+                    sharedVariables = { applicationNo };
                 if (!applicationNo) {
                     pendingSkip = '提交模块没有返回申请编号，依赖审批的用例未执行。';
                     batch.message = pendingSkip;
@@ -872,8 +874,8 @@ export class SystemModuleRegression {
             return entry.selectedCaseIds ?? [];
         }
     }
-    private async runEntry(batch: RegressionBatch, entry: RegressionBatch['entries'][number], signal: AbortSignal) {
-        const job = this.store.start({ moduleId: entry.versionId, requestId: randomUUID(), ...(batch.runMode ? { runMode: batch.runMode } : {}), ...(entry.selectedCaseIds ? { selectedCaseIds: entry.selectedCaseIds } : {}), ...(entry.confirmedCaseIds ? { confirmedCaseIds: entry.confirmedCaseIds } : {}) }, { profileId: batch.profileId, targetUrl: batch.targetUrl, moduleName: entry.moduleName, ...(batch.accountName ? { accountName: batch.accountName } : {}), ...(batch.databaseBinding ? { databaseBinding: batch.databaseBinding } : {}) });
+    private async runEntry(batch: RegressionBatch, entry: RegressionBatch['entries'][number], signal: AbortSignal, variables?: Record<string, string>) {
+        const job = this.store.start({ moduleId: entry.versionId, requestId: randomUUID(), ...(batch.runMode ? { runMode: batch.runMode } : {}), ...(entry.selectedCaseIds ? { selectedCaseIds: entry.selectedCaseIds } : {}), ...(entry.confirmedCaseIds ? { confirmedCaseIds: entry.confirmedCaseIds } : {}) }, { profileId: batch.profileId, targetUrl: batch.targetUrl, moduleName: entry.moduleName, ...(batch.accountName ? { accountName: batch.accountName } : {}), ...(variables ? { runtimeVariables: variables } : {}), ...(batch.databaseBinding ? { databaseBinding: batch.databaseBinding } : {}) });
         entry.jobId = job.id;
         batch.updatedAt = now();
         batch.message = `正在回归：${entry.moduleName}`;

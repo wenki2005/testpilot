@@ -161,6 +161,8 @@ export type BrowserCheck = {
     writeResultSourceRunId?: string;
     /** 显式声明：这条用例只有在申请审批通过后才有意义，优先于自动判断。 */
     approvalDependent?: boolean;
+    /** 运行期注入的变量（如 applicationNo），步骤里可用 {{名字}} 引用。 */
+    runtimeVariables?: Record<string, string>;
     requiredAssertions?: string[];
     id: string;
     title: string;

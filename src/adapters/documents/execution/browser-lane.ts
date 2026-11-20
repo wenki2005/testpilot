@@ -261,6 +261,8 @@ export function createDocumentBrowserLaneAdapter(helpers: DocumentBrowserLaneHel
                     if (item.writeResultSourceRunId)
                         detail += `；只读复核既有提交，来源run=${item.writeResultSourceRunId}，operation=${item.writeResultOperationId}`;
                     const assertionFailures: string[] = [];
+                    for (const [variableName, variableValue] of Object.entries((item as { runtimeVariables?: Record<string, string> }).runtimeVariables ?? {}))
+                        variables.set(variableName, variableValue);
                     const captured: Record<string, string> = {};
                     for (let stepIndex = 0; stepIndex < (item.steps ?? []).length; stepIndex++) {
                         const step = resolveStep(item.steps![stepIndex]!);
@@ -333,7 +335,11 @@ else if (step.action === "openLatestRecord") {
                                     await page.waitForTimeout(2500);
                                 }
                                 const cardSelector = step.list === "order" ? ".logistics-content-item, .order-content-item, .apply-content-item" : ".apply-content-item";
-                                const card = page.locator(cardSelector).first();
+                                // contains：按列表卡片上的文案挑一条（例如"锁单失败"），避免把申请编号写死进脚本。
+                                const contains = (step as { contains?: string }).contains;
+                                const card = contains ? page.locator(cardSelector).filter({ hasText: contains }).first() : page.locator(cardSelector).first();
+                                if (contains && await page.locator(cardSelector).filter({ hasText: contains }).count() === 0)
+                                    throw new Error(`列表里没有包含「${contains}」的记录，无法打开；未改用其它记录。`);
                                 await card.waitFor({ state: "visible", timeout: 8000 });
                                 await card.click();
                                 const navDeadline = Date.now() + 8000;
