@@ -7,9 +7,8 @@
   "hasSteps": true,
   "steps": [
     {
-      "action": "openLatestRecord",
-      "list": "apply",
-      "status": "已通过"
+      "action": "openRoute",
+      "hash": "#/apply-detail/{{lockFailed}}"
     },
     {
       "action": "assertVisible",
