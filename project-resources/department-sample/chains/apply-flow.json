@@ -1,0 +1,55 @@
+{
+  "id": "apply-flow",
+  "title": "用书申请：提交 → 待审批 → 记录明细",
+  "description": "从提交一张测试申请单开始，检查待审核状态、审批人文案、明细回显与全部状态入口。提交会真实创建一条待审批记录。",
+  "steps": [
+    {
+      "id": "submit",
+      "title": "提交申请",
+      "expected": "全部必填完成且格式正确：提交按钮可点击，跳转用书审批详情页并创建待审核记录。",
+      "caseIds": [
+        "xmind-1-050"
+      ]
+    },
+    {
+      "id": "pending",
+      "title": "待审核状态",
+      "expected": "待审核状态按钮置灰，展示申请编号与申请信息。",
+      "caseIds": [
+        "xmind-1-053"
+      ]
+    },
+    {
+      "id": "approver",
+      "title": "审批人文案",
+      "expected": "待审批记录展示「审批人 张三（待审批）」。",
+      "caseIds": [
+        "xmind-2-089"
+      ]
+    },
+    {
+      "id": "rows",
+      "title": "样书明细",
+      "expected": "多行明细逐行展示小计，总计与预估总重计算正确。",
+      "caseIds": [
+        "xmind-1-075"
+      ]
+    },
+    {
+      "id": "echo",
+      "title": "字段回显",
+      "expected": "收件人、手机号、地址与备注按提交内容原样回显。",
+      "caseIds": [
+        "xmind-1-078"
+      ]
+    },
+    {
+      "id": "status-entry",
+      "title": "全部状态入口",
+      "expected": "各审批状态均展示「查看明细」入口。",
+      "caseIds": [
+        "xmind-1-056"
+      ]
+    }
+  ]
+}

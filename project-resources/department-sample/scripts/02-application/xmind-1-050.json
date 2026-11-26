@@ -1,8 +1,8 @@
 {
   "caseId": "xmind-1-050",
   "moduleId": "e807d296-9a7b-4b96-8bf9-2f888ec834b9",
-  "versionId": "9225cd0f-fd24-45e2-9715-399fddc4ee5b",
-  "version": 27,
+  "versionId": "fa9a8244-a953-49e1-bad0-b035aafaa31c",
+  "version": 60,
   "dependsOn": [],
   "hasSteps": true,
   "steps": [
@@ -89,6 +89,24 @@
     {
       "action": "assertVisible",
       "text": "申请待审批"
+    },
+    {
+      "action": "readText",
+      "label": "申请编号",
+      "pattern": "申请编号[:：]\\s*(\\d{8,})",
+      "as": "applicationNo"
+    },
+    {
+      "action": "readText",
+      "label": "审批人",
+      "pattern": "审批人\\s*\\n?\\s*([^\\n（]+)",
+      "as": "approver"
+    },
+    {
+      "action": "readText",
+      "label": "提交时间",
+      "pattern": "提交\\s*\\n?\\s*(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2})",
+      "as": "submittedAt"
     }
   ]
 }

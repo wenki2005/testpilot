@@ -1,0 +1,23 @@
+{
+  "id": "order-flow",
+  "title": "订单与物流：列表 → 详情",
+  "description": "从订单列表进入详情，再取消待发货订单并撤回申请，检查按钮消失与时间轴节点。取消属于写操作。",
+  "steps": [
+    {
+      "id": "order-list",
+      "title": "订单列表",
+      "expected": "订单列表展示订单号、状态与查看明细入口。",
+      "caseIds": [
+        "xmind-1-080"
+      ]
+    },
+    {
+      "id": "order-detail",
+      "title": "订单详情",
+      "expected": "展示对应订单详情。",
+      "caseIds": [
+        "xmind-1-084"
+      ]
+    }
+  ]
+}
