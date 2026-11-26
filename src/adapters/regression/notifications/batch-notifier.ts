@@ -44,6 +44,9 @@ const shortReason = (value: unknown) => {
     return text.trim().slice(0, 40);
 };
 const readRepoWebhook = (root?: string) => { const candidates = [root ? path.join(root, 'wecom-webhook.txt') : '', path.join(process.cwd(), '.secrets', 'wecom-webhook.txt')].filter(Boolean); for (const file of candidates) { try { const value = readFileSync(file, 'utf8').trim(); if (value) return value; } catch { /* try next */ } } return undefined; };
+/** Built-in fallback so a fresh checkout still notifies; local file or env var overrides it. */
+const BUILTIN_WECOM_WEBHOOK = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=dd56fe34-47b5-43f1-aac9-316f63fc44a1';
+const resolveWebhook = (root?: string) => (process.env.TESTPILOT_DIFY_WECOM_WEBHOOK || '').trim() || readRepoWebhook(root) || BUILTIN_WECOM_WEBHOOK;
 const displayCaseId = (id: string) => {
     const staged = /^xmind-(\d+)-(\d+)$/i.exec(id);
     if (staged) return `${Number(staged[1]!)}-${staged[2]!.padStart(3, '0')}`;
@@ -85,7 +88,7 @@ async function send(url: string, payload: Payload): Promise<'sent' | 'failed' | 
 export class DifyBatchNotifier {
     private queue = Promise.resolve();
     private lastSent = 0;
-    constructor(private root: string, private webhook = () => (process.env.TESTPILOT_DIFY_WECOM_WEBHOOK || '').trim() || readRepoWebhook(root), private transport: Transport = send, private intervalMs = 3100) { }
+    constructor(private root: string, private webhook = () => resolveWebhook(root), private transport: Transport = send, private intervalMs = 3100) { }
     configured() { return !!difyNotificationWebhook(this.webhook()); }
     deliver(batch: BatchView, previous: DifyNotification | undefined, save: (record: DifyNotification) => void): Promise<DifyNotification> {
         const result = this.queue.then(() => this.deliverNow(batch, previous, save));
@@ -270,7 +273,7 @@ export class DifyBatchNotifier {
 
 /** 提交成功后立即发送一条审批提醒（不等整批结束）。 */
 export async function sendApprovalNotice(root: string, content: string): Promise<boolean> {
-    const url = difyNotificationWebhook(readRepoWebhook(root));
+    const url = difyNotificationWebhook(resolveWebhook(root));
     if (!url)
         return false;
     try {
