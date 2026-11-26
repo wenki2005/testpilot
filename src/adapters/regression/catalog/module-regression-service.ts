@@ -364,7 +364,7 @@ export class SystemModuleRegression {
         const packs = resources.modules.map(m => ({ module: m, pack: this.store.prepareResourceModule(undefined, m.name, targetUrl, resources.cases.filter(c => c.moduleId === m.id)) }));
         for (const p of packs) await this.store.commitResourceModule(p.pack);
         if (this.list<TestedSystem>('system').some(s => s.id === resources.project.id)) return { initialized: false, systemId: resources.project.id, reason: 'existing' as const };
-        const system: TestedSystem = { id: resources.project.id, name: resources.project.name, environment, targetUrl, profileId: randomUUID(), selectedModuleIds: resources.modules.map(m => m.id), createdAt: now(), updatedAt: now(), notifyFailures: false, notifyScreenshots: false };
+        const system: TestedSystem = { id: resources.project.id, name: resources.project.name, environment, targetUrl, profileId: randomUUID(), selectedModuleIds: resources.modules.map(m => m.id), createdAt: now(), updatedAt: now(), notifyFailures: true, notifyScreenshots: false };
         if (supportsDepartmentDatabase(targetUrl)) system.databaseBinding = 'department-supply-readonly';
         this.db.exec('BEGIN IMMEDIATE');
         try {
