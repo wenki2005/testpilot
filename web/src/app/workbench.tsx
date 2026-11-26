@@ -505,7 +505,7 @@ export default function App() {
     };
     return <div className={`app-shell agent-shell approved-sidebar-shell ${executionPage ? 'sm-shell' : ''}`}>
     <aside className="sidebar">
-      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>部门申样测试</strong></div></div>
+      <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong style={{ whiteSpace: 'nowrap', fontSize: 16 }}>部门申样测试</strong></div></div>
       <nav aria-label="主导航" className="main-nav">
         {workspaceReady ? <NavItem active={page === 'workbench'} icon="folder" label={isDifyWorkspace ? '项目状态' : '新建测试'} onClick={() => { navigate('workbench'); setMoreOpen(false); }}/> : <div className="nav-item nav-skeleton" aria-hidden="true"><span className="nav-skeleton-bar"/></div>}
         <NavItem active={page === 'case-scripts'} icon="list" label="用例与脚本" onClick={() => { navigate('case-scripts'); setMoreOpen(false); }}/>
