@@ -11,7 +11,7 @@ import MysqlExplorerPage from '../features/database/mysql-explorer-page';
 import SettingsPage from '../features/settings/settings-page';
 import CaseGeneratorPage, { type GenerationResult } from '../features/case-generation/case-generator-page';
 import { resolveWorkbenchPage, type WorkbenchPage as Page } from './routes';
-import { useSidebarProjects, selectSidebarProject } from '../shared/project-selection';
+import { useSidebarProjects } from '../shared/project-selection';
 import CaseScriptEditor from '../features/case-scripts/case-script-editor';
 import RunReports from '../features/run-reports/run-reports';
 import ProjectStatusPage from '../features/project-status/project-status-page';
@@ -209,6 +209,7 @@ export default function App() {
     const sidebarProjects = useSidebarProjects();
     const executionPage = page === 'dify-regression' || page === 'module-regression';
     const projectPage = page === 'workbench' || executionPage || page === 'case-scripts' || page === 'run-reports' || page === 'settings' && config?.workspaces?.current === 'dify';
+    void projectPage;
     const selectedRun = useMemo(() => runs.find((r) => r.id === selectedId) ?? null, [runs, selectedId]);
     const refresh = useCallback(async () => {
         const [nextRuns, nextConfig, nextChecks, nextProfiles, nextProjectRuns, nextProjectScripts] = await Promise.all([
@@ -505,7 +506,6 @@ export default function App() {
     return <div className={`app-shell agent-shell approved-sidebar-shell ${executionPage ? 'sm-shell' : ''}`}>
     <aside className="sidebar">
       <div className="brand"><div className="brand-mark"><Icon name="pulse" size={20}/></div><div><strong>TestPilot</strong></div></div>
-      <div className="sidebar-project"><label htmlFor="sidebar-project">当前测试项目</label><select id="sidebar-project" aria-label="当前测试项目" value={projectPage ? sidebarProjects?.systemId ?? '' : ''} disabled={!projectPage || !sidebarProjects?.systems.length || sidebarProjects.disabled} onChange={e => selectSidebarProject(e.target.value)}>{projectPage && sidebarProjects?.systems.length ? sidebarProjects.systems.map(s => <option key={s.id} value={s.id}>{s.name}</option>) : <option value="">{projectPage ? '正在读取项目…' : '本地工作区'}</option>}</select></div>
       <nav aria-label="主导航" className="main-nav">
         {workspaceReady ? <NavItem active={page === 'workbench'} icon="folder" label={isDifyWorkspace ? '项目状态' : '新建测试'} onClick={() => { navigate('workbench'); setMoreOpen(false); }}/> : <div className="nav-item nav-skeleton" aria-hidden="true"><span className="nav-skeleton-bar"/></div>}
         <NavItem active={page === 'case-scripts'} icon="list" label="用例与脚本" onClick={() => { navigate('case-scripts'); setMoreOpen(false); }}/>
